@@ -9518,47 +9518,47 @@ export default function AncPage() {
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // Auto-correction logic
-                      let correctedPara = para;
-                      let correctedLivingChildren = livingChildren;
-                      let correctionMessages: string[] = [];
+                      // Validation logic - check business rules
+                      const errors: Record<string, string> = { ...obstetricValidationErrors };
                       
-                      // If para exceeds gravida, reset para to 0
-                      if (para > gravida && gravida > 0) {
-                        correctedPara = 0;
-                        correctedLivingChildren = 0; // Living children can't exceed para
-                        correctionMessages.push(`Para reset to 0: Live births (${para}) cannot exceed total pregnancies (${gravida})`);
-                      } 
-                      // If gravida < (para + abortions), reset para to 0
-                      else if (gravida > 0 && gravida < (para + abortions)) {
-                        correctedPara = 0;
-                        correctedLivingChildren = 0;
-                        correctionMessages.push(`Para reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
-                      }
-                      // If living children exceed corrected para, reset living children
-                      else if (livingChildren > correctedPara) {
-                        correctedLivingChildren = 0;
-                        correctionMessages.push(`Living children reset to 0: Cannot exceed live births (${correctedPara})`);
+                      // Clear para-related errors first
+                      delete errors.para;
+                      delete errors.livingChildren;
+                      
+                      if (para > 0) {
+                        // Para cannot exceed Gravida
+                        if (para > gravida && gravida > 0) {
+                          errors.para = `Live births cannot exceed total pregnancies. Para (${para}) > Gravida (${gravida})`;
+                        }
+                        
+                        // Check if gravida < (para + abortions)
+                        if (gravida > 0 && gravida < (para + abortions)) {
+                          errors.para = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
+                        }
+                        
+                        // Para ≥ Living Children validation
+                        const currentLivingChildren = parseInt(obstetricHistory.livingChildren) || 0;
+                        if (currentLivingChildren > para) {
+                          errors.livingChildren = `Living children cannot exceed total live births (Para). Please review both fields. Current: Para=${para}, Living=${currentLivingChildren}`;
+                        }
                       }
                       
-                      // Show toast notification if corrections were made
-                      if (correctionMessages.length > 0) {
+                      // Show toast for validation errors
+                      if (Object.keys(errors).length > 0) {
                         toast({
-                          title: "Auto-correction Applied",
-                          description: correctionMessages.join('. '),
+                          title: "Validation Error",
+                          description: Object.values(errors)[0],
                           variant: "destructive",
                         });
                       }
                       
-                      // Update state with corrected values
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        para: correctedPara.toString(),
-                        livingChildren: correctedLivingChildren.toString()
+                        para: e.target.value
                       }));
-                      
-                      // Clear any validation errors since we auto-correct
-                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
@@ -9694,33 +9694,31 @@ export default function AncPage() {
                       // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // Auto-correction logic
-                      let correctedLivingChildren = livingChildren;
-                      let correctionMessages: string[] = [];
+                      // Validation logic - block invalid entries instead of auto-correcting
+                      const errors: Record<string, string> = { ...obstetricValidationErrors };
                       
-                      // If living children exceed para, reset to 0
-                      if (livingChildren > para && para > 0) {
-                        correctedLivingChildren = 0;
-                        correctionMessages.push(`Living children reset to 0: Number of living children (${livingChildren}) cannot exceed live births (${para})`);
-                      }
+                      // Clear living children errors first
+                      delete errors.livingChildren;
                       
-                      // Show toast notification if corrections were made
-                      if (correctionMessages.length > 0) {
+                      // Validate Para ≥ Living Children rule
+                      if (livingChildren > 0 && para > 0 && livingChildren > para) {
+                        errors.livingChildren = `Living children cannot exceed total live births (Para). Please review both fields. Current: Para=${para}, Living=${livingChildren}`;
+                        
+                        // Show toast notification for validation error
                         toast({
-                          title: "Auto-correction Applied",
-                          description: correctionMessages.join('. '),
+                          title: "Validation Error",
+                          description: "Living children cannot exceed total live births (Para). Please review both fields.",
                           variant: "destructive",
                         });
                       }
                       
-                      // Update state with corrected values
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        livingChildren: correctedLivingChildren.toString()
+                        livingChildren: e.target.value
                       }));
-                      
-                      // Clear any validation errors since we auto-correct
-                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
@@ -9746,17 +9744,22 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Auto-correction Notice - Only show when corrections were made */}
+              {/* Validation Error Messages */}
               {Object.keys(obstetricValidationErrors).length > 0 && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center mb-2">
-                    <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg className="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium text-green-800">Auto-Correction Applied</span>
+                    <span className="text-sm font-medium text-red-800">Validation Errors</span>
                   </div>
-                  <div className="text-xs text-green-700 ml-6">
-                    Invalid entries have been automatically corrected to maintain obstetric history business rules.
+                  {Object.entries(obstetricValidationErrors).map(([field, error]) => (
+                    <div key={field} className="text-xs text-red-700 ml-6 mb-1">
+                      <span className="font-medium capitalize">{field}:</span> {error}
+                    </div>
+                  ))}
+                  <div className="text-xs text-red-600 ml-6 mt-2 italic">
+                    Please review and correct the highlighted fields before saving.
                   </div>
                 </div>
               )}
