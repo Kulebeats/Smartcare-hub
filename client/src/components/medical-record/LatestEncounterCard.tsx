@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, AlertCircle, Baby, Stethoscope, FlaskConical, Pill, Users, Activity, Calendar, Heart, TestTube, BookOpen, ArrowRightLeft, Shield, Edit, Plus, ChevronRight } from 'lucide-react';
+import { FileText, AlertCircle, Baby, Stethoscope, FlaskConical, Pill, Users, Activity, Calendar, Heart, TestTube, BookOpen, ArrowRightLeft, Shield, ChevronRight } from 'lucide-react';
 
 interface LatestEncounterProps {
   activeSection: string;
@@ -404,7 +404,7 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
   return (
     <div className="space-y-4">
       {/* Container 1: Gather Client Details */}
-      <Card className="bg-white shadow-sm border border-gray-200">
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold text-gray-800">Gather Client Details</CardTitle>
@@ -416,7 +416,7 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="px-4 pb-3 pt-2">
+        <CardContent className="px-4 pb-4 pt-2">
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Contact Date:</span>
@@ -437,21 +437,11 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
               </span>
             </div>
           </div>
-          <div className="flex gap-2 mt-3">
-            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
-              <Edit className="w-3 h-3 mr-1" />
-              Edit Record
-            </Button>
-            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-3 h-3 mr-1" />
-              Add Record
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
       {/* Container 2: Danger Signs & Health Concerns */}
-      <Card className="bg-white shadow-sm border border-gray-200">
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold text-gray-800">Danger Signs & Health Concerns</CardTitle>
@@ -463,7 +453,7 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="px-4 pb-3 pt-2">
+        <CardContent className="px-4 pb-4 pt-2">
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Danger Signs:</span>
@@ -487,21 +477,11 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
               </div>
             )}
           </div>
-          <div className="flex gap-2 mt-3">
-            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
-              <Edit className="w-3 h-3 mr-1" />
-              Edit Record
-            </Button>
-            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-3 h-3 mr-1" />
-              Add Record
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
       {/* Container 3: Emergency Referral */}
-      <Card className="bg-white shadow-sm border border-gray-200">
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold text-gray-800">Emergency Referral</CardTitle>
@@ -513,7 +493,7 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="px-4 pb-3 pt-2">
+        <CardContent className="px-4 pb-4 pt-2">
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Emergency Referral:</span>
@@ -533,16 +513,6 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
                 {emergencyReferralData.feedbackReceived}
               </span>
             </div>
-          </div>
-          <div className="flex gap-2 mt-3">
-            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
-              <Edit className="w-3 h-3 mr-1" />
-              Edit Record
-            </Button>
-            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-3 h-3 mr-1" />
-              Add Record
-            </Button>
           </div>
         </CardContent>
       </Card>
