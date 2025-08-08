@@ -1,0 +1,69 @@
+2. Business Rules
+A. Data Entry Rules
+Field	Type	Allowed Values	Validation Logic
+Gravida (Total Pregnancies)	Integer	≥ 1	Must be a positive integer (minimum 1 if pregnant)
+No. of Previous Pregnancies	Integer	≥ 0	Must be a non-negative integer; cannot exceed Gravida - 1
+B. Logical Constraints
+Relationship Rule:
+No. of Previous Pregnancies = Gravida - 1
+
+Example: If Gravida = 3 (currently pregnant for the third time), then No. of Previous Pregnancies = 2
+Mandatory Fields:
+Gravida is mandatory for all antenatal clients
+No. of Previous Pregnancies is mandatory if Gravida > 1
+Auto-Calculation:
+When the current pregnancy is registered, the system should auto-calculate:
+No. of Previous Pregnancies = Gravida - 1
+Allow manual override only if clinical scenario justifies (with reason required)
+
+Error Messaging:
+If No. of Previous Pregnancies > (Gravida - 1), display error:
+“Number of previous pregnancies cannot exceed Gravida minus one.”
+Edit Restrictions:
+Once recorded for a pregnancy episode, historical values should be immutable except by users with elevated privileges and audit logging
+2. Core Business Rules
+A. Data Entry and Validation
+Field	Type	Allowed Values	Validation Logic
+Gravida	Integer	≥ 1	Must be at least 1 if currently pregnant
+Para	Integer	≥ 0	Cannot exceed Gravida
+Abortions/Miscarriages	Integer	≥ 0	Cannot exceed Gravida
+Living children	Integer	≥ 0	Cannot exceed Para
+
+B. Logical Constraints and Relationships
+1.	Primary Relationships:
+o	Gravida = Para + Abortions/Miscarriages + Current Pregnancy (if applicable)
+	For antenatal visits (current pregnancy):
+Gravida = (Para + Abortions/Miscarriages) + 1
+o	Living children ≤ Para
+2.	Range Validation:
+o	If Gravida < (Para + Abortions/Miscarriages):
+	Display error: "Sum of live births and abortions/miscarriages cannot exceed total pregnancies."
+o	If Living children > Para:
+	Display error: "Number of living children cannot exceed number of live births."
+o	If Para > Gravida:
+	Display error: "Live births cannot exceed total pregnancies."
+3.	Mandatory Field Rule:
+o	All four fields must be completed for every new antenatal registration.
+4.	Data Consistency:
+o	When Gravida is updated, prompt for review/update of the other related fields.
+o	All updates to historical pregnancy data must be auditable, with a reason required for manual overrides.
+
+D. Error Messaging
+•	If field relationships are violated, display precise, user-friendly error messages (see above).
+•	On manual override, require reason entry and trigger an audit log entry.
+
+E. Data Quality and Integrity
+•	Outlier detection:
+Flag any values outside typical clinical norms (e.g., Gravida > 15, Living children > Para) for secondary review.
+•	Duplicate prevention:
+Ensure that each pregnancy is only counted once in the EHR.
+
+3. Example Clinical Scenario
+•	A client presents for her 5th pregnancy.
+o	Gravida: 5 (includes current)
+o	Para: 3 (three pregnancies reached viability and resulted in live birth)
+o	Abortions/Miscarriages: 1
+o	Living children: 3
+System logic checks:
+•	Para + Abortions/Miscarriages = 4 → Add 1 (current) = 5 (matches Gravida)
+•	Living children (3) ≤ Para (3): OK
