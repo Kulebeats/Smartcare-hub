@@ -1,0 +1,796 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maternal PMTCT Module</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .section-list .card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-list .card:hover {
+             transform: none;
+             box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: #374151;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 30px;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.95em;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #ef4444;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h4 {
+            font-size: 1.1em;
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        h4:first-of-type {
+            margin-top: 0;
+        }
+         
+        /* Notification Modal */
+        #notification-modal .modal-content {
+            max-width: 400px;
+            text-align: center;
+        }
+        #notification-message {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+                Maternal PMTCT Module
+            </h1>
+            <p>Comprehensive HIV Care & Prevention of Mother-to-Child Transmission</p>
+        </div>
+
+        <div class="section-list">
+             <div class="card">
+                <h2 class="section-title">Visit Details & Triage</h2>
+                <button class="btn btn-primary" onclick="openModal('visit-triage-modal')">Add Record</button>
+            </div>
+             <div class="card">
+                <h2 class="section-title">ART & PMTCT History</h2>
+                <button class="btn btn-primary" onclick="openModal('history-modal')">Add Record</button>
+            </div>
+            <div class="card">
+                <h2 class="section-title">Clinical Assessment</h2>
+                <button class="btn btn-primary" onclick="openModal('systems-review-modal')">Add Record</button>
+            </div>
+            <div class="card">
+                <h2 class="section-title">Lab Results & Investigations</h2>
+                <button class="btn btn-primary" onclick="openModal('laboratory-modal')">Add Record</button>
+            </div>
+            <div class="card">
+                <h2 class="section-title">ART Response & VL Monitoring</h2>
+                <button class="btn btn-primary" onclick="openModal('art-management-modal')">Add Record</button>
+            </div>
+            <div class="card">
+                <h2 class="section-title">Clinical Plan</h2>
+                <button class="btn btn-primary" onclick="openModal('plan-modal')">Add Record</button>
+            </div>
+            <div class="card">
+                <h2 class="section-title">Counselling, Referrals & Follow-up</h2>
+                <button class="btn btn-primary" onclick="openModal('referrals-modal')">Add Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+
+    <!-- Visit & Triage Modal -->
+    <div id="visit-triage-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Visit Details & Triage</h3>
+                <button class="modal-close-btn" onclick="closeModal('visit-triage-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Reason for Visit</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label required">Reason for HIV care and treatment visit</label>
+                        <select class="form-control" required>
+                            <option value="">Select...</option>
+                            <option value="first_clinical">First clinical visit</option>
+                            <option value="scheduled_clinical">Scheduled clinical visit</option>
+                            <option value="unscheduled_clinical">Unscheduled clinical visit</option>
+                            <option value="arv_pickup">ARV drug pick-up</option>
+                        </select>
+                    </div>
+                </div>
+                <h4>Signs of Serious Illness</h4>
+                <div class="form-group">
+                     <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="illness_none" name="serious_illness_present" value="no" checked onchange="toggleSeriousIllness(this.value)">
+                            <label for="illness_none">None</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="illness_present" name="serious_illness_present" value="yes" onchange="toggleSeriousIllness(this.value)">
+                            <label for="illness_present">Present</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="serious-illness-options" class="form-grid" style="display: none; grid-template-columns: 1fr 1fr 1fr; margin-top: 15px;">
+                    <div class="checkbox-item"><input type="checkbox" id="fever_high" name="serious_illness_sign"><label for="fever_high">Fever ≥ 39°C</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="tachycardia" name="serious_illness_sign"><label for="tachycardia">Tachycardia</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="tachypnea" name="serious_illness_sign"><label for="tachypnea">Tachypnea</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="walk_unaided" name="serious_illness_sign"><label for="walk_unaided">Unable to walk unaided</label></div>
+                    <div class="checkbox-item child-only-sign"><input type="checkbox" id="lethargy" name="serious_illness_sign"><label for="lethargy">Lethargy</label></div>
+                    <div class="checkbox-item child-only-sign"><input type="checkbox" id="unconscious" name="serious_illness_sign"><label for="unconscious">Unconsciousness</label></div>
+                    <div class="checkbox-item child-only-sign"><input type="checkbox" id="convulsions" name="serious_illness_sign"><label for="convulsions">Convulsions</label></div>
+                    <div class="checkbox-item child-only-sign"><input type="checkbox" id="repeated_vomiting" name="serious_illness_sign"><label for="repeated_vomiting">Repeated vomiting</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="headache_severe" name="serious_illness_sign"><label for="headache_severe">Severe Headache</label></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('visit-triage-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord('visit-triage-modal')">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">ART & PMTCT History</h3>
+                <button class="modal-close-btn" onclick="closeModal('history-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>ART History</h4>
+                 <div class="form-grid">
+                     <div class="form-group">
+                        <label class="form-label">Patient Age (Years)</label>
+                        <input type="number" id="patient_age" class="form-control" onchange="applyAgeBasedRules()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ART Start Type</label>
+                        <select id="art_start_type" class="form-control">
+                            <option value="">Select...</option>
+                            <option value="first_time">First-time user of ART</option>
+                            <option value="restarting">Restarting ART</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Date of ART Initiation</label><input type="date" id="art_initiation_date" class="form-control"></div>
+                    <div class="form-group">
+                        <label class="form-label">Transfer In for HIV Care?</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="transfer_in" value="yes" onchange="toggleTransferIn(true)"><label>Yes</label></div>
+                            <div class="radio-item"><input type="radio" name="transfer_in" value="no" checked onchange="toggleTransferIn(false)"><label>No</label></div>
+                        </div>
+                    </div>
+                     <div class="form-group" id="transfer-in-date-group" style="display: none;"><label class="form-label">Date of Transfer In</label><input type="date" id="transfer_in_date" class="form-control"></div>
+                </div>
+                <h4>PMTCT Enrollment Status</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Currently Pregnant?</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="pregnant" value="yes" onchange="togglePregnancyStatus(true)"><label>Yes</label></div>
+                            <div class="radio-item"><input type="radio" name="pregnant" value="no" checked onchange="togglePregnancyStatus(false)"><label>No</label></div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="anc-art-status-group" style="display: none;">
+                        <label class="form-label">ART Status at First ANC Visit</label>
+                        <select class="form-control" id="anc_art_status">
+                            <option value="">Select...</option>
+                            <option value="already_on_art">Already on ART at first visit</option>
+                            <option value="newly_on_art">Newly on ART during pregnancy</option>
+                            <option value="not_applicable">Not Applicable</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('history-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord('history-modal')">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Systems Review Modal -->
+    <div id="systems-review-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Clinical Assessment</h3>
+                <button class="modal-close-btn" onclick="closeModal('systems-review-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>TB Screening</h4>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Cough</label><div class="radio-group"><div class="radio-item"><input type="radio" class="tb-screen" name="cough" value="yes"><label>Yes</label></div><div class="radio-item"><input type="radio" class="tb-screen" name="cough" value="no" checked><label>No</label></div></div></div>
+                    <div class="form-group"><label class="form-label">Fever</label><div class="radio-group"><div class="radio-item"><input type="radio" class="tb-screen" name="fever" value="yes"><label>Yes</label></div><div class="radio-item"><input type="radio" class="tb-screen" name="fever" value="no" checked><label>No</label></div></div></div>
+                    <div class="form-group"><label class="form-label">Night Sweats</label><div class="radio-group"><div class="radio-item"><input type="radio" class="tb-screen" name="night_sweats" value="yes"><label>Yes</label></div><div class="radio-item"><input type="radio" class="tb-screen" name="night_sweats" value="no" checked><label>No</label></div></div></div>
+                    <div class="form-group"><label class="form-label">Weight Loss</label><div class="radio-group"><div class="radio-item"><input type="radio" class="tb-screen" name="weight_loss" value="yes"><label>Yes</label></div><div class="radio-item"><input type="radio" class="tb-screen" name="weight_loss" value="no" checked><label>No</label></div></div></div>
+                </div>
+                <h4>WHO Clinical Stage</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Current WHO Stage</label>
+                        <select class="form-control" id="who_stage">
+                            <option value="">Select...</option>
+                            <option value="1">Stage 1</option>
+                            <option value="2">Stage 2</option>
+                            <option value="3">Stage 3</option>
+                            <option value="4">Stage 4</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('systems-review-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord('systems-review-modal')">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Laboratory Modal -->
+    <div id="laboratory-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Lab Results & Investigations</h3>
+                <button class="modal-close-btn" onclick="closeModal('laboratory-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Lab Results</h4>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="form-group"><label class="form-label">Hb/HCT</label><input type="text" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">ALT</label><input type="text" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Creatinine</label><input type="text" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">RPR/RST</label><select class="form-control"><option value="">Select</option><option value="pos">+ve</option><option value="neg">-ve</option></select></div>
+                    <div class="form-group"><label class="form-label">HBsAg</label><select class="form-control"><option value="">Select</option><option value="pos">+ve</option><option value="neg">-ve</option></select></div>
+                    <div class="form-group"><label class="form-label">Serum CrAg</label><select class="form-control"><option value="">Select</option><option value="pos">+ve</option><option value="neg">-ve</option></select></div>
+                    <div class="form-group"><label class="form-label">CD4 Count</label><input type="number" id="cd4_count" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Viral Load</label><input type="number" id="viral_load" class="form-control"></div>
+                </div>
+                <h4>Investigations to Order</h4>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                     <div class="checkbox-item"><input type="checkbox" id="inv_fbc"><label for="inv_fbc">FBC</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_vl"><label for="inv_vl">Viral Load</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_preg"><label for="inv_preg">Pregnancy test</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_alt"><label for="inv_alt">ALT & AST</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_cd4"><label for="inv_cd4">CD4 count</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_rpr"><label for="inv_rpr">RPR/RST</label></div>
+                     <div class="checkbox-item"><input type="checkbox" id="inv_sputum"><label for="inv_sputum">Sputum aFB/RIF</label></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('laboratory-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord('laboratory-modal')">Save Record</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ART Management Modal -->
+    <div id="art-management-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">ART Response & VL Monitoring</h3>
+                <button class="modal-close-btn" onclick="closeModal('art-management-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Response to ART</h4>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Has patient been on ART >6mos?</label><select class="form-control"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option><option value="na">N/A</option></select></div>
+                    <div class="form-group"><label class="form-label">Does the patient have IRIS?</label><select class="form-control"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+                    <div class="form-group"><label class="form-label">Number of missed doses since last visit</label><input type="number" class="form-control" min="0"></div>
+                </div>
+                 <h4>VL Monitoring</h4>
+                 <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Reason for VL Test</label><select class="form-control"><option value="">Select</option><option value="routine">Routine Monitoring</option><option value="targeted">Targeted (Suspected Failure)</option></select></div>
+                    <div class="form-group"><label class="form-label">Recent VL Result</label><input type="text" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Date of sample collection</label><input type="date" class="form-control"></div>
+                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('art-management-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord('art-management-modal')">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Modal -->
+    <div id="plan-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3 class="modal-title">Clinical Plan</h3><button class="modal-close-btn" onclick="closeModal('plan-modal')">&times;</button></div>
+            <div class="modal-body">
+                <h4>Plan</h4>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="checkbox-item"><input type="checkbox" id="plan_tpt_prov" onchange="toggleTptRegimen(this.checked)"><label for="plan_tpt_prov">Provide TPT</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_ctx_prov"><label for="plan_ctx_prov">Provide CTX</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_eac_prov"><label for="plan_eac_prov">Provide EAC</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_art_start"><label for="plan_art_start">Start ART</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_art_cont"><label for="plan_art_cont">Continue ART</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_art_mod"><label for="plan_art_mod">Modify ART</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_tb_eval"><label for="plan_tb_eval">Evaluate for TB</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_fp"><label for="plan_fp">Provide family planning</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="plan_dsd"><label for="plan_dsd">Continue in DSD</label></div>
+                </div>
+                 <div id="tpt-regimen-group" style="display: none;">
+                    <h4>TPT Regimen</h4>
+                     <div class="form-grid">
+                         <div class="form-group">
+                            <label class="form-label">TPT Regimen Type</label>
+                            <select class="form-control" id="tpt_regimen_type">
+                                <option value="">Select if starting TPT...</option>
+                                <option value="3hp">3HP</option>
+                                <option value="1hp">1HP</option>
+                                <option value="6h">6H</option>
+                                <option value="levo">Six months of levofloxacin daily</option>
+                            </select>
+                        </div>
+                     </div>
+                 </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('plan-modal')">Cancel</button><button class="btn btn-primary" onclick="saveRecord('plan-modal')">Save Record</button></div>
+        </div>
+    </div>
+
+    <!-- Referrals Modal -->
+    <div id="referrals-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3 class="modal-title">Referrals, Counselling & Follow-up</h3><button class="modal-close-btn" onclick="closeModal('referrals-modal')">&times;</button></div>
+            <div class="modal-body">
+                <h4>Counselling Provided</h4>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="checkbox-item"><input type="checkbox" id="counsel_infant_feeding"><label for="counsel_infant_feeding">Infant feeding counselling provided</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="counsel_ppfp"><label for="counsel_ppfp">Postpartum family planning counselling</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="counsel_adherence"><label for="counsel_adherence">Adherence counselling provided</label></div>
+                </div>
+                <h4>Referrals Made</h4>
+                 <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="checkbox-item"><input type="checkbox" id="ref_none"><label for="ref_none">None</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_cacx"><label for="ref_cacx">CaCx Screening</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_fp"><label for="ref_fp">Family Planning</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_inpatient"><label for="ref_inpatient">In-patient Care</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_disclosure"><label for="ref_disclosure">Disclosure Counselling</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_adherence"><label for="ref_adherence">Adherence Counselling</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_eac"><label for="ref_eac">EAC</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_nutrition"><label for="ref_nutrition">Nutritional support</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_psych"><label for="ref_psych">Psychosocial Counselling</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="ref_tb"><label for="ref_tb">TB Treatment/DOT</label></div>
+                </div>
+                 <h4>Schedule Follow-up</h4>
+                 <div class="form-grid">
+                    <div class="form-group"><label class="form-label required">Date of next appointment</label><input type="date" id="next_appt_date" class="form-control" required></div>
+                    <div class="form-group">
+                        <label class="form-label required">Type of follow-up appointment</label>
+                        <select class="form-control" id="next_appt_type" required>
+                            <option value="">Select...</option>
+                            <option value="clinical_visit">Clinical visit</option>
+                            <option value="arv_pickup">Antiretroviral drug pick up</option>
+                            <option value="other">Other (specify)</option>
+                        </select>
+                    </div>
+                 </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('referrals-modal')">Cancel</button><button class="btn btn-primary" onclick="saveRecord('referrals-modal')">Save Record</button></div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="notification-title">Notification</h3>
+            </div>
+            <div class="modal-body">
+                <p id="notification-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('notification-modal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Mock Patient Data & Clinical Status ---
+        // In a real application, this would come from a database.
+        const patientData = {
+            age: null, // To be entered by user
+            isOnART: false // Default for a new patient
+        };
+
+        const clinicalStatus = {
+            isPresumptiveTB: false,
+            hasAHD: false,
+            isVirallyUnsuppressed: false
+        };
+
+        // --- Business Rule Implementations ---
+
+        // Rule 1: Triage - Signs of Serious Illness
+        function toggleSeriousIllness(status) {
+            const optionsDiv = document.getElementById('serious-illness-options');
+            optionsDiv.style.display = (status === 'yes') ? 'grid' : 'none';
+        }
+
+        // Rule 1: Triage - Age-based skip logic
+        function applyAgeBasedRules() {
+            patientData.age = document.getElementById('patient_age').value;
+            const childOnlySigns = document.querySelectorAll('.child-only-sign');
+            const displayValue = (patientData.age && patientData.age <= 9) ? 'flex' : 'none';
+            childOnlySigns.forEach(el => el.style.display = displayValue);
+        }
+
+        // Rule 2: History - Transfer In
+        function toggleTransferIn(isTransfer) {
+            const transferDateGroup = document.getElementById('transfer-in-date-group');
+            transferDateGroup.style.display = isTransfer ? 'block' : 'none';
+            document.getElementById('transfer_in_date').required = isTransfer;
+        }
+
+        // Rule 2: History - PMTCT Status
+        function togglePregnancyStatus(isPregnant) {
+            const ancStatusGroup = document.getElementById('anc-art-status-group');
+            ancStatusGroup.style.display = isPregnant ? 'block' : 'none';
+            document.getElementById('anc_art_status').required = isPregnant;
+        }
+
+        // Rule 6: Clinical Plan - TPT Logic
+        function toggleTptRegimen(isProvidingTpt) {
+            const tptGroup = document.getElementById('tpt-regimen-group');
+            tptGroup.style.display = isProvidingTpt ? 'block' : 'none';
+            document.getElementById('tpt_regimen_type').required = isProvidingTpt;
+        }
+
+        // --- Modal Management ---
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                // Before opening a modal, run checks to update recommendations
+                updateClinicalStatus();
+                applyRecommendations();
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(event.target.id);
+            }
+        });
+
+        // --- Central function to update clinical status from all forms ---
+        function updateClinicalStatus() {
+            // Rule 3: TB Screening Trigger
+            const tbSymptoms = Array.from(document.querySelectorAll('.tb-screen:checked')).some(el => el.value === 'yes');
+            clinicalStatus.isPresumptiveTB = tbSymptoms;
+
+            // Rule 3 & 4: AHD Triggers
+            const whoStage = document.getElementById('who_stage').value;
+            const cd4Count = document.getElementById('cd4_count').value;
+            clinicalStatus.hasAHD = (whoStage === '3' || whoStage === '4' || (cd4Count && cd4Count < 200));
+
+            // Rule 4: Unsuppressed VL Trigger
+            const viralLoad = document.getElementById('viral_load').value;
+            clinicalStatus.isVirallyUnsuppressed = (viralLoad && viralLoad >= 1000);
+        }
+
+        // --- Apply recommendations based on clinical status ---
+        function applyRecommendations() {
+            // Rule 3: Recommend TB Evaluation
+            document.getElementById('plan_tb_eval').checked = clinicalStatus.isPresumptiveTB;
+
+            // Rule 6: Recommend TPT if not presumptive TB
+            document.getElementById('plan_tpt_prov').checked = !clinicalStatus.isPresumptiveTB;
+            toggleTptRegimen(!clinicalStatus.isPresumptiveTB);
+
+
+            // Rule 6: Recommend CTX for AHD
+            document.getElementById('plan_ctx_prov').checked = clinicalStatus.hasAHD;
+
+            // Rule 4: Recommend EAC for Unsuppressed VL
+            document.getElementById('plan_eac_prov').checked = clinicalStatus.isVirallyUnsuppressed;
+
+            // Rule 7: Intelligent Referrals
+            document.getElementById('ref_tb').checked = clinicalStatus.isPresumptiveTB;
+        }
+
+
+        // --- Notification System ---
+        function showNotification(title, message) {
+            document.getElementById('notification-title').innerText = title;
+            document.getElementById('notification-message').innerText = message;
+            openModal('notification-modal');
+        }
+
+        // --- Form Handling ---
+        function saveRecord(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+
+            // 1. Validate fields within the specific modal
+            const requiredFields = modal.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    field.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#e5e7eb';
+                }
+            });
+            
+            // Rule 2: Date of ART Initiation cannot be in the future
+            const artDateInput = document.getElementById('art_initiation_date');
+            if (artDateInput && artDateInput.value) {
+                if (new Date(artDateInput.value) > new Date()) {
+                    isValid = false;
+                    artDateInput.style.borderColor = '#ef4444';
+                    showNotification('Validation Error', 'ART Initiation Date cannot be in the future.');
+                    return;
+                }
+            }
+
+
+            if (!isValid) {
+                showNotification('Validation Error', 'Please fill in all required fields marked with an asterisk (*).');
+                return;
+            }
+
+            // 2. Collect data from the modal's form
+            const formData = new FormData();
+            const inputs = modal.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    if (input.checked) {
+                        formData.append(input.name, input.value);
+                    }
+                } else {
+                    formData.append(input.name || input.id, input.value);
+                }
+            });
+
+            // 3. In a real application, you would send this data to a server.
+            console.log(`Saving data from ${modalId}:`);
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
+            // 4. Close the modal and show success
+            closeModal(modalId);
+            showNotification('Success', 'The record has been saved successfully!');
+        }
+
+    </script>
+</body>
+</html>

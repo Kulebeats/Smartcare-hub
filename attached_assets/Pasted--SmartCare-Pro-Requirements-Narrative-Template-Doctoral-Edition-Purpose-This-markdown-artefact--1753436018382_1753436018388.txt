@@ -1,0 +1,101 @@
+
+SmartCare Pro Requirements Narrative Template — Doctoral Edition
+Purpose: This markdown artefact constitutes the authoritative scaffold for articulating functional and non functional requirements within the SmartCare Pro development lifecycle. The template is calibrated for an advanced readership—specifically analysts and engineers conversant with enterprise class electronic health record (EHR) architectures, interoperability frameworks, and evidence based clinical informatics. Replace bracketed placeholders with project specific content; remove all italicised guidance prior to baselining a story.
+________________________________________
+1  Title
+[BR MODULE ##] Precise, semantically rich capsule of the requirement
+Illustrative exemplar: [BR INVEST 01] Laboratory Sample Type Canonicalisation
+________________________________________
+2  Epic Link
+Reference the governing Jira Epic or provide its canonical key.
+Rationale: Epics function as macro containers that facilitate longitudinal traceability across dependent work items, enabling stakeholders to interrogate thematic progress through analytic dashboards.
+________________________________________
+3  Module Taxonomy
+Select exactly one domain designation from the controlled vocabulary. Should the extant taxonomy prove insufficient, petition the architecture board to ratify an extension.
+AUTH   │ INVEST │ ART    │ BILLING │ANC 
+ADMIN  │ NOTIF  │ REPORT │ UI
+SCREEN (preventive screening and early detection) for this is 
+________________________________________
+4  Sequence Identifier
+01 09 Foundational primitives · 10 19 Core clinical workflows · 20+ Iterative enhancements or elective capabilities
+Interpretation: Lower ordinal values denote architectural antecedents upon which higher level epics are predicated; assign judiciously to mitigate cyclical dependencies.
+________________________________________
+5  Priority Stratification
+Critical — indispensable within the current sprint window · High — schedule at next capacity increment · Medium — queue for future cycles · Low — defer pending re prioritisation
+Directive: Substantiate the priority in a single sentence that invokes quantified clinical impact, statutory mandate, or patient safety exigency.
+________________________________________
+6  Dependency Lattice
+•	Depends On: [BR MODULE ##] (prerequisite artefacts) or None
+•	Enables: [BR MODULE ##] (downstream artefacts unlocked post completion)
+Implementation note: Encode blocking relationships in Jira to render them in Kanban style dependency visualisations.
+________________________________________
+7  User Centred Narrative
+As a <actor role>
+I require <capability statement>
+So that <tangible clinical or operational benefit>
+Illustration
+As a laboratory technologist
+I require a codified sample type catalogue
+So that specimen selection errors are curtailed, thereby diminishing turnaround time variability.
+________________________________________
+8  Business & Clinical Context Matrix
+Dimension	Explication
+Current Problem	Concise articulation (≤ 3 sentences) of the deficiency in the incumbent system.
+Business Value	Quantitative articulation of fiscal savings, temporal efficiencies, or error abatement.
+Clinical Impact	Description of anticipated patient care improvements, safety augmentation, or outcome optimisation.
+Regulatory Driver	Optional — cite MoH circulars, WHO compendium entries, or jurisprudential imperatives.
+________________________________________
+9  Functional Requirements Catalogue
+Enumerate discrete, verifiable behaviours.
+1.	The system shall …
+2.	The system shall …
+3.	The system shall …
+If the cardinality exceeds eight items, stratify by thematic sub sections (e.g., Persistence Layer, Validation Logic, External Synchronisation).
+________________________________________
+
+11  Business Rule Corpus
+Articulate invariant constraints and contextual logic.
+•	Patients < 15 years mandate guardian consent capture.
+•	Only principals possessing the LAB_ADMIN entitlement may mutate analytic reference ranges.
+________________________________________
+12  Behaviour Driven Acceptance Criteria
+ID	Given (context)	When (trigger)	Then (expected consequence)
+AC1	User accesses Investigation Form	They select "Blood"	UI renders blood specific test compendium automatically
+AC2	DISA API latency > 30 s	User submits request	Middleware enacts exponential back off (5 min ×12) and surfaces alert upon exhaustion
+AC3	Invalid sample test permutation	User attempts to persist	System blocks commit and surfaces inline validation micro copy
+Target ≥ 3 and ≤ 7 ACs to encapsulate normative flows and error handling.
+________________________________________
+13  Technical Specification Ledger
+Vector	Specification Synopsis
+Database	Introduce table lab_sample_type (id, name, loinc_code) with unique constraint on loinc_code.
+API	POST /api/v1/investigations consumes exemplar JSON schema (see SwaggerHub reference).
+Integrations	DISA v2 REST endpoint; bidirectional HL7 interface with SmartCare Integration Hub.
+Resilience	Circuit breaker threshold: 5 consecutive failures; fallback queuing to outbox pattern.
+Migration Script	V2025_07_25__initialise_sample_types.sql packaged via Flyway.
+________________________________________
+14  Definition of Done (DoD)
+•	
+________________________________________
+15  Quality Assurance Checklist (Pre Submission Gate)
+•	Title conforms to BR MODULE ## nomenclature.
+•	Module and sequence integrity verified against taxonomy.
+•	Dependency lattice free from cyclical references.
+•	Quantitative business and clinical impact explicated.
+•	Acceptance criteria deterministic, exhaustive, and testable.
+•	Technical specifications enumerate persistence, integration, and resilience facets.
+•	Relevant NFRs captured.
+•	Abbreviations expanded upon first incidence.
+________________________________________
+16  Ancillary Artefacts & Referential Corpus
+•	Annotated wireframes or Figma prototypes.
+•	OpenAPI/Swagger contract link.
+•	Extracts from WHO SMART Guidelines or equivalent normative sources.
+________________________________________
+Revision Log
+Version	Date	Author	Commentary
+ 0.1    	 2025 07 25	 Technical BA	Initial instantiation
+ 0.2    	 yyyy mm dd	 Dev Lead 	Peer review adjustments
+ 0.3    	 yyyy mm dd	 Clinical SME	Integrated domain feedback
+________________________________________
+Editorial Note: Excise instructional prose and illustrations once the artefact is production ready. Engage in reciprocal peer review to ensure epistemic rigour and narrative coherence prior to lifecycle progression.
+

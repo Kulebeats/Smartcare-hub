@@ -1,0 +1,271 @@
+-- -----------------------------------
+-- migratePatients.sql
+-- Patient Normalization & Schema Refactoring
+-- -----------------------------------
+
+-- 1 ENUM Definitions
+CREATE TYPE visit_type_enum       AS ENUM ('initial','routine');
+CREATE TYPE alert_severity_enum  AS ENUM ('yellow','orange','red','purple','blue');
+CREATE TYPE sex_enum             AS ENUM ('M','F','O');
+CREATE TYPE relation_enum        AS ENUM ('mother','father','guardian','spouse');
+
+-- 2 Create normalized tables
+
+CREATE TABLE patient_core (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,     -- ⇒ will store “patient’s” first name (or mother’s, per design)
+    surname VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    sex sex_enum NOT NULL,
+    nrc VARCHAR(12) UNIQUE,
+    facility_id INTEGER NOT NULL REFERENCES facilities(id),
+    gestational_age INTEGER CHECK (gestational_age BETWEEN 4 AND 42),
+    bp_systolic_1 INTEGER CHECK (bp_systolic_1 BETWEEN 60 AND 250),
+    temperature_first INTEGER CHECK (temperature_first BETWEEN 350 AND 420),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE patient_contacts (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER NOT NULL REFERENCES patient_core(id) ON DELETE CASCADE,
+    contact_type VARCHAR(20) NOT NULL,   -- 'cellphone', 'landline', 'email'
+    contact_value VARCHAR(255) NOT NULL,
+    is_primary BOOLEAN DEFAULT FALSE,
+    start_date TIMESTAMPTZ DEFAULT NOW(),
+    end_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE patient_address (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER NOT NULL REFERENCES patient_core(id) ON DELETE CASCADE,
+    house VARCHAR(100),
+    street VARCHAR(200),
+    city VARCHAR(100),
+    landmark VARCHAR(200),
+    start_date TIMESTAMPTZ DEFAULT NOW(),
+    end_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE patient_family (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER NOT NULL REFERENCES patient_core(id) ON DELETE CASCADE,
+    relation relation_enum NOT NULL,
+    first_name VARCHAR(100),
+    surname VARCHAR(100),
+    contact_phone VARCHAR(20),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 3 Indexes for performance
+CREATE INDEX idx_patient_contacts_patient_id ON patient_contacts(patient_id);
+CREATE INDEX idx_patient_contacts_primary ON patient_contacts(patient_id, is_primary);
+CREATE INDEX idx_patient_address_patient_id ON patient_address(patient_id);
+CREATE INDEX idx_patient_address_active ON patient_address(patient_id) WHERE end_date IS NULL;
+CREATE INDEX idx_patient_family_patient_id ON patient_family(patient_id);
+
+-- 4 Data migration from existing patients table 
+-- (zero rows inserted today, because patients is empty)
+
+-- 4.1 Backfill core data:
+INSERT INTO patient_core (
+    first_name, surname, date_of_birth, sex, nrc, facility_id,
+    gestational_age, bp_systolic_1, temperature_first
+)
+SELECT 
+    first_name,
+    surname,
+    date_of_birth,
+    sex::sex_enum,
+    nrc,
+    COALESCE(facility_id, 1),
+    gestational_age,
+    bp_systolic_1,
+    temperature_first
+FROM patients;
+
+-- 4.2 Migrate contacts (join on mother’s name)
+INSERT INTO patient_contacts (patient_id, contact_type, contact_value, is_primary)
+SELECT 
+    pc.id,
+    'cellphone',
+    p.cellphone,
+    TRUE
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.cellphone IS NOT NULL 
+  AND p.cellphone <> '';
+
+INSERT INTO patient_contacts (patient_id, contact_type, contact_value, is_primary)
+SELECT 
+    pc.id,
+    'landline',
+    p.landline,
+    FALSE
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.landline IS NOT NULL 
+  AND p.landline <> '';
+
+INSERT INTO patient_contacts (patient_id, contact_type, contact_value, is_primary)
+SELECT 
+    pc.id,
+    'email',
+    p.email,
+    CASE WHEN p.cellphone IS NULL OR p.cellphone = '' THEN TRUE ELSE FALSE END
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.email IS NOT NULL 
+  AND p.email <> '';
+
+-- 4.3 Migrate address (join on mother):
+INSERT INTO patient_address (patient_id, house, street, city, landmark)
+SELECT 
+    pc.id,
+    p.house,
+    p.street,
+    p.city,
+    p.landmark
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.house IS NOT NULL 
+   OR p.street IS NOT NULL 
+   OR p.city IS NOT NULL;
+
+-- 4.4 Migrate mother/father entries
+INSERT INTO patient_family (patient_id, relation, first_name, surname, contact_phone)
+SELECT 
+    pc.id,
+    'mother'::relation_enum,
+    p.mother_first_name,
+    p.mother_surname,
+    p.mother_phone
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.mother_first_name IS NOT NULL;
+
+INSERT INTO patient_family (patient_id, relation, first_name, surname, contact_phone)
+SELECT 
+    pc.id,
+    'father'::relation_enum,
+    p.father_first_name,
+    p.father_surname,
+    p.father_phone
+FROM patients p
+JOIN patient_core pc 
+  ON pc.first_name = p.mother_first_name
+ AND pc.surname    = p.mother_surname
+WHERE p.father_first_name IS NOT NULL;
+
+-- 5 Legacy view for backward compatibility
+CREATE OR REPLACE VIEW v_patients_full AS
+SELECT 
+    pc.*,
+    pa.house,
+    pa.street,
+    pa.city,
+    pa.landmark,
+    pcon.contact_value AS primary_contact,
+    pf.first_name AS mother_first_name,
+    pf.surname AS mother_surname,
+    pf.contact_phone AS mother_phone
+FROM patient_core pc
+LEFT JOIN patient_address pa 
+  ON pc.id = pa.patient_id 
+ AND pa.end_date IS NULL
+LEFT JOIN patient_contacts pcon 
+  ON pc.id = pcon.patient_id 
+ AND pcon.is_primary = TRUE
+LEFT JOIN patient_family pf 
+  ON pc.id = pf.patient_id 
+ AND pf.relation = 'mother';
+
+-- 6 Audit‐and‐DPA tables
+CREATE TABLE audit_events (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    action TEXT NOT NULL,
+    object_type TEXT NOT NULL,
+    object_id TEXT,
+    diff JSONB,
+    ip_address INET,
+    user_agent TEXT,
+    session_id TEXT,
+    risk_score INTEGER DEFAULT 0,
+    prev_hash TEXT,
+    curr_hash TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE audit_retention (
+    id SERIAL PRIMARY KEY,
+    table_name TEXT NOT NULL,
+    retention_days INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE data_subject_requests (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    request_type TEXT NOT NULL, -- 'ACCESS', 'RECTIFICATION', 'ERASURE'
+    target_id TEXT,
+    status TEXT DEFAULT 'PENDING',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    completed_at TIMESTAMPTZ
+);
+
+-- 7 Indexes on audit tables
+CREATE INDEX idx_audit_events_user_id ON audit_events(user_id);
+CREATE INDEX idx_audit_events_action ON audit_events(action);
+CREATE INDEX idx_audit_events_created_at ON audit_events(created_at);
+CREATE INDEX idx_data_subject_requests_user_id ON data_subject_requests(user_id);
+CREATE INDEX idx_data_subject_requests_status ON data_subject_requests(status);
+
+-- 8 Default retention policies
+INSERT INTO audit_retention (table_name, retention_days) VALUES
+('audit_events', 2555), -- 7 years
+('patient_core', 3650), -- 10 years
+('patient_contacts', 3650),
+('patient_address', 3650),
+('patient_family', 3650);
+
+-- 9 Trigger for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_patient_core_updated_at
+    BEFORE UPDATE ON patient_core
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- 10 Integrity check (will report “0 migrated” today)
+DO $$
+DECLARE
+    orig_count INTEGER;
+    new_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO orig_count FROM patients;
+    SELECT COUNT(*) INTO new_count FROM patient_core;
+    
+    IF orig_count != new_count THEN
+        RAISE EXCEPTION 'Data migration failed: original count % != new count %', orig_count, new_count;
+    END IF;
+    
+    RAISE NOTICE 'Migration successful: % patients migrated', new_count;
+END $$;

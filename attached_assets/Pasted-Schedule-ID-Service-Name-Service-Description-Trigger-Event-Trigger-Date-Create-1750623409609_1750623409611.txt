@@ -1,0 +1,82 @@
+Schedule ID	 	 	 	 
+ 	 	 	 	 
+Service Name 	Service Description 	Trigger Event	Trigger Date	Create Condition
+ANC Contact 1	The first time a woman visits a health care provider for ANC 	None	None 	The first ANC contact is recommended when the woman is less than 20 weeks pregnant.
+ANC Contact 2	The second time a woman visits a health care provider for ANC.	ANC Contact 1	Date of ANC Contact 1	If GA < 20 weeks, next contact should be at MOST 8 weeks following the first contact
+ANC Contact 3	The third time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 2	If GA <26 weeks, next contact should be at 6 weeks following the second contact
+ANC Contact 4	The fourth time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 3	If GA < 30 weeks, next contacts should be at  4 weeks following the 3rd   contact
+ANC Contact 5	The fifth time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 4	If GA ≥ 34 weeks, next contacts should be scheduled every 2 weeks;
+ANC Contact 6	The sixth time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 5	If GA ≥ 36 weeks, contacts should be scheduled every 2 weeks
+ANC Contact 7	The seventh time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 6	If GA ≥ 38 weeks, contacts should be scheduled every 4 weeks; (every 2 weeks) 
+ANC Contact 8	The eighth time a woman visits a health care provider for ANC 	ANC Contact 1	Date of ANC Contact 7	If GA ≥ 40 weeks, contacts should be scheduled every  week
+Delivery	The date in which a pregnant woman gives birth	N/A	GA = 41 weeks	Does not count as a contact
+				
+ 	 	 	 	 
+EXAMPLE ANC SCHEDULE		
+				
+ 	Interval Rules & Deviations
+ 	Rule 1	< 20 wks, contacts should be scheduled at 8 wks
+ 	Rule 2	≥ 20 wks, contacts should be scheduled at 6 wks
+ 	Rule 3	≥ 26 wks, contacts should be scheduled at 4 wks
+ 	Rule 4	≥ 34 wks, contacts should be scheduled at 2 wks
+ 	Rule 5	if the logic skips the 40 wks contact, she must come for delivery at 41 weeks
+ 	Rule 6	the woman MUST come in at 41 wks if she hasn't given birth already (however this does not count as an official contact)
+ 	Rule 7	if the woman comes in for the first time at 22 wks or later, we have changed the logic to increase the number of contacts, especially those in the 3rd trimester, as follows: 
+- for women who come in at 22 and 23 wks (they have one contact added) by increasing Contacts to every 2 wks after 30 wks (rather than 34 wks)
+- for women who come in at 28 and 29 wks (they have one contact added) by increasing contacts to every 2 wks after 32 wks (rather than 34 wks)
+- for women who come in after 30 wks all her visits are every 2 wks
+ 	Key
+ 	 	cells that deviate from the norm because of Rule 7
+ 	 	doesn't count as a contact, delivery only
+ 		 	 	 
+ 	 	Contact 1	Contact 2	Contact 3
+ 	Weeks pregnant	4	12	20
+ 		5	13	21
+ 		6	14	22
+ 		7	15	23
+ 		8	16	24
+ 		9	17	25
+ 		10	18	26
+ 		11	19	27
+End of 1st trimester		12	20	26
+ 		13	21	27
+ 		14	22	28
+ 		15	23	29
+ 		16	24	30
+ 		17	25	31
+ 		18	26	30
+ 		19	27	31
+Middle of pregnancy		20	26	30
+ 		21	27	31
+ 		22	28	32
+ 		23	29	33
+ 		24	30	34
+ 		25	31	35
+ 		26	30	34
+ 		27	31	35
+End of 2nd trimester		28	32	34
+ 		29	33	35
+ 		30	32	34
+ 		31	33	35
+ 		32	34	36
+ 		33	35	37
+ 		34	36	38
+ 		35	37	39
+ 		36	38	40
+ 		37	39	40
+ 		38	40	41
+ 		39	40	41
+ 		40	41	
+ 		41		
+ 				
+ 	 	 	 	 
+ 	Example woman "Lucy"
+ 	Contact 1: at 10 wks	Expected:	Actual (1):	Actual (2):
+ 	Contact 2:	18 wks	19 wks	20 wks
+ 	Contact 3:	26 wks	27 wks	26 wks
+ 	Contact 4:	30 wks	31 wks	30 wks
+ 	Contact 5:	34 wks	35 wks	34 wks
+ 	Contact 6:	36 wks	37 wks	36 wks
+ 	Contact 7:	38 wks	39 wks	38 wks
+ 	Contact 8:	40 wks	40 wks	40 wks
+				

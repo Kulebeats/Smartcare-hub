@@ -1,0 +1,140 @@
+import React, { useState } from 'react';
+import { AlertTriangle, Phone, MapPin, Clock, X, Zap } from 'lucide-react';
+
+const ModernUrgentAlert = () => {
+  const [selectedAction, setSelectedAction] = useState(null);
+  const [isOpen, setIsOpen] = useState(true);
+
+  const actions = [
+    {
+      id: 'emergency',
+      title: 'Emergency Referral',
+      subtitle: 'Call 911 / Emergency Services',
+      icon: Phone,
+      color: 'bg-red-600 hover:bg-red-700 text-white',
+      priority: 'critical'
+    },
+    {
+      id: 'urgent',
+      title: 'Urgent Hospital Transfer',
+      subtitle: 'Immediate transport required',
+      icon: MapPin,
+      color: 'bg-orange-600 hover:bg-orange-700 text-white',
+      priority: 'urgent'
+    },
+    {
+      id: 'facility',
+      title: 'Facility Management',
+      subtitle: 'Treat on-site with monitoring',
+      icon: Clock,
+      color: 'bg-blue-600 hover:bg-blue-700 text-white',
+      priority: 'high'
+    }
+  ];
+
+  const handleActionSelect = (action) => {
+    setSelectedAction(action);
+    // Auto-execute for emergency
+    if (action.id === 'emergency') {
+      setTimeout(() => {
+        alert(`EMERGENCY ACTION: ${action.title} initiated`);
+        setIsOpen(false);
+      }, 500);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (selectedAction) {
+      alert(`Action confirmed: ${selectedAction.title}`);
+      setIsOpen(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden animate-pulse-once">
+        {/* Critical Header */}
+        <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse"></div>
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center animate-bounce">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-lg">URGENT ALERT</h2>
+                <p className="text-red-100 text-xs">Immediate action required</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Danger Sign */}
+        <div className="px-6 py-4 bg-red-50 border-l-4 border-red-500">
+          <div className="flex items-center space-x-2">
+            <Zap className="w-4 h-4 text-red-600" />
+            <span className="font-semibold text-red-800 text-sm">CONVULSING</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="p-6 space-y-3">
+          <p className="text-sm font-medium text-gray-700 mb-4">Select immediate action:</p>
+          
+          {actions.map((action, index) => {
+            const IconComponent = action.icon;
+            
+            return (
+              <button
+                key={action.id}
+                onClick={() => handleActionSelect(action)}
+                className={`w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg ${action.color}`}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <IconComponent className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-base">
+                      {action.title}
+                    </h3>
+                    <p className="text-sm opacity-90">
+                      {action.subtitle}
+                    </p>
+                  </div>
+                  {action.id === 'emergency' && (
+                    <div className="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-full">
+                      CRITICAL
+                    </div>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quick Actions Footer */}
+        <div className="px-6 py-4 bg-gray-50 border-t">
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>Protocol: Maternal Emergency</span>
+            <span className="flex items-center space-x-1">
+              <Clock className="w-3 h-3" />
+              <span>Time critical</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModernUrgentAlert;

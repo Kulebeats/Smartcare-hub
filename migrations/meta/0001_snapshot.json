@@ -1,0 +1,730 @@
+{
+  "id": "c29d3cf9-6c6b-4075-b0e8-adf7125e2683",
+  "prevId": "c4d09ee9-7289-4e6b-8df7-64e921952cde",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.art_follow_ups": {
+      "name": "art_follow_ups",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "visit_date": {
+          "name": "visit_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "complaints": {
+          "name": "complaints",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tb_symptoms": {
+          "name": "tb_symptoms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "physical_exam": {
+          "name": "physical_exam",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "diagnosis": {
+          "name": "diagnosis",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "treatment_plan": {
+          "name": "treatment_plan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "next_visit": {
+          "name": "next_visit",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.facilities": {
+      "name": "facilities",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "province": {
+          "name": "province",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "district": {
+          "name": "district",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "level": {
+          "name": "level",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ownership": {
+          "name": "ownership",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ACTIVE'"
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact": {
+          "name": "contact",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "facilities_code_unique": {
+          "name": "facilities_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.patients": {
+      "name": "patients",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "surname": {
+          "name": "surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_estimated_dob": {
+          "name": "is_estimated_dob",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "sex": {
+          "name": "sex",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nrc": {
+          "name": "nrc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "no_nrc": {
+          "name": "no_nrc",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "under_five_card_number": {
+          "name": "under_five_card_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "napsa": {
+          "name": "napsa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nupin": {
+          "name": "nupin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cellphone": {
+          "name": "cellphone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "other_cellphone": {
+          "name": "other_cellphone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "landline": {
+          "name": "landline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "house_number": {
+          "name": "house_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "road_street": {
+          "name": "road_street",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "area": {
+          "name": "area",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city_town_village": {
+          "name": "city_town_village",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "landmarks": {
+          "name": "landmarks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mothers_name": {
+          "name": "mothers_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mothers_surname": {
+          "name": "mothers_surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_deceased": {
+          "name": "mother_deceased",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "mothers_nrc": {
+          "name": "mothers_nrc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mothers_napsa_pspf": {
+          "name": "mothers_napsa_pspf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mothers_nationality": {
+          "name": "mothers_nationality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Zambia'"
+        },
+        "fathers_name": {
+          "name": "fathers_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fathers_surname": {
+          "name": "fathers_surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "father_deceased": {
+          "name": "father_deceased",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "fathers_nrc": {
+          "name": "fathers_nrc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fathers_napsa_pspf": {
+          "name": "fathers_napsa_pspf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fathers_nationality": {
+          "name": "fathers_nationality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_name": {
+          "name": "guardian_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_surname": {
+          "name": "guardian_surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_relationship": {
+          "name": "guardian_relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_nrc": {
+          "name": "guardian_nrc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_napsa_pspf": {
+          "name": "guardian_napsa_pspf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_nationality": {
+          "name": "guardian_nationality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "marital_status": {
+          "name": "marital_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spouse_first_name": {
+          "name": "spouse_first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spouse_surname": {
+          "name": "spouse_surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "home_language": {
+          "name": "home_language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_home_language": {
+          "name": "other_home_language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_born_in_zambia": {
+          "name": "is_born_in_zambia",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "province_of_birth": {
+          "name": "province_of_birth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "district_of_birth": {
+          "name": "district_of_birth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_place": {
+          "name": "birth_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "religious_category": {
+          "name": "religious_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "religious_denomination": {
+          "name": "religious_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_religious_denomination": {
+          "name": "other_religious_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "education_level": {
+          "name": "education_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_education_level": {
+          "name": "other_education_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occupation": {
+          "name": "occupation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_occupation": {
+          "name": "other_occupation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "facility": {
+          "name": "facility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registration_date": {
+          "name": "registration_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "last_updated": {
+          "name": "last_updated",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.prescriptions": {
+      "name": "prescriptions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "patient_id": {
+          "name": "patient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "drug_name": {
+          "name": "drug_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dosage": {
+          "name": "dosage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration_unit": {
+          "name": "duration_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prescribed_date": {
+          "name": "prescribed_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "facility": {
+          "name": "facility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Clinician'"
+        },
+        "facility": {
+          "name": "facility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "facility_code": {
+          "name": "facility_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_admin": {
+          "name": "is_admin",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "last_login": {
+          "name": "last_login",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::json"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

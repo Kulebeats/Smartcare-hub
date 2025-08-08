@@ -1,0 +1,15 @@
+/* Hide dropdown arrows for select */
+.radix-select-trigger svg {
+  display: none;
+}
+
+/* Hide native select arrows */
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

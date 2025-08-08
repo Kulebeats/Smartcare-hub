@@ -1,0 +1,1708 @@
+openapi: 3.1.0
+info:
+  title: SmartCare PRO API
+  description: |
+    Comprehensive Electronic Health Record (EHR) system for Zambian healthcare,
+    focusing on intelligent patient transfer and clinical decision support.
+    
+    ## Features
+    - WHO guideline-compliant diagnostic protocols
+    - Advanced clinical intelligence with Anthropic AI
+    - Smart Inter-Facility Patient Transfer system
+    - Comprehensive patient registry (185 columns)
+    - ANC clinical decision support (83 columns)
+    - Real-time clinical alerts and recommendations
+    
+    ## Authentication
+    Uses Replit Auth integration with session-based authentication.
+    All endpoints require valid authentication except for health checks.
+  version: 1.3.0
+  contact:
+    name: Institute for Health Measurement (IHM) Southern Africa
+    url: https://smartcare.gov.zm
+  license:
+    name: Ministry of Health - Zambia
+    url: https://moh.gov.zm
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+  - url: https://smartcare.replit.app
+    description: Production server
+
+security:
+  - cookieAuth: []
+
+paths:
+  # Authentication Endpoints
+  /api/user:
+    get:
+      summary: Get current authenticated user
+      tags: [Authentication]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Facility Management Endpoints
+  /api/facilities:
+    get:
+      summary: Get facilities for authenticated user
+      tags: [Facilities]
+      responses:
+        '200':
+          description: List of facilities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Facility'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/facilities/all:
+    get:
+      summary: Get all facilities in the system
+      tags: [Facilities]
+      responses:
+        '200':
+          description: Complete list of facilities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Facility'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/facilities/provinces:
+    get:
+      summary: Get all provinces
+      tags: [Facilities]
+      responses:
+        '200':
+          description: List of provinces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "Lusaka"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/facilities/districts/{province}:
+    get:
+      summary: Get districts by province
+      tags: [Facilities]
+      parameters:
+        - name: province
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "Lusaka"
+      responses:
+        '200':
+          description: List of districts in the province
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/facilities/byDistrict/{district}:
+    get:
+      summary: Get facilities by district
+      tags: [Facilities]
+      parameters:
+        - name: district
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "Lusaka District"
+      responses:
+        '200':
+          description: List of facilities in the district
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Facility'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/facilities/byProvince/{province}:
+    get:
+      summary: Get facilities by province
+      tags: [Facilities]
+      parameters:
+        - name: province
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "Lusaka"
+      responses:
+        '200':
+          description: List of facilities in the province
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Facility'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Patient Management Endpoints
+  /api/patients:
+    get:
+      summary: Get patients with optional search and pagination
+      tags: [Patients]
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Search by patient name
+        - name: nrc
+          in: query
+          schema:
+            type: string
+          description: Search by NRC number
+        - name: nupin
+          in: query
+          schema:
+            type: string
+          description: Search by NUPIN
+        - name: cellphone
+          in: query
+          schema:
+            type: string
+          description: Search by cellphone number
+        - name: sex
+          in: query
+          schema:
+            type: string
+            enum: [Male, Female]
+          description: Filter by sex
+        - name: minAge
+          in: query
+          schema:
+            type: integer
+          description: Minimum age filter
+        - name: maxAge
+          in: query
+          schema:
+            type: integer
+          description: Maximum age filter
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+          description: Number of results to return
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: "registrationDate"
+          description: Field to sort by
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: "desc"
+          description: Sort order
+      responses:
+        '200':
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create new patient
+      tags: [Patients]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreate'
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Patient already exists (NRC or phone number conflict)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+
+  /api/patients/{id}:
+    get:
+      summary: Get patient by ID
+      tags: [Patients]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1001
+      responses:
+        '200':
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/patients/check-nrc/{nrc}:
+    get:
+      summary: Check if NRC already exists
+      tags: [Patients]
+      parameters:
+        - name: nrc
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "123456/78/9"
+      responses:
+        '200':
+          description: NRC is available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "NRC is available"
+        '409':
+          description: NRC already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "A patient with this NRC already exists"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/patients/check-phone/{phoneNumber}:
+    get:
+      summary: Check if phone number already exists
+      tags: [Patients]
+      parameters:
+        - name: phoneNumber
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "0977123456"
+      responses:
+        '200':
+          description: Phone number is available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Phone number is available"
+        '409':
+          description: Phone number already exists
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/patients/search:
+    get:
+      summary: Search patients by specific criteria
+      tags: [Patients]
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [nrc, nupin, cellphone, name]
+          description: Type of search to perform
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ART Follow-up Endpoints
+  /api/patients/{id}/art-followup:
+    post:
+      summary: Create ART follow-up record
+      tags: [Clinical Records]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ARTFollowUp'
+      responses:
+        '201':
+          description: ART follow-up created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ARTFollowUp'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Prescription Endpoints
+  /api/patients/{id}/prescriptions:
+    post:
+      summary: Create prescription for patient
+      tags: [Clinical Records]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+      responses:
+        '201':
+          description: Prescription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # AI Clinical Analysis Endpoints
+  /api/ai/clinical-analysis:
+    post:
+      summary: Analyze clinical data using AI
+      tags: [Clinical Intelligence]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClinicalAnalysisRequest'
+      responses:
+        '200':
+          description: Clinical analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalAnalysisResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/ai/adverse-reaction:
+    post:
+      summary: Analyze adverse drug reactions
+      tags: [Clinical Intelligence]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdverseReactionRequest'
+      responses:
+        '200':
+          description: Adverse reaction analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdverseReactionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/ai/task-recommendations:
+    post:
+      summary: Generate AI task recommendations
+      tags: [Clinical Intelligence]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRecommendationRequest'
+      responses:
+        '200':
+          description: Task recommendations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskRecommendationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Smart Transfer System Endpoints
+  /api/transfers/search:
+    post:
+      summary: Search for optimal transfer routes
+      tags: [Smart Transfer]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Transfer route options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferSearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/transfers/initiate:
+    post:
+      summary: Initiate patient transfer
+      tags: [Smart Transfer]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferInitiateRequest'
+      responses:
+        '200':
+          description: Transfer initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferInitiateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/transfers/facilities/{radius}:
+    get:
+      summary: Get facilities within radius
+      tags: [Smart Transfer]
+      parameters:
+        - name: radius
+          in: path
+          required: true
+          schema:
+            type: integer
+            default: 50
+          description: Search radius in kilometers
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Latitude coordinate
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Longitude coordinate
+      responses:
+        '200':
+          description: Facilities within radius
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacilitiesInRadiusResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/transfers/capacity-update:
+    post:
+      summary: Update facility capacity
+      tags: [Smart Transfer]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapacityUpdateRequest'
+      responses:
+        '200':
+          description: Capacity updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # User Management Endpoints
+  /api/users:
+    get:
+      summary: Get all users (Admin only)
+      tags: [User Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSanitized'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/admin/users:
+    post:
+      summary: Create new user (Admin only)
+      tags: [User Management]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSanitized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # DAK Administration Endpoints
+  /api/admin/dak/rules:
+    get:
+      summary: List clinical decision rules
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: moduleCode
+          in: query
+          schema:
+            type: string
+          description: Filter by module code
+        - name: activeOnly
+          in: query
+          schema:
+            type: boolean
+          description: Filter active rules only
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of clinical decision rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  rules:
+                    type: array
+                    items:
+                      type: object
+                  count:
+                    type: integer
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/jobs:
+    get:
+      summary: List DAK processing jobs
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: List of processing jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/upload-csv:
+    post:
+      summary: Upload DAK CSV file
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                dakFile:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload successful
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/upload-csv-raw:
+    post:
+      summary: Upload DAK CSV data as raw text
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csvData:
+                  type: string
+                  description: Raw CSV data as string
+                fileName:
+                  type: string
+                  description: Original file name
+              required:
+                - csvData
+      responses:
+        '200':
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  jobId:
+                    type: integer
+                  message:
+                    type: string
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/integrity-check:
+    get:
+      summary: Run rule integrity verification
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Integrity check report
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/cache/stats:
+    get:
+      summary: Get cache statistics
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Cache statistics
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/dak/cache/invalidate:
+    post:
+      summary: Invalidate rule cache
+      tags: [DAK Administration]
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                moduleCode:
+                  type: string
+      responses:
+        '200':
+          description: Cache invalidated
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  # SmartCare PRO Performance Optimization Endpoints
+  /api/admin/performance/dashboard:
+    get:
+      summary: Get comprehensive performance dashboard
+      tags: [Performance Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Performance dashboard data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      metrics:
+                        type: object
+                      recommendations:
+                        type: array
+                        items:
+                          type: object
+                      cacheStats:
+                        type: object
+                      queueStats:
+                        type: object
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/performance/metrics:
+    get:
+      summary: Get real-time performance metrics
+      tags: [Performance Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Performance metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/performance/optimize:
+    post:
+      summary: Apply automatic performance optimizations
+      tags: [Performance Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Optimizations applied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  optimizations:
+                    type: array
+                    items:
+                      type: object
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/cache/stats:
+    get:
+      summary: Get cache statistics and health
+      tags: [Cache Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Cache statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      totalKeys:
+                        type: integer
+                      memoryUsage:
+                        type: string
+                      hitRate:
+                        type: number
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+  /api/admin/cache/clear:
+    delete:
+      summary: Clear all cached data
+      tags: [Cache Management]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Cache cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '403':
+          description: Admin access required
+        '500':
+          description: Server error
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      description: Session cookie authentication
+
+  schemas:
+    # User Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: "Kuwani"
+        role:
+          type: string
+          enum: [SystemAdministrator, FacilityAdministrator, Clinician, Trainer]
+          example: "Clinician"
+        facility:
+          type: string
+          example: "Chikando Rural Health Centre"
+        facilityCode:
+          type: string
+          example: "CHK001"
+        isAdmin:
+          type: boolean
+          example: false
+        email:
+          type: string
+          format: email
+          example: "kuwani@example.com"
+        fullName:
+          type: string
+          example: "Dr. Kuwani Mwanza"
+        permissions:
+          type: array
+          items:
+            type: string
+          example: ["ANC_Service", "MedicalEncounter"]
+        lastLogin:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserSanitized:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            password:
+              readOnly: true
+
+    UserCreate:
+      type: object
+      required:
+        - username
+        - password
+        - role
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+        password:
+          type: string
+          minLength: 8
+        role:
+          type: string
+          enum: [SystemAdministrator, FacilityAdministrator, Clinician, Trainer]
+        facility:
+          type: string
+        facilityCode:
+          type: string
+        isAdmin:
+          type: boolean
+          default: false
+        email:
+          type: string
+          format: email
+        fullName:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+
+    # Facility Schemas
+    Facility:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Chikando Rural Health Centre"
+        code:
+          type: string
+          example: "CHK001"
+        type:
+          type: string
+          example: "Rural Health Centre"
+        province:
+          type: string
+          example: "Lusaka"
+        district:
+          type: string
+          example: "Chongwe"
+        latitude:
+          type: number
+          example: -15.4067
+        longitude:
+          type: number
+          example: 28.2833
+        services:
+          type: array
+          items:
+            type: string
+          example: ["ANC", "Family Planning", "General Medicine"]
+        capacity:
+          type: object
+          properties:
+            beds:
+              type: integer
+            maternity:
+              type: integer
+            pediatric:
+              type: integer
+        contactInfo:
+          type: object
+          properties:
+            phone:
+              type: string
+            email:
+              type: string
+        isActive:
+          type: boolean
+          example: true
+
+    # Patient Schemas  
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1001
+        facility:
+          type: string
+          example: "Chikando Rural Health Centre"
+        firstName:
+          type: string
+          example: "Angela"
+        surname:
+          type: string
+          example: "Phiri"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1998-11-25"
+        sex:
+          type: string
+          enum: [Male, Female]
+          example: "Female"
+        nrc:
+          type: string
+          example: "181/1/1"
+        country:
+          type: string
+          example: "Zambia"
+        cellphone:
+          type: string
+          example: "0977123456"
+        isEstimatedDob:
+          type: boolean
+          example: false
+        noNrc:
+          type: boolean
+          example: false
+        registrationDate:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
+        # Address Information
+        area:
+          type: string
+        houseNumber:
+          type: string
+        roadStreet:
+          type: string
+        cityTownVillage:
+          type: string
+        landmarks:
+          type: string
+        # Additional Identifiers
+        napsa:
+          type: string
+        nupin:
+          type: string
+        underFiveCardNumber:
+          type: string
+        otherCellphone:
+          type: string
+        landline:
+          type: string
+        email:
+          type: string
+          format: email
+        # Family Information
+        mothersName:
+          type: string
+          example: "Carol"
+        mothersSurname:
+          type: string
+        motherDeceased:
+          type: boolean
+          example: false
+        mothersNrc:
+          type: string
+        mothersNapsaPspf:
+          type: string
+        mothersNationality:
+          type: string
+          example: "Zambia"
+        fathersName:
+          type: string
+        fathersSurname:
+          type: string
+        fatherDeceased:
+          type: boolean
+        fathersNrc:
+          type: string
+        fathersNapsaPspf:
+          type: string
+        fathersNationality:
+          type: string
+        # Guardian Information
+        guardianName:
+          type: string
+        guardianSurname:
+          type: string
+        guardianRelationship:
+          type: string
+        guardianNrc:
+          type: string
+        guardianNapsaPspf:
+          type: string
+        guardianNationality:
+          type: string
+        # Personal Information
+        maritalStatus:
+          type: string
+          enum: [Single, Married, Divorced, Widowed, Separated]
+        spouseFirstName:
+          type: string
+        spouseSurname:
+          type: string
+        homeLanguage:
+          type: string
+        otherHomeLanguage:
+          type: string
+        isBornInZambia:
+          type: boolean
+        provinceOfBirth:
+          type: string
+        districtOfBirth:
+          type: string
+        birthPlace:
+          type: string
+        religiousCategory:
+          type: string
+        religiousDenomination:
+          type: string
+        otherReligiousDenomination:
+          type: string
+        # Education and Employment
+        educationLevel:
+          type: string
+        otherEducationLevel:
+          type: string
+        occupation:
+          type: string
+        otherOccupation:
+          type: string
+
+    PatientCreate:
+      type: object
+      required:
+        - firstName
+        - surname
+        - dateOfBirth
+        - sex
+        - mothersName
+        - mothersSurname
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        surname:
+          type: string
+          minLength: 1
+          maxLength: 100
+        dateOfBirth:
+          type: string
+          format: date
+        sex:
+          type: string
+          enum: [Male, Female]
+        nrc:
+          type: string
+          pattern: "^[0-9]{6}/[0-9]{2}/[0-9]$"
+        country:
+          type: string
+          default: "Zambia"
+        cellphoneNumber:
+          type: string
+          pattern: "^0[0-9]{9}$"
+        isEstimatedDob:
+          type: boolean
+          default: false
+        noNrc:
+          type: boolean
+          default: false
+        mothersName:
+          type: string
+          minLength: 1
+        mothersSurname:
+          type: string
+          minLength: 1
+
+    # Clinical Record Schemas
+    ARTFollowUp:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        visitDate:
+          type: string
+          format: date
+        adherence:
+          type: string
+          enum: [Good, Fair, Poor]
+        sideEffects:
+          type: array
+          items:
+            type: string
+        viralLoad:
+          type: number
+        cd4Count:
+          type: number
+        nextAppointment:
+          type: string
+          format: date
+        notes:
+          type: string
+
+    Prescription:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        medication:
+          type: string
+        dosage:
+          type: string
+        frequency:
+          type: string
+        duration:
+          type: string
+        instructions:
+          type: string
+        prescribedBy:
+          type: string
+        prescriptionDate:
+          type: string
+          format: date-time
+
+    # AI Analysis Schemas
+    ClinicalAnalysisRequest:
+      type: object
+      properties:
+        patientData:
+          type: object
+        clinicalData:
+          type: object
+        analysisType:
+          type: string
+          enum: [risk_assessment, diagnosis_support, treatment_recommendation]
+
+    ClinicalAnalysisResponse:
+      type: object
+      properties:
+        riskLevel:
+          type: string
+          enum: [Low, Moderate, High, Critical]
+        recommendations:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClinicalAlert'
+
+    AdverseReactionRequest:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        medication:
+          type: string
+        symptoms:
+          type: array
+          items:
+            type: string
+        severity:
+          type: string
+          enum: [Mild, Moderate, Severe]
+        onsetDate:
+          type: string
+          format: date
+
+    AdverseReactionResponse:
+      type: object
+      properties:
+        severity:
+          type: string
+        probability:
+          type: string
+          enum: [Certain, Probable, Possible, Unlikely]
+        recommendations:
+          type: array
+          items:
+            type: string
+        requiresReporting:
+          type: boolean
+
+    TaskRecommendationRequest:
+      type: object
+      properties:
+        clinicalContext:
+          type: object
+        patientConditions:
+          type: array
+          items:
+            type: string
+        currentWorkload:
+          type: object
+
+    TaskRecommendationResponse:
+      type: object
+      properties:
+        prioritizedTasks:
+          type: array
+          items:
+            type: object
+            properties:
+              task:
+                type: string
+              priority:
+                type: string
+                enum: [High, Medium, Low]
+              timeframe:
+                type: string
+              reasoning:
+                type: string
+
+    # Transfer System Schemas
+    TransferRequest:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        urgency:
+          type: string
+          enum: [Emergency, Urgent, Routine]
+        requiredServices:
+          type: array
+          items:
+            type: string
+        specialization:
+          type: string
+        transportType:
+          type: string
+          enum: [Ambulance, Helicopter, Ground]
+        originFacility:
+          type: string
+        maxDistance:
+          type: number
+        medicalCondition:
+          type: string
+
+    TransferSearchResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferRoute'
+        message:
+          type: string
+
+    TransferRoute:
+      type: object
+      properties:
+        facility:
+          $ref: '#/components/schemas/Facility'
+        score:
+          type: number
+        distance:
+          type: number
+        estimatedCost:
+          type: number
+        travelTime:
+          type: string
+        reasoning:
+          type: string
+        capacity:
+          type: object
+        services:
+          type: array
+          items:
+            type: string
+
+    TransferInitiateRequest:
+      type: object
+      properties:
+        selectedRoute:
+          $ref: '#/components/schemas/TransferRoute'
+        patientId:
+          type: integer
+        urgency:
+          type: string
+        medicalCondition:
+          type: string
+        accompaniedBy:
+          type: string
+
+    TransferInitiateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        transferId:
+          type: string
+        transferPlan:
+          type: object
+        message:
+          type: string
+
+    FacilitiesInRadiusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Facility'
+        radius:
+          type: integer
+
+    CapacityUpdateRequest:
+      type: object
+      properties:
+        facilityId:
+          type: string
+        occupancyUpdate:
+          type: object
+          properties:
+            beds:
+              type: integer
+            maternity:
+              type: integer
+            pediatric:
+              type: integer
+
+    # Clinical Alert Schema
+    ClinicalAlert:
+      type: object
+      properties:
+        severity:
+          type: string
+          enum: [Critical, High, Medium, Info, Milestone]
+        title:
+          type: string
+        message:
+          type: string
+        condition:
+          type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+        requiresReferral:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+
+    # Error Schemas
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ConflictError:
+      type: object
+      properties:
+        message:
+          type: string
+        exists:
+          type: boolean
+        field:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters or request body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthorized"
+
+    Forbidden:
+      description: Access forbidden - insufficient privileges
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Admin access required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Patient not found"
+
+    Conflict:
+      description: Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConflictError'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Authentication
+    description: User authentication and session management
+  - name: Facilities
+    description: Healthcare facility management and geographic data
+  - name: Patients
+    description: Patient registry and demographic information
+  - name: Clinical Records
+    description: Medical encounters, prescriptions, and clinical data
+  - name: Clinical Intelligence
+    description: AI-powered clinical analysis and decision support
+  - name: Smart Transfer
+    description: Inter-facility patient transfer system
+  - name: User Management
+    description: User administration and access control
+  - name: DAK Administration
+    description: DAK-Traceable Clinical Decision Support management
+
+externalDocs:
+  description: SmartCare PRO Documentation
+  url: https://smartcare.gov.zm/docs

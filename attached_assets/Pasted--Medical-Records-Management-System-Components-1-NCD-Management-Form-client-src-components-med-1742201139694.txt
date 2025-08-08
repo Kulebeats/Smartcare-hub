@@ -1,0 +1,780 @@
+# Medical Records Management System Components
+
+## 1. NCD Management Form (client/src/components/medical-record/ncd-management-form.tsx)
+```tsx
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+const ncdManagementSchema = z.object({
+  smokingCessation: z.enum(["yes", "no"]),
+  heartHealthyDiet: z.enum(["yes", "no"]),
+  lowSodiumDiet: z.enum(["yes", "no"]),
+  lowFatFoods: z.enum(["yes", "no"]),
+  stressReduction: z.enum(["yes", "no"]),
+  alcoholConsumption: z.enum(["yes", "no"]),
+  physicalActivity: z.enum(["yes", "no"]),
+  healthyWeight: z.enum(["yes", "no"]),
+  drugsCollectedElsewhere: z.enum(["yes", "no"]),
+  collectionLocation: z.string().optional(),
+});
+
+type NCDManagementForm = z.infer<typeof ncdManagementSchema>;
+
+interface NCDManagementFormProps {
+  onSave: (data: NCDManagementForm) => void;
+}
+
+const guidanceItems = [
+  { 
+    id: "smokingCessation",
+    label: "Smoking Cessation Guidance",
+  },
+  { 
+    id: "heartHealthyDiet",
+    label: "Heart-Healthy Diet Guidance",
+  },
+  { 
+    id: "lowSodiumDiet",
+    label: "Low Sodium Diet Guidance",
+    description: "No more than 1 teaspoon (6g) of salt in a day, including snacks, and no added salt at the table"
+  },
+  { 
+    id: "lowFatFoods",
+    label: "Low-Fat Foods Guidance",
+    description: "No chicken skin, no deep-fried foods, no animal fats, no sausage"
+  },
+  { 
+    id: "stressReduction",
+    label: "Stress-Reducing Activities Guidance"
+  },
+  { 
+    id: "alcoholConsumption",
+    label: "Alcohol Consumption Guidance"
+  },
+  { 
+    id: "physicalActivity",
+    label: "Regular Physical Activity Guidance",
+    description: "30 minutes daily brisk walk, at least 5 days per week (aiming for 150 minutes per week)"
+  },
+  { 
+    id: "healthyWeight",
+    label: "Healthy Weight Maintenance Guidance"
+  },
+];
+
+export function NCDManagementForm({ onSave }: NCDManagementFormProps) {
+  const form = useForm<NCDManagementForm>({
+    resolver: zodResolver(ncdManagementSchema),
+    defaultValues: {
+      smokingCessation: "no",
+      heartHealthyDiet: "no",
+      lowSodiumDiet: "no",
+      lowFatFoods: "no",
+      stressReduction: "no",
+      alcoholConsumption: "no",
+      physicalActivity: "no",
+      healthyWeight: "no",
+      drugsCollectedElsewhere: "no",
+    },
+  });
+
+  const handleSubmit = (data: NCDManagementForm) => {
+    onSave(data);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Non-Pharmacological Management</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              {guidanceItems.map((item) => (
+                <FormField
+                  key={item.id}
+                  control={form.control}
+                  name={item.id as keyof NCDManagementForm}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{item.label}</FormLabel>
+                      {item.description && (
+                        <FormDescription>{item.description}</FormDescription>
+                      )}
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex space-x-4"
+                        >
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="yes" />
+                            </FormControl>
+                            <FormLabel className="font-normal">Yes</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="no" />
+                            </FormControl>
+                            <FormLabel className="font-normal">No</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              ))}
+
+              <FormField
+                control={form.control}
+                name="drugsCollectedElsewhere"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Drugs Collected from Other Facilities</FormLabel>
+                    <FormDescription>
+                      Local pharmacy, public or private facility
+                    </FormDescription>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <RadioGroupItem value="yes" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Yes</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <RadioGroupItem value="no" />
+                          </FormControl>
+                          <FormLabel className="font-normal">No</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button type="submit" className="w-full">
+              Save Management Plan
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## 2. Chronic Conditions Form (client/src/components/medical-record/chronic-conditions-form.tsx)
+```tsx
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+
+const chronicConditionSchema = z.object({
+  ntgLevel1: z.string().min(1, "NTG Level 1 is required"),
+  ntgLevel2: z.string().optional(),
+  ntgLevel3: z.string().optional(),
+  icd11: z.string().min(1, "ICD 11 code is required"),
+  condition: z.string().min(1, "Condition is required"),
+  dateDiagnosed: z.string().min(1, "Date diagnosed is required"),
+  stillOngoing: z.boolean().default(false),
+  dateResolved: z.string().optional(),
+  certainty: z.string().min(1, "Certainty is required"),
+  comments: z.string().optional(),
+});
+
+type ChronicConditionForm = z.infer<typeof chronicConditionSchema>;
+
+interface ChronicConditionFormProps {
+  onSave: (data: ChronicConditionForm) => void;
+}
+
+const certaintyOptions = [
+  { value: "confirmed", label: "Confirmed" },
+  { value: "suspected", label: "Suspected" },
+  { value: "probable", label: "Probable" },
+  { value: "refuted", label: "Refuted" },
+];
+
+export function ChronicConditionForm({ onSave }: ChronicConditionFormProps) {
+  const [isOngoing, setIsOngoing] = useState(false);
+
+  const form = useForm<ChronicConditionForm>({
+    resolver: zodResolver(chronicConditionSchema),
+    defaultValues: {
+      stillOngoing: false,
+    },
+  });
+
+  const handleSubmit = (data: ChronicConditionForm) => {
+    onSave(data);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Chronic / Non Chronic Conditions</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="ntgLevel1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NTG Level 1 *</FormLabel>
+                      <Select onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Search" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="level1_option1">Level 1 Option 1</SelectItem>
+                          <SelectItem value="level1_option2">Level 1 Option 2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="ntgLevel2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NTG Level 2</FormLabel>
+                      <Select onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Search" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="level2_option1">Level 2 Option 1</SelectItem>
+                          <SelectItem value="level2_option2">Level 2 Option 2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="ntgLevel3"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NTG Level 3</FormLabel>
+                      <Select onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Search" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="level3_option1">Level 3 Option 1</SelectItem>
+                          <SelectItem value="level3_option2">Level 3 Option 2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="icd11"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ICD 11</FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Search ICD 11" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="icd11_code1">ICD-11 Code 1</SelectItem>
+                        <SelectItem value="icd11_code2">ICD-11 Code 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condition *</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="--Select--" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="condition1">Condition 1</SelectItem>
+                      <SelectItem value="condition2">Condition 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="dateDiagnosed"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date Diagnosed *</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="stillOngoing"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked);
+                            setIsOngoing(checked as boolean);
+                          }}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">Still Ongoing</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {!isOngoing && (
+                <FormField
+                  control={form.control}
+                  name="dateResolved"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date Resolved</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+
+            <FormField
+              control={form.control}
+              name="certainty"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Certainty *</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="--Select--" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {certaintyOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="comments"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Comments</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter Comments"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full">
+              Save Condition
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## 3. Patient Overview Page (client/src/pages/patient-overview.tsx)
+```tsx
+import { Card } from "@/components/ui/card";
+import {
+  Stethoscope,
+  Heart,
+  Ribbon,
+  TestTube2,
+  Stethoscope as LungIcon,
+  Activity,
+  Microscope,
+  UserCircle,
+  Syringe,
+  Scissors,
+  Users,
+  SyringeIcon,
+  Shield,
+  Baby,
+  FileX,
+  Clock,
+  Pill,
+  UserPlus,
+  ThermometerSun,
+} from "lucide-react";
+import { format } from "date-fns";
+
+interface ServiceCardProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+function ServiceCard({ icon, label, onClick }: ServiceCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border flex flex-col items-center justify-center gap-2 aspect-square"
+    >
+      <div className="text-blue-500">{icon}</div>
+      <span className="text-sm text-center">{label}</span>
+    </button>
+  );
+}
+
+const services = [
+  { icon: <Stethoscope className="h-6 w-6" />, label: "Me (OPD)" },
+  { icon: <Heart className="h-6 w-6" />, label: "Vital" },
+  { icon: <Ribbon className="h-6 w-6" />, label: "HTS" },
+  { icon: <TestTube2 className="h-6 w-6" />, label: "PEP" },
+  { icon: <TestTube2 className="h-6 w-6" />, label: "PrEP" },
+  { icon: <LungIcon className="h-6 w-6" />, label: "TB Service" },
+  { icon: <Activity className="h-6 w-6" />, label: "Pain Scaling" },
+  { icon: <Microscope className="h-6 w-6" />, label: "Investigation" },
+  { icon: <UserCircle className="h-6 w-6" />, label: "ME(PD)" },
+  { icon: <Syringe className="h-6 w-6" />, label: "Nursing Care" },
+  { icon: <Scissors className="h-6 w-6" />, label: "Surgery" },
+  { icon: <Users className="h-6 w-6" />, label: "Referrals" },
+  { icon: <SyringeIcon className="h-6 w-6" />, label: "Vaccinations" },
+  { icon: <Shield className="h-6 w-6" />, label: "Covid" },
+  { icon: <Baby className="h-6 w-6" />, label: "Birth Records" },
+  { icon: <FileX className="h-6 w-6" />, label: "Death Record" },
+  { icon: <Clock className="h-6 w-6" />, label: "ART Adult" },
+  { icon: <Pill className="h-6 w-6" />, label: "Pharmacy" },
+  { icon: <UserPlus className="h-6 w-6" />, label: "Family Plan" },
+  { icon: <ThermometerSun className="h-6 w-6" />, label: "GBV" },
+];
+
+export default function PatientOverview() {
+  const patientData = {
+    name: "XXX MMMM",
+    dateOfBirth: "1988-10-11",
+    sex: "Female",
+    cellphone: "0977000000",
+    nupn: "RRRR-MMMMMM-YYYYY-K",
+    nrc: "222222/22/2",
+  };
+
+  const handleServiceClick = (service: string) => {
+    console.log(`Selected service: ${service}`);
+    // Handle navigation or action based on service selection
+  };
+
+  return (
+    <div className="container mx-auto p-6 max-w-7xl">
+      <Card className="bg-blue-50 p-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-blue-900">{patientData.name}</h1>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Clock className="h-4 w-4" />
+              <span>
+                {format(new Date(patientData.dateOfBirth), "dd-MMM-yyyy")} ({patientData.sex})
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Cellphone:</span>
+            <span>{patientData.cellphone}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+            <div>
+              <span className="font-medium">NUPN:</span>
+              <span className="ml-2">{patientData.nupn}</span>
+            </div>
+            <div>
+              <span className="font-medium">NRC:</span>
+              <span className="ml-2">{patientData.nrc}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <h2 className="text-xl font-semibold mb-6 text-center">Select Service for the Patient</h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4">
+        {services.map((service) => (
+          <ServiceCard
+            key={service.label}
+            icon={service.icon}
+            label={service.label}
+            onClick={() => handleServiceClick(service.label)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+## 4. Medical Records Page (client/src/pages/medical-records.tsx)
+```tsx
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { FileEdit, Plus } from "lucide-react";
+import { PresentHistoryDialog } from "@/components/medical-record/present-history-dialog";
+import { FamilySocialHistoryDialog } from "@/components/medical-record/family-social-history-dialog";
+import { FootExaminationForm } from "@/components/medical-record/foot-examination-form";
+import { NCDManagementForm } from "@/components/medical-record/ncd-management-form";
+import { ChronicConditionForm } from "@/components/medical-record/chronic-conditions-form";
+
+export default function MedicalRecords() {
+  const [activeTab, setActiveTab] = useState("complaints");
+  const [presentHistoryOpen, setPresentHistoryOpen] = useState(false);
+  const [familySocialHistoryOpen, setFamilySocialHistoryOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<string>("");
+
+  const sections = [
+    { id: "presenting", title: "Presenting Complaints" },
+    { id: "tb", title: "TB Constitutional Symptoms" },
+    { id: "systems", title: "Review of Systems" },
+    { id: "medical", title: "Past Medical History" },
+    { id: "chronic", title: "Chronic / Non Chronic Conditions" },
+    { id: "allergies", title: "Allergies" },
+    { id: "family", title: "Family & Social History" },
+  ];
+
+  const handleAddRecord = (sectionId: string) => {
+    setSelectedSection(sectionId);
+    if (sectionId === "presenting") {
+      setPresentHistoryOpen(true);
+    } else if (sectionId === "family") {
+      setFamilySocialHistoryOpen(true);
+    }
+  };
+
+  const handleSavePresentHistory = (data: any) => {
+    console.log("Saving present history:", data);
+    // Here you would typically save the data to your backend
+  };
+
+  const handleSaveFamilySocialHistory = (data: any) => {
+    console.log("Saving family & social history:", data);
+    // Here you would typically save the data to your backend
+  };
+
+  const handleSaveFootExamination = (data: any) => {
+    console.log("Saving foot examination:", data);
+    // Here you would typically save the data to your backend
+  };
+
+  const handleSaveNCDManagement = (data: any) => {
+    console.log("Saving NCD management:", data);
+    // Here you would typically save the data to your backend
+  };
+
+  const handleSaveChronicCondition = (data: any) => {
+    console.log("Saving chronic condition:", data);
+    // Here you would typically save the data to your backend
+  };
+
+  return (
+    <div className="container mx-auto p-6 max-w-7xl">
+      <Tabs defaultValue="complaints" className="w-full">
+        <TabsList className="w-full justify-start border-b mb-6">
+          <TabsTrigger value="complaints" className="text-lg font-medium">
+            Complaints & Histories
+          </TabsTrigger>
+          <TabsTrigger value="examination" className="text-lg font-medium">
+            Examination & Diagnosis
+          </TabsTrigger>
+          <TabsTrigger value="plan" className="text-lg font-medium">
+            Plan
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="complaints" className="space-y-6">
+          {sections.map((section) => (
+            <Card key={section.id} className="p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {section.title}
+                </h3>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <FileEdit className="h-4 w-4" />
+                    Edit Record
+                  </Button>
+                  <Button
+                    className="flex items-center gap-2"
+                    onClick={() => handleAddRecord(section.id)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Record
+                  </Button>
+                </div>
+              </div>
+              {section.id === "chronic" && (
+                <div className="mt-4">
+                  <ChronicConditionForm onSave={handleSaveChronicCondition} />
+                </div>
+              )}
+            </Card>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="examination">
+          <div className="space-y-6">
+            <FootExaminationForm onSave={handleSaveFootExamination} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="plan">
+          <div className="space-y-6">
+            <NCDManagementForm onSave={handleSaveNCDManagement} />
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <PresentHistoryDialog
+        open={presentHistoryOpen}
+        onClose={() => setPresentHistoryOpen(false)}
+        onSave={handleSavePresentHistory}
+      />
+
+      <FamilySocialHistoryDialog
+        open={familySocialHistoryOpen}
+        onClose={() => setFamilySocialHistoryOpen(false)}
+        onSave={handleSaveFamilySocialHistory}
+      />
+    </div>
+  );
+}
+```
+
+## 5. App Router (client/src/App.tsx)
+```tsx
+import { Switch, Route } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient";
+import { Toaster } from "@/components/ui/toaster";
+import { Sidebar } from "@/components/layout/sidebar";
+import MedicalRecords from "@/pages/medical-records";
+import PatientOverview from "@/pages/patient-overview";
+import POCTestsPage from "@/pages/poc-tests-page";
+import NotFound from "@/pages/not-found";
+
+function Router() {
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 lg:ml-64">
+        <Switch>
+          <Route path="/" component={PatientOverview} />
+          <Route path="/medical-records" component={MedicalRecords} />
+          <Route path="/poc-tests" component={POCTestsPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router />
+      <Toaster />
+    </QueryClientProvider>
+  );
+}
+```
+
+To use these components in your project, you'll need to:
+
+1. Install the required dependencies:
+- @hookform/resolvers
+- @radix-ui/react-* (all the Radix UI components)
+- react-hook-form
+- date-fns
+- lucide-react
+- zod
+- wouter
+- @tanstack/react-query
+
+2. Set up your project with:
+- TypeScript
+- Tailwind CSS
+- ShadCN UI components
+
+3. Create the necessary component folders and files as shown in the file paths.
+
+4. Copy each component into its respective file.
+
+5. Update the import paths (`@/components/*`) to match your project structure.
+
+Let me know if you need help with any specific part of the integration!

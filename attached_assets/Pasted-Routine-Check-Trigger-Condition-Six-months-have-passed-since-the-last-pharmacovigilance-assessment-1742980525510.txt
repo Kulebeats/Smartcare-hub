@@ -1,0 +1,33 @@
+Routine Check
+
+Trigger Condition: Six months have passed since the last pharmacovigilance assessment for patients on ART.
+System Prompt: Display a link or reminder within the EHR to initiate an active pharmacovigilance check.
+Clinical Rationale: Regular six-monthly evaluations help detect emerging side effects or suboptimal patient responses.
+Adverse Reaction Onset
+
+Trigger Condition: A new or unexpected adverse drug reaction (ADR) is observed or reported.
+Action:
+Record the reaction details, including symptoms, severity, and potential causative agent.
+Schedule close follow-up to track and document progression or resolution of the reaction.
+Clinical Rationale: Early identification and thorough documentation of ADRs are crucial to prevent complications and guide treatment modifications.
+Change of ART Regimen
+
+Trigger Condition: Any alteration in the patient’s existing ART regimen (e.g., drug substitution or switch).
+Action:
+Initiate or reactivate active pharmacovigilance monitoring for at least three consecutive visits following the regimen change.
+Assess patient tolerance, adherence, and any new adverse events.
+Clinical Rationale: Changes in therapy can expose patients to new side effects or therapeutic challenges that require careful observation.
+ART-Naive Patients
+
+Trigger Condition: Patient is starting ART for the first time.
+Action:
+Mandate a minimum of three ART follow-up visits post initiation to monitor drug tolerance, side effects, and early treatment success.
+Include counseling sessions to support adherence and address patient concerns.
+Clinical Rationale: New ART patients may be unfamiliar with side effects or the importance of adherence, making close oversight essential for successful treatment outcomes.
+Follow-Up Visit (Post-Adverse Reaction)
+
+Trigger Condition: A patient returns for follow-up care after an initial adverse drug reaction or an ongoing suspected ADR.
+Action:
+Prompt the clinician to assess the status of the previous adverse reaction—whether resolved, improved, or worsened.
+Update pharmacovigilance records and decide on continued or modified monitoring as needed.
+Clinical Rationale: Consistent follow-up is vital to evaluate clinical improvement, adjust therapy if necessary, and maintain patient safety.

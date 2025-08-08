@@ -1,0 +1,92 @@
+1. Has a urinalysis been performed and were the results normal?
+Clinician’s Question:
+“We need to check your urine for any signs of kidney problems or infection. Have you had a urine test recently, and did your provider tell you if the results were normal?”
+
+Decision Support:
+
+Urinalysis screens for kidney disease, protein in urine (proteinuria), blood (hematuria), or infection (leucocytes/nitrites). Any abnormal findings should prompt further evaluation before PrEP initiation. If urinalysis is abnormal, PrEP should be deferred until further renal assessment is complete. If urinalysis is normal and creatinine testing is not available, you may proceed for low-risk clients, per guidelines.
+
+2. Has a serum creatinine test or creatinine clearance (>50 ml/min) been confirmed?
+Clinician’s Question:
+“We also need to check your kidney function using a blood test called creatinine. Has this test been done, and was your kidney function above 50?”
+
+Decision Support:
+
+Creatinine clearance or estimated glomerular filtration rate (eGFR) is essential for assessing kidney safety with PrEP (especially tenofovir). If creatinine clearance is below 50 ml/min, PrEP should not be started; advise repeat testing and nephrology consultation if needed. Creatinine testing should not delay PrEP if urinalysis is normal and the client is not at high risk for kidney dysfunction.
+
+3. Has Hepatitis B surface antigen screening been performed?
+Clinician’s Question:
+“Have you ever been tested for Hepatitis B? We do this because the same medicines in PrEP also treat Hepatitis B, and stopping suddenly can cause liver problems.”
+
+Decision Support:
+
+Clients who are Hepatitis B positive can start PrEP but require ongoing hepatitis B monitoring. If PrEP is stopped, refer the client for hepatitis B care due to risk of flare. If Hepatitis B testing is pending, PrEP initiation should not be delayed, but follow up is needed once results are available.
+
+4. For female clients, has a pregnancy test been performed?
+Clinician’s Question:
+“If you are of childbearing age or might be pregnant, have you had a pregnancy test recently?”
+
+Decision Support:
+
+Pregnancy is not a contraindication for PrEP; in fact, it is often recommended for women at high risk. Ensure pregnancy status is documented to guide appropriate counseling and follow-up. If positive, reinforce the safety and rationale for PrEP use during pregnancy.
+
+5. Has syphilis screening (RPR/RST) been performed?
+Clinician’s Question:
+“We recommend screening for syphilis as part of your sexual health check. Have you had this test done?”
+
+Decision Support:
+
+Syphilis screening is a routine part of the sexual health assessment. Treat any positive results, but PrEP may still be initiated or continued if indicated, provided other safety checks are passed.
+
+6. Are you currently experiencing any symptoms that might suggest recent (acute) HIV infection?
+Examples: Fever, sore throat, rash, muscle aches, mouth ulcers, headache, swollen glands.
+
+Clinician’s Question:
+“Are you currently experiencing any of the following symptoms: fever, sore throat, muscle aches, rash, mouth sores, headaches, or swollen glands?”
+
+Decision Support:
+
+Presence of two or more of these symptoms, especially after a recent exposure, suggests possible acute HIV infection. PrEP should be deferred, and HIV RNA or antigen/antibody testing should be performed immediately.
+
+7. Do you have a known history of kidney disease or has a doctor ever told you that your eGFR is less than 60 ml/min/1.73m²?
+Clinician’s Question:
+“Have you ever been told that you have kidney problems, or that your kidney function is low?”
+
+Decision Support:
+
+History of kidney disease or low eGFR (<60) increases risk of complications from PrEP. PrEP should be deferred, and the client should be referred for further assessment. Repeat renal testing after two weeks if recently abnormal.
+
+8. Have you ever had an allergic reaction to tenofovir or emtricitabine?
+Clinician’s Question:
+“Have you ever taken HIV medicines called tenofovir or emtricitabine, and did you have any allergic reaction to them?”
+
+Decision Support:
+
+A history of allergy to tenofovir or emtricitabine is an absolute contraindication for PrEP; do not initiate PrEP.
+
+Digital Workflow Checklist for SmartCare Pro
+ HIV test done and negative
+
+ Creatinine or urinalysis normal (if at risk)
+
+ Syphilis (RPR/RST) result available
+
+ Hepatitis B surface antigen result available
+
+ Pregnancy test for women
+
+ No symptoms suggestive of acute HIV infection
+
+ No history of kidney disease or low eGFR
+
+ No allergy to tenofovir or emtricitabine
+
+If any result is not available or abnormal:
+Proceed with PrEP if HIV-negative and no acute symptoms.
+
+If creatinine pending, do not delay PrEP for low-risk clients; follow up once result available.
+
+If Hepatitis B positive: initiate PrEP, set reminder for hepatitis B monitoring and referral.
+
+If urinalysis abnormal, acute HIV symptoms present, or kidney/allergy contraindication—defer PrEP and follow clinical guidance.
+

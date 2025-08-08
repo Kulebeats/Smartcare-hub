@@ -1,0 +1,32 @@
+# SmartCare PRO Production Configuration
+# Use this configuration for deployment to avoid security warnings
+
+modules = ["nodejs-20", "bash", "web", "postgresql-16"]
+run = "./start-production.sh"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "cloudrun"
+run = ["sh", "-c", "./start-production.sh"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[[ports]]
+localPort = 5002
+externalPort = 3001
+
+[[ports]]
+localPort = 5003
+externalPort = 3002
+
+[env]
+NODE_ENV = "production"

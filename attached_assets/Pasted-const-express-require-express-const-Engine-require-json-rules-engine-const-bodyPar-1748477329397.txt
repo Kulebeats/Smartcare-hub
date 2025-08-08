@@ -1,0 +1,138 @@
+const express = require('express');
+const { Engine } = require('json-rules-engine');
+const bodyParser = require('body-parser');
+const fs = require('fs').promises; // Using promises API of fs module
+
+const app = express();
+app.use(bodyParser.json()); // Middleware to parse JSON request bodies
+
+let rules = []; // In-memory store for the rules
+let engine = new Engine(); // Initialize the rules engine instance once
+
+/**
+ * @function setupEngine
+ * @description Configures and returns a new rules engine instance with the provided rules.
+ * @param {Array} currentRules - An array of rule objects.
+ * @returns {Engine} A configured json-rules-engine instance.
+ */
+function setupEngine(currentRules) {
+    const newEngine = new Engine(); // Create a new engine instance
+    // Add each rule to the engine
+    currentRules.forEach(rule => {
+        // Ensure rule.conditions is an object before trying to get Object.entries
+        const conditions = typeof rule.conditions === 'object' && rule.conditions !== null ? rule.conditions : {};
+        newEngine.addRule({
+            conditions: {
+                // 'all' means all conditions must be true
+                all: Object.entries(conditions).map(([fact, expectedValue]) => ({
+                    fact: fact,          // The fact to check (e.g., "bleedingPerVaginam")
+                    operator: 'equal',   // The comparison operator
+                    value: expectedValue // The expected value for the fact
+                }))
+            },
+            event: { // The event to trigger if conditions are met
+                type: rule.id,        // Rule ID
+                params: rule.action   // Action to take (contains severity and message)
+            }
+        });
+    });
+    return newEngine;
+}
+
+/**
+ * @function loadRules
+ * @description Asynchronously loads rules from the JSON file into memory
+ * and re-initializes the rules engine.
+ */
+async function loadRules() {
+    try {
+        const data = await fs.readFile('./rules/danger-signs.json', 'utf-8');
+        rules = JSON.parse(data); // Parse the JSON data into the rules array
+        engine = setupEngine(rules); // Re-initialize the global engine instance with the new rules
+        console.log(`Successfully loaded ${rules.length} danger-signs rules and configured engine.`);
+    } catch (err) {
+        console.error('Error loading or setting up rules:', err);
+        // In case of error, clear existing rules and engine to prevent using stale/corrupted data
+        rules = [];
+        engine = new Engine(); // Reset to an empty engine
+        // Depending on requirements, you might want to throw the error or handle it differently,
+        // e.g., prevent the server from starting or use a default set of rules.
+    }
+}
+
+// Initial load of rules when the server starts
+loadRules();
+
+/**
+ * @api {post} /admin/rules/reload/anc/danger-signs Hot-reload rules
+ * @description Endpoint to trigger a reload of the rules from danger-signs.json.
+ * This allows updating rules without restarting the server.
+ * @security IMPORTANT: This endpoint should be secured in a production environment!
+ * Consider adding authentication and authorization middleware.
+ */
+app.post('/admin/rules/reload/anc/danger-signs', async (req, res) => {
+    console.log('Received request to reload danger-signs rules.');
+    try {
+        await loadRules(); // loadRules will re-read the file and re-initialize the engine
+        res.json({
+            message: 'Danger-signs rules reloaded and engine reconfigured successfully.',
+            count: rules.length
+        });
+    } catch (error) {
+        // This catch block might be redundant if loadRules throws and is not caught internally,
+        // but it's good for catching any other unexpected errors in this endpoint's logic.
+        console.error('Error during rule reload process via admin endpoint:', error);
+        res.status(500).json({ message: 'Failed to reload rules due to an internal error.' });
+    }
+});
+
+/**
+ * @api {post} /api/v1/alerts/danger-signs Process danger signs
+ * @description Evaluates input clinical data (facts) against the loaded rules
+ * and returns any triggered alerts.
+ * @param {object} req.body - The request body.
+ * @param {string} req.body.field - The specific clinical finding being reported (e.g., "bleedingPerVaginam").
+ * @param {any} req.body.value - The value of the clinical finding (e.g., true).
+ * @param {object} [req.body.context] - Optional additional facts to be considered by the rules engine.
+ */
+app.post('/api/v1/alerts/danger-signs', async (req, res) => {
+    try {
+        const { field, value, context } = req.body;
+
+        // Basic input validation: Check if 'field' and 'value' are provided.
+        if (typeof field === 'undefined' || typeof value === 'undefined') {
+            return res.status(400).json({
+                error: 'Bad Request: Missing "field" or "value" in the request body.'
+            });
+        }
+
+        // Construct the facts object for the rules engine.
+        // Merge the general context (if any) with the specific field-value pair.
+        const inputFacts = { ...(context || {}), [field]: value };
+
+        console.log('Processing danger signs with input facts:', inputFacts);
+
+        // Run the pre-configured engine against the input facts.
+        const results = await engine.run(inputFacts);
+
+        // Map the triggered events to the desired alert format.
+        const alerts = results.events.map(event => event.params);
+
+        res.json({ alerts });
+
+    } catch (error) {
+        console.error('Error processing danger signs in /api/v1/alerts/danger-signs:', error);
+        res.status(500).json({
+            error: 'Internal Server Error: Could not process the request.'
+        });
+    }
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`SmartCare Pro ANC Danger Signs Backend server running on port ${PORT}`);
+    if (rules.length === 0) {
+        console.warn('Warning: Server started but no rules were loaded. Check ./rules/danger-signs.json and logs.');
+    }
+});

@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from 'react';
+import { X, AlertTriangle, Shield, Zap, Clock, ArrowLeft, BookOpen, CalendarClock, ClipboardCheck } from 'lucide-react';
+
+// --- Main Application Component ---
+// This component demonstrates how to use the dynamic alert modal.
+const App = () => {
+  const [currentRiskInfo, setCurrentRiskInfo] = useState(null);
+  const [selectedAction, setSelectedAction] = useState(null);
+
+  const riskScenarios = {
+    low: { score: 2, maxScore: 20, protocol: 'ANC PrEP Assessment', followUp: 'Reassess in 3rd trimester' },
+    moderate: { score: 4, maxScore: 20, protocol: 'ANC PrEP Assessment', followUp: 'Monthly follow-up' },
+    high: { score: 9, maxScore: 20, protocol: 'ANC PrEP Assessment', followUp: 'Intensive monthly follow-up' },
+  };
+
+  const showAlert = (riskLevel) => {
+    setCurrentRiskInfo(riskScenarios[riskLevel]);
+    setSelectedAction(null);
+  };
+
+  const handleAction = (action) => {
+    console.log('Action selected:', action, 'for score:', currentRiskInfo.score);
+    setSelectedAction(action);
+    setCurrentRiskInfo(null);
+  };
+
+  const handleClose = () => {
+    console.log('Modal closed without action.');
+    setCurrentRiskInfo(null);
+  };
+
+  return (
+    <div className="bg-gray-100 font-sans p-8 min-h-screen">
+      <div className="max-w-2xl mx-auto text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Clinical Dashboard</h1>
+        <p className="text-gray-600 mb-6">This dashboard demonstrates a dynamic risk alert system. Click a button to simulate a patient scenario.</p>
+        
+        <div className="flex justify-center space-x-4 mb-6">
+          <button onClick={() => showAlert('low')} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Low Risk Alert</button>
+          <button onClick={() => showAlert('moderate')} className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Moderate Risk Alert</button>
+          <button onClick={() => showAlert('high')} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">High Risk Alert</button>
+        </div>
+
+        {selectedAction && (
+          <div className="mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <p><span className="font-bold">Last Action Taken:</span> {selectedAction}</p>
+          </div>
+        )}
+      </div>
+
+      <PrEPUrgentAlertInterface
+        riskInfo={currentRiskInfo}
+        onClose={handleClose}
+        onAction={handleAction}
+      />
+    </div>
+  );
+};
+
+
+// --- Dynamic PrEP Urgent Alert Modal ---
+const PrEPUrgentAlertInterface = ({ riskInfo, onClose, onAction }) => {
+  // State to manage which view is active: 'actions', 'recommendations', or 'readiness'
+  const [currentView, setCurrentView] = useState('actions');
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    if (riskInfo) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [riskInfo, onClose]);
+
+  // Reset to the main action view whenever the alert is opened for a new patient
+  useEffect(() => {
+    if (riskInfo) {
+      setCurrentView('actions');
+    }
+  }, [riskInfo]);
+
+  if (!riskInfo) return null;
+
+  const getRiskProfile = (score) => {
+    if (score <= 2) return { level: 'Low', recommendation: 'Reassess later in pregnancy', headerClass: 'bg-gray-500', bannerClass: 'bg-gray-50 border-gray-500 text-gray-800' };
+    if (score <= 5) return { level: 'Moderate', recommendation: 'Offer PrEP, tailor counseling', headerClass: 'bg-yellow-500', bannerClass: 'bg-yellow-50 border-yellow-500 text-yellow-800' };
+    return { level: 'High', recommendation: 'Strongly recommend PrEP initiation', headerClass: 'bg-red-600', bannerClass: 'bg-red-50 border-red-500 text-red-800' };
+  };
+
+  const riskProfile = getRiskProfile(riskInfo.score);
+
+  // --- Sub-Components for Different Views ---
+
+  const ActionSelectionView = () => (
+    <div className="p-6">
+      <p className="text-gray-800 mb-4 font-medium">Select immediate action:</p>
+      <div className="space-y-3">
+        {riskProfile.level === 'Low' && (
+            <button onClick={() => onAction('SCHEDULE_REASSESSMENT')} className="w-full p-4 rounded-lg flex items-center transition-colors bg-gray-500 text-white hover:bg-gray-600">
+                <CalendarClock size={20} className="mr-3" />
+                <div className="text-left font-semibold">Reassess Later in Pregnancy</div>
+            </button>
+        )}
+        {(riskProfile.level === 'Moderate' || riskProfile.level === 'High') && (
+          <>
+            <button 
+              onClick={() => onAction('INITIATE_PREP')}
+              className={`w-full p-4 rounded-lg flex items-center transition-colors text-white ${riskProfile.level === 'High' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-500 hover:bg-green-600'}`}
+            >
+              <Shield size={20} className="mr-3" />
+              <div className="text-left">
+                  <div className="font-semibold">Initiate PrEP</div>
+                  <div className={`text-sm ${riskProfile.level === 'High' ? 'text-red-100' : 'text-green-100'}`}>Conduct risk reduction counseling and ascertain client interest.</div>
+              </div>
+              {riskProfile.level === 'High' && <div className="bg-red-700 text-xs px-2 py-1 rounded-full font-bold">PRIORITY</div>}
+            </button>
+            <button 
+                onClick={() => setCurrentView('recommendations')} 
+                className="w-full p-4 rounded-lg flex items-center transition-colors bg-blue-500 text-white hover:bg-blue-600"
+            >
+              <BookOpen size={20} className="mr-3" />
+              <div className="text-left font-semibold">Clinical Recommendations</div>
+            </button>
+            <button 
+                onClick={() => setCurrentView('readiness')} 
+                className="w-full p-4 rounded-lg flex items-center transition-colors bg-orange-500 text-white hover:bg-orange-600"
+            >
+              <ClipboardCheck size={20} className="mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Assess PrEP Readiness</div>
+                <div className="text-sm text-orange-100">Go through readiness checklist.</div>
+              </div>
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  const RecommendationsView = () => (
+    <div className="p-6">
+       <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-gray-800">Clinical Recommendations</h3>
+        <button onClick={() => setCurrentView('actions')} className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"><ArrowLeft size={16} className="mr-1" />Back to Actions</button>
+      </div>
+      <div className="space-y-4 text-sm text-gray-700 max-h-72 overflow-y-auto pr-2">
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2 mt-4">Standard Guidelines</h4>
+          <ul className="list-disc list-inside space-y-2">
+            <li><strong>Condom Use:</strong> Provide intensive counseling on consistent condom use during pregnancy. Address barriers like trust, desire to conceive, partner refusal.</li>
+            <li><strong>Partner Reduction:</strong> Counsel on reducing the number of sexual partners, emphasizing its importance during pregnancy.</li>
+            <li><strong>STI Treatment:</strong> Ensure complete STI treatment is finished before PrEP initiation.</li>
+            <li><strong>Partner Health:</strong> Support partner viral load monitoring and ART adherence.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+  
+  const ReadinessView = () => (
+    <div className="p-6">
+       <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-gray-800">ANC PrEP Readiness Checklist</h3>
+        <button onClick={() => setCurrentView('actions')} className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"><ArrowLeft size={16} className="mr-1" />Back to Actions</button>
+      </div>
+      <div className="space-y-4 text-sm text-gray-700 max-h-72 overflow-y-auto pr-2">
+        <div className="p-3 bg-gray-50 rounded-lg border">
+            <h4 className="font-semibold text-gray-800">1. Medical Eligibility</h4>
+            <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                <li>Confirm client is HIV-negative with a recent rapid test.</li>
+                <li>Assess for signs/symptoms of acute HIV infection.</li>
+                <li>Confirm eGFR is {'>'}60 mL/min (no significant kidney problems).</li>
+                <li>No use of other nephrotoxic drugs.</li>
+            </ul>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-lg border">
+            <h4 className="font-semibold text-gray-800">2. Client Counseling & Understanding</h4>
+            <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                <li>Explain that PrEP is safe during pregnancy and breastfeeding.</li>
+                <li>Counsel on the importance of PrEP for protecting both mother and baby from HIV.</li>
+                <li>Discuss the need for daily adherence for maximum protection.</li>
+                <li>Explain potential mild, temporary side effects (e.g., nausea).</li>
+            </ul>
+        </div>
+         <div className="p-3 bg-gray-50 rounded-lg border">
+            <h4 className="font-semibold text-gray-800">3. Adherence & Social Support</h4>
+            <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                <li>Discuss client's daily routine to identify best time to take pill.</li>
+                <li>Address potential barriers: stigma, partner support, and disclosure.</li>
+                <li>Offer to counsel the client's partner if she consents.</li>
+            </ul>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-lg border">
+            <h4 className="font-semibold text-gray-800">4. Final Confirmation</h4>
+            <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                <li>Confirm client is willing to start PrEP today.</li>
+                <li>Explain the follow-up schedule (e.g., next visit in 1 month).</li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'recommendations':
+        return <RecommendationsView />;
+      case 'readiness':
+        return <ReadinessView />;
+      case 'actions':
+      default:
+        return <ActionSelectionView />;
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 font-sans">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden animate-fade-in">
+        <div className={`text-white p-4 flex items-center justify-between ${riskProfile.headerClass}`}>
+          <div className="flex items-center">
+            <AlertTriangle size={24} className="mr-3" />
+            <div>
+              <h2 className="text-xl font-bold">{riskProfile.level.toUpperCase()} RISK ALERT</h2>
+              <p className="opacity-90 text-sm">{riskProfile.recommendation}</p>
+            </div>
+          </div>
+          <button onClick={onClose} aria-label="Close alert" className={`hover:bg-black/20 rounded-full p-1 transition-colors`}><X size={20} /></button>
+        </div>
+        <div className={`p-4 border-l-4 ${riskProfile.bannerClass}`}>
+          <div className="flex items-center">
+            <Zap size={18} className="mr-2" />
+            <span className="font-semibold">Risk Score: {riskInfo.score}/{riskInfo.maxScore} ({riskProfile.level} Risk)</span>
+          </div>
+        </div>
+        
+        {renderContent()}
+
+        <div className="bg-gray-100 px-6 py-3 flex items-center justify-between text-sm text-gray-600">
+          <span>Protocol: {riskInfo.protocol}</span>
+          <div className="flex items-center"><Clock size={14} className="mr-1.5" /><span>{riskInfo.followUp}</span></div>
+        </div>
+      </div>
+      <style>{`
+        @keyframes fade-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-fade-in { animation: fade-in 0.2s ease-out forwards; }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;

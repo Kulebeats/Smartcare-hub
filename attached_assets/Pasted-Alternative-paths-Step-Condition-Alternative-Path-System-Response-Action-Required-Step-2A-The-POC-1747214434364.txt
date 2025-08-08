@@ -1,0 +1,11 @@
+Alternative paths	Step	Condition (Alternative Path)	System Response	Action Required
+Step 2A	The POC panel fails to load due to a system error or downtime.	The system displays an error message: "System temporarily unavailable. Please try again later."	The user can retry or contact technical support.
+Step 5A	The health worker searches for a test, but no results are found.	The system displays a message: "No matching tests found. Please try a different keyword."	The user must manually scroll through the list or refine the search.
+Step 6A	The health worker selects an incorrect test and realizes before saving.	The system allows test deselection before submission.	The user can deselect and choose a new test.
+Step 6B	The health worker selects a test that has already been ordered for the same patient within 24 hours.	The system alerts the user: "A similar test has already been ordered within the last 24 hours. Do you want to proceed?"	The user can override with justification or cancel the duplicate order.
+Step 7A	The user tries to change the default priority from Regular to Emergency without justification.	The system displays a mandatory comment box requiring justification before proceeding.	The user must enter a reason before saving the test order.
+Step 9A	The user enters an out-of-range numeric test result.	The system displays an alert: "Warning: Entered value is outside the normal range. Do you want to continue?"	The user can confirm and proceed or re-enter a correct value.
+Step 10A	The user selects an invalid measuring unit for the test.	The system restricts invalid selections and displays an error message.	The user must select a valid unit from the dropdown list.
+Step 13A	The user tries to submit the test result with missing required fields.	The system displays an error message: "Missing fields: Numeric Result, Result Status, or Measuring Unit."	The user must complete the required fields before submitting.
+Step 14A	The user tries to edit the test result after 15 minutes.	The system prevents further edits unless the user has admin privileges.	The user must contact an administrator to request a change.
+

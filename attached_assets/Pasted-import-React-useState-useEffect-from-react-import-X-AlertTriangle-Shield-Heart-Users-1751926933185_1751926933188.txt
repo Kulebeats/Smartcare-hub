@@ -1,0 +1,510 @@
+import React, { useState, useEffect } from 'react';
+import { X, AlertTriangle, Shield, Heart, Users, FileText, CheckCircle, Phone, MapPin, UserCheck, MessageCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+
+const IPVRiskAssessmentModal = () => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [assessmentData, setAssessmentData] = useState({
+    patientAlone: null,
+    riskFactors: [],
+    firstLineSupport: {
+      listened: false,
+      inquired: false,
+      validated: false,
+      safetyPlan: false,
+      connected: false
+    },
+    immediateNeeds: {
+      emotional: false,
+      physical: false,
+      safety: false,
+      support: false
+    },
+    referrals: [],
+    notes: ''
+  });
+
+  const hasRiskFactors = assessmentData.riskFactors.length > 0;
+  const totalPages = hasRiskFactors ? 5 : 3;
+
+  const riskFactors = [
+    { id: 'ongoing_stress', label: 'Ongoing stress', category: 'Emotional' },
+    { id: 'ongoing_anxiety', label: 'Ongoing anxiety', category: 'Emotional' },
+    { id: 'ongoing_depression', label: 'Ongoing depression', category: 'Emotional' },
+    { id: 'alcohol_misuse', label: 'Misuse of alcohol', category: 'Behavioral' },
+    { id: 'drug_misuse', label: 'Misuse of drugs', category: 'Behavioral' },
+    { id: 'self_harm_thoughts', label: 'Thoughts of self-harm or suicide', category: 'Self-harm' },
+    { id: 'self_harm_plans', label: 'Plans of self-harm or suicide', category: 'Self-harm' },
+    { id: 'repeated_stis', label: 'Repeated STIs', category: 'Reproductive' },
+    { id: 'unwanted_pregnancies', label: 'Unwanted pregnancies', category: 'Reproductive' },
+    { id: 'chronic_pain', label: 'Unexplained chronic pain', category: 'Physical' },
+    { id: 'traumatic_injury', label: 'Unexplained traumatic injury', category: 'Physical' },
+    { id: 'intrusive_partner', label: 'Partner intrusive during consultations', category: 'Behavioral' },
+    { id: 'missed_appointments', label: 'Often misses appointments', category: 'Behavioral' },
+    { id: 'children_problems', label: 'Children have emotional/behavioral problems', category: 'Behavioral' }
+  ];
+
+  const handleRiskFactorToggle = (factorId) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      riskFactors: prev.riskFactors.includes(factorId) 
+        ? prev.riskFactors.filter(id => id !== factorId)
+        : [...prev.riskFactors, factorId]
+    }));
+  };
+
+  const handleCheckboxChange = (section, key) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [key]: !prev[section][key]
+      }
+    }));
+  };
+
+  const handleReferralToggle = (referral) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      referrals: prev.referrals.includes(referral)
+        ? prev.referrals.filter(r => r !== referral)
+        : [...prev.referrals, referral]
+    }));
+  };
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const canProceed = () => {
+    if (currentPage === 1) return assessmentData.patientAlone === 'yes';
+    return true;
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[85vh] flex flex-col">
+        
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-xl flex-shrink-0">
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-xl font-bold">IPV Risk Assessment</h2>
+              <p className="text-blue-100 text-sm">WHO Guidelines B1.3</p>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white hover:bg-opacity-20 rounded">
+              <X size={20} />
+            </button>
+          </div>
+          
+          {/* Progress */}
+          <div className="mt-3">
+            <div className="flex justify-between text-sm text-blue-100 mb-1">
+              <span>Page {currentPage} of {totalPages}</span>
+              <span>{Math.round((currentPage / totalPages) * 100)}%</span>
+            </div>
+            <div className="w-full bg-blue-500 bg-opacity-30 rounded-full h-1.5">
+              <div 
+                className="bg-white h-1.5 rounded-full transition-all duration-300"
+                style={{ width: `${(currentPage / totalPages) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          
+          {/* Page 1: Privacy Check */}
+          {currentPage === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Privacy Assessment</h3>
+                <p className="text-gray-600">Ensure patient safety before proceeding</p>
+              </div>
+              
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-amber-800 text-sm">
+                    <p className="font-medium mb-1">Critical Safety Guidelines:</p>
+                    <ul className="space-y-1">
+                      <li>• Never discuss violence unless woman is completely alone</li>
+                      <li>• Use empathic, non-judgmental language</li>
+                      <li>• Respect cultural preferences for terminology</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold">Is the patient alone right now?</h4>
+                <div className="space-y-3">
+                  <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-green-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="patientAlone"
+                      value="yes"
+                      checked={assessmentData.patientAlone === 'yes'}
+                      onChange={(e) => setAssessmentData(prev => ({ ...prev, patientAlone: e.target.value }))}
+                      className="mr-3 text-green-600"
+                    />
+                    <div>
+                      <span className="font-medium text-green-700">✓ Yes, patient is alone</span>
+                      <p className="text-sm text-gray-600">Safe to proceed with assessment</p>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-red-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="patientAlone"
+                      value="no"
+                      checked={assessmentData.patientAlone === 'no'}
+                      onChange={(e) => setAssessmentData(prev => ({ ...prev, patientAlone: e.target.value }))}
+                      className="mr-3 text-red-600"
+                    />
+                    <div>
+                      <span className="font-medium text-red-700">✗ No, others are present</span>
+                      <p className="text-sm text-gray-600">Cannot safely conduct assessment</p>
+                    </div>
+                  </label>
+                </div>
+
+                {assessmentData.patientAlone === 'no' && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex gap-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                      <div className="text-red-800">
+                        <p className="font-medium">Assessment Blocked</p>
+                        <p className="text-sm">For patient safety, IPV assessment can only proceed when patient is alone.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Page 2: Risk Factors */}
+          {currentPage === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Risk Factor Screening</h3>
+                <p className="text-gray-600">Select any factors that apply to this patient</p>
+              </div>
+
+              <div className="grid gap-4">
+                {Object.entries(
+                  riskFactors.reduce((acc, factor) => {
+                    if (!acc[factor.category]) acc[factor.category] = [];
+                    acc[factor.category].push(factor);
+                    return acc;
+                  }, {})
+                ).map(([category, factors]) => (
+                  <div key={category} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      {category === 'Emotional' && <Heart className="w-4 h-4 text-blue-600" />}
+                      {category === 'Behavioral' && <Users className="w-4 h-4 text-purple-600" />}
+                      {category === 'Self-harm' && <AlertTriangle className="w-4 h-4 text-red-600" />}
+                      {category === 'Reproductive' && <Heart className="w-4 h-4 text-pink-600" />}
+                      {category === 'Physical' && <Shield className="w-4 h-4 text-green-600" />}
+                      {category}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {factors.map((factor) => (
+                        <label key={factor.id} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={assessmentData.riskFactors.includes(factor.id)}
+                            onChange={() => handleRiskFactorToggle(factor.id)}
+                            className="mr-2 text-blue-600"
+                          />
+                          <span className="text-sm">{factor.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {hasRiskFactors && (
+                <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                  <div className="flex">
+                    <AlertTriangle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-red-800 font-semibold">⚠️ Risk Factors Detected</h4>
+                      <p className="text-red-700 text-sm mt-1">
+                        {assessmentData.riskFactors.length} risk factor(s) identified. First-line support required.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Page 3: Immediate Needs (only if risk factors detected) OR Documentation (if no risk factors) */}
+          {currentPage === 3 && !hasRiskFactors && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Documentation</h3>
+                <p className="text-gray-600">Complete assessment documentation</p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Assessment Result</h4>
+                <p className="text-blue-800 text-sm">
+                  No immediate risk factors identified. Continue with standard ANC care.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Clinical Notes
+                </label>
+                <textarea
+                  rows={6}
+                  value={assessmentData.notes}
+                  onChange={(e) => setAssessmentData(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Document assessment findings and any observations..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Use objective language. Store securely - authorized access only.
+                </p>
+              </div>
+
+              {/* Summary */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h5 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Assessment Summary
+                </h5>
+                <div className="text-sm text-green-800">
+                  <p>• Risk factors identified: <strong>{assessmentData.riskFactors.length}</strong></p>
+                  <p>• Privacy maintained: <strong>{assessmentData.patientAlone === 'yes' ? 'Yes' : 'No'}</strong></p>
+                  <p>• Assessment completed: <strong>Yes</strong></p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentPage === 3 && hasRiskFactors && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Immediate Needs Assessment</h3>
+                <p className="text-gray-600">Assess the 4 types of immediate needs</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { key: 'emotional', label: 'Emotional/Psychological Health', icon: Heart, color: 'blue' },
+                  { key: 'physical', label: 'Physical Health', icon: Shield, color: 'green' },
+                  { key: 'safety', label: 'Safety Planning', icon: AlertTriangle, color: 'red' },
+                  { key: 'support', label: 'Support & Mental Health', icon: Users, color: 'purple' }
+                ].map(({ key, label, icon: Icon, color }) => (
+                  <label key={key} className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                    assessmentData.immediateNeeds[key] 
+                      ? `border-${color}-300 bg-${color}-50` 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.immediateNeeds[key]}
+                      onChange={() => handleCheckboxChange('immediateNeeds', key)}
+                      className={`mb-3 text-${color}-600`}
+                    />
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon className={`w-5 h-5 text-${color}-600`} />
+                      <span className="font-medium text-gray-900">{label}</span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {key === 'emotional' && 'Immediate psychological support needed'}
+                      {key === 'physical' && 'Medical attention or treatment required'}
+                      {key === 'safety' && 'Ongoing safety concerns to address'}
+                      {key === 'support' && 'Long-term support services needed'}
+                    </p>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Page 4: First-Line Support */}
+          {currentPage === (hasRiskFactors ? 4 : 3) && hasRiskFactors && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">First-Line Support Tasks</h3>
+                <p className="text-gray-600">Complete the 5 essential support actions</p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { key: 'listened', label: 'LISTEN', desc: 'Listen closely with empathy, without judging' },
+                  { key: 'inquired', label: 'INQUIRE', desc: 'Ask about needs and concerns (emotional, physical, practical)' },
+                  { key: 'validated', label: 'VALIDATE', desc: 'Show understanding and belief - assure not to blame' },
+                  { key: 'safetyPlan', label: 'ENHANCE SAFETY', desc: 'Discuss protection plan if violence occurs again' },
+                  { key: 'connected', label: 'SUPPORT', desc: 'Connect to information, services and social support' }
+                ].map(({ key, label, desc }) => (
+                  <label key={key} className={`block border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                    assessmentData.firstLineSupport[key] 
+                      ? 'border-green-300 bg-green-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={assessmentData.firstLineSupport[key]}
+                        onChange={() => handleCheckboxChange('firstLineSupport', key)}
+                        className="mt-1 text-green-600"
+                      />
+                      <div>
+                        <div className="font-semibold text-gray-900">{label}</div>
+                        <div className="text-sm text-gray-600 mt-1">{desc}</div>
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h5 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Safety Planning Questions
+                </h5>
+                <div className="text-sm text-yellow-800 space-y-1">
+                  <p>• "Do you have a safe place to go if needed?"</p>
+                  <p>• "Do you have important documents accessible?"</p>
+                  <p>• "Is there someone you trust for emergencies?"</p>
+                  <p>• "Would you like information about support services?"</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Page 5: Referrals & Documentation */}
+          {currentPage === (hasRiskFactors ? 5 : 3) && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {hasRiskFactors ? 'Referrals & Documentation' : 'Documentation'}
+                </h3>
+                <p className="text-gray-600">Complete assessment documentation</p>
+              </div>
+
+              {hasRiskFactors && (
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Referrals Made
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      'Crisis hotline',
+                      'Domestic violence shelter',
+                      'Legal aid services',
+                      'Mental health counseling',
+                      'Social services',
+                      'Police/law enforcement',
+                      'Medical specialist',
+                      'Support groups'
+                    ].map((referral) => (
+                      <label key={referral} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={assessmentData.referrals.includes(referral)}
+                          onChange={() => handleReferralToggle(referral)}
+                          className="mr-2 text-blue-600"
+                        />
+                        <span className="text-sm">{referral}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Clinical Notes <span className="text-red-600">*</span>
+                </label>
+                <textarea
+                  rows={6}
+                  value={assessmentData.notes}
+                  onChange={(e) => setAssessmentData(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Document findings, support provided, safety planning, and next steps..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Use objective language. Store securely - authorized access only.
+                </p>
+              </div>
+
+              {/* Summary */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h5 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Assessment Summary
+                </h5>
+                <div className="text-sm text-green-800 grid grid-cols-2 gap-4">
+                  <div>
+                    <p>• Risk factors: <strong>{assessmentData.riskFactors.length}</strong></p>
+                    <p>• Privacy maintained: <strong>{assessmentData.patientAlone === 'yes' ? 'Yes' : 'No'}</strong></p>
+                  </div>
+                  {hasRiskFactors && (
+                    <div>
+                      <p>• Support tasks: <strong>{Object.values(assessmentData.firstLineSupport).filter(Boolean).length}/5</strong></p>
+                      <p>• Referrals: <strong>{assessmentData.referrals.length}</strong></p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="border-t bg-gray-50 px-6 py-4 flex justify-between items-center flex-shrink-0">
+          <div className="text-sm text-gray-500">WHO Clinical Guidelines</div>
+          <div className="flex gap-3">
+            {currentPage > 1 && (
+              <button onClick={prevPage} className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                <ArrowLeft className="w-4 h-4" />
+                Previous
+              </button>
+            )}
+            {currentPage < totalPages ? (
+              <button 
+                onClick={nextPage} 
+                disabled={!canProceed()}
+                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Next
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button 
+                onClick={() => {
+                  console.log('Assessment completed:', assessmentData);
+                  setIsOpen(false);
+                }}
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Complete
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IPVRiskAssessmentModal;

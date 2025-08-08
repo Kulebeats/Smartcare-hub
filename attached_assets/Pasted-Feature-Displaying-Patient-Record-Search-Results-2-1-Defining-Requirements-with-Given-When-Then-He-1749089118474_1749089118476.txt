@@ -1,0 +1,237 @@
+Feature: Displaying Patient Record Search Results
+2.1. Defining Requirements with Given-When-Then
+Here are the Given-When-Then scenarios to define the "Displaying Patient Record Search Results" feature, informed by the "SmartCare PRO" screenshot:
+
+Scenario: Successful Search Displaying a Single Patient Record
+
+Given a user is on the "Search or Add New Patient" page.
+And the user has entered a valid and specific search criterion (e.g., a unique "ART Number," "NUPN," or "Cellphone") into the search input field.
+And the user has selected the corresponding search type (e.g., "ART Number" radio button).
+When the user clicks the "Search" button.
+And the system finds exactly one patient record matching the entered criteria.
+Then the patient's record summary should be displayed clearly on the page (e.g., below the search interface as shown for "Susan Butler").
+And this summary should include: Patient's Full Name, Date of Birth (with calculated age, e.g., "10-Dec-2014 (10y)"), Sex, Cellphone number, NUPN, ART Number, and Mother's Name.
+And a series of action buttons specific to that patient ("Edit Profile," "Admission," "Appointment," "Assign Queue," "Historical visit," "Vitals," "Attend to Patient") should be displayed directly associated with their record.
+Scenario: Successful Search Displaying Multiple Patient Records
+
+Given a user is on the "Search or Add New Patient" page.
+And the user has entered a general search criterion (e.g., a common "Full Name" or partial name) that is likely to match multiple patients.
+When the user clicks the "Search" button.
+And the system finds multiple patient records matching the criteria.
+Then a list or tabular view of all matching patient record summaries should be displayed.
+And each record summary in the list should display key distinguishing information (e.g., Full Name, Date of Birth, ART Number, NUPN).
+And each patient record in the list must have its own set of associated action buttons (e.g., "Edit Profile," "Vitals," etc.) or a clear mechanism to select one patient to view these actions.
+And the system may display a count of the number of records found (e.g., "Displaying X matching records").
+Scenario: Search Yielding No Matching Patient Records
+
+Given a user is on the "Search or Add New Patient" page.
+And the user has entered search criteria.
+When the user clicks the "Search" button.
+And the system finds no patient records matching the entered criteria.
+Then a clear, user-friendly message should be displayed (e.g., "No patient records found matching your criteria. You can try different search terms or Add New Patient.").
+And the area designated for patient records should not display any previous results.
+Scenario: Attempting Search with Invalid or Empty Criteria
+
+Given a user is on the "Search or Add New Patient" page.
+And the user has not entered any text into the search input field OR has entered data in an obviously invalid format for the selected search type.
+When the user clicks the "Search" button.
+Then a validation message should appear, prompting the user to enter valid search criteria (e.g., "Please enter a search term" or "Invalid format for ART Number").
+And no search query should be sent to the backend.
+And the patient record display area should remain unchanged.
+Scenario: Clarity and Accessibility of Displayed Patient Data
+
+Given one or more patient record summaries are displayed after a search.
+When the user views these records.
+Then all displayed data fields (Full Name, Date of Birth, Sex, Cellphone, NUPN, ART Number, Mother's Name) should be clearly labeled or their meaning should be evident from column headers if in a table.
+And the calculated age next to the Date of Birth should be accurate as of the current date.
+And all action buttons should have clear, concise labels indicating their function.
+And the layout should be responsive, ensuring readability and usability on different screen sizes.
+2.2. Enhancing Prompts for New Features
+1. Please assess the enhancement and determine what steps need to be taken to address the change.
+
+This feature defines the core user experience for retrieving and interacting with patient records after a search. The key steps to ensure this functionality works as described are:
+
+UI Design Confirmation: Verify that the UI elements shown in the screenshot (search type selection, input field, search button, results display format, action buttons) represent the target design. If multiple results are possible, design how that list will look.
+API Integration: Ensure backend APIs can handle searches by NRC, ART Number, NUPN, Cellphone, and Full Name. The API should return structured data for single or multiple matches, or a clear no-match response.
+Frontend Logic for Search Execution: Implement client-side logic to:
+Capture selected search type and search term.
+Perform basic client-side validation (e.g., for empty fields).
+Call the appropriate backend API.
+Frontend Logic for Results Display:
+Dynamically render single patient record summaries.
+Dynamically render a list/table of patient record summaries for multiple matches.
+Display "no results found" messages.
+Display error/validation messages.
+Action Button Integration: Ensure each action button is correctly linked to its respective functionality (e.g., "Edit Profile" navigates to an editing interface for that patient).
+State Management: Manage application state related to search criteria, search results, loading states, and error states.
+Testing: Thoroughly test all search scenarios, result displays, and button functionalities.
+2. Describe your understanding of the requirements.
+
+My understanding is that you want to formalize the requirements for how patient records are displayed following a search action on the "Search or Add New Patient" page within the "SmartCare PRO" application. This involves:
+
+Users selecting a search type (NRC, ART Number, NUPN, Cellphone, Full Name) and entering a search term.
+Upon clicking "Search":
+If a single patient matches, their detailed summary (including Name, DOB/Age, Sex, Cellphone, NUPN, ART No., Mother's Name) and a set of action buttons ("Edit Profile," "Admission," etc.) are shown.
+If multiple patients match, a list of summaries is shown, each with key identifiers and its own set of action buttons (or a way to select one).
+If no patients match, a "no records found" message is displayed.
+Basic input validation should occur before a search is attempted.
+The displayed information should be clear, accurate, and the action buttons functional.
+3. Are there any key considerations you need to keep in mind when proceeding with this plan as to not disrupt any existing functionality?
+
+Existing Search API: If a search API already exists, ensure the frontend correctly consumes it and handles its responses. If the API needs modification (e.g., to return more fields for the summary), coordinate backend and frontend changes.
+Performance for Multiple Results: If a search can return many records (e.g., by a common name), consider pagination or limiting the number of results initially displayed to maintain performance. The GWT scenarios currently imply all matches are listed.
+Data Security and Privacy (PHI): Since this involves Patient Health Information (PHI), ensure that only authorized users can access this search functionality and view patient data. Data transmission and display must be secure.
+Action Button Destinations: The functionality of each action button ("Edit Profile," "Admission," etc.) is outside the scope of displaying search results but is integral to the user flow. Ensure these buttons correctly route to existing or planned modules with the correct patient context.
+"Add New Patient" Workflow: The "Search or Add New Patient" title implies a workflow for adding new patients. The display of search results should not interfere with this, and the "no records found" scenario might naturally lead to this workflow.
+Consistency: The display style should be consistent with other parts of the SmartCare PRO application.
+4. Propose best practice user experience for completing this.
+
+Clear Indication of Search Type: The selected search type (NRC, ART Number, etc.) should be visually distinct.
+Loading Indicator: Provide a visual cue (e.g., spinner) while the search is in progress.
+Informative Messages: Use clear messages for "no results," errors, and number of results found.
+Readable Results:
+For single results: Ample spacing, clear labels for data fields.
+For multiple results: Use a well-structured list or table with sortable columns (e.g., by Name, DOB) if many results are common. Each row should be easily scannable.
+Accessible Design: Ensure the search inputs, buttons, and results display are WCAG compliant (e.g., keyboard navigable, screen-reader friendly).
+Highlight Search Term: If feasible, highlight the user's search term within the results to show relevance.
+Sticky Search Bar (Optional): If results can be lengthy, consider making the search bar sticky so the user can easily perform a new search without scrolling up.
+Prioritize Key Information: Display the most critical patient identifiers prominently in the summary to allow for quick identification.
+Logical Order of Action Buttons: Group or order action buttons logically (e.g., most frequently used first).
+5. Assess any other best practices that may be relevant & keep in mind how the application is currently implemented.
+
+Debouncing Search Input (for "live search"): If you were to implement live search (results appearing as user types), debounce the input to avoid excessive API calls. However, the current design with a "Search" button doesn't require this.
+Fuzzy Search/Tolerance (Backend): The backend search logic might incorporate fuzzy matching or tolerance for minor misspellings, which is a backend concern but affects user experience.
+Auditing: Log search actions for security and auditing purposes, especially given the sensitivity of PHI.
+Role-Based Access Control (RBAC): Ensure that the data fields displayed and action buttons available might vary based on the user's role and permissions. The current GWTs assume uniform access.
+Client-Side Validation: Implement basic client-side validation for formats (e.g., numeric for NUPN if applicable) or presence of search term to provide instant feedback. Server-side validation is still essential.
+6. Generate a step-by-step plan to implement this enhancement.
+
+Phase 1: API Definition & Backend Preparation
+Define/Confirm the API endpoint(s) for patient search.
+Specify request parameters (searchType, searchTerm).
+Define the JSON response structure for:
+Single patient match (including all fields shown in the screenshot).
+Multiple patient matches (array of patient summary objects).
+No match.
+Error responses.
+Implement or update backend logic to support these search types and response formats.
+Phase 2: Frontend - Search Interface & Input Handling
+Develop the UI for search type selection (radio buttons: NRC, ART Number, NUPN, Cellphone, Full Name).
+Develop the search input field and "Search" button.
+Implement client-side logic to:
+Get the selected search type and term.
+Perform basic validation (e.g., ensure search term is not empty).
+Display validation messages if needed.
+Phase 3: Frontend - API Call & State Management
+Implement a service/function to call the backend search API.
+Manage loading state (show spinner during API call).
+Manage state for search results (e.g., using React state, Vuex, Redux).
+Manage error state from API calls.
+Phase 4: Frontend - Displaying Single Patient Result
+Create a component to render a single patient record summary (as per screenshot: Name, DOB/Age, Sex, Cellphone, NUPN, ART No., Mother's Name).
+Create components for or integrate existing components for the action buttons ("Edit Profile," "Admission," etc.).
+When API returns a single match, render this component with the patient's data and associated action buttons.
+Phase 5: Frontend - Displaying Multiple Patient Results
+Design and develop a component to render a list or table of patient summaries.
+Each item in the list should display key identifiers and its own set of action buttons (or a selection mechanism).
+When API returns multiple matches, render this list.
+Consider pagination if results can be numerous.
+Phase 6: Frontend - Handling No Results and Messages
+Implement logic to display a "No patient records found" message when appropriate.
+Display any other relevant messages (e.g., count of results).
+Phase 7: Testing
+Unit Tests: Test individual components (result display, button functionality, input validation).
+Integration Tests: Test frontend API calling and data handling.
+End-to-End Tests: Test the full search workflow for all search types and result scenarios (single, multiple, none, error).
+UX Testing: Verify usability, clarity, and responsiveness.
+Phase 8: Deployment
+Deploy changes to a staging environment for review.
+Deploy to production.
+7. Do not make changes that will break other features within the application; keep the scope of your enhancements limited to just the feature request.
+
+Understood. This plan focuses solely on implementing the patient search input and the display of search results as described. The functionalities triggered by the action buttons (e.g., "Edit Profile," "Admission") are considered separate features; this plan only covers displaying the buttons and ensuring they can pass the correct patient context if clicked.
+
+8. Then, identify how the technical changes will be made and propose it in a skeleton framework.
+
+(Assuming a common web application stack, e.g., React/Angular/Vue frontend with a REST API backend. This is a conceptual skeleton.)
+
+Frontend (e.g., React)
+
+PatientSearchPage Component (or SearchOrAddNewPatientPage):
+
+State: searchType, searchTerm, searchResults (array), isLoading, errorMessage, noResultsMessage.
+Render:
+<SearchTypeSelector onChange={handleSearchTypeChange} value={searchType} /> (NRC, ART Number, etc.)
+<SearchInput onChange={handleSearchTermChange} value={searchTerm} />
+<SearchButton onClick={performSearch} disabled={isLoading} />
+{isLoading && <LoadingSpinner />}
+{errorMessage && <ErrorMessage text={errorMessage} />}
+{noResultsMessage && <InfoMessage text={noResultsMessage} />}
+{searchResults.length === 1 && <SinglePatientRecordDisplay patient={searchResults[0]} />}
+{searchResults.length > 1 && <MultiplePatientResultsDisplay results={searchResults} />}
+Methods:
+handleSearchTypeChange(newType): Update searchType.
+handleSearchTermChange(newTerm): Update searchTerm.
+validateInputs(): Client-side validation.
+performSearch():
+If validateInputs() fails, show errors.
+setIsLoading(true).
+Call patientApiService.searchPatients(searchType, searchTerm).
+On success:
+setSearchResults(response.data).
+If response.data.length === 0, setNoResultsMessage(...).
+On error: setErrorMessage(...).
+setIsLoading(false).
+SinglePatientRecordDisplay Component:
+
+Props: patient (object).
+Render:
+Display patient's full name, DOB/Age, Sex, Cellphone, NUPN, ART No., Mother's Name.
+<PatientActionButtons patientId={patient.id} /> (containing "Edit Profile", "Admission" etc. which handle their own navigation/logic).
+MultiplePatientResultsDisplay Component:
+
+Props: results (array of patient objects).
+Render:
+A list or table.
+For each patient in results:
+<PatientSummaryRow patient={patient} /> (displays key identifiers).
+<PatientActionButtons patientId={patient.id} /> (associated with that row).
+PatientActionButtons Component:
+
+Props: patientId.
+Render: Buttons like "Edit Profile," "Admission," "Appointment," etc.
+Each button's onClick would trigger navigation or an action, passing patientId. Example: MapsTo(/patient/${patientId}/edit).
+patientApiService (Service/Module):
+
+searchPatients(searchType, searchTerm):
+Construct API request (e.g., GET /api/patients?type={searchType}&term={searchTerm}).
+Return Promise that resolves with API response or rejects with error.
+Backend (Conceptual REST API Endpoint)
+
+GET /api/patients
+Query Parameters:
+type (String: "nrc", "art_number", "nupn", "cellphone", "full_name")
+term (String: the actual search value)
+Response (JSON):
+Success (200 OK):
+JSON
+
+// Single result
+[{ "id": "123", "fullName": "Susan Butler", "dob": "2014-12-10", "age": 10, "sex": "Female", ...otherFields }]
+// Multiple results
+[
+  { "id": "123", "fullName": "Susan Butler", ... },
+  { "id": "456", "fullName": "Susan Another", ... }
+]
+// No results
+[]
+Error (e.g., 400 Bad Request for invalid params, 500 Internal Server Error):
+JSON
+
+{ "error": "Error message" }
+Do not proceed until I have confirmed your approach & understanding is sound.
+
+Please review this detailed breakdown for the "Displaying Patient Record Search Results" feature. Confirm if it accurately reflects your requirements and if the proposed approach aligns with your vision for the SmartCare PRO application.
+
+
+Sources

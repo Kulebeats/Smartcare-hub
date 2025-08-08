@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Linear gradient for the background -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#e6f2ff" />
+    </linearGradient>
+    
+    <!-- Gradient for ECG lines -->
+    <linearGradient id="ecgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2096F3" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#2096F3" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#2096F3" stop-opacity="0.1" />
+    </linearGradient>
+    
+    <!-- Filter for subtle shadow effect -->
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+    </filter>
+  </defs>
+  
+  <!-- Background rectangle with gradient -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)" />
+  
+  <!-- ECG patterns with different opacities and positions -->
+  <g opacity="0.4">
+    <!-- First ECG line -->
+    <path d="M-100 200 L300 200 L320 180 L340 220 L360 180 L380 320 L400 80 L420 200 L1300 200" 
+          stroke="url(#ecgGradient)" 
+          stroke-width="2" 
+          fill="none" />
+    
+    <!-- Second ECG line -->
+    <path d="M-100 400 L200 400 L220 380 L240 420 L260 380 L280 520 L300 280 L320 400 L1300 400" 
+          stroke="url(#ecgGradient)" 
+          stroke-width="2" 
+          fill="none" />
+    
+    <!-- Third ECG line -->
+    <path d="M-100 600 L400 600 L420 580 L440 620 L460 580 L480 720 L500 480 L520 600 L1300 600" 
+          stroke="url(#ecgGradient)" 
+          stroke-width="2" 
+          fill="none" />
+    
+    <!-- Fourth ECG line (more vertical) -->
+    <path d="M300 -100 L300 150 L280 170 L320 190 L280 210 L420 230 L180 250 L300 270 L300 900" 
+          stroke="url(#ecgGradient)" 
+          stroke-width="2" 
+          fill="none" />
+    
+    <!-- Fifth ECG line (more vertical) -->
+    <path d="M900 -100 L900 250 L880 270 L920 290 L880 310 L1020 330 L780 350 L900 370 L900 900" 
+          stroke="url(#ecgGradient)" 
+          stroke-width="2" 
+          fill="none" />
+  </g>
+  
+  <!-- Softer ECG patterns with blur for depth -->
+  <g opacity="0.2" filter="url(#blur)">
+    <!-- Blurred ECG line 1 -->
+    <path d="M50 100 L450 100 L470 80 L490 120 L510 80 L530 220 L550 -20 L570 100 L1450 100" 
+          stroke="#2096F3" 
+          stroke-width="4" 
+          fill="none" />
+    
+    <!-- Blurred ECG line 2 -->
+    <path d="M-50 300 L350 300 L370 280 L390 320 L410 280 L430 420 L450 180 L470 300 L1350 300" 
+          stroke="#2096F3" 
+          stroke-width="4" 
+          fill="none" />
+    
+    <!-- Blurred ECG line 3 -->
+    <path d="M-150 500 L250 500 L270 480 L290 520 L310 480 L330 620 L350 380 L370 500 L1250 500" 
+          stroke="#2096F3" 
+          stroke-width="4" 
+          fill="none" />
+    
+    <!-- Blurred ECG line 4 -->
+    <path d="M-200 700 L200 700 L220 680 L240 720 L260 680 L280 820 L300 580 L320 700 L1200 700" 
+          stroke="#2096F3" 
+          stroke-width="4" 
+          fill="none" />
+  </g>
+  
+  <!-- Subtle grid pattern for depth -->
+  <g opacity="0.05">
+    <!-- Horizontal lines -->
+    <line x1="0" y1="0" x2="1200" y2="0" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="50" x2="1200" y2="50" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="100" x2="1200" y2="100" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="150" x2="1200" y2="150" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="200" x2="1200" y2="200" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="250" x2="1200" y2="250" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="350" x2="1200" y2="350" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="400" x2="1200" y2="400" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="450" x2="1200" y2="450" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="500" x2="1200" y2="500" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="550" x2="1200" y2="550" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="600" x2="1200" y2="600" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="650" x2="1200" y2="650" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="700" x2="1200" y2="700" stroke="#2096F3" stroke-width="1" />
+    <line x1="0" y1="750" x2="1200" y2="750" stroke="#2096F3" stroke-width="1" />
+    
+    <!-- Vertical lines -->
+    <line x1="0" y1="0" x2="0" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="50" y1="0" x2="50" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="100" y1="0" x2="100" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="150" y1="0" x2="150" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="200" y1="0" x2="200" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="250" y1="0" x2="250" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="300" y1="0" x2="300" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="350" y1="0" x2="350" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="400" y1="0" x2="400" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="450" y1="0" x2="450" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="500" y1="0" x2="500" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="550" y1="0" x2="550" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="600" y1="0" x2="600" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="650" y1="0" x2="650" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="700" y1="0" x2="700" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="750" y1="0" x2="750" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="800" y1="0" x2="800" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="850" y1="0" x2="850" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="900" y1="0" x2="900" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="950" y1="0" x2="950" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="1000" y1="0" x2="1000" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="1050" y1="0" x2="1050" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="1100" y1="0" x2="1100" y2="800" stroke="#2096F3" stroke-width="1" />
+    <line x1="1150" y1="0" x2="1150" y2="800" stroke="#2096F3" stroke-width="1" />
+  </g>
+</svg>

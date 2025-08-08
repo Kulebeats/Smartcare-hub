@@ -1,0 +1,65 @@
+Given (The Context):
+
+User State: [e.g., The user is logged in as an 'Editor'.]
+
+Application State: [e.g., The user is viewing a 'Published' article on the /articles/{id} page.]
+
+Relevant Data: [e.g., The article with id {id} exists in the database and currently has 42 comments.]
+
+When (The Trigger):
+
+Action: [Describe the specific user action or sequence of actions, e.g., The user types "This is a new comment" into the comment input box and clicks the 'Submit' button.]
+
+Then (The Expected Outcome):
+
+UI Changes: [e.g., The new comment appears at the top of the comment list without a page reload. The comment count updates from 42 to 43. The input box is cleared.]
+
+Data Changes: [e.g., A new record is created in the 'comments' database table, associated with the correct article_id and user_id.]
+
+Side-Effects: [e.g., A notification is sent to the author of the article. No other users are notified.]
+
+2. Scope and Constraints
+In Scope: [Clearly define what this task includes, e.g., Frontend UI changes, backend API endpoint, and database update for adding a comment.]
+
+Out of Scope: [Explicitly state what to avoid, e.g., Do not implement comment editing, deletion, or nested replies in this task.]
+
+Technical Constraints: [Mention any specific libraries, frameworks, or patterns that must be used or avoided, e.g., Use the existing useApi hook for the frontend call. Do not introduce new external libraries.]
+
+3. Analysis and Implementation Plan
+Before proceeding, provide a detailed response covering the following points:
+
+Confirm Your Understanding:
+
+Restate the primary business goal of this feature.
+
+Paraphrase the Given-When-Then requirements to confirm your interpretation.
+
+Propose a Step-by-Step Plan:
+
+Break down the implementation into discrete, ordered steps covering:
+
+Backend/API: [e.g., 1. Create a new POST /api/articles/{id}/comments endpoint...]
+
+Database: [e.g., 2. Add validation rules to the new endpoint...]
+
+Frontend: [e.g., 3. Modify the CommentForm component to handle state and API submission...]
+
+Testing: [e.g., 4. Write a unit test for the new API endpoint and an integration test for the form submission.]
+
+Outline the Technical Framework:
+
+List the specific files you intend to create or modify.
+
+Provide a skeleton/pseudo-code for new functions, classes, or components.
+
+Assess Key Considerations & Best Practices:
+
+Security: How will you ensure the new functionality is secure (e.g., input sanitization, authorization checks)?
+
+Performance: Are there any performance implications (e.g., database queries, UI rendering)? How will you mitigate them?
+
+User Experience (UX): Propose how to handle loading states, error states (e.g., network failure, validation errors), and success feedback for the user.
+
+Maintainability: How will your changes align with existing code style and architectural patterns?
+
+Final Instruction: Do not write or apply any code until I have reviewed and approved your entire plan.

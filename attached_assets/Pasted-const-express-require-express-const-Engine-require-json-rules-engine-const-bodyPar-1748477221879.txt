@@ -1,0 +1,402 @@
+const express = require('express');
+const { Engine } = require('json-rules-engine');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const morgan = require('morgan');
+const Joi = require('joi');
+const fs = require('fs').promises;
+const path = require('path');
+
+const app = express();
+
+// Security and performance middleware
+app.use(helmet());
+app.use(compression());
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  credentials: true
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
+// Body parsing
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Logging
+app.use(morgan('combined'));
+
+// Global variables
+let dangerSignsRules = [];
+let ruleStats = {
+  totalRules: 0,
+  lastReloaded: null,
+  categoryCounts: {}
+};
+
+// Validation schemas
+const alertRequestSchema = Joi.object({
+  patientId: Joi.string().optional(),
+  field: Joi.string().required(),
+  value: Joi.alternatives().try(Joi.boolean(), Joi.string(), Joi.number()).required(),
+  context: Joi.object().optional().default({}),
+  metadata: Joi.object({
+    gestationalAge: Joi.string().optional(),
+    providerId: Joi.string().optional(),
+    facilityId: Joi.string().optional()
+  }).optional()
+});
+
+const bulkAlertSchema = Joi.object({
+  patientId: Joi.string().optional(),
+  symptoms: Joi.object().required(),
+  metadata: Joi.object({
+    gestationalAge: Joi.string().optional(),
+    providerId: Joi.string().optional(),
+    facilityId: Joi.string().optional()
+  }).optional()
+});
+
+// Load danger signs rules from JSON file
+async function loadDangerSignsRules() {
+  try {
+    const rulesPath = path.join(__dirname, 'rules', 'danger-signs.json');
+    const data = await fs.readFile(rulesPath, 'utf-8');
+    dangerSignsRules = JSON.parse(data);
+    
+    // Update statistics
+    ruleStats.totalRules = dangerSignsRules.length;
+    ruleStats.lastReloaded = new Date().toISOString();
+    ruleStats.categoryCounts = dangerSignsRules.reduce((acc, rule) => {
+      acc[rule.category] = (acc[rule.category] || 0) + 1;
+      return acc;
+    }, {});
+    
+    console.log(`✅ Loaded ${dangerSignsRules.length} danger signs rules`);
+    console.log(`📊 Categories: ${Object.keys(ruleStats.categoryCounts).join(', ')}`);
+  } catch (err) {
+    console.error('❌ Error loading danger signs rules:', err.message);
+    throw err;
+  }
+}
+
+// Initialize rules engine with loaded rules
+function createRulesEngine(rules, facts) {
+  const engine = new Engine();
+  
+  rules
+    .sort((a, b) => a.priority - b.priority) // Sort by priority
+    .forEach(rule => {
+      const conditions = {
+        all: Object.entries(rule.conditions).map(([fact, expected]) => {
+          if (fact === 'gestationalAge') {
+            // Handle gestational age comparisons
+            const match = expected.match(/([<>]=?)\s*(\d+)/);
+            if (match) {
+              const operator = match[1] === '<' ? 'lessThan' : 
+                             match[1] === '<=' ? 'lessThanInclusive' :
+                             match[1] === '>' ? 'greaterThan' : 'greaterThanInclusive';
+              return {
+                fact: 'gestationalAgeWeeks',
+                operator,
+                value: parseInt(match[2])
+              };
+            }
+          }
+          
+          return {
+            fact,
+            operator: 'equal',
+            value: expected
+          };
+        })
+      };
+      
+      engine.addRule({
+        conditions,
+        event: { 
+          type: rule.id, 
+          params: { 
+            ...rule.action,
+            ruleId: rule.id,
+            category: rule.category,
+            priority: rule.priority
+          }
+        }
+      });
+    });
+  
+  return engine;
+}
+
+// Helper function to extract gestational age in weeks
+function parseGestationalAge(ageString) {
+  if (!ageString) return null;
+  const match = ageString.match(/(\d+)/);
+  return match ? parseInt(match[1]) : null;
+}
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    rulesLoaded: ruleStats.totalRules > 0,
+    uptime: process.uptime()
+  });
+});
+
+// Rules statistics endpoint
+app.get('/api/v1/rules/stats', (req, res) => {
+  res.json(ruleStats);
+});
+
+// Admin endpoint to reload rules
+app.post('/admin/rules/reload/anc/danger-signs', async (req, res) => {
+  try {
+    await loadDangerSignsRules();
+    res.json({ 
+      message: 'Danger signs rules reloaded successfully',
+      stats: ruleStats
+    });
+  } catch (error) {
+    console.error('Error reloading rules:', error);
+    res.status(500).json({ 
+      error: 'Failed to reload rules',
+      message: error.message 
+    });
+  }
+});
+
+// Single field alert evaluation
+app.post('/api/v1/alerts/danger-signs', async (req, res) => {
+  try {
+    // Validate request
+    const { error, value } = alertRequestSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: error.details[0].message
+      });
+    }
+    
+    const { field, value: fieldValue, context, metadata, patientId } = value;
+    
+    // Prepare facts for rules engine
+    const facts = { 
+      ...context, 
+      [field]: fieldValue 
+    };
+    
+    // Add gestational age in weeks if provided
+    if (metadata?.gestationalAge) {
+      facts.gestationalAgeWeeks = parseGestationalAge(metadata.gestationalAge);
+    }
+    
+    // Create and run rules engine
+    const engine = createRulesEngine(dangerSignsRules, facts);
+    const results = await engine.run(facts);
+    
+    // Process results
+    const alerts = results.events.map(event => ({
+      ...event.params,
+      timestamp: new Date().toISOString(),
+      patientId: patientId || null
+    }));
+    
+    // Sort alerts by priority (lower number = higher priority)
+    alerts.sort((a, b) => a.priority - b.priority);
+    
+    res.json({
+      success: true,
+      alertCount: alerts.length,
+      alerts,
+      metadata: {
+        evaluatedAt: new Date().toISOString(),
+        rulesEvaluated: dangerSignsRules.length,
+        patientId: patientId || null
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error in danger signs evaluation:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to evaluate danger signs'
+    });
+  }
+});
+
+// Bulk symptoms evaluation
+app.post('/api/v1/alerts/danger-signs/bulk', async (req, res) => {
+  try {
+    // Validate request
+    const { error, value } = bulkAlertSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: error.details[0].message
+      });
+    }
+    
+    const { symptoms, metadata, patientId } = value;
+    
+    // Prepare facts for rules engine
+    const facts = { ...symptoms };
+    
+    // Add gestational age in weeks if provided
+    if (metadata?.gestationalAge) {
+      facts.gestationalAgeWeeks = parseGestationalAge(metadata.gestationalAge);
+    }
+    
+    // Create and run rules engine
+    const engine = createRulesEngine(dangerSignsRules, facts);
+    const results = await engine.run(facts);
+    
+    // Process results
+    const alerts = results.events.map(event => ({
+      ...event.params,
+      timestamp: new Date().toISOString(),
+      patientId: patientId || null
+    }));
+    
+    // Sort alerts by priority and group by severity
+    alerts.sort((a, b) => a.priority - b.priority);
+    
+    const groupedAlerts = alerts.reduce((acc, alert) => {
+      if (!acc[alert.severity]) acc[alert.severity] = [];
+      acc[alert.severity].push(alert);
+      return acc;
+    }, {});
+    
+    // Calculate risk score
+    const riskScore = alerts.reduce((score, alert) => {
+      const weights = { 'Red': 10, 'Orange': 5, 'Yellow': 2 };
+      return score + (weights[alert.severity] || 0);
+    }, 0);
+    
+    res.json({
+      success: true,
+      riskScore,
+      alertCount: alerts.length,
+      alerts,
+      groupedBySeverity: groupedAlerts,
+      summary: {
+        red: groupedAlerts.Red?.length || 0,
+        orange: groupedAlerts.Orange?.length || 0,
+        yellow: groupedAlerts.Yellow?.length || 0
+      },
+      metadata: {
+        evaluatedAt: new Date().toISOString(),
+        rulesEvaluated: dangerSignsRules.length,
+        patientId: patientId || null,
+        gestationalAge: metadata?.gestationalAge || null
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error in bulk danger signs evaluation:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to evaluate danger signs'
+    });
+  }
+});
+
+// Get available danger sign categories
+app.get('/api/v1/danger-signs/categories', (req, res) => {
+  const categories = [...new Set(dangerSignsRules.map(rule => rule.category))];
+  res.json({
+    categories,
+    counts: ruleStats.categoryCounts
+  });
+});
+
+// Get rules by category
+app.get('/api/v1/danger-signs/rules/:category', (req, res) => {
+  const { category } = req.params;
+  const categoryRules = dangerSignsRules.filter(rule => rule.category === category);
+  
+  if (categoryRules.length === 0) {
+    return res.status(404).json({
+      error: 'Category not found',
+      availableCategories: Object.keys(ruleStats.categoryCounts)
+    });
+  }
+  
+  res.json({
+    category,
+    ruleCount: categoryRules.length,
+    rules: categoryRules.map(rule => ({
+      id: rule.id,
+      priority: rule.priority,
+      conditions: rule.conditions,
+      action: rule.action
+    }))
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Endpoint not found',
+    availableEndpoints: [
+      'GET /health',
+      'GET /api/v1/rules/stats',
+      'POST /api/v1/alerts/danger-signs',
+      'POST /api/v1/alerts/danger-signs/bulk',
+      'GET /api/v1/danger-signs/categories',
+      'GET /api/v1/danger-signs/rules/:category',
+      'POST /admin/rules/reload/anc/danger-signs'
+    ]
+  });
+});
+
+// Initialize server
+async function startServer() {
+  try {
+    // Load rules on startup
+    await loadDangerSignsRules();
+    
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 SmartCare Pro ANC Backend running on port ${PORT}`);
+      console.log(`📋 Loaded ${ruleStats.totalRules} danger signs rules`);
+      console.log(`🏥 Ready to evaluate ANC danger signs`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT, shutting down gracefully');
+  process.exit(0);
+});
+
+// Start the server

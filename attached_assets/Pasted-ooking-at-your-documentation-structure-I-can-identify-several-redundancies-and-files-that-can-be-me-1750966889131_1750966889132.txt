@@ -1,0 +1,62 @@
+ooking at your documentation structure, I can identify several redundancies and files that can be merged or removed. Let me analyze the docs and related files:
+
+Redundancies Found:
+1. Duplicate Documentation Files:
+BestPractices.md (root) and docs/BestPractices.md
+DataStructure.md (root) and docs/DATA_STRUCTURE_COMPREHENSIVE.md
+Features.md (root) and docs/Features.md
+Overview.md (root) and docs/Overview.md
+Performance.md (root) and docs/Performance.md
+Technical.md (root) and docs/Technical.md
+Usage.md (root) and docs/Usage.md
+UserStories.md (root) and docs/UserStories.md
+2. Overlapping Implementation Summaries:
+docs/ART_NUMBER_SEARCH_IMPLEMENTATION_SUMMARY.md
+docs/CSV_UPLOAD_IMPLEMENTATION_SUMMARY.md
+docs/PERFORMANCE_OPTIMIZATION_SUMMARY.md
+docs/SECURITY_VALIDATION_SUMMARY.md
+docs/SMARTCARE_PRO_IMPLEMENTATION_SUMMARY.md
+docs/SYSTEM_STATUS_JUNE_8_2025.md
+docs/MODULE_EXTRACTION_SUMMARY.md
+These can be consolidated into docs/IMPLEMENTATION_SUMMARIES.md
+
+3. Architecture Documentation Overlap:
+docs/BACKEND_ARCHITECTURE_OVERVIEW.md
+docs/BACKEND_ARCHITECTURE_COMPREHENSIVE.md
+docs/CDSS_Architecture_Overview.md
+These should be merged into a single comprehensive architecture document.
+
+4. Backup/Corrupted Files:
+server/routes.ts.backup
+server/routes.ts.corrupted
+server/routes_clean.ts
+server/routes-fixed.ts
+server/storage-clean.ts
+5. Old/Unused Scripts:
+create-admin.ts (root) - duplicate of scripts/create-new-admin.ts
+create-test-users.ts (root) - duplicate functionality in scripts folder
+Multiple test files in root that should be in __tests__ folder
+6. Export/Module Files:
+art_pharmacovigilance_export.tsx
+prep_module_export.tsx
+art_pharmacovigilance_modules.zip
+Proposed Actions:
+Remove duplicate root-level docs (keep docs/ versions)
+Consolidate implementation summaries into single file
+Merge architecture docs into comprehensive guide
+Remove backup/corrupted files
+Clean up root-level scripts (move to scripts/ or remove)
+Remove old export files
+Consolidate test files in proper directory
+Files to Remove (23 files):
+
+Root: BestPractices.md, DataStructure.md, Features.md, Overview.md, Performance.md, Technical.md, Usage.md, UserStories.md
+Root scripts: create-admin.ts, create-test-users.ts
+Backup files: server/routes.ts.backup, server/routes.ts.corrupted, server/routes_clean.ts, server/routes-fixed.ts, server/storage-clean.ts
+Individual implementation summaries: 6 files
+Export files: 3 files
+Files to Merge:
+
+Architecture docs into single comprehensive document
+Implementation summaries into consolidated guide
+Should I proceed with removing these redundant files and consolidating the documentation structure?

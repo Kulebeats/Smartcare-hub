@@ -1,0 +1,609 @@
+ANC Referral Sub-Module Requirements (SmartCare Pro)
+
+1. Overview
+
+Module Purpose: Enable routine and emergency antenatal referrals through automated clinical decision-support and clinician-initiated workflows in SmartCare Pro.
+
+Scope:
+
+Routine and emergency referrals
+
+Referral form generation 
+
+Referral condition screening (rule-based)
+
+Referral registry and patient timeline integration
+
+2. Routine Referrals
+
+2.1 Functional Requirements
+
+ID
+
+Requirement
+
+Type
+
+Logic Source
+
+RR-FR1
+
+Auto-screen all ANC clients for referral eligibility at every visit
+
+Automated
+
+Zambia Guidelines, WHO
+
+RR-FR2
+
+Prompt provider to initiate referral when risk conditions are met
+
+Automated
+
+System
+
+RR-FR3
+
+Allow clinician to manually initiate referral with reason
+
+Manual
+
+Clinician judgment
+
+RR-FR4
+
+Auto-populate referral form with patient demographics and ANC data
+
+Automated
+
+ANC module
+
+RR-FR5
+
+Allow print/export of referral form
+
+Manual
+
+Referral screen
+
+
+
+Automated
+
+
+
+
+
+RR-FR7
+
+Track status as: Pending, Completed, Cancelled
+
+Manual
+
+Referral registry
+
+RR-FR8
+
+Link referrals to patient timeline and history
+
+Automated
+
+Patient module
+
+2.2 Data Elements
+
+Field
+
+Type
+
+Required
+
+Source
+
+Referral reason
+
+Dropdown + text
+
+Yes
+
+Logic/User
+
+Referral type
+
+Dropdown
+
+Yes
+
+System
+
+add Gestational age
+
+Auto
+
+Yes
+
+ANC encounter
+
+Destination facility
+
+Lookup
+
+Yes
+
+Facility registry
+
+Provider name
+
+Auto
+
+Yes
+
+System
+
+
+
+
+
+
+
+
+
+Referral notes
+
+Text
+
+Optional
+
+Manual entry
+
+Referral date
+
+Auto
+
+Yes
+
+System timestamp
+
+3. Emergency Referrals
+
+3.1 Functional Requirements
+
+ID
+
+Requirement
+
+Type
+
+Logic Source
+
+ER-FR1
+
+Auto-flag emergency conditions from ANC visit data
+
+Automated
+
+Zambia Guidelines
+
+ER-FR2
+
+Display emergency-specific pre-referral checklist
+
+Automated
+
+Checklist module
+
+ER-FR3
+
+Allow manual initiation of emergency referral
+
+Manual
+
+Clinician
+
+ER-FR4
+
+Include pre-referral interventions in referral form
+
+Manual
+
+Referral screen
+
+ER-FR5
+
+Display emergency referrals at top of referral dashboard
+
+Automated
+
+UI configuration
+
+ER-FR6
+
+Log referral initiation timestamp and provider
+
+Auto
+
+System log
+
+ER-FR7
+
+Record referral form print/export for emergency case
+
+Auto/manual
+
+Referral screen
+
+ER-FR8
+
+Provide link to National Maternal Referral Checklist
+
+Auto
+
+System
+
+3.2 Emergency Referral Logic Triggers
+
+Condition
+
+Trigger
+
+Source
+
+Severe Preeclampsia/Eclampsia
+
+Immediate
+
+MOH Guidelines
+
+Antepartum haemorrhage
+
+Immediate
+
+
+
+Severe anaemia (<8 g/dL)
+
+Referral to 2nd level
+
+
+
+Multiple pregnancy + IUGR
+
+Referral ≥34 wks
+
+
+
+Cardiac disease + respiratory distress
+
+Urgent
+
+
+
+4. Workflow Requirements
+
+4.1 Standard Workflow
+
+ANC visit initiated
+
+System checks for referral conditions
+
+System prompts or clinician initiates referral
+
+Referral details auto-filled; clinician edits as needed
+
+Referral form is printed or saved
+
+Referral is logged in patient timeline
+
+4.2 Linked Modules
+
+ANC module
+
+Patient summary
+
+Referral registry
+
+Facility master list
+
+5. Reporting & Audit
+
+Total referrals (routine/emergency)
+
+% of referrals with forms printed
+
+Referral turnaround time
+
+Top 5 referral conditions
+
+Referral status tracking report
+
+6. Decision-Support Logic Appendix (Summary)
+
+Condition
+
+Referral Type
+
+Target Facility
+
+Trigger Logic
+
+BOH + Grand Multiparity
+
+Routine
+
+1st level
+
+Booking visit, if G ≥5
+
+Placenta Praevia
+
+Emergency
+
+2nd level
+
+Based on ultrasound or bleeding
+
+PROM at <37 weeks
+
+Emergency
+
+2nd level
+
+System flags based on EDD
+
+Teenage pregnancy (<16 years)
+
+Routine
+
+1st level
+
+Booking age verification
+
+Paper-based workflows are accommodated through printable referral forms and manual tracking, while real-time facility feedback is currently out of scope.
+
+7. Maternal Emergency Referral Checklist – System Requirements
+
+The sub‑module shall support structured capture of the national Maternal Emergency Checklist items. Each checklist element is represented as a discrete data field with validation and audit logging.
+
+ID
+
+Checklist Element
+
+Requirement Statement
+
+Data Type
+
+Mandatory?
+
+CHK-FR1
+
+Receiving facility contacted
+
+System shall provide a Yes/No/N/A field to confirm that the receiving facility has been contacted.
+
+Enum
+
+Yes
+
+CHK-FR2
+
+Reason for referral communicated
+
+System shall capture a Yes/No toggle indicating whether the reason for referral was communicated.
+
+Boolean
+
+Yes
+
+CHK-FR3
+
+Co‑morbid conditions communicated
+
+System shall capture a Yes/No toggle for communicating co‑morbid conditions (e.g., cardiac, hypertension).
+
+Boolean
+
+Yes
+
+CHK-FR4
+
+General condition of patient communicated
+
+System shall capture confirmation (Yes/No) that patient consciousness level was shared.
+
+Boolean
+
+Yes
+
+CHK-FR5
+
+Blood group & Hb communicated
+
+System shall capture Yes/No confirmation that blood group & Hb were communicated.
+
+Boolean
+
+Yes
+
+CHK-FR6
+
+IV access secured
+
+System shall record whether IV access was established (Yes/No).
+
+Boolean
+
+Yes
+
+CHK-FR7
+
+Urinary catheter inserted
+
+System shall record catheter insertion status (Yes/No).
+
+Boolean
+
+Yes
+
+CHK-FR8
+
+Blood samples collected (3 bottles)
+
+System shall record completion of blood collection (Yes/No).
+
+Boolean
+
+Yes
+
+CHK-FR9
+
+Bedside clotting test done
+
+System shall record results of bedside clotting test (Normal/Abnormal/Not done).
+
+Enum
+
+Yes
+
+CHK-FR10
+
+Urinalysis done
+
+System shall record urinalysis completion (Yes/No).
+
+Boolean
+
+Yes
+
+CHK-FR11
+
+IV fluids administered
+
+System shall record whether IV fluids were given and volume/type.
+
+Object
+
+Conditional
+
+CHK-FR12
+
+Observations – BP
+
+System shall capture numeric BP reading (systolic/diastolic).
+
+Numeric
+
+Yes
+
+CHK-FR13
+
+Observations – Pulse
+
+System shall capture pulse rate (bpm).
+
+Numeric
+
+Yes
+
+CHK-FR14
+
+Observations – Temperature
+
+System shall capture temperature (°C).
+
+Numeric
+
+Yes
+
+CHK-FR15
+
+Observations – Respiratory rate
+
+System shall capture respiratory rate (breaths/min).
+
+Numeric
+
+Yes
+
+CHK-FR16
+
+Appropriate drugs given
+
+System shall allow entry of administered drugs with dosage and time.
+
+Object
+
+Conditional
+
+CHK-FR17
+
+Anti‑shock garment/UBT applied
+
+System shall record Yes/No for application of anti‑shock garment or UBT.
+
+Boolean
+
+Conditional
+
+CHK-FR18
+
+Estimated blood loss documented
+
+System shall capture estimated blood loss in mL.
+
+Numeric
+
+Conditional
+
+CHK-FR19
+
+Patient positioned appropriately
+
+System shall record Yes/No for correct transfer positioning.
+
+Boolean
+
+Conditional
+
+CHK-FR20
+
+Details discussed with patient/family
+
+System shall capture confirmation (Yes/No) that referral details were explained to patient/family.
+
+Boolean
+
+Yes
+
+CHK-FR21
+
+Referral form completed
+
+System shall enforce completion of digital referral form before closure.
+
+System Validation
+
+Yes
+
+CHK-FR22
+
+Referral register updated
+
+System shall update referral registry automatically upon form completion.
+
+Auto
+
+Yes
+
+Validation Rules
+
+All mandatory checklist fields must be completed before the referral can move to a Pending status.
+
+Conditional fields become mandatory when the related clinical context exists (e.g., blood loss > 0 mL makes CHK‑FR18 mandatory).
+
+Audit trail must capture user ID, timestamp, and any edits for each checklist element.
+
+User Interface Notes
+
+Checklist presented as a collapsible panel within the emergency referral form.
+
+Green/red indicators show completion status for each item

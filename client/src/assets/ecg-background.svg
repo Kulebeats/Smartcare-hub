@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F0F9FF"/>
+  
+  <!-- ECG Line Pattern -->
+  <path d="M0 400 
+           L100 400 
+           L150 400 
+           L200 300 
+           L250 500 
+           L280 150 
+           L310 650 
+           L350 400 
+           L450 400 
+           L550 400 
+           L600 300 
+           L650 500 
+           L680 150 
+           L710 650 
+           L750 400 
+           L850 400 
+           L950 400 
+           L1000 300 
+           L1050 500 
+           L1080 150 
+           L1110 650 
+           L1150 400 
+           L1200 400" 
+        stroke="#AEDEE8" stroke-width="3" fill="none"/>
+  
+  <!-- Medical Symbols Pattern - Faded -->
+  <g opacity="0.05">
+    <!-- Repeated medical symbols -->
+    <g transform="translate(100, 100)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(300, 200)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(700, 150)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(900, 300)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(200, 500)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(500, 600)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(800, 650)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+    
+    <g transform="translate(1100, 400)">
+      <circle cx="0" cy="0" r="20" fill="#000000"/>
+      <rect x="-2" y="-15" width="4" height="30" fill="#FFFFFF"/>
+      <rect x="-15" y="-2" width="30" height="4" fill="#FFFFFF"/>
+    </g>
+  </g>
+</svg>

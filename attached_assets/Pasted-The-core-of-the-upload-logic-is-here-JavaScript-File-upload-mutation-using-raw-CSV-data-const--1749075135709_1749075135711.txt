@@ -1,0 +1,146 @@
+The core of the upload logic is here:
+
+JavaScript
+
+// File upload mutation using raw CSV data
+const uploadMutation = useMutation({
+  mutationFn: async (file: File) => {
+    // Read file as text to send as raw CSV data
+    const csvData = await file.text(); // 1. Read file content
+
+    // Use the raw CSV upload endpoint to bypass multipart form issues
+    const response = await fetch('/api/admin/dak/upload-csv-raw', { // 2. API Endpoint
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // 3. Sending JSON
+      },
+      body: JSON.stringify({ // 4. Payload is a JSON object
+        csvData: csvData,     // containing the CSV string
+        fileName: file.name
+      }),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const error = await response.json(); // 5. Assumes error response is JSON
+      throw new Error(error.message || 'Upload failed');
+    }
+
+    return await response.json(); // 6. Assumes success response is JSON
+  },
+  onSuccess: (data) => { /* ... */ },
+  onError: (error: any) => { /* ... */ },
+});
+Here's a breakdown of potential failure points and how to debug them:
+
+1. Backend Expectation Mismatch (Most Likely)
+
+Problem: The comment // Use the raw CSV upload endpoint to bypass multipart form issues and the endpoint name /api/admin/dak/upload-csv-raw strongly suggest the backend might be expecting the raw CSV text directly in the request body, perhaps with a Content-Type: text/csv or Content-Type: application/octet-stream. However, your frontend code is explicitly setting Content-Type: 'application/json' and sending a JSON object: { "csvData": "...", "fileName": "..." }.
+Why it fails: If the backend expects raw CSV text, it won't know how to parse the JSON wrapper. It might try to interpret the JSON string itself as CSV data, leading to errors. Or, it might reject the request due to an unexpected Content-Type.
+Solution/Debug Steps:
+Verify Backend Expectations: This is crucial. Check the backend code for the /api/admin/dak/upload-csv-raw endpoint.
+What Content-Type does it expect?
+How does it read the request body? Is it looking for req.body.csvData (if it's parsing JSON) or req.body directly (if it's expecting raw text/CSV)?
+Option A: Backend expects JSON (as your code sends):
+Ensure the backend is correctly parsing the JSON: const { csvData, fileName } = req.body; (or equivalent in your backend framework).
+The backend then needs to process the csvData string.
+Option B: Backend expects raw CSV text:
+Modify your mutationFn:
+JavaScript
+
+mutationFn: async (file: File) => {
+  const csvData = await file.text();
+  const response = await fetch('/api/admin/dak/upload-csv-raw', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/csv', // Or 'application/octet-stream'
+      // You might need to send filename via a custom header if backend needs it
+      'X-File-Name': file.name,
+    },
+    body: csvData, // Send the raw CSV string directly
+    credentials: 'include',
+  });
+  // ... rest of the logic
+}
+The backend would then read the raw request body and use the X-File-Name header if needed.
+Option C: Backend expects multipart/form-data (despite the comment): Sometimes, initial intentions (like avoiding multipart) change, or there's a misunderstanding. If the backend actually expects a form data upload:
+JavaScript
+
+mutationFn: async (file: File) => {
+  const formData = new FormData();
+  formData.append('csvFile', file, file.name); // 'csvFile' is the field name expected by backend
+
+  const response = await fetch('/api/admin/dak/upload-csv', { // Endpoint might be different
+    method: 'POST',
+    // For FormData, the browser sets the Content-Type automatically (including boundary)
+    body: formData,
+    credentials: 'include',
+  });
+  // ... rest of the logic
+}
+2. Error Response Handling
+
+Problem: const error = await response.json(); assumes that if !response.ok, the server will always return a JSON-formatted error message. If the server returns HTML (e.g., a generic 500 error page) or plain text, response.json() will throw a SyntaxError, masking the original error.
+Solution/Debug Steps:
+Make the error parsing more robust:
+JavaScript
+
+if (!response.ok) {
+  let errorMessage = `Upload failed with status: ${response.status}`;
+  try {
+    // Try to parse as JSON first
+    const errorData = await response.json();
+    errorMessage = errorData.message || errorData.error || JSON.stringify(errorData);
+  } catch (e) {
+    // If not JSON, try to read as text
+    // This could be HTML for a server error page or just plain text
+    const textError = await response.text();
+    errorMessage = textError || errorMessage; // Use textError if available
+    console.error("Server error response was not JSON:", textError);
+  }
+  throw new Error(errorMessage);
+}
+3. API Endpoint Path or Server Availability
+
+Problem: The path /api/admin/dak/upload-csv-raw might be incorrect, or the server/API route might not be running or accessible.
+Solution/Debug Steps:
+Network Tab: Open your browser's Developer Tools (usually F12), go to the "Network" tab, and then try the upload.
+Look for the request to upload-csv-raw.
+What is the Status Code? (e.g., 200 OK, 400 Bad Request, 404 Not Found, 415 Unsupported Media Type, 500 Internal Server Error).
+Inspect the Headers of the request (ensure Content-Type is what you intend).
+Inspect the Payload/Body of the request (ensure it's formatted as you expect).
+Inspect the Response tab for that request. This will show you exactly what the server sent back, which is invaluable if it's not JSON.
+Verify API Route: Ensure the API route exists on your backend and is correctly configured to handle POST requests at that path.
+4. apiRequest Utility (for other mutations)
+
+While not directly related to the failing upload mutation (which uses fetch directly), your other mutations like integrityMutation, warmCacheMutation, and clearCacheMutation use apiRequest.
+Potential Issue: If apiRequest has its own default Content-Type headers or body processing logic, it might conflict if the backend expects something different for those specific endpoints. However, the uploadMutation bypasses this by using fetch directly. The warmCacheMutation does set a body, implying apiRequest can handle it.
+JavaScript
+
+// apiRequest likely handles JSON stringification and Content-Type headers by default
+return apiRequest('/api/admin/dak/cache/warm', {
+    method: 'POST',
+    body: JSON.stringify({ modules: ['ANC', 'ART', 'PHARMACOVIGILANCE'] }), // Explicitly stringifying
+});
+If apiRequest already stringifies the body and sets Content-Type: application/json, then JSON.stringify here is redundant and might even cause issues if apiRequest tries to stringify an already stringified JSON. Check the implementation of apiRequest.
+5. CSV Content Itself
+
+Problem: While less likely to cause an HTTP error during the upload phase (unless the file is enormous and hits server limits), the content of the CSV could cause errors during processing on the backend after a successful upload. This would typically result in a success toast from the frontend initially, followed by a failed job status.
+Solution/Debug Steps:
+The alert for "CSV Format Requirements" is good. Ensure your test CSV adheres to this: rule_identifier, dak_source_id, guideline_doc_version, evidence_rating, applicable_module, rule_name, alert_severity, trigger_conditions, recommendations.
+Check for special characters, incorrect delimiters, or encoding issues in the CSV file that might break the backend parser.
+Debugging Checklist:
+
+Open Browser DevTools (Network Tab): This is your primary tool. Observe the request to /api/admin/dak/upload-csv-raw.
+What's the status code?
+What's the actual request payload?
+What's the server's response body? (Crucial for understanding errors if response.json() fails).
+Check Server Logs: The backend logs will provide the most detailed information about why it rejected the request or failed to process it.
+Confirm Backend Expectations:
+What Content-Type is /api/admin/dak/upload-csv-raw expecting?
+How is it expecting the CSV data and filename to be sent? (JSON wrapper vs. raw body + header).
+Adjust Frontend mutationFn: Based on backend expectations, modify the Content-Type and body in your fetch call.
+Improve Error Handling: Implement the more robust error parsing shown above to get clearer error messages from the server.
+Test with a Known Good, Simple CSV: Use a very small, simple CSV file that you are certain meets the format requirements to rule out data issues.
+Test API Endpoint Directly: Use a tool like Postman or curl to send requests directly to /api/admin/dak/upload-csv-raw with different Content-Type headers and body formats. This helps isolate whether the problem is in the client-side code or the server-side handling.
+The most common culprit in such scenarios is a mismatch between what the frontend is sending (application/json with a wrapped CSV) and what the backend endpoint (upload-csv-raw) is designed to receive. Start by clarifying that.

@@ -1,0 +1,43 @@
+Decision ID	Pre-eclampsia, Severe pre-eclampsia, and hypertension diagnosis
+Business Rule	If the woman presents with any of the following symptoms and/or test results, conduct counselling and referral as needed.
+Trigger	ANC.B10.4 Diagnosis and treatment
+Inputs	Output	Action	Annotations
+'Systolic blood pressure' => 139 mmHg	'Repeat Systolic blood pressure' => 139 mmHg	'Symptoms of severe pre-eclampsia' = 'Severe headache'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	Symptom(s) of severe pre-eclampsia! Refer urgently to hospital!
+Woman has hypertension. If she is experiencing a symptom of severe pre-eclampsia, then refer urgently to the hospital for further investigation and management.
+
+Procedure
+- Give magnesium sulphate
+- Give appropriate anti-hypertensives
+- Revise the birth plan
+- Refer urgently to hospital
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	'Symptoms of severe pre-eclampsia' = 'Severe headache'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Systolic blood pressure' => 139mmHg	'Repeat Systolic blood pressure' => 139 mmHg	'Symptoms of severe pre-eclampsia' = 'Blurred vision'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	'Symptoms of severe pre-eclampsia' = 'Blurred vision'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Systolic blood pressure' => 139mmHg	'Repeat Systolic blood pressure' => 139 mmHg	'Symptoms of severe pre-eclampsia' = 'Epigastric pain'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	'Symptoms of severe pre-eclampsia' = 'Epigastric pain'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Systolic blood pressure' => 139 mmHg	'Repeat Systolic blood pressure' => 139 mmHg	'Symptoms of severe pre-eclampsia' = 'Dizziness'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	'Symptoms of severe pre-eclampsia' = 'Dizziness'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Systolic blood pressure' => 139mmHg	'Repeat Systolic blood pressure' => 89 mmHg	'Symptoms of severe pre-eclampsia' = 'Vomiting'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	'Symptoms of severe pre-eclampsia' = 'Vomiting'	 	'Severe Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+90mmHg <= 'Systolic blood pressure' < 139mmHg	90mmHg <= 'Repeat Systolic blood pressure' < 139 mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	Pre-eclampsia diagnosis! Refer to hospital and revise birth plan.
+Woman has pre-eclampsia - SBP of 140 mmHg or above and/or DBP of 90 mmHg or above and proteinuria 2+ and no symptom of severe pre-eclampsia.
+
+Procedure: 
+- Refer to hospital 
+- Revise the birth plan
+60mmHg <= 'Diastolic blood pressure' < 89mmHg	60mmHg <= 'Repeat Diastolic blood pressure' < 89mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+90mmHg <= 'Systolic blood pressure' < 139 mmHg	90mmHg <= 'Repeat Systolic blood pressure' < 139mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '+++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+60mmHg <= 'Diastolic blood pressure' < 89mmHg	60mmHg <= 'Repeat Diastolic blood pressure' < 89mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '+++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+90mmHg <= 'Systolic blood pressure' < 139 mmHg	90mmHg <= 'Repeat Systolic blood pressure' < 139 mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '++++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+60mmHg <= 'Diastolic blood pressure' < 89mmHg	60mmHg <= 'Repeat Diastolic blood pressure' < 89mmHg	'Symptoms of severe pre-eclampsia' = 'No symptoms of sever pre-eclampsia'	'Urine dipstick result - protein' = '++++'	'Pre-eclampsia' = TRUE	ANC.C. Referral	Refer urgently to a hospital	
+'Systolic blood pressure' => 139mmHg	'Repeat Systolic blood pressure' => 139 mmHg	Urine dipstick result - protein' = ???	 	'Severe Hypertension' = TRUE	ANC.C. Referral	 Administer loading dose of magnesium sulphate and refer urgently to a hospital	Woman has severe hypertension. If SBP is 160 mmHg or higher and/or DBP is 110 mmHg or higher, then refer urgently to the hospital for further investigation and management.
+'Diastolic blood pressure' =>89mmHg	'Repeat Diastolic blood pressure' => 89mmHg	Urine dipstick result - protein' = ???	 	'Severe Hypertension' = TRUE	ANC.C. Referral	 Administer loading dose of magnesium sulphate and refer urgently to a hospital. Also provide hypertension counseling	
+'Existing chronic health conditions' = 'Hypertension'	 	 	 	'Existing chronic health conditions' = 'Hypertension'	ANC.B10.4 Diagnosis & treatment	 Administer loading dose of magnesium sulphate and refer urgently to a hospital. Also provide hypertension counseling	Woman has hypertension - SBP of 140 mmHg or higher and/or DBP of 90 mmHg or higher and no proteinuria.
+
+Counseling:
+- Advice to reduce workload and to rest
+- Advise on danger signs
+- Reassess at the next contact or in 1 week if 8 months pregnant
+- If hypertension persists after 1 week or at next contact, refer to hospital or discuss case with the doctor, if available
+90mmHg <= 'Systolic blood pressure' < 139mmHg	90mmHg <= 'Repeat Systolic blood pressure' < 139 mmHg	Urine dipstick result - protein' = 'None'	 	'Hypertension' = TRUE	ANC.B10.4 Diagnosis & treatment	 Administer loading dose of magnesium sulphate and refer urgently to a hospital. Also provide hypertension counseling	
+60mmHg <= 'Diastolic blood pressure' < 89mmHg	60mmHg <= 'Repeat Diastolic blood pressure' < 89mmHg	Urine dipstick result - protein' = 'None'	 	'Hypertension' = TRUE	ANC.B10.4 Diagnosis & treatment	 Administer loading dose of magnesium sulphate and refer urgently to a hospital. Also provide hypertension counseling	

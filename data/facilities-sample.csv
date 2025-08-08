@@ -1,0 +1,21 @@
+code,name,province,district,type,level,ownership,status,latitude,longitude,contact,email
+ZM001,Chipata Central Hospital,Eastern,Chipata,Hospital,Level 3,Public,ACTIVE,-13.626600,32.638500,+260211123456,chipata.central@moh.gov.zm
+ZM002,Mansa General Hospital,Luapula,Mansa,Hospital,Level 2,Public,ACTIVE,-11.234500,28.893400,+260212345678,mansa.general@moh.gov.zm
+ZM003,Kabwe General Hospital,Central,Kabwe,Hospital,Level 2,Public,ACTIVE,-14.440600,28.446700,+260213456789,kabwe.general@moh.gov.zm
+ZM004,Kitwe Central Hospital,Copperbelt,Kitwe,Hospital,Level 3,Public,ACTIVE,-12.809800,28.213500,+260214567890,kitwe.central@moh.gov.zm
+ZM005,Livingstone Central Hospital,Southern,Livingstone,Hospital,Level 3,Public,ACTIVE,-17.855200,25.858200,+260215678901,livingstone.central@moh.gov.zm
+ZM006,University Teaching Hospital,Lusaka,Lusaka,Hospital,Level 3,Public,ACTIVE,-15.353300,28.330000,+260216789012,uth@moh.gov.zm
+ZM007,Ndola Teaching Hospital,Copperbelt,Ndola,Hospital,Level 3,Public,ACTIVE,-12.959700,28.637300,+260217890123,ndola.teaching@moh.gov.zm
+ZM008,Kasama General Hospital,Northern,Kasama,Hospital,Level 2,Public,ACTIVE,-10.212900,31.180200,+260218901234,kasama.general@moh.gov.zm
+ZM009,Mongu General Hospital,Western,Mongu,Hospital,Level 2,Public,ACTIVE,-15.268900,23.127100,+260219012345,mongu.general@moh.gov.zm
+ZM010,Solwezi General Hospital,North-Western,Solwezi,Hospital,Level 2,Public,ACTIVE,-12.180300,26.365500,+260220123456,solwezi.general@moh.gov.zm
+ZM011,Chikando Rural Health Centre,Eastern,Chipata,Rural Health Centre,Level 1,Public,ACTIVE,-13.683520,32.600350,+260221234567,chikando.rhc@moh.gov.zm
+ZM012,Champhande Rural Health Centre,Eastern,Chipata,Rural Health Centre,Level 1,Public,ACTIVE,-13.645890,32.575680,+260222345678,champhande.rhc@moh.gov.zm
+ZM013,Chipulukusu Urban Health Centre,Copperbelt,Ndola,Urban Health Centre,Level 1,Public,ACTIVE,-12.932540,28.645780,+260223456789,chipulukusu.uhc@moh.gov.zm
+ZM014,Chamboli Urban Health Centre,Copperbelt,Kitwe,Urban Health Centre,Level 1,Public,ACTIVE,-12.831270,28.249360,+260224567890,chamboli.uhc@moh.gov.zm
+ZM015,Chawama Level 1 Hospital,Lusaka,Lusaka,Hospital,Level 1,Public,ACTIVE,-15.412690,28.292750,+260225678901,chawama.hospital@moh.gov.zm
+ZM016,Matero Level 1 Hospital,Lusaka,Lusaka,Hospital,Level 1,Public,ACTIVE,-15.362810,28.255080,+260226789012,matero.hospital@moh.gov.zm
+ZM017,Chichele Rural Health Center,Eastern,Chipata,Rural Health Centre,Level 1,Public,ACTIVE,-13.615470,32.662040,+260227890123,chichele.rhc@moh.gov.zm
+ZM018,Chipata District Hospital,Eastern,Chipata,Hospital,Level 1,Public,ACTIVE,-13.641280,32.627890,+260228901234,chipata.district@moh.gov.zm
+ZM019,Mumbwa District Hospital,Central,Mumbwa,Hospital,Level 1,Public,ACTIVE,-14.987640,27.064780,+260229012345,mumbwa.district@moh.gov.zm
+ZM020,Chamakubi Health Post,Western,Mongu,Health Post,Basic,Public,ACTIVE,-15.298750,23.105620,+260230123456,chamakubi.hp@moh.gov.zm

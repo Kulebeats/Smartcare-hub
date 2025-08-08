@@ -1,0 +1,79 @@
+Warning: Invalid event handler property &#x60;onchange&#x60;. Did you mean &#x60;onChange&#x60;?
+    at input
+    at label
+    at div
+    at div
+    at div
+    at div
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:59:7
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GMWEQTF4.js?v=25b5598a:29:5
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:232:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:155:58
+    at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:146:64
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:258:22
+    at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+    at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+    at DialogPortal (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:109:11)
+    at _c3 (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/dialog.tsx:51:12)
+    at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+    at Dialog (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:50:5)
+    at div
+    at AncPage (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/pages/anc-page.tsx:30:20)
+    at Route (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=25b5598a:338:16)
+    at Switch (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=25b5598a:394:17)
+    at main
+    at div
+    at Router (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/App.tsx?v=fCzV_oR_nkEzKVydEqCvq:46:41)
+    at AuthProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/hooks/use-auth.tsx:27:32)
+    at GlobalLoadingProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/global-loading-provider.tsx:34:41)
+    at QueryClientProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=25b5598a:2848:3)
+    at App (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/App.tsx?v=fCzV_oR_nkEzKVydEqCvq:199:41)
+at input
+at label
+at div
+at div
+at div
+at div
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:59:7
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GMWEQTF4.js?v=25b5598a:29:5
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:232:13
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:155:58
+at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:146:64
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:258:22
+at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+at DialogPortal (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:109:11)
+at _c3 (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/dialog.tsx:51:12)
+at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+at Dialog (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:50:5)
+at div
+at AncPage (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/pages/anc-page.tsx:30:20)
+at Route (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=25b5598a:338:16)
+at Switch (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=25b5598a:394:17)
+at main
+at div
+at Router (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/App.tsx?v=fCzV_oR_nkEzKVydEqCvq:46:41)
+at AuthProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/hooks/use-auth.tsx:27:32)
+at GlobalLoadingProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/global-loading-provider.tsx:34:41)
+at QueryClientProvider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=25b5598a:2848:3)
+at App (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/App.tsx?v=fCzV_oR_nkEzKVydEqCvq:199:41)
+at t.value (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

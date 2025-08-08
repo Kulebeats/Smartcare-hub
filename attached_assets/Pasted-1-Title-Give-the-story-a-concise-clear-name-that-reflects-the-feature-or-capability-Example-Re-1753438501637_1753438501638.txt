@@ -1,0 +1,47 @@
+1. Title
+Give the story a concise, clear name that reflects the feature or capability.
+Example: Register New Insurance Company
+2. User Story
+As a [user role],
+I want [feature or system behavior],
+So that [benefit or reason why].
+Example:
+As a billing officer, I want to register a new insurance company, so that I can proceed with client enrollment when the company is not listed.
+3. Acceptance Criteria
+Use Given / When / Then format to define what must be true for the story to be accepted.
+Example:
+#	Given	When	Then
+1	The user is on the company selection page	They can't find the company	A “Register New Company” option is shown
+2	The user opens the registration form	All fields are filled and valid	The “Continue” button is enabled
+3	The user clicks “Continue”	The data is valid	The company is saved and the workflow continues
+4. Functional Requirements
+#	Requirement Description
+FR1	The system shall display a “Register New Company” option if no match is found.
+FR2	The system shall present a form with fields: Company Name, License Number, ZRA TPIN, and Contact Person.
+FR3	The system shall validate that all fields are completed and formatted correctly.
+FR4	The system shall enable the “Continue” button only when all validations pass.
+FR5	The system shall save the new company record into the insurance provider database.
+5. Definition of Done (DoD)
+•	Clinical validation is complete 
+•	Input validations are implemented and verified
+•	Feature meets all acceptance criteria
+•	UI/UX meets user expectations
+•	UAT completed with stakeholder sign-off
+•	Unit and integration tests pass
+•	Relevant documentation is updated
+•	Code is peer-reviewed and passes QA
+Tags
+[E.g., IPD, Billing, PMTCT, HIV, Sprint-Ready]
+6. Metadata / Governance Traceability
+Field	Description
+Epic / Feature	Insurance Management
+Test Case ID	TC-BILL-091
+Priority	Must / Should / Could
+7. INVEST Evaluation (Standard to hold User Story to) 
+Criterion	Explanation
+Independent	Can be developed and tested without relying on other stories
+Negotiable	Details like field labels or alert wording can be refined
+Valuable	Enables accurate enrollment and reduces workflow interruptions
+Estimable	Well-scoped and ready for effort estimation
+Small	Fits within one sprint or delivery cycle
+Testable	Acceptance criteria and FRs are clear and verifiable

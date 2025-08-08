@@ -1,0 +1,100 @@
+Fix Option 1: Make onClose Required (Recommended)
+tsxinterface PharmacyPrescriptionProps {
+  onSaveComplete?: () => void;
+  onClose: () => void; // Remove the ? - now required
+}
+
+export default function PharmacyPrescriptionEnhanced({ onSaveComplete, onClose }: PharmacyPrescriptionProps) {
+  // Now onClose is guaranteed to exist, so this works:
+  const handleClose = (): void => {
+    onClose(); // Safe to call directly
+  };
+  
+  // Rest of your component...
+}
+When using the component:
+tsx// Parent component must now provide onClose
+<PharmacyPrescriptionEnhanced 
+  onClose={() => setShowModal(false)} // Required
+  onSaveComplete={() => handleSaveComplete()}
+/>
+Fix Option 2: Keep Optional but Add Default Behavior
+tsxinterface PharmacyPrescriptionProps {
+  onSaveComplete?: () => void;
+  onClose?: () => void; // Keep optional
+}
+
+export default function PharmacyPrescriptionEnhanced({ onSaveComplete, onClose }: PharmacyPrescriptionProps) {
+  const handleClose = (): void => {
+    if (onClose) {
+      onClose();
+    } else {
+      // Default behavior when no onClose provided
+      console.warn("No onClose handler provided");
+      // You could add fallback behavior here:
+      // window.history.back();
+      // or just do nothing
+    }
+  };
+  
+  // Rest of your component...
+}
+Fix Option 3: Provide Default Value in Props
+tsxinterface PharmacyPrescriptionProps {
+  onSaveComplete?: () => void;
+  onClose?: () => void;
+}
+
+export default function PharmacyPrescriptionEnhanced({ 
+  onSaveComplete, 
+  onClose = () => console.log("Default close behavior") // Default function
+}: PharmacyPrescriptionProps) {
+  
+  const handleClose = (): void => {
+    onClose(); // Safe to call - will use default if not provided
+  };
+  
+  // Rest of your component...
+}
+Fix Option 4: Use Conditional Rendering
+tsx// Only render the close button if onClose is provided
+<button 
+  className="text-gray-400 hover:text-gray-600" 
+  onClick={handleClose}
+  style={{ display: onClose ? 'block' : 'none' }}
+>
+  <X className="w-6 h-6" />
+</button>
+Recommended Solution
+I recommend Option 1 (making onClose required) because:
+
+Modal components should always be closeable - it's a fundamental UX requirement
+Prevents runtime errors - you can't forget to provide the handler
+Clear API contract - developers know they must provide a close handler
+Type safety - TypeScript will enforce it at compile time
+
+Implementation:
+tsxinterface PharmacyPrescriptionProps {
+  onSaveComplete?: () => void;
+  onClose: () => void; // Required
+}
+
+const handleClose = (): void => {
+  onClose(); // Safe to call directly
+};
+Parent component usage:
+tsxconst [showModal, setShowModal] = useState(false);
+
+return (
+  <>
+    {showModal && (
+      <PharmacyPrescriptionEnhanced 
+        onClose={() => setShowModal(false)} // Must provide this
+        onSaveComplete={() => {
+          handleSaveComplete();
+          setShowModal(false);
+        }}
+      />
+    )}
+  </>
+);

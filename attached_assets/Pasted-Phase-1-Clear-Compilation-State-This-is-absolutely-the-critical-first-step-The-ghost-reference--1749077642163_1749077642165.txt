@@ -1,0 +1,18 @@
+Phase 1: Clear Compilation State: This is absolutely the critical first step. The "ghost" reference to storage2 strongly suggests stale artifacts.
+
+In addition to your "Cache Clearing Strategy," you might explicitly want to:
+Delete your main build output directory (e.g., dist, build, out).
+Run npm cache clean --force or yarn cache clean (depending on your package manager), though this is often less impactful for transpilation issues than node_modules and build artifacts.
+After deleting node_modules and any cache/build folders, a fresh npm install (or yarn install) followed by your build command (e.g., npm run build, tsc) will ensure everything is from scratch.
+Phase 2: Verify Storage Integration:
+
+Runtime Logging (Post-Clean Build): After a completely clean build and server restart, a quick way to verify what storage actually is in your routes.ts at runtime can be to add a temporary console.log(typeof storage, storage) right after the import. This can confirm if it's the expected object/class instance and if its methods are listed. Remember to remove this debug log afterward.
+Check Transpiled Code: Occasionally, it can be insightful to look at the generated JavaScript code in your build output directory (e.g., dist/routes.js) to see how the storage import and its usage have been transpiled. This can sometimes reveal if the issue lies in the TypeScript-to-JavaScript conversion process or configuration.
+Phase 3 & 4: Fix & Test: Your approach to fix any revealed issues and then test thoroughly is perfect. End-to-end testing of the patient registration flow is key.
+
+General Reinforcement:
+
+Development Server: If you're using a development server with Hot Module Replacement (HMR) (e.g., nodemon with ts-node, or a webpack-dev-server setup), these are indeed prone to getting into inconsistent states. A full stop and restart after clearing caches is often the most reliable way to reset them.
+TypeScript Configuration (tsconfig.json): While less likely to cause an alias like storage2 out of the blue, ensuring your tsconfig.json paths and module resolution settings are correct can prevent other subtle import issues.
+Environment Variables: Double-check if any environment variables could be influencing how modules are loaded or aliased, though this is usually not the cause for such a direct naming discrepancy unless there's some very custom module loading logic.
+You have a very solid plan. Executing it step-by-step, especially the aggressive cache clearing and clean restart, is highly likely to resolve this TypeError. The issue almost certainly lies in the build/runtime environment rather than a logical error in the code you've written for storage itself.

@@ -1,0 +1,40 @@
+'
+
+Cervical dilatation' > 2cm	'Gestational age' < 37 weeks	'Cervical dilatation' > 2cm	Evaluate labour	Cervix is more than 2 cm dilated. Please check for other signs and symptoms of pre-term labour and other related complications (if GA is less than 37 weeks).
+'Respiratory exam result' = 'Dyspnoea'	Dyspnoea	'Respiratory exam result' = 'Dyspnoea'	ANC.C. Referral	Refer urgently to a hospital	Woman has respiratory distress. Refer urgently to the hospital!
+'Respiratory exam result' = 'Cough'	Cough	'Respiratory exam result' = 'Cough'	ANC.C. Referral	Refer urgently to a hospital	
+'Respiratory exam result' = 'Rapid breathing'	Rapid breathing	'Respiratory exam result' = 'Rapid breathing'	ANC.C. Referral	Refer urgently to a hospital	
+'Respiratory exam result' = 'Slow breathing'	Slow breathing	'Respiratory exam result' = 'Slow breathing'	ANC.C. Referral	Refer urgently to a hospital	
+'Respiratory exam result' = 'Wheezing'	Wheezing	'Respiratory exam result' = 'Wheezing'	ANC.C. Referral	Refer urgently to a hospital	
+'Respiratory exam result' = 'Rales'	Rales	'Respiratory exam result' = 'Rales'	ANC.C. Referral	Refer urgently to a hospital	
+'Respiratory exam result' = 'Other (specify)'	Other (specify)	'Respiratory exam result' = 'Other abnormal respiratory exam result (specify)'	ANC.C. Referral	Refer urgently to a hospital	
+'Oximetry' < 92%	'Oximetry' < 92%	'Oximetry' < 92	ANC.C. Referral	Refer urgently to a hospital	Woman has low oximetry (<92%). She should be referred urgently to the hospital
+'Cardiac exam result' = 'Heart murmur'	Heart murmur'	'Cardiac exam result' = 'Heart murmur'	ANC.C. Referral	Refer urgently to a hospital	Woman's cardiac condition is abnormal and she should be referred urgently to the hospital.
+'Cardiac exam result' = 'Weak pulse'	Weak pulse'	'Cardiac exam result' = 'Weak pulse'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Tachycardia'	Tachycardia'	'Cardiac exam result' = 'Tachycardia'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Bradycardia'	'Bradycardia'	'Cardiac exam result' = 'Bradycardia'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Arrhythmia'	Arrhythmia'	'Cardiac exam result' = 'Arrhythmia'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Cyanosis'	'Cyanosis'	'Cardiac exam result' = 'Cyanosis'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Cold sweats'	'Cold sweats'	'Cardiac exam result' = 'Cold sweats'	ANC.C. Referral	Refer urgently to a hospital	
+'Cardiac exam result' = 'Other abnormal cardiac exam result (specify)'	'Other (specify)	Cardiac exam result' = 'Other (specify)'	ANC.C. Referral	Refer urgently to a hospital	
+'Breast exam result' = 'Nodule'	'Nodule'	'Breast exam result' = 'Nodule'	ANC.C. Referral	Refer to a hospital	Woman's breast exam was abnormal and she should be referred to hospital for further investigation.
+'Breast exam result' = 'Discharge'	'Discharge'	'Breast exam result' = 'Discharge'	ANC.C. Referral	Refer to a hospital	
+'Breast exam result' = 'Flushing'	'Flushing'	'Breast exam result' = 'Flushing'	ANC.C. Referral	Refer to a hospital	
+'Breast exam result' = 'Local pain'	Local pain'	'Breast exam result' = 'Local pain'	ANC.C. Referral	Refer to a hospital	
+'Breast exam result' = 'Bleeding'	Bleeding'	'Breast exam result' = 'Bleeding'	ANC.C. Referral	Refer to a hospital	
+'Breast exam result' = 'Increased temperature'	Increased temperature'	'Breast exam result' = 'Increased temperature'	ANC.C. Referral	Refer to a hospital	
+'Breast exam result' = 'Other  (specify)'	Other (specify)'	Breast exam result' = 'Other  (specify)'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual inspection)' = 'Physiological vaginal discharge' 	Physiological vaginal discharge'	Pelvic exam result (visual)' = 'Physiological vaginal discharge'	ANC.C. Referral ( normal finding, considering removing)	Refer to a hospital	Woman's pelvic exam was abnormal and she should be referred to hospital. Consider high level evaluation, specific syndromic treatment or referral.
+'Pelvic exam result (visual)' = 'Abnormal vaginal discharge'	 'Abnormal vaginal discharge'	'Pelvic exam result (visual)' = 'Abnormal vaginal discharge'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Evidence of amniotic fluid'	 'Evidence of amniotic fluid'	'Pelvic exam result (visual)' = 'Evidence of amniotic fluid'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Foul-smelling vaginal discharge'	Foul-smelling vaginal discharge'	'Pelvic exam result (visual)' = 'Foul-smelling vaginal discharge'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Clusters of erythematous papules'	 'Clusters of erythematous papules'	'Pelvic exam result (visual)' = 'Clusters of erythematous papules'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Vesicles'	Vesicles'	'Pelvic exam result (visual)' = 'Vesicles'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Genital ulcer'	Genital ulcer'	'Pelvic exam result (visual)' = 'Genital ulcer'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Genital pain'	 'Genital pain'	'Pelvic exam result (visual)' = 'Genital pain'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' =' Lymphadenopathy (pelvic)(unilateral)(bilateral)'	 Lymphadenopathy (pelvic)(unilateral)(bilateral)'	Pelvic exam result (visual)' = '' Lymphadenopathy (pelvic)(unilateral)(bilateral)''	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Cervical friability'	 'Cervical friability'	'Pelvic exam result (visual)' = 'Cervical friability'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Mucopurulent cervicitis'	 'Mucopurulent cervicitis'	'Pelvic exam result (visual)' = 'Mucopurulent cervicitis'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Tender unilateral lymphadenopathy'	 'Tender unilateral lymphadenopathy'	'Pelvic exam result (visual)' = 'Tender unilateral lymphadenopathy'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Curd-like vaginal discharge'	 'Curd-like vaginal discharge'	'Pelvic exam result (visual)' = 'Curd-like vaginal discharge'	ANC.C. Referral	Refer to a hospital	
+'Pelvic exam result (visual)' = 'Other (specify)'	Other (specify)'	'Pelvic exam result (visual)' = 'Other abnormal pelvic exam (visual) result (specify)'	ANC.C. Referral	Refer to a hospital	

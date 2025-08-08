@@ -1,0 +1,197 @@
+// 1. BACKEND: Enhanced patient search endpoint with better error handling
+app.get('/api/patients/search', async (req, res) => {
+  try {
+    console.log('Patient search request:', req.query);
+    
+    // Set proper JSON headers
+    res.setHeader('Content-Type', 'application/json');
+    
+    const { query, phone, nrc } = req.query;
+    
+    let searchResults = [];
+    
+    if (query) {
+      // Search by name
+      searchResults = await db
+        .select()
+        .from(patients)
+        .where(
+          // Using OR conditions for flexible search
+          eq(patients.first_name, query) ||
+          eq(patients.surname, query) ||
+          // Add more search conditions as needed
+        )
+        .orderBy(desc(patients.last_updated))
+        .limit(50); // Limit results
+    } else if (phone) {
+      // Search by phone
+      searchResults = await db
+        .select()
+        .from(patients)
+        .where(eq(patients.cellphone, phone))
+        .limit(10);
+    } else if (nrc) {
+      // Search by NRC
+      searchResults = await db
+        .select()
+        .from(patients)
+        .where(eq(patients.nrc, nrc))
+        .limit(10);
+    } else {
+      // Return all patients if no search criteria
+      searchResults = await db
+        .select()
+        .from(patients)
+        .orderBy(desc(patients.last_updated))
+        .limit(100);
+    }
+    
+    console.log(`Found ${searchResults.length} patients`);
+    
+    res.status(200).json({
+      success: true,
+      data: searchResults,
+      count: searchResults.length
+    });
+    
+  } catch (error) {
+    console.error('Error searching patients:', error);
+    
+    // Ensure we always return JSON, even on error
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to search patients',
+      error: error.message 
+    });
+  }
+});
+
+// 2. BACKEND: Fix existing patients endpoint
+app.get('/api/patients', async (req, res) => {
+  try {
+    console.log('Fetching all patients...');
+    
+    // Set proper JSON headers
+    res.setHeader('Content-Type', 'application/json');
+    
+    const patientsList = await db
+      .select()
+      .from(patients)
+      .orderBy(desc(patients.last_updated))
+      .limit(1000); // Add reasonable limit
+    
+    console.log(`Retrieved ${patientsList.length} patients`);
+    
+    res.status(200).json({
+      success: true,
+      data: patientsList,
+      count: patientsList.length
+    });
+    
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+    
+    // Ensure JSON response even on error
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch patients',
+      error: error.message 
+    });
+  }
+});
+
+// 3. FRONTEND: Improved error handling for API calls
+async function searchPatients(searchQuery = '') {
+  try {
+    console.log('Searching patients with query:', searchQuery);
+    
+    // Build the correct API URL
+    const baseUrl = window.location.origin;
+    const endpoint = searchQuery 
+      ? `/api/patients/search?query=${encodeURIComponent(searchQuery)}`
+      : '/api/patients';
+    
+    const url = `${baseUrl}${endpoint}`;
+    console.log('API URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include' // Include cookies for auth
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    
+    // Check if response is actually JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Response is not JSON. Content-Type:', contentType);
+      
+      // Get the actual response text to see what was returned
+      const responseText = await response.text();
+      console.error('Response body:', responseText.substring(0, 500));
+      
+      throw new Error(`Server returned ${contentType} instead of JSON. Check server logs.`);
+    }
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Search results:', data);
+    
+    // Handle both old and new response formats
+    const patients = data.data || data;
+    return Array.isArray(patients) ? patients : [];
+    
+  } catch (error) {
+    console.error('Error searching patients:', error);
+    
+    // Provide helpful error messages
+    if (error.message.includes('Failed to fetch')) {
+      throw new Error('Cannot connect to server. Check if the server is running.');
+    } else if (error.message.includes('<!DOCTYPE')) {
+      throw new Error('Server returned HTML instead of JSON. Check the API endpoint URL.');
+    } else {
+      throw error;
+    }
+  }
+}
+
+// 4. DEBUGGING: Add this function to test your API endpoints
+async function testApiEndpoints() {
+  const baseUrl = window.location.origin;
+  const endpoints = [
+    '/api/patients',
+    '/api/patients/search',
+    '/api/reports/summary'
+  ];
+  
+  for (const endpoint of endpoints) {
+    try {
+      console.log(`Testing ${endpoint}...`);
+      const response = await fetch(`${baseUrl}${endpoint}`);
+      console.log(`${endpoint}: Status ${response.status}, Content-Type: ${response.headers.get('content-type')}`);
+      
+      if (response.headers.get('content-type')?.includes('application/json')) {
+        const data = await response.json();
+        console.log(`${endpoint}: JSON response received`);
+      } else {
+        const text = await response.text();
+        console.log(`${endpoint}: Non-JSON response:`, text.substring(0, 200));
+      }
+    } catch (error) {
+      console.error(`${endpoint}: Error -`, error.message);
+    }
+  }
+}
+
+// Call this in browser console to test: testApiEndpoints()

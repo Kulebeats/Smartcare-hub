@@ -1,0 +1,13 @@
+
+/* Responsive styles for tab navigation */
+@media (max-width: 640px) {
+  .tab-navigation a {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  
+  .tab-content {
+    height: 200px; /* Smaller height on mobile */
+  }
+}
+

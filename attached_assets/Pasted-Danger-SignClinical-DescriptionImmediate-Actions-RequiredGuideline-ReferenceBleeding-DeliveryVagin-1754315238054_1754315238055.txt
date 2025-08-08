@@ -1,0 +1,36 @@
+Danger SignClinical DescriptionImmediate Actions RequiredGuideline ReferenceBleeding & DeliveryVaginal bleeding
+Any amount of vaginal bleeding during pregnancy must be treated as serious and immediately attended to. It may indicate placental abruption, placenta previa, or other complications, especially in the 2nd and 3rd trimesters.
+<ul><li>Assess vital signs, especially Blood Pressure (BP).</li><li>Assess fetal heart rate and movement .</li><li>Note the amount and color of bleeding.</li><li>Prepare for immediate referral to a higher level of care.</li></ul>
+DrainingAmniotic fluid leak (a gush or trickle of clear or colored fluid from the vagina) indicates ruptured membranes. This increases the risk of infection and preterm labor.
+<ul><li>Confirm if fluid is amniotic.</li><li>Assess fetal heart rate .</li><li>Check for umbilical cord prolapse.</li><li>Refer immediately to a facility for assessment and management.</li></ul>
+Imminent deliverySigns that birth is about to happen immediately, such as an overwhelming urge to push, strong contractions less than 2 minutes apart, or the baby's head being visible.<ul><li>Do not leave the patient unattended.</li><li>Prepare for a clean, safe birth.</li><li>Call for skilled assistance immediately.</li><li>Arrange for emergency transport if at a lower-level facility.</li></ul>
+Labour
+Regular, painful uterine contractions causing cervical changes. If this occurs between 20 and 37 weeks, it is defined as 
+preterm labor, a significant danger sign.
+<ul><li>Assess contraction frequency, duration, and strength.</li><li>Assess fetal heart rate .</li><li>Minimize vaginal examinations.</li><li>Refer immediately to a facility capable of managing premature birth.</li></ul>
+"Preterm labour" is listed as a major obstetric complication requiring early diagnosis and management.
+NeurologicalConvulsing
+A seizure in pregnancy is a life-threatening sign of eclampsia, a severe complication of high blood pressure. It involves uncontrolled shaking and loss of consciousness.
+<ul><li>Protect the patient from injury; manage airway (ABC).</li><li>Administer emergency anticonvulsants (e.g., Magnesium Sulfate) per protocol.</li><li>Check vital signs after the seizure.</li><li>Prepare for urgent referral and delivery.</li></ul>
+Convulsions are a sign of eclampsia, the severe progression of "Pre-eclampsia". Management falls under emergency protocols and referral systems.
+Severe headache
+A new, persistent, and severe headache not relieved by simple analgesics. This is a key symptom of pre-eclampsia.
+<ul><li>Measure Blood Pressure immediately .</li><li>Test urine for protein .</li><li>Assess for other signs of pre-eclampsia (e.g., visual changes).</li><li>Refer immediately if BP is high or other signs are present.</li></ul>
+The guidelines list "severe headaches" as a symptom of Pre-eclampsia.
+Visual disturbance
+New vision problems, such as blurred vision, or seeing spots or flashing lights. This is a key symptom of severe pre-eclampsia.
+<ul><li>Measure Blood Pressure immediately .</li><li>Test urine for protein .</li><li>Refer immediately if BP is high or other signs are present.</li></ul>
+"Blurred vision" is listed as a symptom of Pre-eclampsia.
+UnconsciousA state of unresponsiveness. This is a critical medical emergency that could be caused by eclampsia, shock from bleeding, or sepsis.
+<ul><li>Check Airway, Breathing, and Circulation (ABC) immediately.</li><li>Begin resuscitation if required.</li><li>Arrange for urgent, immediate referral to a hospital.</li></ul>
+SystemicFever
+A body temperature ≥38°C (100.4°F), often signaling a serious underlying infection such as a UTI, Malaria, or TB.
+<ul><li>Take complete vital signs, including temperature.</li><li>Assess fetal heart rate .</li><li>Investigate for the source of infection (e.g., test for Malaria, urinalysis for UTI) .</li><li>Refer based on severity and findings.</li></ul>
+Looks very illA crucial clinical impression that the patient is deteriorating. Signs include lethargy, confusion, pale or clammy skin, and rapid breathing, often signifying sepsis or shock.
+<ul><li>Trust clinical judgment and act immediately.</li><li>Take a full set of vital signs.</li><li>Perform a rapid assessment (ABC).</li><li>Prepare for immediate emergency referral.</li></ul>
+
+Severe vomitingPersistent vomiting that leads to dehydration and weight loss.
+<ul><li>Assess for signs of dehydration.</li><li>Provide dietary advice .</li><li>Refer to a clinician for consideration of antiemetics or IV fluids if dehydration is present.</li></ul>
+Severe abdominal painIntense, non-contraction pain that could indicate placental abruption, uterine rupture, or HELLP syndrome (a severe form of pre-eclampsia).
+<ul><li>Assess the location, nature, and severity of the pain.</li><li>Check vital signs and fetal heart rate .</li><li>Palpate the abdomen for tenderness or rigidity.</li><li>Refer immediately for diagnosis and management.</li></ul>
+

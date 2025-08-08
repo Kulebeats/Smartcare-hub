@@ -1,0 +1,38 @@
+evelop a React-based user interface that simulates a clinical decision support system for an EHR environment. This system will include a toast notification mechanism and a dedicated Pharmacovigilance section with interactive modals.
+
+Requirements:
+
+Toast Notification System:
+
+Placement & Timing:
+Toast notifications must appear in the top-right corner of the screen.
+Each toast should be visible for 4 seconds before automatically disappearing.
+Visual Design:
+Toasts should have a blue background with borders.
+Inside the blue background, include a lighter box to visually separate the content.
+Behavior:
+Ensure that the toast notifications do not obstruct the user experience and are dismissible after the allotted time.
+Pharmacovigilance Section:
+
+Card Renaming:
+Change the label of the "Pharmacovigilance Report" card to simply "Pharmacovigilance."
+Modal Interaction:
+When a user clicks on the Pharmacovigilance card, display a modal popup that explains the available entry options.
+Entry Options to Include in the Modal:
+Routine:
+Display a message indicating that this option provides a link to initiate a pharmacovigilance check if six months have passed since the last active check.
+Adverse Reaction Onset:
+Indicate that an observed adverse reaction is being recorded.
+Change of ART Regime:
+If there is a change in the ART regimen, trigger active monitoring for at least three post-change visits.
+ART Naive:
+For newly initiated patients, require monitoring with a minimum of three visits.
+Follow Up Visit:
+Specify that this option should be used for follow-up visits after an initial adverse drug reaction onset.
+Design Considerations for the Modal:
+Clearly present each entry option with a brief explanation of the action or monitoring requirement.
+Ensure the modal is easy to read and navigate, with a clear call-to-action for closing the modal or proceeding with a selected option.
+Additional Notes:
+
+The interface should be intuitive and optimized for clinical workflow, ensuring that alerts and modals are informative yet unobtrusive.
+Focus on a clean, professional design that aligns with healthcare UI/UX best practices.

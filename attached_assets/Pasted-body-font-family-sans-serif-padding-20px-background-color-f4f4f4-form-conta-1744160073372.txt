@@ -1,0 +1,161 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+legend {
+  font-weight: bold;
+  padding: 0 10px;
+  color: #555;
+}
+
+.question-group {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-bottom: 1px dashed #eee;
+}
+.question-group:last-child {
+    border-bottom: none;
+}
+
+
+/* Styling for checkbox-based questions where the label follows */
+.checkbox-question {
+  display: flex; /* Use flexbox */
+  align-items: flex-start; /* Align items to the start */
+  border-bottom: none; /* Remove border if it's just the checkbox line */
+  margin-bottom: 5px; /* Adjust spacing */
+  padding: 0;
+}
+
+.checkbox-question input[type="checkbox"] {
+  margin-right: 8px; /* Space between checkbox and label */
+  margin-top: 0.2em; /* Align checkbox slightly better with text */
+}
+
+.checkbox-question label {
+  flex: 1; /* Allow label to take remaining space */
+  font-weight: normal; /* Reset label weight if needed */
+}
+
+
+.question-group > label,
+p { /* Target direct label children and paragraphs */
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+
+.radio-options, .checkbox-options {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 15px; /* Space between options */
+  margin-top: 5px;
+}
+
+.radio-options label, .checkbox-options label {
+  display: flex; /* Align input and text */
+  align-items: center;
+  font-weight: normal; /* Normal weight for options */
+  cursor: pointer;
+  margin-right: 15px; /* Spacing between options */
+}
+
+.radio-options input[type="radio"],
+.checkbox-options input[type="checkbox"] {
+  margin-right: 5px; /* Space between radio/checkbox and its text */
+}
+
+.inline-radio {
+    display: flex;
+    justify-content: space-between; /* Pushes label and options apart */
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: none;
+}
+.inline-radio > label { /* Label for the question itself */
+    margin-bottom: 0;
+    flex-basis: 60%; /* Give label more space */
+    font-weight: normal;
+}
+.inline-radio .radio-options { /* Options container */
+    margin-top: 0;
+    justify-content: flex-end; /* Push options to the right */
+    flex-basis: 40%;
+}
+
+
+.conditional-section {
+  margin-left: 20px;
+  padding-left: 15px;
+  border-left: 2px solid #007bff;
+  margin-top: 15px;
+  padding-top: 10px;
+}
+
+.sub-question {
+  margin-left: 20px;
+  padding-left: 15px;
+  border-left: 2px dashed #eee;
+  margin-top: 10px;
+  padding-top: 5px;
+}
+
+.footnote {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  display: block;
+  margin: 20px auto 0;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.debug-state {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

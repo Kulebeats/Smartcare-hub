@@ -1,0 +1,200 @@
+# Adverse Drug Reactions Implementation Guide
+
+## 1. First, define your symptom categories:
+
+```typescript
+const GI_SYMPTOMS = [
+  "None",
+  "Nausea",
+  "Vomiting",
+  "Diarrhoea",
+  "Normal appetite",
+  "Reduced appetite",
+  "Increased appetite",
+  "Polydipsia",
+  "Other"
+] as const;
+
+// Similarly for other categories:
+const CNS_SYMPTOMS = ["None", "Insomnia", "Somnolence", /* ... */] as const;
+const CVS_SYMPTOMS = ["None", "Palpitations", /* ... */] as const;
+const SKIN_MUSCULO_SYMPTOMS = ["None", "Rash", /* ... */] as const;
+const GENITAL_URINARY_SYMPTOMS = ["None", "Change in urine colour", /* ... */] as const;
+```
+
+## 2. Create a schema helper for symptoms:
+
+```typescript
+const createSymptomSchema = <T extends readonly string[]>(symptoms: T) =>
+  z.object({
+    symptom: z.enum(symptoms),
+    grade: z.number().min(1).max(4).optional(),
+    otherSpecify: z.string().optional()
+  });
+```
+
+## 3. Create the ADRSection component:
+
+```typescript
+const ADRSection = ({
+  title,
+  symptoms,
+  control,
+  name
+}: {
+  title: string;
+  symptoms: readonly string[];
+  control: any;
+  name: string;
+}) => {
+  return (
+    <div className="space-y-4">
+      <h4 className="font-medium">{title}</h4>
+      <FormField
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <FormItem>
+            <div className="space-y-4">
+              {field.value.map((symptom: any, index: number) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <Select
+                      value={symptom.symptom}
+                      onValueChange={(value) => {
+                        const newSymptoms = [...field.value];
+                        newSymptoms[index] = {
+                          ...symptom,
+                          symptom: value,
+                          grade: value === "None" ? undefined : symptom.grade
+                        };
+                        field.onChange(newSymptoms);
+                      }}
+                    >
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select symptom" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* Prevent duplicate selections */}
+                        {symptoms.filter(s =>
+                          s === "None" ||
+                          s === "Other" ||
+                          !field.value.some((existing: any) =>
+                            existing.symptom === s &&
+                            existing !== symptom
+                          )
+                        ).map((s) => (
+                          <SelectItem key={s} value={s}>
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Show grade selection only for non-"None" symptoms */}
+                    {symptom.symptom !== "None" && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Grade:</span>
+                        <RadioGroup
+                          value={symptom.grade?.toString()}
+                          onValueChange={(value) => {
+                            const newSymptoms = [...field.value];
+                            newSymptoms[index] = {
+                              ...symptom,
+                              grade: parseInt(value)
+                            };
+                            field.onChange(newSymptoms);
+                          }}
+                          className="flex items-center gap-2"
+                        >
+                          {[1, 2, 3, 4].map((grade) => (
+                            <div key={grade} className="flex items-center space-x-1">
+                              <RadioGroupItem value={grade.toString()} />
+                              <label>{grade}</label>
+                            </div>
+                          ))}
+                        </RadioGroup>
+                      </div>
+                    )}
+
+                    {/* Show text input for "Other" symptoms */}
+                    {symptom.symptom === "Other" && (
+                      <Input
+                        placeholder="Specify other symptom"
+                        value={symptom.otherSpecify || ""}
+                        onChange={(e) => {
+                          const newSymptoms = [...field.value];
+                          newSymptoms[index] = {
+                            ...symptom,
+                            otherSpecify: e.target.value
+                          };
+                          field.onChange(newSymptoms);
+                        }}
+                        className="w-[200px]"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {/* Add new symptom button */}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  field.onChange([...field.value, { symptom: "None" }]);
+                }}
+              >
+                Add Symptom
+              </Button>
+            </div>
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+```
+
+## 4. Usage in Form:
+
+```typescript
+// In your form component:
+const form = useForm<PharmacovigilanceForm>({
+  resolver: zodResolver(pharmacovigilanceSchema),
+  defaultValues: {
+    // ... other form defaults ...
+    adverseDrugReactions: {
+      gastrointestinal: [{ symptom: "None" }],
+      cnsNeuralPsychiatric: [{ symptom: "None" }],
+      cardiovascular: [{ symptom: "None" }],
+      skinMusculoskeletal: [{ symptom: "None" }],
+      genitalUrinary: [{ symptom: "None" }]
+    }
+  }
+});
+
+// Then in your JSX:
+<div className="space-y-6">
+  <h3 className="text-lg font-semibold">Adverse Drug Reactions</h3>
+  <ADRSection
+    title="Gastro-intestinal"
+    symptoms={GI_SYMPTOMS}
+    control={form.control}
+    name="adverseDrugReactions.gastrointestinal"
+  />
+  {/* Add other sections similarly */}
+</div>
+```
+
+## Key Business Rules:
+
+1. Each symptom can only be selected once per category
+2. Grades (1-4) only show for non-"None" symptoms
+3. "Other" selection requires additional text input
+4. "None" selection cannot have a grade
+5. Multiple symptoms can be added dynamically
+6. Each category starts with one "None" symptom by default
+
+Remember to import all necessary components and ensure your form validation schema includes the adverse reactions structure.

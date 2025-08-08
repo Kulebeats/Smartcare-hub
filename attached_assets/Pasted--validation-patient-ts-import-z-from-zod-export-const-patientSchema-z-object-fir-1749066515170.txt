@@ -1,0 +1,198 @@
+// validation/patient.ts
+import { z } from 'zod';
+
+export const patientSchema = z.object({
+  first_name: z.string().min(1, 'First name is required').max(100),
+  surname: z.string().min(1, 'Surname is required').max(100),
+  date_of_birth: z.string().refine(
+    val => !isNaN(Date.parse(val)) && new Date(val) <= new Date(),
+    'Invalid date of birth'
+  ),
+  sex: z.enum(['M', 'F', 'O'], { errorMap: () => ({ message: 'Sex must be M, F, or O' }) }),
+  nrc: z.string()
+    .regex(/^\d{6}\/\d{2}\/\d{1}$/, 'NRC format must be XXXXXX/XX/X')
+    .optional(),
+  cellphone: z.string()
+    .regex(/^(\+260|260|0)?[97]\d{8}$/, 'Invalid Zambian phone number format')
+    .optional(),
+  landline: z.string()
+    .regex(/^(\+260|260|0)?[2]\d{6}$/, 'Invalid landline format')
+    .optional(),
+  email: z.string().email('Invalid email format').optional(),
+  gestational_age: z.number()
+    .min(4, 'Gestational age must be at least 4 weeks')
+    .max(42, 'Gestational age cannot exceed 42 weeks')
+    .optional(),
+  bp_systolic_1: z.number()
+    .min(60, 'Systolic BP too low')
+    .max(250, 'Systolic BP too high')
+    .optional(),
+  temperature_first: z.number()
+    .min(350, 'Temperature too low (×10 units)')
+    .max(420, 'Temperature too high (×10 units)')
+    .optional(),
+  facility_id: z.number().positive('Facility ID is required'),
+  // Address fields
+  house: z.string().max(100).optional(),
+  street: z.string().max(200).optional(),
+  city: z.string().max(100).optional(),
+  landmark: z.string().max(200).optional(),
+  // Family contact fields
+  mother_first_name: z.string().max(100).optional(),
+  mother_surname: z.string().max(100).optional(),
+  mother_phone: z.string().max(20).optional(),
+  father_first_name: z.string().max(100).optional(),
+  father_surname: z.string().max(100).optional(),
+  father_phone: z.string().max(20).optional()
+});
+
+export const ancRecordSchema = z.object({
+  patient_id: z.number().positive('Patient ID is required'),
+  visit_type: z.enum(['initial', 'routine'], { 
+    errorMap: () => ({ message: 'Visit type must be initial or routine' }) 
+  }),
+  visit_date: z.string().refine(
+    val => !isNaN(Date.parse(val)),
+    'Invalid visit date'
+  ),
+  gestational_age: z.number()
+    .min(4, 'Gestational age must be at least 4 weeks')
+    .max(42, 'Gestational age cannot exceed 42 weeks'),
+  bp_systolic: z.number()
+    .min(60, 'Systolic BP too low')
+    .max(250, 'Systolic BP too high'),
+  bp_diastolic: z.number()
+    .min(40, 'Diastolic BP too low')
+    .max(150, 'Diastolic BP too high'),
+  temperature: z.number()
+    .min(350, 'Temperature too low (×10 units)')
+    .max(420, 'Temperature too high (×10 units)'),
+  weight: z.number()
+    .min(30, 'Weight too low')
+    .max(200, 'Weight too high')
+    .optional(),
+  alert_severity: z.enum(['yellow', 'orange', 'red', 'purple', 'blue']).optional(),
+  notes: z.string().max(1000).optional()
+});
+
+export const userSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters').max(50),
+  email: z.string().email('Invalid email format'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
+           'Password must contain uppercase, lowercase, number and special character'),
+  role: z.enum(['SystemAdministrator', 'DataController', 'HealthWorker', 'ReadOnly']),
+  facility_id: z.number().positive().optional()
+});
+
+export const dataSubjectRequestSchema = z.object({
+  request_type: z.enum(['ACCESS', 'RECTIFICATION', 'ERASURE'], {
+    errorMap: () => ({ message: 'Request type must be ACCESS, RECTIFICATION, or ERASURE' })
+  }),
+  target_id: z.string().min(1, 'Target ID is required'),
+  reason: z.string().max(500).optional()
+});
+
+// validation/middleware.ts
+import { Request, Response, NextFunction } from 'express';
+import { ZodSchema, ZodError } from 'zod';
+
+export const validate = (schema: ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.body);
+      next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const errorMessages = error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }));
+        
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: errorMessages
+        });
+      }
+      
+      return res.status(500).json({
+        error: 'Internal server error during validation'
+      });
+    }
+  };
+};
+
+// utils/xssClean.ts
+import { escapeHtml } from 'escape-html';
+
+interface CleanableObject {
+  [key: string]: any;
+}
+
+export const sanitizeString = (str: string): string => {
+  if (typeof str !== 'string') return str;
+  
+  // Remove HTML tags and escape special characters
+  return escapeHtml(str.replace(/<[^>]*>?/gm, '').trim());
+};
+
+export const sanitizeObject = (obj: CleanableObject): CleanableObject => {
+  const cleaned: CleanableObject = {};
+  
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      cleaned[key] = sanitizeString(value);
+    } else if (typeof value === 'object' && value !== null) {
+      cleaned[key] = Array.isArray(value) 
+        ? value.map(item => typeof item === 'string' ? sanitizeString(item) : item)
+        : sanitizeObject(value);
+    } else {
+      cleaned[key] = value;
+    }
+  }
+  
+  return cleaned;
+};
+
+export const xssClean = () => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.body && typeof req.body === 'object') {
+      req.body = sanitizeObject(req.body);
+    }
+    
+    if (req.query && typeof req.query === 'object') {
+      req.query = sanitizeObject(req.query as CleanableObject);
+    }
+    
+    if (req.params && typeof req.params === 'object') {
+      req.params = sanitizeObject(req.params);
+    }
+    
+    next();
+  };
+};
+
+// validation/rateLimiter.ts
+import rateLimit from 'express-rate-limit';
+
+export const createRateLimit = (windowMs: number, max: number, message?: string) => {
+  return rateLimit({
+    windowMs,
+    max,
+    message: message || 'Too many requests from this IP',
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+      res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Too many requests from this IP, please try again later'
+      });
+    }
+  });
+};
+
+// Standard rate limits
+export const generalRateLimit = createRateLimit(15 * 60 * 1000, 100); // 100 requests per 15 minutes
+export const authRateLimit = createRateLimit(15 * 60 * 1000, 5); // 5 auth attempts per 15 minutes
+export const apiRateLimit = createRateLimit(15 * 60 * 1000, 1000); // 1000 API calls per 15 minutes ewhat is this and is this impreotant to a prototype

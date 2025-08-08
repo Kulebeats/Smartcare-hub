@@ -1,0 +1,82 @@
+Build a persistent client database for an Electronic Health Records (EHR) system, directly replicating the UI and workflows of Smartcare Pro, including specific data validation and conditional form behavior. This system must handle sensitive patient information securely and support health program tracking.
+
+📋 Functional Requirements:
+1. Patient Identification & Auto-Generated NUPIN:
+
+Automatically generate a National Unique Patient Identification Number (NUPIN) during registration using the format:
+NO-0001C-27401-4
+
+NO – Constant prefix.
+
+0001C – Facility HMIS Code (from facility list) + client type indicator (e.g., C for Client).
+
+27401 – Sequential serial number.
+
+4 – Checksum digit (calculated using a standard checksum algorithm, e.g., Luhn Algorithm).
+
+2. Conditional Field Display Based on Age:
+
+If Date of Birth is entered:
+
+Age ≥ 16 years → Show NRC Field (Format: ------/--/-).
+
+Age < 5 years → Show Under-Five Card Number field.
+
+Ages between 5 and 15 → Neither NRC nor Under-Five fields should appear.
+
+Include a checkbox: “Date of birth is estimated”.
+
+3. Contact Information Validation:
+
+Cell Phone Number must be exactly 9 digits (after the Zambian country code +260 is selected).
+
+Validation for one primary cell number and optional secondary number.
+
+Checkbox for “Client does not have cellphone number” disables phone number fields.
+
+4. Search Functionality:
+
+Search clients using:
+
+NRC Number
+
+NUPIN
+
+Mobile Phone Number
+
+Full Name and Sex
+
+🖥️ Technical Requirements:
+Target Platform: Web Application (desktop and tablet optimized).
+
+Operating Environment: Online and Offline with automatic background data synchronization.
+
+Hosting Options: Prefer Azure Cloud, with flexibility for AWS or local government servers.
+
+Interface Style:
+
+Follow the exact design and layout from Smartcare Pro (as seen in the provided screenshots).
+
+Simple, professional, and intuitive for healthcare workers.
+
+📊 Expected Outputs:
+Client Visit History Reports (PDF and CSV).
+
+Health Program Participation Summaries.
+
+Synchronization Logs.
+
+Exportable Patient Records.
+
+🔐 Additional Features:
+Secure User Authentication with Role-Based Access Control (RBAC).
+
+Advanced Search and Filtering.
+
+NUPIN Auto-Generation Logic with Checksum Validation.
+
+Data Import/Export (CSV, Excel).
+
+Offline-First Data Entry and Sync.
+
+Compliance with Data Privacy Standards (HIPAA-like).

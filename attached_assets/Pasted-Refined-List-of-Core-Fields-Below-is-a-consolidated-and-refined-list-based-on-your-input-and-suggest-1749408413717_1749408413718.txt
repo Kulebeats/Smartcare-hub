@@ -1,0 +1,68 @@
+Refined List of Core Fields
+Below is a consolidated and refined list based on your input and suggested additions, optimized for SmartCare Pro:
+
+Core User Information
+User ID: Alphanumeric, 6-12 chars, unique, required (e.g., USR001234).
+First Name: Text, 2-50 chars, no numbers/special chars, required.
+Last Name: Text, 2-50 chars, no numbers/special chars, required.
+Middle Name/Initial: Text, 1-25 chars, optional.
+Preferred Name: Text, 2-50 chars, optional.
+Profile Photo: Image (<2MB), optional.
+Contact Information
+Primary Email: Valid email, unique, required.
+Secondary Email: Valid email, optional.
+Primary Phone: 10-digit numeric (e.g., +260123456789), required.
+Secondary Phone: 10-digit numeric, optional.
+Work Address: Facility, Street, City, District, required for clinical users.
+Emergency Contact Name: Text, optional.
+Emergency Contact Phone: 10-digit numeric, optional.
+Zambia-Specific Professional Information
+HPCZ Registration Number: Category prefix + numeric (e.g., CO/2024/001234), required for HPCZ roles, verified.
+HPCZ Category: CO, ML, PT, OT, RAD, MLT, BME, DT, DH, etc., required for applicable roles.
+GNCZ Registration Number: Numeric, required for nurses, verified.
+Nursing Category: RN, EN, RM, Public Health, Mental Health, Oncology, Nurse Practitioner, required for nurses.
+MOH Certificate Number: Alphanumeric, required for CHAs/EMTs, verified.
+District Health Office: Province + District (e.g., Lusaka, Chilanga), required for CHWs.
+Primary Languages: English + 1 local (Bemba, Nyanja, Tonga, Lozi, Kaonde, Lunda, Luvale, Chewa, Tumbuka), required.
+Language Certification Level: Basic, Intermediate, Fluent, Native, required per language.
+Additional Certifications: Text (e.g., BLS, ACLS, SmartCare Pro Training), optional.
+Professional Credentials
+Professional Title: MD, RN, NP, PA, LPN, Administrator, etc., required.
+License Number: Varies by profession, required for clinical users, verified.
+License State: 2-char code (if applicable), required for clinical users.
+License Expiration Date: MM/DD/YYYY, required for clinical users.
+License Verification Status: Pending, Verified, Expired, required for clinical users.
+Verification Date: MM/DD/YYYY, auto-populated.
+Specialty/Department: General Medicine, Pediatrics, OB/GYN, Surgery, Public Health, HIV/AIDS, TB, Malaria, Community Health, etc., required.
+Employment Status: Active, Inactive, Terminated, On Leave, required.
+Account Type: Permanent, Temporary, Volunteer, required.
+Account Expiry Date: MM/DD/YYYY, required for temporary accounts.
+Security & Access
+Username: 6-20 chars, alphanumeric, unique, required.
+Password: 12+ chars, complex, 90-day expiry, no reuse of last 12, required.
+Two-Factor Authentication: SMS, Email, or App, required.
+Digital Signature ID: Alphanumeric, required for clinical users.
+Biometric Identifier: Fingerprint ID, optional.
+Security Level: Basic, Standard, Elevated, Administrator, required.
+Data Processing Consent: Yes/No + Date, required.
+System Configuration
+Facility/Location Access: Multi-select facilities, required.
+Department Access: Multi-select departments, required.
+Patient Population Access: All, Department Only, Provider Panel, required.
+Default Landing Page: Dashboard, Patient List, Schedule, optional.
+Notification Preferences: Email, SMS, In-app; Real-time, Daily, Weekly, optional.
+Time Zone: Standard code (e.g., CAT), required.
+Accessibility Needs: Text (e.g., Screen Reader), optional.
+DHIS2 User ID: Alphanumeric, optional.
+eLMIS User ID: Alphanumeric, optional.
+Audit & Compliance
+Account Creation Date: MM/DD/YYYY HH:MM:SS, auto-populated.
+Created By: User ID, auto-populated.
+Last Login Date: MM/DD/YYYY HH:MM:SS, auto-updated.
+Last Password Change: MM/DD/YYYY, auto-updated.
+Failed Login Attempts: Numeric, auto-updated.
+Policy Acknowledgments: List + dates, required.
+Geographic Access Controls
+Province Assignment: Central, Copperbelt, Eastern, etc., required.
+District Assignment: 116 districts, required for CHWs.
+Facility Type Access: Teaching Hospital, General Hospital, Health Centre, etc., required.

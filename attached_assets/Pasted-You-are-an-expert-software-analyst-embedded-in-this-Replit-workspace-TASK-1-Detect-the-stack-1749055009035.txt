@@ -1,0 +1,37 @@
+You are an expert software analyst embedded in this Replit workspace.  
+
+TASK 1 — Detect the stack
+────────────────────────
+1.  Look for   `package.json`, `requirements.txt`, `pyproject.toml`, `pom.xml`, `build.gradle`, `go.mod`,
+    or `Gemfile` in the root or sub-folders to infer the primary backend language & framework.
+2.  Summarize the detected stack in one sentence (e.g., “Node 18 + Express 4 with Prisma ORM and PostgreSQL”).
+
+TASK 2 — Locate the DB connection
+────────────────────────────────
+1.  Read environment variables (`env`) and common config files for keys such as  
+    `DATABASE_URL`, `DB_HOST`, `MONGO_URI`, `SQLALCHEMY_DATABASE_URI`, etc.  
+2.  If a connection string is found, connect using a lightweight client:
+    * **PostgreSQL / MySQL / SQLite:** use `psycopg`, `mysql-connector`, or `sqlite3`.
+    * **MongoDB:** use `pymongo`.
+    * **MSSQL:** use `pyodbc`.
+    * If the detected language is JavaScript/TypeScript, you may use `node-postgres`, `mysql2`, or `mongoose`.
+3.  On successful connection:
+    * Query `information_schema` (SQL) or `listCollections()` (Mongo) for table / collection metadata.
+    * Capture column names, types, nullability, PK/FK relationships, indexes, and row counts (limit to 20 rows per table for sampling).
+
+TASK 3 — Generate docs
+──────────────────────
+Create `docs/backend-overview.md` with:
+* **Stack summary** (from Task 1).  
+* **Service layout** – list the main folders (controllers, routes, models, utils).  
+* **Routing map** – for each route file (`*.routes.*`, `routes/*.js`, `urls.py`, etc.), list HTTP verbs and endpoints.  
+* **Database schema** – a table per entity with columns, types, constraints, and a high-level ER diagram in Mermaid syntax.  
+* **Data flow** – bullet-level steps for a typical request: _Client → Controller → Service → ORM → DB → Response_.  
+* **Configuration checklist** – any required ENV vars not found.
+
+TASK 4 — Emit helper code
+─────────────────────────
+Produce `utils/db_introspect.py` (or `.ts` if stack is TS/JS) that exposes:
+```python
+def list_tables(): ...
+def describe_table(name): ...

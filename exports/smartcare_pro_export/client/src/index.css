@@ -1,0 +1,363 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes toast-timer {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-toast-timer {
+  animation: toast-timer 4s linear forwards;
+}
+
+.modern-toast {
+  animation: fade-in 0.3s ease forwards, fade-out 0.3s ease forwards 3.7s;
+  background-color: white;
+  border-radius: 6px;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+  padding: 12px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  max-width: 420px;
+  position: relative;
+}
+
+.toast-progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: rgba(247, 114, 114, 0.2);
+  overflow: hidden;
+}
+
+.toast-progress-bar {
+  height: 100%;
+  background-color: #f77272;
+  animation: toast-timer 4s linear forwards;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    /* SmartCare PRO Brand Colors */
+    --smartcare-green: #00A651;
+    --smartcare-blue: #0072BC;
+    --smartcare-light-blue: #E6F3FF;
+    --smartcare-grey: #F5F5F5;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    @apply text-gray-800;
+  }
+
+  /* SmartCare specific styles */
+  .smartcare-green {
+    color: var(--smartcare-green);
+  }
+
+  .smartcare-blue {
+    color: var(--smartcare-blue);
+  }
+
+  .smartcare-light-blue-bg {
+    background-color: var(--smartcare-light-blue);
+  }
+
+  .smartcare-grey-bg {
+    background-color: var(--smartcare-grey);
+  }
+}
+
+/* Navigation Bar for Pharmacovigilance Tabs */
+.nav-bar {
+  display: flex;
+  overflow-x: auto; /* Horizontal scroll if tabs overflow */
+  white-space: nowrap;
+  padding: 0;
+  background-color: white;
+  border-radius: 8px;
+  width: 100%;
+  border-bottom: 1px solid #e5e7eb;
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+}
+
+.nav-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nav-bar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: #4B5563;
+  font-size: 14px;
+  padding: 12px 14px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-bar a:hover {
+  color: #4287f5;
+}
+
+.nav-bar a.active {
+  color: #4287f5;
+  font-weight: 600;
+  border-bottom: 3px solid #4287f5;
+}
+
+.nav-bar a svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav-bar {
+    padding: 6px 0;
+  }
+
+  .nav-bar a {
+    font-size: 13px;
+    padding: 6px 10px;
+    margin: 0 2px;
+  }
+}
+
+/* Patient info card styling */
+.patient-info-card {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.patient-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.patient-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-info-label {
+  font-size: 12px;
+  color: #336699; /* Updated color */
+  margin-bottom: 4px;
+}
+
+.patient-info-value {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.patient-info-item p {
+  font-size: 0.85rem;
+}
+
+
+/* Data summary cards */
+.data-summary-card {
+  background-color: #f0f7ff;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.data-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.data-summary-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0072BC;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.data-summary-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.data-summary-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.data-summary-label {
+  font-size: 12px;
+  color: #4B5563;
+}
+
+.data-summary-value {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Dashboard smaller text styling */
+.dashboard-text-sm {
+  font-size: 12px;
+}
+
+.dashboard-heading-sm {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dashboard-label-xs {
+  font-size: 11px;
+  color: #6B7280;
+}
+
+.dashboard-value-sm {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Make Latest Encounter and Recent Data Summary consistent */
+.card-section-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card-section-content {
+  font-size: 12px;
+}
+
+/* Standardize font sizes across Latest Encounter section */
+.latest-encounter span,
+.latest-encounter div,
+.latest-encounter h4,
+.latest-encounter p {
+  font-size: 12px;
+}
+
+.latest-encounter h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

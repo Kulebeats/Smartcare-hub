@@ -1,0 +1,251 @@
+[
+  {
+    "id": "severe-bleeding",
+    "category": "bleeding",
+    "priority": 1,
+    "conditions": {
+      "bleedingPerVaginam": true,
+      "bleedingAmount": "heavy"
+    },
+    "action": {
+      "severity": "Red",
+      "message": "Severe vaginal bleeding detected - immediate referral required",
+      "recommendations": [
+        "Start IV access immediately",
+        "Monitor vital signs every 15 minutes",
+        "Refer to hospital with obstetric facilities",
+        "Do not perform vaginal examination"
+      ],
+      "referralRequired": true,
+      "urgency": "immediate"
+    }
+  },
+  {
+    "id": "severe-hypertension",
+    "category": "hypertension",
+    "priority": 1,
+    "conditions": {
+      "systolicBP": 160,
+      "diastolicBP": 110
+    },
+    "action": {
+      "severity": "Red",
+      "message": "Severe hypertension detected - urgent evaluation required",
+      "recommendations": [
+        "Repeat BP measurement after 15 minutes rest",
+        "Check for proteinuria",
+        "Assess for symptoms of severe pre-eclampsia",
+        "Refer for immediate obstetric care"
+      ],
+      "referralRequired": true,
+      "urgency": "urgent"
+    }
+  },
+  {
+    "id": "severe-preeclampsia-symptoms",
+    "category": "preeclampsia",
+    "priority": 1,
+    "conditions": {
+      "severePersistentHeadache": true,
+      "systolicBP": 140
+    },
+    "action": {
+      "severity": "Red",
+      "message": "Severe pre-eclampsia symptoms - immediate referral required",
+      "recommendations": [
+        "Do not leave patient unattended",
+        "Prepare for emergency transport",
+        "Monitor for seizure activity",
+        "Refer to hospital with obstetric facilities"
+      ],
+      "referralRequired": true,
+      "urgency": "immediate"
+    }
+  },
+  {
+    "id": "severe-anemia",
+    "category": "anemia",
+    "priority": 2,
+    "conditions": {
+      "hemoglobin": 7,
+      "pallor": "severe"
+    },
+    "action": {
+      "severity": "Red",
+      "message": "Severe anemia detected - urgent treatment required",
+      "recommendations": [
+        "Start iron supplementation immediately",
+        "Refer for blood transfusion evaluation",
+        "Monitor for signs of heart failure",
+        "Weekly follow-up required"
+      ],
+      "referralRequired": true,
+      "urgency": "urgent"
+    }
+  },
+  {
+    "id": "severe-hypoxemia",
+    "category": "respiratory",
+    "priority": 1,
+    "conditions": {
+      "oxygenSaturation": 90,
+      "dyspnoea": true
+    },
+    "action": {
+      "severity": "Red",
+      "message": "Critical hypoxemia - immediate oxygen therapy required",
+      "recommendations": [
+        "Administer oxygen immediately",
+        "Position patient in left lateral position",
+        "Monitor oxygen saturation continuously",
+        "Urgent referral for respiratory evaluation"
+      ],
+      "referralRequired": true,
+      "urgency": "immediate"
+    }
+  },
+  {
+    "id": "abnormal-fetal-heart-rate",
+    "category": "fetal",
+    "priority": 2,
+    "conditions": {
+      "fetalHeartRate": 110
+    },
+    "action": {
+      "severity": "Orange",
+      "message": "Abnormal fetal heart rate - positioning and re-evaluation required",
+      "recommendations": [
+        "Position mother in left lateral position",
+        "Re-check fetal heart rate after 10 minutes",
+        "If still abnormal, refer for obstetric evaluation",
+        "Monitor maternal vital signs"
+      ],
+      "referralRequired": false,
+      "urgency": "monitoring"
+    }
+  },
+  {
+    "id": "moderate-hypertension",
+    "category": "hypertension",
+    "priority": 3,
+    "conditions": {
+      "systolicBP": 140,
+      "diastolicBP": 90
+    },
+    "action": {
+      "severity": "Yellow",
+      "message": "Moderate hypertension - monitoring and follow-up required",
+      "recommendations": [
+        "Repeat BP measurement after rest",
+        "Check urine for protein",
+        "Counsel on warning signs",
+        "Schedule follow-up within 1 week"
+      ],
+      "referralRequired": false,
+      "urgency": "follow-up"
+    }
+  },
+  {
+    "id": "moderate-anemia",
+    "category": "anemia",
+    "priority": 4,
+    "conditions": {
+      "hemoglobin": 8,
+      "pallor": "moderate"
+    },
+    "action": {
+      "severity": "Yellow",
+      "message": "Moderate anemia - iron supplementation required",
+      "recommendations": [
+        "Prescribe iron and folic acid supplements",
+        "Counsel on iron-rich foods",
+        "Follow-up in 4 weeks",
+        "Monitor for improvement"
+      ],
+      "referralRequired": false,
+      "urgency": "routine"
+    }
+  },
+  {
+    "id": "syphilis-positive",
+    "category": "infections",
+    "priority": 2,
+    "conditions": {
+      "syphilisResult": "positive"
+    },
+    "action": {
+      "severity": "Orange",
+      "message": "Syphilis positive - immediate treatment required",
+      "recommendations": [
+        "Start benzathine penicillin treatment",
+        "Treat sexual partner",
+        "Counsel on sexually transmitted infections",
+        "Follow-up for treatment completion"
+      ],
+      "referralRequired": false,
+      "urgency": "treatment"
+    }
+  },
+  {
+    "id": "proteinuria-severe",
+    "category": "preeclampsia",
+    "priority": 2,
+    "conditions": {
+      "urineProtein": "3+",
+      "gestationalAgeWeeks": 20
+    },
+    "action": {
+      "severity": "Orange",
+      "message": "Severe proteinuria detected - pre-eclampsia evaluation required",
+      "recommendations": [
+        "Check blood pressure immediately",
+        "Assess for pre-eclampsia symptoms",
+        "Refer for obstetric evaluation",
+        "Monitor closely for progression"
+      ],
+      "referralRequired": true,
+      "urgency": "urgent"
+    }
+  },
+  {
+    "id": "high-fetal-heart-rate",
+    "category": "fetal",
+    "priority": 3,
+    "conditions": {
+      "fetalHeartRate": 160
+    },
+    "action": {
+      "severity": "Yellow",
+      "message": "High fetal heart rate - monitoring required",
+      "recommendations": [
+        "Check maternal temperature",
+        "Re-assess fetal heart rate in 30 minutes",
+        "If persistent, consider referral",
+        "Monitor for signs of infection"
+      ],
+      "referralRequired": false,
+      "urgency": "monitoring"
+    }
+  },
+  {
+    "id": "mild-hypertension-early-pregnancy",
+    "category": "hypertension",
+    "priority": 4,
+    "conditions": {
+      "systolicBP": 140,
+      "gestationalAgeWeeks": 18
+    },
+    "action": {
+      "severity": "Yellow",
+      "message": "Early pregnancy hypertension - close monitoring required",
+      "recommendations": [
+        "Investigate for chronic hypertension",
+        "More frequent antenatal visits",
+        "Monitor for pre-eclampsia development",
+        "Lifestyle counseling"
+      ],
+      "referralRequired": false,
+      "urgency": "monitoring"
+    }
+  }
+]

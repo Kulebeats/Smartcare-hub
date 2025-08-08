@@ -1,0 +1,32 @@
+Decision ID	ANC.DT.12 Behaviour counselling required		
+Business Rule	Depending on the woman's behaviours reported during the first contact and the woman's reported persistent behaviours, additional counselling may or may not be required. 		
+Trigger	ANC.B10 Counselling, in-facility management & treatment - 1. Behaviour counselling		
+Inputs	Output	Action	Display to health worker
+'Daily caffeine intake' = 'More than 2 cups (200 ml) of filtered or commercially brewed coffee'	FOR FIRST CONTACT: 'Daily caffeine intake' = 'More than 2 cups (200 ml) of filtered or commercially brewed coffee'	Caffeine reduction counseling required	"Health care providers should counsel clients to avoid caffeine completely until they deliver.Lowering daily caffeine intake during pregnancy is recommended to reduce the risk of pregnancy loss and low-birth-weight neonates.
+
+This includes any product, beverage or food containing caffeine (e.g. brewed coffee, tea, cola-type soft drinks, caffeinated energy drinks, chocolate, caffeine tablets). Caffeine-containing teas (black tea and green tea) and soft drinks (colas and iced tea) usually contain less than 50 mg per 250 ml serving."
+'Daily caffeine intake' = 'More than 4 cups of tea'	FOR FIRST CONTACT: 'Daily caffeine intake' = 'More than 4 cups of tea'	Caffeine avoidance counseling required	
+'Daily caffeine intake' = 'More than one bottle of cola or caffeine energy drink'	FOR FIRST CONTACT: 'Daily caffeine intake' = More than one bottle of cola or caffeine energy drink'	Caffeine avoidance counseling required	
+'Daily caffeine intake' = 'None of the above daily caffeine intake'	FOR FIRST CONTACT: 'Daily caffeine intake' = 'None of the above daily caffeine intake'	Caffeine avoidance counseling required	
+IF 'Daily caffeine intake' = 'More than 2 cups (200 ml) of filtered or commercially brewed coffee' ON MORE THAN ONE CONTACT	Persistant behaviours' = 'High caffeine intake'	Caffeine avoidance counseling required	
+IF 'Daily caffeine intake' = 'More than 4 cups of tea' ON MORE THAN ONE CONTACT	Persistant behaviours' = 'High caffeine intake'	Caffeine avoidance counseling required	
+IF 'Daily caffeine intake' = 'More than 3 cups (300 ml) of instant coffee' ON MORE THAN ONE CONTACT	Persistant behaviours' = 'High caffeine intake'	Caffeine avoidance counseling required	
+IF 'Daily caffeine intake' = 'More than 48 pieces (squares) of chocolate' ON MORE THAN ONE CONTACT	Persistant behaviours' = 'High caffeine intake'	Caffeine reduction counseling required	
+IF 'Daily caffeine intake' = 'None of the above daily caffeine intake' ON MORE THAN ONE CONTACT	Persistant behaviours' = 'High caffeine intake'	Caffeine reduction counseling required	
+'Persistant behaviours' = 'High caffeine intake'	Persistant behaviours' = 'High caffeine intake'	Caffeine reduction counseling required	
+'Tobacco use' = TRUE	FOR FIRST CONTACT: 'Tobacco use' = TRUE	Tobacco cessation counseling required	Healthcare providers should routinely offer advice and psycho-social interventions for tobacco cessation to all pregnant women who are either current tobacco users or recent tobacco quitters.
+IF 'Tobacco use' = TRUE ON MORE THAN ONE CONTACT	Persistant behaviours' = 'Current tobacco use or recently quit'	Tobacco cessation counseling required	
+'Recently quit tobacco products' = TRUE	FOR FIRST CONTACT: 'Recently quit tobacco products' = TRUE	Tobacco cessation counseling required	
+IF 'Recently quit tobacco products' = TRUE ON MORE THAN ONE CONTACT	Persistant behaviours' = 'Current tobacco use or recently quit'	Tobacco cessation counseling required	
+'Persistant behaviours' = 'Current tobacco use or recently quit'	Persistant behaviours' = 'Current tobacco use or recently quit'	Tobacco cessation counseling required	
+Does anyone in the household smoke? ' = TRUE	"FOR FIRST CONTACT: 'Does anyone in the household smoke? ' = TRUE
+"	Second-hand smoke counseling required	Provide pregnant women, their partners and other household members with advice and information about the risks of second-hand smoke (SHS) exposure from all forms of smoked tobacco, as well as strategies to reduce SHS in the home.
+IF 'Does anyone in the household smoke? ' = TRUE on MORE THAN ONE CONTACT	Persistent behaviours' = 'Does anyone in the household smoke? '	Second-hand smoke counseling required	
+Persistent behaviours' = 'Does anyone in the household smoke? '	Persistent behaviours' = 'Does anyone in the household smoke? '	Second-hand smoke counseling required	
+Current alcohol and/or other substance use' = 'Alcohol'	FOR FIRST CONTACT 'Current alcohol and/or other substance use' = 'Alcohol'	Alcohol / substance use counseling required	Healthcare providers should at the earliest opportunity advise pregnant women dependent on alcohol or drugs to cease their alcohol or drug use and offer, or refer them to, detoxification services under medical supervision, where necessary and applicable.
+IF  'Current alcohol and/or other substance use' = 'Alcohol' on MORE THAN ONE CONTACT	Persistent behaviours' = 'Alcohol use'	Alcohol / substance use counseling required	
+Persistent behaviours' = 'Alcohol use'	Persistent behaviours' = 'Alcohol use'	Alcohol / substance use counseling required	
+'Current alcohol and/or other substance use' = 'Marijuana' AND/OR 'Cocaine' AND/OR 'Crack' AND/OR 'Injectable drugs' AND/OR 'Other substance use (specify)'	FOR FIRST CONTACT 'Current alcohol and/or other substance use' = 'Marijuana' AND/OR 'Cocaine' AND/OR 'Crack' AND/OR 'Injectable drugs' AND/OR 'Other substance use (specify)'	Alcohol / substance use counseling required	
+IF  'Current alcohol and/or other substance use' = 'Marijuana' AND/OR 'Cocaine' AND/OR 'Crack' AND/OR 'Injectable drugs' AND/OR 'Other substance use (specify)' on MORE THAN ONE CONTACT	Persistent behaviours' = 'Substance use'	Alcohol / substance use counseling required	
+Persistent behaviours' = 'Substance use'	Persistent behaviours' = 'Substance use'	Alcohol / substance use counseling required	
+Intimate partner violence/GBV 		counseling required on IPV/GBV 	Healthcare providers should ask pregnant women about physical or emotional abuse and violence with their current or previous partner. Shoud also examine the woman for signs of IPV/GBV

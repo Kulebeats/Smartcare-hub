@@ -1,0 +1,117 @@
+Submit button clicked 
+Object {isMaritalSectionComplete: true, formValues: {…}, formErrors: {…}, formErrorsDetailed: "{↵  "first_name": {↵    "message": "Required",↵    "type": "invalid_type"↵  },↵ …"}
+formErrors: Object
+cellphone: Object
+message: "Required"
+ref: undefined
+type: "invalid_type"
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+date_of_birth: Object
+message: "Required"
+ref: undefined
+type: "invalid_type"
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+first_name: Object
+message: "Required"
+ref: undefined
+type: "invalid_type"
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+mothers_name: Object
+message: "Mother's first name is required"
+ref: undefined
+type: "invalid_type"
+[[Prototype]]: Object
+mothers_surname: Object
+message: "Mother's surname is required"
+ref: undefined
+type: "invalid_type"
+[[Prototype]]: Object
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+formErrorsDetailed: "{↵ "first_name": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "date_of_birth": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "cellphone": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "mothers_name": {↵ "message": "Mother's first name is required",↵ "type": "invalid_type"↵ },↵ "mothers_surname": {↵ "message": "Mother's surname is required",↵ "type": "invalid_type"↵ }↵}"
+formValues: Object
+isMaritalSectionComplete: true
+[[Prototype]]: Object
+Submit button clicked 
+Object {isMaritalSectionComplete: true, formValues: {…}, formErrors: {…}, formErrorsDetailed: "{↵  "first_name": {↵    "message": "Required",↵    "type": "invalid_type"↵  },↵ …"}
+formErrors: Object
+cellphone: Object
+date_of_birth: Object
+first_name: Object
+mothers_name: Object
+mothers_surname: Object
+[[Prototype]]: Object
+formErrorsDetailed: "{↵ "first_name": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "date_of_birth": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "cellphone": {↵ "message": "Required",↵ "type": "invalid_type"↵ },↵ "mothers_name": {↵ "message": "Mother's first name is required",↵ "type": "invalid_type"↵ },↵ "mothers_surname": {↵ "message": "Mother's surname is required",↵ "type": "invalid_type"↵ }↵}"
+formValues: Object
+isMaritalSectionComplete: true
+[[Prototype]]: Object
+constructor: ƒ Object()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+

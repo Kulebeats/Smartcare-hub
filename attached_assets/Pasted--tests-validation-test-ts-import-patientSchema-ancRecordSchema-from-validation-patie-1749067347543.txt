@@ -1,0 +1,504 @@
+// __tests__/validation.test.ts
+import { patientSchema, ancRecordSchema } from '../validation/patient';
+import { validate } from '../validation/middleware';
+import { Request, Response } from 'express';
+
+describe('Patient Validation', () => {
+  describe('patientSchema', () => {
+    test('should accept valid patient data', () => {
+      const validPatient = {
+        first_name: 'John',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'M' as const,
+        nrc: '123456/12/1',
+        cellphone: '0977123456',
+        facility_id: 1
+      };
+
+      expect(() => patientSchema.parse(validPatient)).not.toThrow();
+    });
+
+    test('should reject invalid NRC format', () => {
+      const invalidPatient = {
+        first_name: 'John',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'M' as const,
+        nrc: '12345/12/1', // Missing digit
+        facility_id: 1
+      };
+
+      expect(() => patientSchema.parse(invalidPatient)).toThrow();
+    });
+
+    test('should reject invalid phone number format', () => {
+      const invalidPatient = {
+        first_name: 'John',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'M' as const,
+        cellphone: '123456789', // Invalid format
+        facility_id: 1
+      };
+
+      expect(() => patientSchema.parse(invalidPatient)).toThrow();
+    });
+
+    test('should reject gestational age outside valid range', () => {
+      const invalidPatient = {
+        first_name: 'Jane',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'F' as const,
+        gestational_age: 50, // Too high
+        facility_id: 1
+      };
+
+      expect(() => patientSchema.parse(invalidPatient)).toThrow();
+    });
+
+    test('should reject BP outside valid range', () => {
+      const invalidPatient = {
+        first_name: 'Jane',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'F' as const,
+        bp_systolic_1: 300, // Too high
+        facility_id: 1
+      };
+
+      expect(() => patientSchema.parse(invalidPatient)).toThrow();
+    });
+  });
+
+  describe('ancRecordSchema', () => {
+    test('should accept valid ANC record', () => {
+      const validANC = {
+        patient_id: 1,
+        visit_type: 'routine' as const,
+        visit_date: '2024-01-01',
+        gestational_age: 20,
+        bp_systolic: 120,
+        bp_diastolic: 80,
+        temperature: 370
+      };
+
+      expect(() => ancRecordSchema.parse(validANC)).not.toThrow();
+    });
+
+    test('should reject BP systolic = 300', () => {
+      const invalidANC = {
+        patient_id: 1,
+        visit_type: 'routine' as const,
+        visit_date: '2024-01-01',
+        gestational_age: 20,
+        bp_systolic: 300, // Too high
+        bp_diastolic: 80,
+        temperature: 370
+      };
+
+      expect(() => ancRecordSchema.parse(invalidANC)).toThrow('Systolic BP too high');
+    });
+  });
+});
+
+// __tests__/middleware.test.ts
+import request from 'supertest';
+import express from 'express';
+import { validate } from '../validation/middleware';
+import { patientSchema } from '../validation/patient';
+
+const app = express();
+app.use(express.json());
+
+app.post('/test-patient', validate(patientSchema), (req, res) => {
+  res.json({ success: true });
+});
+
+describe('Validation Middleware', () => {
+  test('should return 400 for invalid NRC format', async () => {
+    const response = await request(app)
+      .post('/test-patient')
+      .send({
+        first_name: 'John',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',  
+        sex: 'M',
+        nrc: '12345/12/1', // Invalid format
+        facility_id: 1
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Validation failed');
+    expect(response.body.details).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'nrc',
+          message: 'NRC format must be XXXXXX/XX/X'
+        })
+      ])
+    );
+  });
+
+  test('should return 400 for BP systolic = 300', async () => {
+    const response = await request(app)
+      .post('/test-patient')
+      .send({
+        first_name: 'Jane',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'F',
+        bp_systolic_1: 300,
+        facility_id: 1
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.details).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'bp_systolic_1',
+          message: 'Systolic BP too high'
+        })
+      ])
+    );
+  });
+
+  test('should pass validation for valid data', async () => {
+    const response = await request(app)
+      .post('/test-patient')
+      .send({
+        first_name: 'John',
+        surname: 'Doe',
+        date_of_birth: '1990-01-01',
+        sex: 'M',
+        nrc: '123456/12/1',
+        cellphone: '0977123456',
+        facility_id: 1
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+  });
+});
+
+// __tests__/audit.test.ts
+import request from 'supertest';
+import express from 'express';
+import { auditMiddleware, auditFailedLogin } from '../middleware/audit';
+import { AuditChainVerifier } from '../middleware/audit';
+
+// Mock database
+jest.mock('../db/connection', () => ({
+  db: {
+    insert: jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined)
+    }),
+    select: jest.fn().mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          orderBy: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([])
+          })
+        }),
+        orderBy: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue([])
+        })
+      })
+    })
+  }
+}));
+
+const app = express();
+app.use(express.json());
+
+// Mock user middleware
+app.use((req, res, next) => {
+  (req as any).user = { id: 1 };
+  next();
+});
+
+app.get('/api/users', auditMiddleware('READ_USER'), (req, res) => {
+  res.json({ users: [] });
+});
+
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  if (username === 'admin' && password === 'correct') {
+    res.json({ success: true, token: 'mock-token' });
+  } else {
+    // Log failed login attempt
+    auditFailedLogin(req, req.ip);
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+describe('Audit Middleware', () => {
+  test('should generate audit event for GET /api/users', async () => {
+    const response = await request(app)
+      .get('/api/users')
+      .set('User-Agent', 'test-agent');
+
+    expect(response.status).toBe(200);
+    
+    // Verify audit logging was called (in real test, check database)
+    // This would require proper database integration testing
+  });
+
+  test('should generate audit event for failed login', async () => {
+    const response = await request(app)
+      .post('/api/login')
+      .send({
+        username: 'admin',
+        password: 'wrong'
+      });
+
+    expect(response.status).toBe(401);
+    
+    // In real implementation, verify that auditFailedLogin was called
+    // and audit_events table contains FAILED_LOGIN entry
+  });
+
+  test('should pass for successful login', async () => {
+    const response = await request(app)
+      .post('/api/login')
+      .send({
+        username: 'admin',
+        password: 'correct'
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+  });
+});
+
+// __tests__/auditChain.test.ts
+describe('Audit Chain Verification', () => {
+  let verifier: AuditChainVerifier;
+
+  beforeEach(() => {
+    verifier = new AuditChainVerifier();
+  });
+
+  test('should validate intact audit chain', async () => {
+    // Mock database with proper chain
+    const mockEvents = [
+      {
+        id: 1,
+        prev_hash: null,
+        curr_hash: 'hash1',
+        action: 'CREATE_USER',
+        created_at: new Date('2024-01-01T10:00:00Z')
+      },
+      {
+        id: 2,
+        prev_hash: 'hash1',
+        curr_hash: 'hash2',
+        action: 'READ_USER',
+        created_at: new Date('2024-01-01T10:01:00Z')
+      }
+    ];
+
+    // Mock the database call
+    jest.spyOn(verifier as any, 'getEvents').mockResolvedValue(mockEvents);
+    jest.spyOn(verifier as any, 'recalculateHash')
+      .mockReturnValueOnce('hash1')
+      .mockReturnValueOnce('hash2');
+
+    const result = await verifier.verifyChain();
+    expect(result.isValid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  test('should detect broken audit chain', async () => {
+    const mockEvents = [
+      {
+        id: 1,
+        prev_hash: null,
+        curr_hash: 'hash1',
+        action: 'CREATE_USER',
+        created_at: new Date('2024-01-01T10:00:00Z')
+      },
+      {
+        id: 2,
+        prev_hash: 'wrong_hash', // Broken chain
+        curr_hash: 'hash2',
+        action: 'READ_USER',
+        created_at: new Date('2024-01-01T10:01:00Z')
+      }
+    ];
+
+    jest.spyOn(verifier as any, 'getEvents').mockResolvedValue(mockEvents);
+    jest.spyOn(verifier as any, 'recalculateHash')
+      .mockReturnValueOnce('hash1')
+      .mockReturnValueOnce('hash2');
+
+    const result = await verifier.verifyChain();
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('Hash chain broken at event 2')
+      ])
+    );
+  });
+});
+
+// __tests__/xss.test.ts
+import { sanitizeString, sanitizeObject, xssClean } from '../utils/xssClean';
+
+describe('XSS Sanitization', () => {
+  test('should remove HTML tags from strings', () => {
+    const maliciousInput = '<script>alert("xss")</script>Hello World';
+    const cleaned = sanitizeString(maliciousInput);
+    
+    expect(cleaned).not.toContain('<script>');
+    expect(cleaned).not.toContain('</script>');
+    expect(cleaned).toContain('Hello World');
+  });
+
+  test('should sanitize object properties', () => {
+    const maliciousObject = {
+      name: '<script>alert("xss")</script>John',
+      email: 'john@example.com',
+      bio: '<img src=x onerror=alert("xss")>Bio text'
+    };
+
+    const cleaned = sanitizeObject(maliciousObject);
+    
+    expect(cleaned.name).not.toContain('<script>');
+    expect(cleaned.name).toContain('John');
+    expect(cleaned.email).toBe('john@example.com');
+    expect(cleaned.bio).not.toContain('<img');
+    expect(cleaned.bio).toContain('Bio text');
+  });
+
+  test('should handle nested objects', () => {
+    const nestedObject = {
+      user: {
+        profile: {
+          name: '<script>alert("nested")</script>Alice'
+        }
+      }
+    };
+
+    const cleaned = sanitizeObject(nestedObject);
+    expect(cleaned.user.profile.name).not.toContain('<script>');
+    expect(cleaned.user.profile.name).toContain('Alice');
+  });
+
+  test('middleware should sanitize request body', () => {
+    const mockReq = {
+      body: {
+        name: '<script>alert("xss")</script>Test',
+        comment: '<img src=x onerror=alert("xss")>Comment'
+      },
+      query: {},
+      params: {}
+    } as any;
+    
+    const mockRes = {} as any;
+    const mockNext = jest.fn();
+
+    const middleware = xssClean();
+    middleware(mockReq, mockRes, mockNext);
+
+    expect(mockReq.body.name).not.toContain('<script>');
+    expect(mockReq.body.name).toContain('Test');
+    expect(mockReq.body.comment).not.toContain('<img');
+    expect(mockReq.body.comment).toContain('Comment');
+    expect(mockNext).toHaveBeenCalled();
+  });
+});
+
+// __tests__/integration.test.ts
+import request from 'supertest';
+import { app } from '../app'; // Your main Express app
+
+describe('Integration Tests', () => {
+  describe('Patient API with Validation and Audit', () => {
+    test('should create patient with valid data and generate audit log', async () => {
+      const validPatient = {
+        first_name: 'Jane',
+        surname: 'Smith',
+        date_of_birth: '1985-05-15',
+        sex: 'F',
+        nrc: '850515/15/1',
+        cellphone: '0977123456',
+        facility_id: 1
+      };
+
+      const response = await request(app)
+        .post('/api/patients')
+        .send(validPatient)
+        .set('Authorization', 'Bearer mock-token');
+
+      expect(response.status).toBe(201);
+      expect(response.body.patient.first_name).toBe('Jane');
+      
+      // Verify audit event was created
+      const auditResponse = await request(app)
+        .get('/api/admin/audit/events')
+        .query({ action: 'CREATE_PATIENT', limit: 1 })
+        .set('Authorization', 'Bearer admin-token');
+
+      expect(auditResponse.status).toBe(200);
+      expect(auditResponse.body.events).toHaveLength(1);
+      expect(auditResponse.body.events[0].action).toBe('CREATE_PATIENT');
+    });
+
+    test('should reject invalid patient data', async () => {
+      const invalidPatient = {
+        first_name: 'Jane',
+        surname: 'Smith',
+        date_of_birth: '1985-05-15',
+        sex: 'F',
+        nrc: '123/45/1', // Invalid format
+        cellphone: '123456789', // Invalid format
+        facility_id: 1
+      };
+
+      const response = await request(app)
+        .post('/api/patients')
+        .send(invalidPatient);
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Validation failed');
+      expect(response.body.details).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            field: 'nrc',
+            message: 'NRC format must be XXXXXX/XX/X'
+          }),
+          expect.objectContaining({
+            field: 'cellphone',
+            message: 'Invalid Zambian phone number format'
+          })
+        ])
+      );
+    });
+  });
+});
+
+// package.json test scripts addition
+/*
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src", "<rootDir>/__tests__"],
+    "testMatch": ["**/__tests__/**/*.test.ts"],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
+  }
+}
+*/

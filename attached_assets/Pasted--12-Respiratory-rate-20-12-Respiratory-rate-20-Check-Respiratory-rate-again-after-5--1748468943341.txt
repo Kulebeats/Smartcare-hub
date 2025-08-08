@@ -1,0 +1,18 @@
+
+12  >  Respiratory rate > 20	 12  >  Respiratory rate > 20	 Check Respiratory rate  again after 5 minutes .	The health worker should retake the woman's respiratory rate if the first reading is lower 12 or above 20	NEWLY ADDED
+'Respiratory exam result' = 'Dyspnoea'	'Respiratory exam result' = 'Dyspnoea'	Conduct oximetry test	If the woman has an abnormal respiratory exam result or respiratory distress, conduct oximetry test and REFER	 
+'Respiratory exam result' = 'Cough'	'Respiratory exam result' = 'Cough'	Conduct oximetry test		 
+'Respiratory exam result' = 'Rapid breathing'	'Respiratory exam result' = 'Rapid breathing'	Conduct oximetry test		 
+'Respiratory exam result' = 'Slow breathing'	'Respiratory exam result' = 'Slow breathing'	Conduct oximetry test		 
+'Respiratory exam result' = 'Wheezing'	'Respiratory exam result' = 'Wheezing'	Conduct oximetry test		 
+'Respiratory exam result' = 'Rales'	'Respiratory exam result' = 'Rales'	Conduct oximetry test		 
+'Respiratory exam result' = 'Other  (specify)'	'Respiratory exam result' = 'Other abnormal respiratory exam result (specify)'	Conduct oximetry test		 
+('120 bpm > Fetal heart rate > 160 bpm	 '120 bpm > Fetal heart rate > 160 bpm	Measure the fetal heart rate again.	Fetal heart rate out of normal range  (120-160). Please have the woman lay on her left side for 15 minutes and check again.	Changed to 120 from 110 as we need to take immediately to save baby *
+ 	 	 	 	 
+Decision ID	ANC.DT.04 Evaluating labour
+Business Rule	During a cervical exam, if cervical dilation is greater than 2cm evaluate the possibility of labour.
+Trigger	ANC.B8. Conduct Physical Exam
+Inputs	Output	Action	Annotations
+'Cervical dilatation' > 2cm	'Gestational age' > 37 weeks	'Cervical dilatation' > 2cm	Evaluate labour	Cervix is more than 2 cm dilated. Please check for other signs and symptoms of labour (if GA is 37 weeks or later)
+'Cervical dilatation' > 2cm	'Gestational age' < 37 weeks	'Cervical dilatation' > 2cm	Evaluate labour	Cervix is more than 2 cm dilated. Please check for other signs and symptoms of pre-term labour and other related complications (if GA is less than 37 weeks).
+

@@ -1,0 +1,136 @@
+ Performance & Scalability Tuning (Replit Optimized & Hardened)
+Objective: Implement targeted optimizations to ensure your EHR application runs efficiently, stably, and performs well under expected load within the resource constraints of the Replit environment. This includes memory-conscious database indexing, Replit-optimized connection pooling, a smart caching strategy, gentle load testing, and proactive Replit-specific resource management techniques.
+
+1. Memory-Conscious Database Indexing (Replit Focus)
+Goal: Speed up common queries while minimizing the memory footprint of indexes, crucial for Replit's resource limits.
+
+Strategy: Use CREATE INDEX CONCURRENTLY to avoid table locking during index creation (good practice, impact varies in dev vs. prod-like environments). Prioritize lightweight, partial indexes for frequently queried subsets of data.
+Implementation (add to your database migration files):
+SQL
+
+-- Lightweight index for active alerts, potentially focusing on recent ones if full history isn't always needed
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_alerts_active_patient_created
+  ON clinical_alerts(patient_id, created_at DESC) -- Order by created_at for easier "latest" queries
+  WHERE NOT is_acknowledged;
+
+-- Partial index for recent ANC records, significantly reducing index size and memory
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_anc_recent_patient_date
+  ON anc_records(patient_id, visit_date DESC)
+  WHERE visit_date > (CURRENT_DATE - INTERVAL '1 year');
+
+-- GIN index if 'speculum_findings' is a TEXT field used in full-text search,
+-- or an array/jsonb type where elements within it are queried.
+-- Assess if this specific index is heavily used, as GIN indexes can be larger.
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_speculum_findings_gin
+  ON anc_records USING gin(speculum_findings);
+Note: IF NOT EXISTS prevents errors if re-running scripts. Regularly use EXPLAIN ANALYZE on your common queries to verify that these indexes are being used effectively and are providing performance benefits without undue overhead.
+2. Replit-Optimized Database Connection Pooling
+Goal: Manage database connections efficiently, respecting Replit's constraints (especially on free/hobbyist tiers) and ensuring graceful handling of Replit's sleep/wake cycles or application restarts.
+
+Strategy: Use conservative connection limits and timeouts. Implement graceful shutdown for the pool.
+Implementation (e.g., src/db/pgpool-replit.ts or within your Drizzle setup):
+TypeScript
+
+// In e.g., src/db/connection.ts or pgpool-replit.ts
+import { Pool, PoolConfig } from 'pg';
+
+const poolConfig: PoolConfig = {
+  connectionString: process.env.DATABASE_URL || process.env.REPLIT_DB_URL, // Use Replit secrets
+  max: parseInt(process.env.DB_POOL_MAX || '5'), // Lower connection limit suitable for Replit, configurable
+  min: parseInt(process.env.DB_POOL_MIN || '1'), // Minimum connections
+  idleTimeoutMillis: parseInt(process.env.DB_POOL_IDLE_TIMEOUT || '10000'), // 10s
+  connectionTimeoutMillis: parseInt(process.env.DB_POOL_CONNECTION_TIMEOUT || '5000'), // 5s
+  // acquireTimeoutMillis: 10000, // (If using a library like 'generic-pool' via Drizzle that supports this)
+};
+
+const pool = new Pool(poolConfig);
+
+pool.on('error', (err, client) => {
+  console.error('[DATABASE_POOL] Unexpected error on idle client:', err);
+  // Consider if this should be a fatal error for your application
+  // process.exit(-1);
+});
+
+console.log(`[DATABASE_POOL] Configured: max=<span class="math-inline">\{poolConfig\.max\}, min\=</span>{poolConfig.min}`);
+
+const gracefulShutdown = async () => {
+  console.log('[DATABASE_POOL] Attempting to gracefully shut down database pool...');
+  try {
+    await pool.end();
+    console.log('[DATABASE_POOL] Pool has been drained and closed.');
+    process.exit(0);
+  } catch (err) {
+    console.error('[DATABASE_POOL] Error during pool shutdown:', err);
+    process.exit(1);
+  }
+};
+
+// Listen for termination signals
+process.on('SIGINT', gracefulShutdown); // Catches Ctrl+C
+process.on('SIGTERM', gracefulShutdown); // Catches kill signals (used by Replit for stopping/restarting)
+
+// Export for use with raw queries or pass to Drizzle
+export const dbPool = pool;
+export const query = (text: string, params?: any[]) => pool.query(text, params);
+export const getClient = () => pool.connect();
+
+// If using Drizzle ORM, you typically pass the connection string, and Drizzle
+// (if using node-postgres driver) will internally manage pooling.
+// You might need to configure Drizzle's pool options if it exposes them,
+// or ensure node-postgres is configured with these conservative values if Drizzle uses it directly.
+// For Drizzle with node-postgres, often you just provide the connection string.
+// If Drizzle allows passing a pre-configured pool, this `dbPool` could be used.
+3. Smart Caching Strategy (Replit Focus)
+Goal: Reduce database load and improve response times using memory-efficient in-memory caching with appropriate TTLs, size limits, and proactive cleanup.
+
+Strategy: Use multiple node-cache instances for different data types/lifecycles to apply granular control. Limit cache sizes using maxKeys and use checkperiod for automatic cleanup of expired items.
+Implementation (e.g., src/services/cacheManager.ts):
+TypeScript
+
+// In e.g., src/services/cacheManager.ts
+import NodeCache from 'node-cache';
+
+// Cache for relatively static data (e.g., facility lists, DAK guideline codes)
+const staticCacheConfig = {
+  stdTTL: parseInt(process.env.CACHE_STATIC_TTL_SECONDS || '3600'),     // 1 hour
+  checkperiod: parseInt(process.env.CACHE_STATIC_CHECKPERIOD_SECONDS || '600'), // Check every 10 minutes
+  maxKeys: parseInt(process.env.CACHE_STATIC_MAX_KEYS || '100'),         // Limit memory
+  useClones: false // Better performance if cached objects are not modified after being set
+};
+export const staticCache = new NodeCache(staticCacheConfig);
+console.log('[CACHE_MANAGER] Static cache configured:', staticCacheConfig);
+
+// Cache for more dynamic, frequently accessed data (e.g., active user sessions, recent patient lookups)
+const dynamicCacheConfig = {
+  stdTTL: parseInt(process.env.CACHE_DYNAMIC_TTL_SECONDS || '300'),      // 5 minutes
+  checkperiod: parseInt(process.env.CACHE_DYNAMIC_CHECKPERIOD_SECONDS || '60'),  // Check every 1 minute
+  maxKeys: parseInt(process.env.CACHE_DYNAMIC_MAX_KEYS || '200'),        // Limit memory
+  useClones: false
+};
+export const dynamicCache = new NodeCache(dynamicCacheConfig);
+console.log('[CACHE_MANAGER] Dynamic cache configured:', dynamicCacheConfig);
+
+// Optional: Log cache stats periodically for monitoring or implement a /metrics endpoint
+// setInterval(() => {
+//   console.log('[CACHE_STATS] Static:', staticCache.getStats());
+//   console.log('[CACHE_STATS] Dynamic:', dynamicCache.getStats());
+// }, 300000); // Every 5 minutes
+Cache Invalidation: Crucially, implement logic to invalidate or update cache entries when the underlying data changes (e.g., after DAK CSV uploads, successful patient updates). Call staticCache.del(key) or dynamicCache.flushAll().
+4. Startup & Cache Warming Optimization (Replit Sleep/Wake Cycles)
+Goal: Improve initial response times after a Replit instance starts or wakes from sleep by pre-populating essential caches.
+
+Strategy: Create a "warm-up" function that runs shortly after application startup.
+Implementation (e.g., src/startup/warmUp.ts or in your main index.ts):
+TypeScript
+
+// In e.g., src/startup/warmUp.ts
+import { staticCache } from '../services/cacheManager'; // Assuming cacheManager.ts
+// import { query } from '../db/connection'; // Your DB query function
+
+async function warmUpApplicationCaches() {
+  console.log('[WARM_UP] Starting application cache warm-up...');
+  try {
+    // Example: Pre-populate facilities list
+    // const facilitiesResult = await query('SELECT id, name FROM facilities_dim WHERE is_active = true');
+    // if (facilitiesResult.rows.length > 0) {
+    //   staticCache

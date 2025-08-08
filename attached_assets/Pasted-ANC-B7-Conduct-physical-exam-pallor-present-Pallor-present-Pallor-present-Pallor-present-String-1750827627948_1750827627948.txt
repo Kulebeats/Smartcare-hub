@@ -1,0 +1,22 @@
+ANC.B7. Conduct physical exam	pallor_present	Pallor present?	Pallor present?		Pallor present?	String	Yes, No	No				
+ANC.B7. Conduct physical exam	respiratory_exam	Respiratory exam	Respiratory exam		Respiratory exam	MC (Select One)	Not done, Normal, Abnormal	No				
+ANC.B7. Conduct physical exam	repiratory_exam_abnormal	Respiratory exam: abnormal	Respiratory exam: abnormal		Respiratory exam: abnormal	MC (Select Multiple)	Dyspnoea, Cough, Rapid breating, Slow breating, Wheezing, Rales, Other(specify)	No				
+ANC.B7. Conduct physical exam	oximetry	Oximetry (%)	Oximetry (%)		Oximetry (%)	Integer		No				
+ANC.B7. Conduct physical exam	cardic_exam	Cardic exam	Cardic exam		Cardic exam	MC (Select One)	Not done, Normal, Abnormal					
+ANC.B7. Conduct physical exam	cardic_exam_abnormal	Cardic exam: Abnormal	Cardic exam: Abnormal		Cardic exam: Abnormal	MC (Select Multiple)	Heart murmur, Weak pulse, Tachycardia,Arrhythmia,Cyanosis,Cold sweats, other (specify)	No				
+ANC.B7. Conduct physical exam	breast_exam	Breast exam	Breast exam		Breast exam	MC (Select One)	Not done, Normal, Abnormal	No				
+												
+ANC.B7. Conduct physical exam	breast_exam_abnormal	Breat exam: abnormal	Breat exam: abnormal		Breat exam: abnormal	MC (Select Multiple)	Nodule, Discharge, Flushing, Local pain, Bleeding, Increased temperature, Other (specify)	No				
+ANC.B7. Conduct physical exam	pelvic_exam	Pelvic exam (visual)	Pelvic exam (visual)		Pelvic exam (visual)	MC (Select One)	Not done, Normal, Abnormal	No				
+ANC.B7. Conduct physical exam	pelvic_exam_test	Pelvic Exam test	Pelvic Exam test		Pelvic Exam test	MC (Select Multiple)	Abnormal vaginal discharge , Evidence of amniotic fluid, Foul-smelling vaginal discharge, Clusters of erythematous papules, Vescles, Genital Ulcer, Genital pain, Lymphadenopathy (pelvic)(unilateral)(bilateral), Cervical friability, Mucopurulent cervicitis, Curd-like vaginal disvahrge, Other (specify)	No				
+ANC.B7. Conduct physical exam	speculum_exam		Speculum exam		Speculum exam	MC (Select One)	Not done, Normal, Abnormal	No				
+ANC.B7. Conduct physical exam	speculum_exam_abnormal		Speculum exam: Abnormal		Speculum exam: Abnormal	MC (Select Multiple)	Cervix inflammed (appears read), Cervix has curd-lie discharge, Cervix draining liquor from internal os, Cervical lesion, Foul cervical discharge, Cervix dilated, Other specify	No				
+ANC.B7. Conduct physical exam	oedema_present	Oedema present	Oedema present		Oedema present	MC (Select One)	Yes, No	No				
+ANC.B7. Conduct physical exam	oedema_type	Oedema type	Oedema type		Oedema type	MC (Select Multiple)	Pitting ankle oedema, Oedema of the hands and feet, Pitting lower oedema, Leg swelling, Varicose veins	No				
+ANC.B7. Conduct physical exam	unilateral_or_bilateral	Unilateral or Bilateral	Unilateral or Bilateral		Unilateral or Bilateral	MC (Select One)	Bilateral, Unilateral	No				
+ANC.B7. Conduct physical exam	other_oedema_symptoms	Any other oedema symptoms	Any other oedema symptoms		Any other oedema symptoms	MC (Select Multiple)	None, Leg pain, Pain on the affected area, Warmth on the affected area, Readness	No				
+ANC.B7. Conduct physical exam	oedema_severity	Oedema severity	Oedema severity		Oedema severity	MC (Select One)	, +, ++,+++,++++	No				
+ANC.B7. Conduct physical exam	varicose_veins	Vericose veins	Vericose veins		Vericose veins	MC (Select One)	Yes, No	No				
+ANC.B7. Conduct physical exam	varicose_type	Varicose type	Varicose type		Varicose type	MC (Select Multiple)	Leg pain, Leg redness, Other specify	No				
+ANC.B7. Conduct physical exam	presenting_signs _ or_conditions		Presenting signs /conditions		Presenting signs /conditions	MC (Select Multiple)	Not presenting signs or conditions for IPV, Traumatic injury or implausible explanations, Intrusive partner or husband present at consultations,Signs of depression and anxiety, Self-harm or sucidal, Unexplained or repeated genital ulcers or injuries, Other( specify)	No				
+ANC.B7. Conduct physical exam	other_signs		Other signs or symptoms indicative of violence -specify 		Other signs or symptoms indicative of violence -specify 	Text		No				

@@ -1,0 +1,237 @@
+3. Feature Requirements
+3.1 Section 1: Diagnosis & Treatment (ANC.B10.4)
+Purpose: Track counselling and treatment for various conditions detected during ANC visits.
+Fields Required:
+
+Syphilis Counselling and Treatment
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: Yes
+Display Logic: Show only if Syphilis test result = "Positive"
+Editable: No
+
+
+Hypertension Counselling
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: Yes
+Display Logic: Show only if Past medical history includes "Hypertension"
+Editable: No
+
+
+HIV Positive Counselling
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: Yes
+Display Logic: Show only if HIV status = "Positive"
+Editable: No
+
+
+Hepatitis B Counselling
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: Yes
+Display Logic: Show only if Hep B test result = "Positive"
+Editable: No
+
+
+Seven-day Antibiotic Regimen for Asymptomatic UTI
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: Yes
+Conditional Fields: If "Not done" → Show "Reason" field
+Editable: No
+
+
+Reason (for antibiotic regimen)
+
+Type: Single-choice dropdown
+Options: "Stock out", "Other (specify)"
+Required: Yes (when parent field = "Not done")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: No
+
+
+Specify (reason details)
+
+Type: Text input
+Required: No
+Display Logic: Show when Reason = "Other (specify)"
+Editable: Yes
+
+
+Comment
+
+Type: Text area
+Required: No
+Editable: Yes
+
+
+
+3.2 Section 2: Nutrition Supplementation (ANC.B10.5)
+Purpose: Track provision of essential nutritional supplements during pregnancy.
+Fields Required:
+
+Daily Iron 60mg and Folic Acid 0.4mg
+
+Type: Single-choice dropdown
+Options: "Given", "Not given", "Alternative (other)"
+Required: Yes
+Conditional Fields:
+
+If "Not given" → Show "Reason" field
+If "Alternative (other)" → Show "Specify" field
+
+
+Editable: Yes
+
+
+Reason (for iron/folic acid)
+
+Type: Single-choice dropdown
+Options: "Out of stock", "Expired", "Other (specify)"
+Required: Yes (when parent = "Not given")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: No
+
+
+Specify (reason details - multiple instances)
+
+Type: Text input
+Required: No
+Display Logic: Context-dependent based on parent selection
+Editable: Yes
+
+
+Daily Calcium Supplementation (1.5-2.0g)
+
+Type: Single-choice dropdown
+Options: "Given", "Not given"
+Required: No
+Conditional Fields: If "Not given" → Show "Reason" field
+Editable: No
+
+
+Reason (for calcium)
+
+Type: Single-choice dropdown
+Options: "Out of stock", "Expired", "Other (specify)"
+Required: Yes (when parent = "Not given")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: No
+
+
+
+3.3 Section 3: Preventive Therapy (ANC.B10.5)
+Purpose: Track malaria prevention and other preventive treatments.
+Fields Required:
+
+Malaria Prevention Counselling
+
+Type: Single-choice dropdown
+Options: "Done", "Not done"
+Required: No
+Editable: No
+
+
+ITN Issued? (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Yes", "No"
+Required: No
+Editable: No
+
+
+CPT (Co-trimoxazole 960mg OD oral) (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Yes", "No"
+Required: No
+Conditional Fields: If "No" → Show "Reason no Co-trimoxazole" field
+Editable: No
+
+
+Reason no Co-trimoxazole (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Out of stock", "Expired", "Other (specify)"
+Required: Yes (when parent = "No")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: No
+
+
+Deworming (Mebendazole 500mg PO stat) (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Yes", "No"
+Required: No
+Conditional Fields: If "No" → Show "Reason no Mebendazole" field
+Editable: No
+
+
+Reason no Mebendazole (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Out of stock", "Expired", "Other (specify)"
+Required: Yes (when parent = "No")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: No
+
+
+
+3.4 Section 4: Immunisation (ANC.B10.5)
+Purpose: Track TTCV (Tetanus Toxoid Containing Vaccine) immunisation status.
+Fields Required:
+
+TTCV Immunisation (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "Done today", "Done earlier", "Not done"
+Required: Yes
+Conditional Fields:
+
+If "Done today" → Show "TTCV Dose No."
+If "Done earlier" → Show "Date TTCV dose was given" AND "TTCV Dose No."
+If "Not done" → Show "Reason"
+
+
+Editable: No
+
+
+TTCV Dose No. (NEW FIELD)
+
+Type: Single-choice dropdown
+Options: "1", "2", "3", "4"
+Required: No
+Display Logic: Show when TTCV Immunisation = "Done today" OR "Done earlier"
+Editable: No
+
+
+Date TTCV Dose Was Given
+
+Type: Date picker
+Required: Yes (when TTCV Immunisation = "Done earlier")
+Display Logic: Show only when TTCV Immunisation = "Done earlier"
+Editable: Yes
+
+
+Reason (for not doing TTCV)
+
+Type: Multi-choice dropdown
+Options: "Stock out", "Expired", "Woman is ill", "Woman refused", "Allergies", "Other (specify)"
+Required: Yes (when TTCV Immunisation = "Not done")
+Conditional Fields: If "Other (specify)" → Show "Specify" field
+Editable: Yes
+
+
+Specify (reason details)
+
+Type: Text input
+Required: No
+Display Logic: Show when Reason includes "Other (specify)"
+Editable: Yes

@@ -1,0 +1,83 @@
+Developer-Preferred Requirements Story Template
+Title
+[BR-MODULE-##] Story Title
+
+e.g., [BR-INVEST-01] Laboratory Sample Type Foundation
+
+Epic Link
+Select from dropdown (e.g., INVEST-LABORATORY-SYSTEM)
+
+Module
+AUTH / INVEST / ART / BILLING / ADMIN / NOTIF / REPORT / UI / SCREEN
+
+Sequence
+01-09 Foundation / 10-19 Core / 20+ Enhanced
+
+Priority
+Critical / High / Medium / Low – justify based on business/clinical impact
+
+Dependencies
+Depends On: [BR-MODULE-##, ...] or "None" for foundation
+
+Enables: [BR-MODULE-##, ...] (what stories need this first)
+
+User Story
+As a [specific CarePro user type – e.g., clinical officer, midwife, admin, patient],
+I want [specific capability with clear action],
+So that [measurable benefit for workflow or patient care].
+
+Business Context
+Current Problem: What’s broken or missing in CarePro today (be specific)
+
+Business Value: Cost savings, time savings, efficiency gains (quantify if possible)
+
+Clinical Impact: How this improves patient care or clinical workflow
+
+Functional Requirements
+The system shall [specific, testable requirement]
+
+The system shall [specific, testable requirement]
+
+The system shall [specific, testable requirement]
+
+(Continue as needed)
+
+Business Rules
+Rule 1: Under what conditions this applies
+
+Rule 2: Data validation or business logic constraints
+
+Rule 3: Permission/access control rules
+
+Acceptance Criteria
+ID	Given (initial state)	When (action)	Then (expected outcome)
+AC1	[Initial system state]	[User action]	[Expected outcome]
+AC2	[Different context]	[Different action]	[Different outcome]
+AC3	[Error scenario]	[Invalid input]	[Error handling]
+
+Technical Specifications
+Database Changes: [Tables, fields, or constraints needed]
+
+API Changes: [New endpoints or modifications needed]
+
+Integration Points: [External systems – e.g., DISA, SmartCare, payment gateways]
+
+Performance Requirements: [Response time, concurrent users, data volume]
+
+Definition of Done
+ All functional requirements implemented
+
+ All acceptance criteria verified
+
+ Code reviewed and approved
+
+ Unit tests written (≥80% coverage)
+
+ Integration tests pass
+
+ UAT completed with clinical users
+
+ Documentation updated
+
+ Deployed to staging successfully
+

@@ -1,0 +1,39 @@
+Warning: Encountered two children with the same key, &#x60;3&#x60;. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at div
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:59:7
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GMWEQTF4.js?v=25b5598a:29:5
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:232:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:155:58
+    at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:146:64
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:258:22
+    at Presence (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QEVKRBSM.js?v=25b5598a:24:11)
+    at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+    at DialogPortal (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:109:11)
+    at _c3 (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/dialog.tsx:51:12)
+    at Provider (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YDACODEB.js?v=25b5598a:38:15)
+    at Dialog (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VEAC5OVH.js?v=25b5598a:50:5)
+    at PatientSearchModal (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/PatientSearchModal.tsx:166:38)
+    at div
+    at _c (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at PatientRelationshipManager (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/src/components/PatientRelationshipManager.tsx:41:54)
+    at div
+    at div
+    at form
+    at div
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=25b5598a:41:13
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M6RXNKPV.js?v=25b5598a:59:7
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:52:11
+    at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=25b5598a:33:11
+    at…
+

@@ -1,0 +1,207 @@
+# Card-based Pharmacovigilance Form Implementation
+
+## Required Dependencies
+```json
+{
+  "dependencies": {
+    "@hookform/resolvers": "latest",
+    "@radix-ui/react-checkbox": "latest",
+    "@radix-ui/react-dialog": "latest",
+    "@radix-ui/react-radio-group": "latest",
+    "@radix-ui/react-select": "latest",
+    "@tanstack/react-query": "latest",
+    "date-fns": "latest",
+    "react-hook-form": "latest",
+    "zod": "latest"
+  }
+}
+```
+
+## Component Implementation
+```tsx
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+
+// Constants for form options
+const FOLLOW_UP_REASONS = [
+  "TDF+XTC+DTG",
+  "TAF+FTC+DTG",
+  "AZT+3TC+DRV-r",
+  "AZT+3TC+DTG",
+  "ABC+3TC+DTG",
+  "Rifapentine + High-dose Isoniazid (3HP)",
+  "INH",
+  "Pregnant or Breastfeeding Women (PBW)"
+] as const;
+
+const CO_MORBIDITIES = [
+  { id: "tb", label: "Tuberculosis" },
+  { id: "diabetes", label: "Diabetes Mellitus" },
+  { id: "hypertension", label: "Hypertension" },
+  { id: "mental", label: "Mental Illness" },
+  { id: "renal", label: "Renal Disease" },
+  { id: "liver", label: "Liver Disease" },
+  { id: "stroke", label: "Stroke" },
+  { id: "cvd", label: "Cardiovascular Disease (CVD)" },
+  { id: "seizures", label: "Seizures" },
+  { id: "allergies", label: "Allergies (including Asthma)" }
+] as const;
+
+// Form schema
+const pharmacovigilanceSchema = z.object({
+  registration: z.object({
+    dateOfReporting: z.string(),
+    healthFacility: z.string(),
+    district: z.string(),
+    province: z.string()
+  }),
+  patientDetails: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    dateOfBirth: z.string(),
+    sex: z.string(),
+    phoneNumber: z.string(),
+    artNumber: z.string()
+  }),
+  // ... add other schema sections as needed
+});
+
+type PharmacovigilanceForm = z.infer<typeof pharmacovigilanceSchema>;
+
+export default function PharmacovigilanceCard() {
+  const { data: patient } = useQuery<{
+    fullName: string;
+    dateOfBirth: string;
+    sex: string;
+    cellphone: string;
+    nupn: string;
+  }>({
+    queryKey: ["/api/patients/1"]
+  });
+
+  const form = useForm<PharmacovigilanceForm>({
+    resolver: zodResolver(pharmacovigilanceSchema),
+    defaultValues: {
+      registration: {
+        dateOfReporting: format(new Date(), "yyyy-MM-dd"),
+        healthFacility: "Chilenje Mini Hospital",
+        district: "Lusaka",
+        province: "Lusaka"
+      },
+      patientDetails: {
+        firstName: patient?.fullName?.split(" ")[0] || "",
+        lastName: patient?.fullName?.split(" ")[1] || "",
+        dateOfBirth: patient?.dateOfBirth || "",
+        sex: patient?.sex || "",
+        phoneNumber: patient?.cellphone || "",
+        artNumber: patient?.nupn || ""
+      },
+      // ... add other default values
+    }
+  });
+
+  const onSubmit = async (data: PharmacovigilanceForm) => {
+    console.log(data);
+    // Implement save functionality
+  };
+
+  return (
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle>Pharmacovigilance Form</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Registration Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Registration</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="registration.dateOfReporting"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Reporting</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                {/* Add other registration fields */}
+              </div>
+            </div>
+
+            {/* Patient Details Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Patient Details</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="patientDetails.firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                {/* Add other patient details fields */}
+              </div>
+            </div>
+
+            {/* Add other form sections */}
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+              <Button type="submit">Save</Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Usage
+```tsx
+// In your page or component:
+import PharmacovigilanceCard from "@/components/PharmacovigilanceCard";
+
+export default function YourPage() {
+  return (
+    <div className="p-6">
+      <PharmacovigilanceCard />
+    </div>
+  );
+}
+```

@@ -1,0 +1,230 @@
+[
+  {
+    "id": "clinician_patient_read",
+    "subject": "Clinician",
+    "resource_type": "patient",
+    "action": "read",
+    "description": "Clinicians can read patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "clinician_patient_data_read",
+    "subject": "Clinician",
+    "resource_type": "patient_data",
+    "action": "read",
+    "description": "Clinicians can read patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "clinician_patient_create",
+    "subject": "Clinician",
+    "resource_type": "patient",
+    "action": "create",
+    "description": "Clinicians can create patients within their own facility.",
+    "conditions": {
+      "match_facility_id_on_body": true
+    }
+  },
+  {
+    "id": "clinician_patient_data_create",
+    "subject": "Clinician",
+    "resource_type": "patient_data",
+    "action": "create",
+    "description": "Clinicians can create patient data within their own facility.",
+    "conditions": {
+      "match_facility_id_on_body": true
+    }
+  },
+  {
+    "id": "clinician_patient_update",
+    "subject": "Clinician",
+    "resource_type": "patient",
+    "action": "update",
+    "description": "Clinicians can update patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "clinician_anc_read",
+    "subject": "Clinician",
+    "resource_type": "anc_record",
+    "action": "read",
+    "description": "Clinicians can read ANC records for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "clinician_anc_create",
+    "subject": "Clinician",
+    "resource_type": "anc_record",
+    "action": "create",
+    "description": "Clinicians can create ANC records for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "clinician_anc_update",
+    "subject": "Clinician",
+    "resource_type": "anc_record",
+    "action": "update",
+    "description": "Clinicians can update ANC records for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "facility_admin_patient_read",
+    "subject": "FacilityAdministrator",
+    "resource_type": "patient",
+    "action": "read",
+    "description": "Facility Administrators can read any patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "facility_admin_patient_create",
+    "subject": "FacilityAdministrator",
+    "resource_type": "patient",
+    "action": "create",
+    "description": "Facility Administrators can create patients within their own facility.",
+    "conditions": {
+      "match_facility_id_on_body": true
+    }
+  },
+  {
+    "id": "facility_admin_patient_update",
+    "subject": "FacilityAdministrator",
+    "resource_type": "patient",
+    "action": "update",
+    "description": "Facility Administrators can update patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "facility_admin_patient_delete",
+    "subject": "FacilityAdministrator",
+    "resource_type": "patient",
+    "action": "delete",
+    "description": "Facility Administrators can delete patient data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "facility_admin_anc_all",
+    "subject": "FacilityAdministrator",
+    "resource_type": "anc_record",
+    "action": "*",
+    "description": "Facility Administrators have full access to ANC records in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "facility_admin_users_read",
+    "subject": "FacilityAdministrator",
+    "resource_type": "user",
+    "action": "read",
+    "description": "Facility Administrators can read user data within their own facility.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "facility_admin_users_create",
+    "subject": "FacilityAdministrator",
+    "resource_type": "user",
+    "action": "create",
+    "description": "Facility Administrators can create users within their own facility.",
+    "conditions": {
+      "match_facility_id_on_body": true,
+      "role_restrictions": ["Clinician", "Trainer"]
+    }
+  },
+  {
+    "id": "system_admin_all",
+    "subject": "SystemAdministrator",
+    "resource_type": "*",
+    "action": "*",
+    "description": "System Administrators have unrestricted access to all resources."
+  },
+  {
+    "id": "trainer_patient_read",
+    "subject": "Trainer",
+    "resource_type": "patient",
+    "action": "read",
+    "description": "Trainers can read patient data within their own facility for educational purposes.",
+    "conditions": {
+      "match_facility_id": true
+    }
+  },
+  {
+    "id": "trainer_anc_read",
+    "subject": "Trainer",
+    "resource_type": "anc_record",
+    "action": "read",
+    "description": "Trainers can read ANC records for patients in their facility for educational purposes.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "clinician_prescription_create",
+    "subject": "Clinician",
+    "resource_type": "prescription",
+    "action": "create",
+    "description": "Clinicians can create prescriptions for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "clinician_prescription_read",
+    "subject": "Clinician",
+    "resource_type": "prescription",
+    "action": "read",
+    "description": "Clinicians can read prescriptions for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "clinician_clinical_alert_read",
+    "subject": "Clinician",
+    "resource_type": "clinical_alert",
+    "action": "read",
+    "description": "Clinicians can read clinical alerts for patients in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "facility_admin_clinical_all",
+    "subject": "FacilityAdministrator",
+    "resource_type": "prescription",
+    "action": "*",
+    "description": "Facility Administrators have full access to prescriptions in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  },
+  {
+    "id": "facility_admin_alerts_all",
+    "subject": "FacilityAdministrator",
+    "resource_type": "clinical_alert",
+    "action": "*",
+    "description": "Facility Administrators have full access to clinical alerts in their facility.",
+    "conditions": {
+      "match_facility_id_via_patient": true
+    }
+  }
+]

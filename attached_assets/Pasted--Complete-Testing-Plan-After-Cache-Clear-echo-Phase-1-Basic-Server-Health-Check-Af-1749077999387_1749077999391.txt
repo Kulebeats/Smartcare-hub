@@ -1,0 +1,66 @@
+# Complete Testing Plan After Cache Clear
+
+echo "=== Phase 1: Basic Server Health Check ==="
+# After restarting your server, test these endpoints:
+
+# 1. Health check
+curl -X GET http://localhost:3000/api/health
+# Expected: {"status":"ok","storage":{"available":true,"type":"object","hasGetPatients":true}}
+
+# 2. Storage debug endpoint
+curl -X GET http://localhost:3000/api/debug/storage
+# Expected: All methods should show as true
+
+echo "=== Phase 2: Patient Registration Test ==="
+# 3. Test patient registration with all required fields
+curl -X POST http://localhost:3000/api/patients \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890",
+    "dateOfBirth": "1990-01-01"
+  }'
+# Expected: 201 status with created patient object
+
+echo "=== Phase 3: Data Retrieval Test ==="
+# 4. Get all patients to verify storage is working
+curl -X GET http://localhost:3000/api/patients
+# Expected: Array containing the patient you just created
+
+echo "=== Phase 4: Error Handling Test ==="
+# 5. Test with missing required fields
+curl -X POST http://localhost:3000/api/patients \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Incomplete Patient"
+  }'
+# Expected: 400 status with missing fields error
+
+echo "=== Manual Testing Checklist ==="
+echo "□ Server starts without errors"
+echo "□ No 'storage2' references in console logs"
+echo "□ Health endpoint returns positive storage status"
+echo "□ Debug endpoint shows all methods available"
+echo "□ Patient creation succeeds with valid data"
+echo "□ Patient creation fails gracefully with invalid data"
+echo "□ Patient retrieval returns created patients"
+echo "□ Dashboard loads without storage errors"
+
+echo "=== If Issues Persist ==="
+echo "1. Check server logs for any remaining 'storage2' references"
+echo "2. Verify TypeScript compilation is using latest source"
+echo "3. Try running with --no-cache flag if available"
+echo "4. Consider restarting your IDE/editor"
+echo "5. Double-check import/export paths are correct"
+
+# Additional debugging commands
+echo "=== Additional Debug Commands ==="
+echo "# Check for any remaining cache files:"
+find . -name "*.tsbuildinfo" -o -name ".cache" -type d 2>/dev/null
+
+echo "# Check TypeScript compilation:"
+npx tsc --noEmit --listFiles | grep storage
+
+echo "# Check for multiple storage files:"
+find . -name "*storage*" -type f 2>/dev/null

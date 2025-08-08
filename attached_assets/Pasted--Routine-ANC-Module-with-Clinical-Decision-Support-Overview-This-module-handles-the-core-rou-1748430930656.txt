@@ -1,0 +1,334 @@
+# Routine ANC Module with Clinical Decision Support
+
+## Overview
+This module handles the core routine antenatal care workflow including physical examination, diagnostic tests, medication management, and automated clinical decision support based on WHO ANC guidelines.
+
+## Phase 1: Routine ANC Requirements (Given-When-Then Format)
+
+### 1.1 Medication Follow-up Assessment
+
+**Given** a pregnant woman returns for a routine ANC visit
+**When** the healthcare worker begins the medication review
+**Then** the system should:
+- Display current medications (supplements, vitamins) she's taking
+- Check penicillin treatment compliance (if prescribed)
+- Assess calcium supplement intake and side effects
+- Verify aspirin usage (if prescribed)
+- Monitor Iron and Folic Acid (IFA) tablet compliance
+- Document any medication side effects reported
+- Generate medication adherence alerts if compliance is poor
+
+### 1.2 Physical Examination Workflow
+
+**Given** medication review is completed
+**When** physical examination begins
+**Then** the system should:
+- Record vital signs with validation:
+  - Systolic/Diastolic BP (required, with 10-15 min rest option)
+  - Height (cm) and Weight (kg) - required
+  - Temperature (°C), Pulse rate (bpm), Respiratory rate
+- Calculate BMI automatically from height/weight
+- Screen for pre-eclampsia symptoms
+- Perform urine dipstick test for protein
+- Assess for pallor and respiratory abnormalities
+- Trigger decision support based on abnormal findings
+
+### 1.3 Diagnostic Tests Management
+
+**Given** physical examination findings are recorded
+**When** diagnostic tests are required
+**Then** the system should:
+- Manage blood group testing (ABO, Rh factor) with dates
+- Handle HIV testing for both patient and partner
+- Process Hepatitis B screening
+- Track test dates and results
+- Generate alerts for missing required tests
+- Provide reasons for test deferrals if applicable
+
+### 1.4 Clinical Decision Support Integration
+
+**Given** examination and test data are entered
+**When** specific clinical conditions are detected
+**Then** the system should:
+- Apply hypertension management protocols
+- Trigger anaemia screening and IFA supplementation rules
+- Generate referral recommendations for abnormal findings
+- Provide automated counseling content
+- Calculate gestational age-appropriate interventions
+
+## Phase 2: Clinical Decision Support Logic
+
+### 2.1 Blood Pressure Management Decision Trees
+
+**Hypertension Detection:**
+- Normal: SBP <140 AND DBP <90 → Continue routine care
+- Mild HTN: SBP 140-159 OR DBP 90-99 → Repeat in 10-15 min, lifestyle counseling
+- Severe HTN: SBP ≥160 OR DBP ≥100 → Immediate referral
+- Pre-eclampsia: HTN + proteinuria + symptoms → Emergency referral
+
+**Decision Support Rules:**
+```
+IF (systolic_bp >= 160 OR diastolic_bp >= 100) 
+THEN trigger_immediate_referral("Severe Hypertension")
+
+IF (systolic_bp >= 140 OR diastolic_bp >= 90) AND urine_protein > 0
+THEN assess_preeclampsia_symptoms()
+
+IF pre_eclampsia_symptoms.includes("severe_headache", "visual_disturbance", "epigastric_pain")
+THEN trigger_emergency_referral("Pre-eclampsia")
+```
+
+### 2.2 Anaemia Management & IFA Supplementation
+
+**Anaemia Assessment:**
+- Pallor assessment (clinical indicator)
+- Hemoglobin levels (if available)
+- Symptoms assessment (fatigue, dizziness)
+
+**IFA Supplementation Rules:**
+```
+IF pallor_present = "Yes" OR hemoglobin < 11.0
+THEN prescribe_IFA("60mg elemental iron + 400mcg folic acid daily")
+
+IF taking_iron_and_folic_acid = "No" AND gestational_age >= 12
+THEN recommend_IFA_initiation()
+
+IF iron_folic_acid_side_effects = "Yes"
+THEN provide_side_effect_management_counseling()
+```
+
+### 2.3 Laboratory Test Decision Support
+
+**Required Test Schedule:**
+```
+ANC Contact 1 (≤20 weeks):
+- Blood group & Rh factor (mandatory)
+- HIV test (mandatory)
+- Hepatitis B test (mandatory)
+- Hemoglobin (if available)
+
+ANC Contact 2-3 (20-30 weeks):
+- Repeat HIV if high risk
+- Hemoglobin reassessment
+- Urine protein screening
+
+ANC Contact 4+ (30+ weeks):
+- Hemoglobin monitoring
+- HIV retest if indicated
+```
+
+**Decision Logic:**
+```
+IF contact_number = 1 AND (blood_group_test != "Done" OR hiv_test != "Done")
+THEN flag_missing_mandatory_tests()
+
+IF gestational_age >= 28 AND last_hemoglobin_date > 8_weeks_ago
+THEN recommend_hemoglobin_recheck()
+```
+
+### 2.4 Counseling Decision Support
+
+**Behavior Counseling Triggers:**
+- Tobacco use → Smoking cessation counseling
+- Alcohol consumption → Alcohol cessation support
+- Poor nutrition → Dietary counseling
+- Medication non-compliance → Adherence counseling
+
+**Dietary Counseling Rules:**
+```
+IF weight_gain < expected_for_GA OR BMI < 18.5
+THEN provide_nutritional_counseling("weight_gain")
+
+IF calcium_supplements = "No" 
+THEN recommend_calcium("1.5-2g daily")
+
+IF taking_aspirin = "No" AND hypertension_risk_factors_present
+THEN consider_aspirin_prophylaxis("75mg daily from 12 weeks")
+```
+
+## Phase 3: Technical Implementation Architecture
+
+### 3.1 Data Models
+
+**Physical Examination Entity:**
+```javascript
+{
+  exam_id: String,
+  patient_id: String,
+  contact_number: Integer,
+  exam_date: Date,
+  vital_signs: {
+    systolic_bp: Integer (required),
+    diastolic_bp: Integer (required),
+    bp_repeat: {
+      systolic_after_rest: Integer,
+      diastolic_after_rest: Integer
+    },
+    height: Decimal (required),
+    weight: Decimal (required),
+    bmi: Decimal (calculated),
+    temperature: Decimal,
+    pulse_rate: Integer,
+    respiratory_rate: Integer
+  },
+  clinical_findings: {
+    pallor_present: Boolean,
+    pre_eclampsia_symptoms: Array,
+    urine_protein: String,
+    respiratory_exam: String
+  }
+}
+```
+
+**Medication Tracking Entity:**
+```javascript
+{
+  medication_id: String,
+  patient_id: String,
+  contact_date: Date,
+  current_medications: Array,
+  compliance_assessment: {
+    taking_ifa: Boolean,
+    ifa_side_effects: Boolean,
+    taking_calcium: Boolean,
+    calcium_side_effects: Boolean,
+    taking_aspirin: Boolean,
+    taking_penicillin: Boolean
+  }
+}
+```
+
+**Laboratory Results Entity:**
+```javascript
+{
+  lab_id: String,
+  patient_id: String,
+  test_type: String,
+  test_date: Date,
+  result: String,
+  normal_range: String,
+  interpretation: String,
+  follow_up_required: Boolean
+}
+```
+
+### 3.2 Decision Support Engine Components
+
+**Clinical Rules Engine:**
+- Rule definitions in JSON/YAML format
+- Condition evaluation engine
+- Action trigger system
+- Alert generation mechanism
+
+**Calculation Engine:**
+- BMI calculation: weight(kg) / (height(m))²
+- Gestational age calculations
+- Expected weight gain calculations
+- Medication dosage calculations
+
+**Alert System:**
+- Critical alerts (immediate referral required)
+- Warning alerts (attention needed)
+- Information alerts (routine recommendations)
+- Overdue test/appointment alerts
+
+### 3.3 Integration Points
+
+**With SmartCare Pro EHR:**
+- Patient demographic data
+- Previous ANC contact history
+- Laboratory system integration
+- Prescription management system
+
+**External Systems:**
+- Laboratory information systems
+- Referral management systems
+- Reporting systems (MOH)
+- SMS/notification services
+
+## Phase 4: Implementation Roadmap
+
+### 4.1 Sprint 1: Core Physical Examination (Week 1-2)
+- Build vital signs capture interface
+- Implement data validation rules
+- Create BMI auto-calculation
+- Add basic decision support alerts
+
+### 4.2 Sprint 2: Laboratory Integration (Week 3-4)
+- Implement laboratory test tracking
+- Build test scheduling logic
+- Create results management interface
+- Add overdue test alerts
+
+### 4.3 Sprint 3: Medication Management (Week 5-6)
+- Build medication compliance tracking
+- Implement side effect monitoring
+- Create adherence alerts
+- Add prescription integration
+
+### 4.4 Sprint 4: Advanced Decision Support (Week 7-8)
+- Implement complex clinical rules
+- Build counseling recommendation engine
+- Create referral pathway automation
+- Add comprehensive reporting
+
+## Phase 5: Decision Support Workflows
+
+### 5.1 Hypertension Management Workflow
+```
+Start Physical Exam → Record BP → 
+IF BP elevated → Rest 10-15 min → Repeat BP →
+IF still elevated → Check symptoms → 
+IF severe → Emergency referral
+IF mild → Lifestyle counseling + Follow-up
+```
+
+### 5.2 Anaemia Screening Workflow
+```
+Assess Pallor → Record findings →
+IF pallor present → Recommend Hb test →
+Prescribe IFA → Monitor compliance →
+Counsel on side effects → Schedule follow-up
+```
+
+### 5.3 Laboratory Management Workflow
+```
+Check contact number → Determine required tests →
+IF tests missing → Generate alerts →
+IF tests overdue → Send reminders →
+When results available → Interpret → Take action
+```
+
+## Phase 6: Quality Assurance & Validation
+
+### 6.1 Clinical Validation
+- Review all decision rules with clinical experts
+- Validate against WHO ANC guidelines
+- Test with real patient scenarios
+- Ensure cultural appropriateness
+
+### 6.2 Technical Testing
+- Unit tests for all calculation functions
+- Integration tests for decision logic
+- Performance testing with large datasets
+- User acceptance testing with healthcare workers
+
+### 6.3 Continuous Improvement
+- Monitor decision support accuracy
+- Track clinical outcomes
+- Gather user feedback
+- Update rules based on evidence
+
+## Prompt for Agent Implementation
+
+**For Routine ANC Module Implementation:**
+
+"Please assess this routine ANC module with integrated clinical decision support. Describe your understanding of the physical examination workflow, medication management, and laboratory test integration requirements. 
+
+Key considerations:
+- How will the decision support engine integrate with existing SmartCare Pro EHR data?
+- What validation rules are needed for vital signs and clinical findings?
+- How should the system handle complex clinical scenarios like pre-eclampsia screening?
+- What user experience design will ensure efficient workflow for healthcare workers?
+
+Generate a step-by-step technical implementation plan for the decision support engine, including data models, rule definitions, and integration architecture. Propose best practices for clinical accuracy and system performance. Do not proceed until I confirm your approach aligns with clinical requirements."</content>

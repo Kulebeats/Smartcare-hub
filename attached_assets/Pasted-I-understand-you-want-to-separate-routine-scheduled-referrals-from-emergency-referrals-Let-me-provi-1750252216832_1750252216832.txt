@@ -1,0 +1,72 @@
+I understand you want to separate routine/scheduled referrals from emergency referrals. Let me provide a detailed plan for restructuring the referral system:
+
+Detailed Plan for Referral Section Restructure
+1. New Section Structure
+Current Location: Emergency Referral (mixed routine + emergency)
+New Structure:
+Section 1: "Referral" (routine/scheduled) - next to Counselling
+Section 2: "Emergency Referral" (urgent/immediate)
+2. Routine Referral Section (ANC.C6)
+Content to include:
+
+ANC.C.DE2: Reason for referral (Select all that apply)
+ANC.C.DE3: Referral for screening including diagnostics and lab testing
+ANC.C.DE4: Referral for other general services
+Scheduled referral: Hospital delivery indicated
+Reasons for Routine Referral:
+
+Pre-existing medical conditions (from current emergency section)
+Diagnostic tests and lab screening
+Scheduled hospital delivery
+Other general services
+Specialist consultation needs
+3. Emergency Referral Section (Urgent)
+Content to keep:
+
+Immediate danger signs
+Life-threatening conditions
+Urgent obstetric emergencies
+Severe complications requiring immediate care
+4. Content Migration Plan
+FROM Emergency Referral TO Routine Referral:
+
+Pre-existing medical conditions section
+Diagnostic/screening referrals
+Scheduled delivery planning
+General specialist consultations
+Medical history & risk factors
+KEEP in Emergency Referral:
+
+Severe preeclampsia/eclampsia
+Heavy bleeding
+Severe danger signs
+Immediate life-threatening conditions
+Emergency transport requirements
+5. Implementation Structure
+Routine Referral Section:
+
+├── ANC.C6 Reason for referral (checkboxes)
+├── Pre-existing medical conditions (moved from emergency)
+├── Diagnostic/screening needs
+├── Scheduled delivery planning
+├── Client health history (moved from emergency)
+├── Treatment before referral
+└── Referral facility information
+Emergency Referral Section (streamlined):
+
+├── Immediate danger signs
+├── Emergency conditions
+├── Urgent transport needs
+├── Emergency treatment given
+└── Emergency receiving facility
+6. Business Logic Changes
+Routine referrals: Standard assessment, planned care
+Emergency referrals: Immediate action, urgent transport
+Risk stratification: Determines which referral type is appropriate
+Clinical decision support: Guides referral urgency
+Would you like me to proceed with this restructure? The plan involves:
+
+Creating new "Referral" section next to Counselling
+Moving appropriate content from Emergency Referral
+Streamlining Emergency Referral for urgent cases only
+Maintaining all existing functionality with better organization

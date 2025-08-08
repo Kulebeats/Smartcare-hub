@@ -1,0 +1,253 @@
+import React, { useState } from 'react';
+import './style.css'; // We'll create this file for basic styling
+
+export default function App() {
+  // State to hold all form answers
+  const [formData, setFormData] = useState({
+    // Section 1
+    sexuallyActiveLast6Months: null, // 'yes', 'no'
+    intercourseMultiPartnerNoCondom: false, // boolean checkbox
+    partnerCount: null, // '1', '2+' (conditional)
+    consistentCondomUse: null, // 'yes', 'no' (conditional)
+    currentPartnerWithRisk: false, // boolean checkbox
+    partnerLivingWithHIV: null, // 'yes', 'no' (conditional)
+    partnerInjectsDrugs: null, // 'yes', 'no' (conditional)
+    partnerIsSexWorker: null, // 'yes', 'no' (conditional)
+    partnerIsMSM: null, // 'yes', 'no' (conditional)
+    partnerIsTransgender: null, // 'yes', 'no' (conditional)
+    partnerMultiplePartnersNoCondoms: null, // 'yes', 'no' (conditional)
+    hadSTI: null, // 'yes', 'no' (conditional)
+    usedPEP: null, // 'yes', 'no' (conditional)
+
+    // Section 2
+    sharedInjectionEquipment: null, // 'yes', 'no'
+
+    // Section 3
+    partnerHIVPositiveIneffectiveTx: null, // 'yes', 'no'
+    isPartnerHIVInfected: null, // 'yes', 'no', 'dk' (conditional)
+    isPartnerOnART: null, // 'yes', 'no', 'dk' (conditional)
+    lastViralLoadResultKnown: null, // 'yes', 'no', 'dk' (conditional - interpreting the checkboxes)
+  });
+
+  // Handler to update state for any input
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+    // Handler specifically for the grouped checkboxes in Section 3
+    const handleCheckboxGroupChange = (event) => {
+      const { name, value, checked } = event.target;
+      // If checked, set the value; if unchecked, maybe set to null or handle differently if needed
+      // This simple version assumes only one can be checked per group effectively like radios
+      // For true multi-select, state structure would need adjustment (e.g., array or object)
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked ? value : null, // Allow unchecking back to null state
+      }));
+    };
+
+
+  // Simple display of the collected data
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission
+    alert('Form Data:\n' + JSON.stringify(formData, null, 2));
+  };
+
+
+  // --- Conditional Logic Flags ---
+  const showSection1Details = formData.sexuallyActiveLast6Months === 'yes';
+  const showPartnerCountCondom = showSection1Details && formData.intercourseMultiPartnerNoCondom;
+  const showPartnerRiskDetails = showSection1Details && formData.currentPartnerWithRisk;
+  const showSection3Details = formData.partnerHIVPositiveIneffectiveTx === 'yes';
+
+
+  return (
+    <div className="form-container">
+      <h1>Screening for Substantial Risk for HIV Infection</h1>
+      <form onSubmit={handleSubmit}>
+        {/* --- Section 1 --- */}
+        <fieldset>
+          <legend>1) Currently sexually active AND report any of the below in last six months</legend>
+
+          <div className="question-group">
+            <label>Have you been sexually active in the last six months?</label>
+            <div className="radio-options">
+              <label>
+                <input
+                  type="radio"
+                  name="sexuallyActiveLast6Months"
+                  value="yes"
+                  checked={formData.sexuallyActiveLast6Months === 'yes'}
+                  onChange={handleChange}
+                /> Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="sexuallyActiveLast6Months"
+                  value="no"
+                  checked={formData.sexuallyActiveLast6Months === 'no'}
+                  onChange={handleChange}
+                /> No
+              </label>
+            </div>
+          </div>
+
+          {/* Conditional questions based on sexuallyActive */}
+          {showSection1Details && (
+            <div className="conditional-section">
+              <div className="question-group checkbox-question">
+                 <input
+                    type="checkbox"
+                    id="intercourseMultiPartnerNoCondom"
+                    name="intercourseMultiPartnerNoCondom"
+                    checked={formData.intercourseMultiPartnerNoCondom}
+                    onChange={handleChange}
+                  />
+                <label htmlFor="intercourseMultiPartnerNoCondom">Has had vaginal or anal intercourse without condoms with more than one partner</label>
+
+                {/* Conditional based on the checkbox above */}
+                {showPartnerCountCondom && (
+                    <div className="sub-question">
+                       <label>With how many people did you have vaginal or anal sex in the last six months?</label>
+                        <div className="radio-options">
+                           <label><input type="radio" name="partnerCount" value="1" checked={formData.partnerCount === '1'} onChange={handleChange}/> 1</label>
+                           <label><input type="radio" name="partnerCount" value="2+" checked={formData.partnerCount === '2+'} onChange={handleChange}/> 2 or more</label>
+                        </div>
+                        <label>Did you use condoms consistently during sex in the last six months?</label>
+                        <div className="radio-options">
+                            <label><input type="radio" name="consistentCondomUse" value="yes" checked={formData.consistentCondomUse === 'yes'} onChange={handleChange}/> Yes</label>
+                            <label><input type="radio" name="consistentCondomUse" value="no" checked={formData.consistentCondomUse === 'no'} onChange={handleChange}/> No</label>
+                        </div>
+                    </div>
+                )}
+              </div>
+
+              <div className="question-group checkbox-question">
+                <input
+                  type="checkbox"
+                  id="currentPartnerWithRisk"
+                  name="currentPartnerWithRisk"
+                  checked={formData.currentPartnerWithRisk}
+                  onChange={handleChange}
+                />
+                <label htmlFor="currentPartnerWithRisk">Has a current sex partner with one or more HIV risk</label>
+
+                {/* Conditional based on currentPartnerWithRisk */}
+                {showPartnerRiskDetails && (
+                  <div className="sub-question">
+                    <p>Have you had a sex partner in the last six months who:</p>
+                    {/* Nested Yes/No questions */}
+                    {[
+                      { key: 'partnerLivingWithHIV', label: 'Is living with HIV?' },
+                      { key: 'partnerInjectsDrugs', label: 'Injects drugs?' },
+                      { key: 'partnerIsSexWorker', label: 'Is a sex worker?' },
+                      { key: 'partnerIsMSM', label: 'Is a man who has sex with men?' },
+                      { key: 'partnerIsTransgender', label: 'Is a transgender person?' },
+                      { key: 'partnerMultiplePartnersNoCondoms', label: 'Has sex with multiple partners without condoms?' },
+                    ].map(q => (
+                       <div key={q.key} className="question-group inline-radio">
+                         <label>{q.label}</label>
+                         <div className="radio-options">
+                            <label><input type="radio" name={q.key} value="yes" checked={formData[q.key] === 'yes'} onChange={handleChange}/> Yes</label>
+                            <label><input type="radio" name={q.key} value="no" checked={formData[q.key] === 'no'} onChange={handleChange}/> No</label>
+                         </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+               <div className="question-group">
+                  <label>Has had a sexually transmitted infection (STI) (based on self-report, lab test, syndromic STI treatment) in the last six months?</label>
+                  <div className="radio-options">
+                      <label><input type="radio" name="hadSTI" value="yes" checked={formData.hadSTI === 'yes'} onChange={handleChange}/> Yes</label>
+                      <label><input type="radio" name="hadSTI" value="no" checked={formData.hadSTI === 'no'} onChange={handleChange}/> No</label>
+                  </div>
+              </div>
+
+               <div className="question-group">
+                  <label>Has used post-exposure prophylaxis (PEP) following a potential exposure to HIV in the last six months?</label>
+                  <div className="radio-options">
+                      <label><input type="radio" name="usedPEP" value="yes" checked={formData.usedPEP === 'yes'} onChange={handleChange}/> Yes</label>
+                      <label><input type="radio" name="usedPEP" value="no" checked={formData.usedPEP === 'no'} onChange={handleChange}/> No</label>
+                  </div>
+              </div>
+
+            </div>
+          )}
+        </fieldset>
+
+        {/* --- Section 2 --- */}
+        <fieldset>
+           <legend>2) Has shared injection material/equipment with other people in the last six months</legend>
+           <div className="question-group">
+               <div className="radio-options">
+                  <label><input type="radio" name="sharedInjectionEquipment" value="yes" checked={formData.sharedInjectionEquipment === 'yes'} onChange={handleChange}/> Yes</label>
+                  <label><input type="radio" name="sharedInjectionEquipment" value="no" checked={formData.sharedInjectionEquipment === 'no'} onChange={handleChange}/> No</label>
+               </div>
+           </div>
+        </fieldset>
+
+
+        {/* --- Section 3 --- */}
+         <fieldset>
+           <legend>3) Has had a sexual partner in the last six months who is HIV positive AND who has not been on effective* HIV treatment</legend>
+            <p className="footnote">*If partner has been on ART for less than six months, or has inconsistent or unknown adherence</p>
+           <div className="question-group">
+               <div className="radio-options">
+                  <label><input type="radio" name="partnerHIVPositiveIneffectiveTx" value="yes" checked={formData.partnerHIVPositiveIneffectiveTx === 'yes'} onChange={handleChange}/> Yes</label>
+                  <label><input type="radio" name="partnerHIVPositiveIneffectiveTx" value="no" checked={formData.partnerHIVPositiveIneffectiveTx === 'no'} onChange={handleChange}/> No</label>
+               </div>
+           </div>
+
+            {/* Conditional questions for Section 3 */}
+            {showSection3Details && (
+                <div className="conditional-section">
+                    <div className="question-group">
+                        <label>Is your partner HIV infected?</label>
+                        <div className="checkbox-options">
+                             <label><input type="checkbox" name="isPartnerHIVInfected" value="yes" checked={formData.isPartnerHIVInfected === 'yes'} onChange={handleCheckboxGroupChange}/> Yes</label>
+                             <label><input type="checkbox" name="isPartnerHIVInfected" value="no" checked={formData.isPartnerHIVInfected === 'no'} onChange={handleCheckboxGroupChange}/> No</label>
+                             <label><input type="checkbox" name="isPartnerHIVInfected" value="dk" checked={formData.isPartnerHIVInfected === 'dk'} onChange={handleCheckboxGroupChange}/> Don't know</label>
+                        </div>
+                    </div>
+                    <div className="question-group">
+                        <label>Is he/she on ART?</label>
+                         <div className="checkbox-options">
+                             <label><input type="checkbox" name="isPartnerOnART" value="yes" checked={formData.isPartnerOnART === 'yes'} onChange={handleCheckboxGroupChange}/> Yes</label>
+                             <label><input type="checkbox" name="isPartnerOnART" value="no" checked={formData.isPartnerOnART === 'no'} onChange={handleCheckboxGroupChange}/> No</label>
+                             <label><input type="checkbox" name="isPartnerOnART" value="dk" checked={formData.isPartnerOnART === 'dk'} onChange={handleCheckboxGroupChange}/> Don't know</label>
+                        </div>
+                    </div>
+                     <div className="question-group">
+                        {/* Interpreting this question based on Yes/No/DK check options */}
+                        <label>Was the last viral load result detectable (or result unknown)?</label>
+                        <div className="checkbox-options">
+                           <label><input type="checkbox" name="lastViralLoadResultKnown" value="yes" checked={formData.lastViralLoadResultKnown === 'yes'} onChange={handleCheckboxGroupChange}/> Yes (Detectable)</label>
+                           <label><input type="checkbox" name="lastViralLoadResultKnown" value="no" checked={formData.lastViralLoadResultKnown === 'no'} onChange={handleCheckboxGroupChange}/> No (Undetectable)</label>
+                           <label><input type="checkbox" name="lastViralLoadResultKnown" value="dk" checked={formData.lastViralLoadResultKnown === 'dk'} onChange={handleCheckboxGroupChange}/> Don't know</label>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+         </fieldset>
+
+        <button type="submit" className="submit-button">Submit Answers</button>
+      </form>
+
+        {/* Optional: Display current state for debugging */}
+       {/* <pre className="debug-state">
+            Current State:
+            {JSON.stringify(formData, null, 2)}
+        </pre> */}
+
+    </div>
+  );
+}

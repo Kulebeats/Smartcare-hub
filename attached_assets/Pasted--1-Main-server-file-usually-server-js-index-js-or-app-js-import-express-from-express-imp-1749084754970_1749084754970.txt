@@ -1,0 +1,226 @@
+// 1. Main server file (usually server.js, index.js, or app.js)
+import express from 'express';
+import { registerRoutes } from './routes'; // Your routes file
+import path from 'path';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Essential middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS middleware (if needed)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
+// CRITICAL: Register API routes BEFORE static file serving
+await registerRoutes(app);
+
+// Serve static files (for production)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('dist'));
+}
+
+// IMPORTANT: This catch-all route must come AFTER API routes
+// It serves the frontend app for any non-API routes
+app.get('*', (req, res) => {
+  // Only serve HTML for non-API routes
+  if (!req.path.startsWith('/api/')) {
+    if (process.env.NODE_ENV === 'production') {
+      res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+    } else {
+      // In development, let Vite handle this
+      res.status(404).json({ error: 'Route not found in development' });
+    }
+  } else {
+    // API route not found
+    res.status(404).json({ error: `API route ${req.path} not found` });
+  }
+});
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`API available at http://localhost:${PORT}/api`);
+});
+
+// 2. Enhanced registerRoutes function with better logging
+export async function registerRoutes(app) {
+  await setupAuth(app);
+
+  console.log('Registering API routes...');
+
+  // Add route logging middleware for API routes only
+  app.use('/api/*', (req, res, next) => {
+    console.log(`API Request: ${req.method} ${req.path}`);
+    console.log('Query params:', req.query);
+    console.log('Body:', req.body);
+    next();
+  });
+
+  // Test route to verify API is working
+  app.get('/api/health', (req, res) => {
+    console.log('Health check requested');
+    res.json({ 
+      status: 'OK', 
+      timestamp: new Date().toISOString(),
+      message: 'API is working correctly'
+    });
+  });
+
+  // Patient registration endpoint
+  app.post('/api/patients', async (req, res) => {
+    console.log('POST /api/patients called');
+    try {
+      // ... your existing patient creation code
+      
+      const formData = req.body;
+      console.log('Patient registration request:', formData);
+      
+      // Your existing mapping and validation code here...
+      
+    } catch (error) {
+      console.error('Error in POST /api/patients:', error);
+      res.status(500).json({ 
+        message: 'Failed to create patient',
+        error: error.message 
+      });
+    }
+  });
+
+  // Enhanced patients list endpoint with debugging
+  app.get('/api/patients', async (req, res) => {
+    console.log('GET /api/patients called');
+    try {
+      console.log('Fetching patients from database...');
+      
+      const patientsList = await db
+        .select()
+        .from(patients)
+        .orderBy(desc(patients.last_updated));
+      
+      console.log(`Found ${patientsList.length} patients`);
+      
+      // Ensure JSON response
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        success: true,
+        data: patientsList,
+        count: patientsList.length
+      });
+      
+    } catch (error) {
+      console.error('Error in GET /api/patients:', error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).json({ 
+        success: false,
+        message: 'Failed to fetch patients',
+        error: error.message 
+      });
+    }
+  });
+
+  // Patient search endpoint
+  app.get('/api/patients/search', async (req, res) => {
+    console.log('GET /api/patients/search called');
+    console.log('Search params:', req.query);
+    
+    try {
+      const { q, phone, nrc } = req.query;
+      let searchResults = [];
+      
+      if (q) {
+        // Simple text search - you might need to adjust this based on your DB
+        searchResults = await db
+          .select()
+          .from(patients)
+          .where(
+            // You'll need to use your ORM's OR syntax here
+            // This is just an example - adjust for your specific ORM
+          )
+          .limit(50);
+      } else {
+        // Return recent patients if no search query
+        searchResults = await db
+          .select()
+          .from(patients)
+          .orderBy(desc(patients.last_updated))
+          .limit(20);
+      }
+      
+      res.setHeader('Content-Type', 'application/json');
+      res.json({
+        success: true,
+        data: searchResults,
+        count: searchResults.length
+      });
+      
+    } catch (error) {
+      console.error('Error in GET /api/patients/search:', error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).json({ 
+        success: false,
+        message: 'Failed to search patients',
+        error: error.message 
+      });
+    }
+  });
+
+  // Your other existing routes...
+  
+  console.log('✅ API routes registered successfully');
+  console.log('Available routes:');
+  console.log('  GET  /api/health');
+  console.log('  GET  /api/patients');
+  console.log('  GET  /api/patients/search');
+  console.log('  POST /api/patients');
+  console.log('  GET  /api/patients/check-phone/:phoneNumber');
+  console.log('  GET  /api/patients/check-nrc/:nrc');
+
+  const server = createServer(app);
+  return server;
+}
+
+// 3. Quick test function - add this to your frontend for debugging
+function testApiConnection() {
+  console.log('Testing API connection...');
+  
+  // Test health endpoint first
+  fetch('/api/health')
+    .then(response => {
+      console.log('Health check status:', response.status);
+      console.log('Health check content-type:', response.headers.get('content-type'));
+      return response.json();
+    })
+    .then(data => {
+      console.log('Health check response:', data);
+      
+      // If health check works, test patients endpoint
+      return fetch('/api/patients');
+    })
+    .then(response => {
+      console.log('Patients endpoint status:', response.status);
+      console.log('Patients endpoint content-type:', response.headers.get('content-type'));
+      return response.json();
+    })
+    .then(data => {
+      console.log('Patients endpoint response:', data);
+    })
+    .catch(error => {
+      console.error('API test failed:', error);
+    });
+}

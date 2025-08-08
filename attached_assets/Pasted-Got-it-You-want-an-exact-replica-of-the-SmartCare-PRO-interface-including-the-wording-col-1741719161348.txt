@@ -1,0 +1,84 @@
+Got it! You want an **exact replica** of the **SmartCare PRO** interface, including the wording, colors, layout, and functionality. Below is a detailed prompt to guide the development of your **SmartCare PRO Prototype**.
+
+---
+
+### **🚀 Prompt for Replit Agent: SmartCare PRO Prototype**
+
+#### **Project Name:**  
+📌 **SmartCare PRO Prototype**  
+
+#### **🎯 Project Description:**  
+Develop a **web-based Electronic Health Record (EHR) system** that **mirrors** the design, colors, interface, and functionalities of **SmartCare PRO** as shown in the provided screenshots. This system should allow healthcare providers to:  
+- **Search for and manage patient records**  
+- **Document HIV/AIDS treatment follow-ups**  
+- **Log medical encounters, vitals, and diagnoses**  
+- **Schedule appointments & manage queues**  
+- **Prescribe and track medication plans**  
+- **Store medical history and ART adherence data**  
+
+#### **🖥️ Target Platform:**  
+- **Web Application** (Optimized for both **desktop & mobile** views)  
+
+#### **🌐 Operating Environment:**  
+- **Cloud-based application** with offline data storage support (for syncing later).  
+
+#### **☁️ Hosting Options:**  
+- **AWS or Local Server** (Discuss best deployment options).  
+
+#### **🎨 Interface Style & Requirements:**  
+- **Exact UI replication** of SmartCare PRO as seen in the provided screenshots.  
+- **Maintain the same color scheme, icons, typography, and layout.**  
+- **Left-side navigation menu** for different medical services.  
+- **Top search bar** for quick patient lookup.  
+- **Main content area** displaying patient details, history, and encounters.  
+- **Right-side summary panel** showing vitals, test results, diagnoses, treatment plans, and medications.  
+- **Action buttons** for editing, adding records, scheduling, and managing queues.  
+
+#### **🔎 Example Screens for Reference:**  
+- **Patient Search & Registration Page**  
+- **Patient Dashboard & Medical Summary**  
+- **Encounter & ART Follow-up Forms**  
+- **Complaints & Histories Entry Modal**  
+- **Service Selection Page**  
+
+#### **📌 Expected Outputs & Features:**  
+✅ **Patient Management:**  
+- Search, register, and update patient information.  
+- Store **ART Number, NRC, NUPN, Cellphone, DOB, and Mother's Name**.  
+
+✅ **Medical Data Tracking:**  
+- **Vitals Tracking:** Weight, Height, BMI.  
+- **HIV Test Results:** Status, Date, HIV Type.  
+- **Diagnosis:** ICD 11 classification, NTG codes.  
+- **Treatment Plans & Medications.**  
+
+✅ **ART Follow-Up Management:**  
+- Presenting complaints, TB symptoms, past medical history.  
+- ART drug adherence, chronic conditions, allergies.  
+- Previous ART exposure, family & social history.  
+
+✅ **User Roles & Permissions:**  
+- **Administrator, Doctor, Nurse** (with different access levels).  
+
+✅ **Appointment Scheduling & Queue System**  
+- Book, assign, and manage patient visits.  
+
+✅ **Reports & Analytics Dashboard**  
+- Generate summary reports on HIV care, medication adherence, and visit history.  
+
+#### **🌍 Language Preferences:**  
+- **Replit Agent Interaction:** English  
+- **Application Interface:** English (Maintain the exact wording as seen in screenshots).  
+
+---
+
+### **Next Steps:**
+✅ **Build the exact UI & color scheme**  
+✅ **Implement database for patient records**  
+✅ **Develop user authentication & role-based access**  
+✅ **Create forms for encounters, ART follow-up, and medication tracking**  
+✅ **Set up cloud hosting & offline storage**  
+
+---
+
+This should give the developer a **clear and precise** guide to replicate **SmartCare PRO** **exactly** as shown in your screenshots. Let me know if you want any modifications! 🚀

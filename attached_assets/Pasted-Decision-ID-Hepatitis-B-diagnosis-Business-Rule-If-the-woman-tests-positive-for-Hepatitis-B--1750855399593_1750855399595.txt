@@ -1,0 +1,108 @@
+Decision ID	Hepatitis B diagnosis						
+Business Rule	If the woman tests positive for Hepatitis B, provide counselling and referral as needed.						
+Trigger	ANC.B10.4 Diagnosis and treatment						
+Inputs	Output	Action		Annotations		References	
+'Hepatitis B test result' = 'Hepatitis B Negative'	'Hepatitis B Diagnosis' = 'Hepatitis B Negative'	ANC.B.10.7 Immunizations	Provide Hepatitis B counselling and immunization	"Counseling:
+- Provide post-testing counselling
+- Advise retesting and immunisation if ongoing risk or known exposure"		 WHO Guidelines on Hepatitis B and C Testing  -- Section 16.6	
+'Hepatitis B test result' = 'Hepatitis B Positive'	'Hepatitis B test result' = 'Hepatitis B Positive'	ANC.C. Referral	Conduct Hepatitis B positive counseling	"Counseling:
+- Provide post-testing counselling
+- Request confirmatory Nucleic Acid Testing (NAT)
+- Refer to hospital"		 WHO Guidelines on Hepatitis B and C Testing  -- Section 16.7	
+							
+Decision ID	Syphilis diagnosis						
+Business Rule	If the woman tests positive for syphilis, provide counselling and treatment as needed						
+Trigger	ANC.B10.4 Diagnosis and treatment						
+Inputs			Output	Action		Annotations	
+'Population prevalence of syphilis in pregnant women' => 5%	'Syphilis test type' = 'Rapid syphilis test (RST)'	'Syphilis test result' = 'Syphilis Positive'	'Syphilis test result' = 'Syphilis Positive'	ANC.C. Referral	Conduct Syphilis counselling and further testing	"Procedure: Provide first dose of  treatment & refer for additional testing
+- If primary or secondary stage of syphilis, please give single dose of benzathine penicillin 2.400.000 IU
+- If late or unknown stage of syphilis, please give one dose of benzathine penicillin 2.400.000 IU weekly for 3 consecutive weeks
+- Advise on treating her partner
+- Encourage HIV testing and counselling
+- Reinforce use of condoms
+- Proceed to further testing with an RPR test"	
+'Population prevalence of syphilis in pregnant women' => 5%	'Syphilis test type' = 'Rapid plasma reagin (RPR) test'	'Syphilis test result' = 'Syphilis Positive'	'Syphilis diagnosis' = 'Syphilis Positive'	ANC.B. Diagnosis & treatment	Conduct Syphilis counselling and further testing	"Provide treatment according to the clinical phase of syphilis.
+- If primary or secondary stage of syphilis, please give single dose of benzathine penicillin 2.400.000 IU
+- If late or unknown stage of syphilis, please give one dose of benzathine penicillin 2.400.000 IU weekly for 3 consecutive weeks
+- Advise on treating her partner
+- Encourage HIV testing and counselling
+- Reinforce use of condoms
+- Proceed to further testing with an RPR test"	
+'Population prevalence of syphilis in pregnant women' < 5%	'Syphilis test result' = 'Syphilis Positive'		'Syphilis diagnosis' = 'Syphilis Positive'	ANC.B. Diagnosis & treatment	Conduct Syphilis counselling and further testing	"Procedure:
+- If primary or secondary stage of syphilis, please give single dose of benzathine penicillin 2.400.000 IU
+- If late or unknown stage of syphilis, please give one dose of benzathine penicillin 2.400.000 IU weekly for 3 consecutive weeks
+- Advise on treating her partner
+- Encourage HIV testing and counselling
+- Reinforce use of condoms"	
+							
+Decision ID	Asymptomatic bacteriuria (ASB) diagnosis						
+Business Rule	If the woman tests positive for ASB, provide counselling and treatment as needed.						
+Trigger	ANC.B10.4 Diagnosis and treatment						
+Inputs	Output	Action		Annotations			
+'Midstream urine culture (recommended)' = 'Positive - any agent'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Midstream urine culture (recommended)' = 'Positive - Group B Streptococcus (GBS)'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Midstream urine Gram-staining' = 'Positive'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - nitrites' = '+'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - nitrites' = '++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - nitrites' = '+++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - nitrites' = '++++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - leukocytes' = '+'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - leukocytes' = '++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - leukocytes' = '+++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Urine dipstick result - leukocytes' = '++++'	'Asymptomatic bacteriuria (ASB) diagnosis' = 'Positive ASB'	ANC.B. Diagnosis & treatment	Provide Seven-day antibiotic regimen for asymptomatic bacteriuria (ASB)	"A woman is considered to have ASB if she has one of the following test results:
+- Positive culture (> 100,000 bacteria/mL)
+- Gram-staining positive
+- Urine dipstick test positive (nitrites or leukocytes)
+
+Seven-day antibiotic regimen is recommended for all pregnant women with asymptomatic bacteriuria (ASB) to prevent persistent bacteriuria, preterm birth and low birth weight."			
+'Midstream urine culture (recommended)' = 'Positive - Group B Streptococcus (GBS)'		ANC.B. Diagnosis & treatment	Provide Intrapartum antibiotic to prevent early neonatal Group B Streptococcus (GBS) infection counseling	Pregnant women with Group B Streptococcus (GBS) colonization should receive intrapartum antibiotic administration to prevent early neonatal GBS infection.		

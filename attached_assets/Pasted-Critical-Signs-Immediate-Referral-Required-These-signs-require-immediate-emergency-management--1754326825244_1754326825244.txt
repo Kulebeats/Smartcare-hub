@@ -1,0 +1,67 @@
+Critical Signs (Immediate Referral Required)
+⚠️ These signs require immediate emergency management and referral. Do not delay treatment.
+
+Convulsing
+Seizures, fits, or uncontrolled muscle contractions - may indicate eclampsia (BP >140/90 + proteinuria + seizures), severe pre-eclampsia, or epilepsy. IMMEDIATE ACTIONS: Position on left side, protect airway, give MgSO4 4g IV loading dose + 1g/hr maintenance. Life-threatening emergency.
+Unconscious
+Not responding to voice, touch, or painful stimuli (GCS <8) - may indicate post-ictal state (eclampsia), severe hypoglycemia (<2.2mmol/L), or cerebral complications. IMMEDIATE: Secure airway, check blood glucose, vital signs, and neurological assessment.
+Severe headache
+Persistent, throbbing headache not relieved by rest or paracetamol, often frontal or occipital - classic sign of severe pre-eclampsia (BP >160/110). Check: BP, urine protein, deep tendon reflexes (DTRs), and epigastric pain. May progress to eclampsia.
+Visual disturbance
+Blurred vision, seeing spots/scotomata, flashing lights, or temporary vision loss - indicates severe pre-eclampsia with possible cerebral edema or retinal changes. URGENT: Check BP, fundoscopy for papilledema/hemorrhages. High risk for eclampsia within hours.
+Vaginal bleeding
+Any amount of vaginal bleeding during pregnancy - may indicate placental abruption, placenta previa, cervical issues, or threatened abortion. Assess amount, color, and associated pain. Always requires immediate evaluation.
+Imminent delivery
+Active labor with cervical dilation >7cm, baby crowning, or uncontrollable urge to push. Prepare for immediate delivery or urgent transfer. Check fetal presentation and cord visibility.
+Severe abdominal pain
+Constant severe cramping, knife-like, or tearing abdominal pain - may indicate placental abruption, uterine rupture, appendicitis, or ectopic pregnancy. Assess uterine tenderness and fetal heart rate.
+Other Important Signs
+ℹ️ These signs require careful evaluation and may need urgent referral depending on severity.
+
+Draining
+Amniotic fluid leak or rupture of membranes (PROM/PPROM) - clear, blood-stained, or greenish fluid leaking from vagina. May indicate preterm labor, infection risk, or cord prolapse. Check gestational age and fetal movement.
+Labour
+Regular uterine contractions before 37 weeks gestation (preterm labor) - contractions every 5-10 minutes lasting 30+ seconds. May lead to premature birth. Assess cervical changes and fetal wellbeing.
+Fever
+Body temperature ≥39°C (102.2°F) or ≥38°C with chills/rigors - may indicate chorioamnionitis, UTI, malaria, or sepsis. Higher risk if membranes ruptured. Check for source and culture specimens.
+Looks very ill
+Appears distressed, lethargic, pale, sweating, or critically unwell - non-specific but important danger sign. May indicate sepsis, severe anemia, or multi-organ dysfunction. Assess vital signs and oxygen saturation.
+Severe vomiting
+Persistent vomiting unable to keep fluids/food down >24 hours, signs of dehydration - may indicate hyperemesis gravidarum, pre-eclampsia, or gastroenteritis. Check for ketones and electrolyte imbalance.
+Pre-eclampsia/Eclampsia Management Protocol
+Immediate Assessment (Within 5 minutes):
+• Blood pressure (repeat if >140/90)
+• Urine dipstick for proteinuria (≥2+ significant)
+• Deep tendon reflexes (hyperreflexia = brisk/clonus)
+• Assess for epigastric pain (liver capsule stretching)
+• Check for facial/hand edema
+Severe Pre-eclampsia Criteria (Any 1):
+• BP ≥160/110 mmHg on 2 occasions 4hrs apart
+• Proteinuria ≥3+ or ≥5g/24hrs
+• Severe headache or visual disturbances
+• Epigastric/RUQ pain
+• Oliguria <500ml/24hrs
+MgSO4 Protocol (If seizures/severe PE):
+• Loading: 4g IV over 20 minutes
+• Maintenance: 1g/hour IV infusion
+• Monitor: Respiratory rate >12, reflexes present, urine > 30ml/hr
+• Antidote: Calcium gluconate 10ml of 10% IV
+General Clinical Management
+Immediate Actions:
+• Take vital signs (BP, pulse, temperature, respiratory rate)
+• Assess level of consciousness (AVPU or GCS)
+• Check fetal heart rate and movement
+• Establish IV access if signs of shock/dehydration
+• Position patient on left side if unconscious
+Documentation Requirements:
+• Time of onset and duration of symptoms
+• Associated symptoms and triggers
+• Vital signs and clinical findings
+• Interventions given and patient response
+• Gestational age and fetal status
+Emergency Referral Protocol:
+• Call ahead to receiving facility (obstetric unit)
+• Stabilize airway and breathing before transport
+• Continue MgSO4 during transport if started
+• Accompany with detailed referral note
+• Monitor maternal and fetal status en route

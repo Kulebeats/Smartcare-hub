@@ -1,0 +1,43 @@
+Inputs	Output	Action	Annotations	References
+ 	 	 	 	 	ANC Guideline --Recommendation B1.3
+"Intimate partner violence or sexual violence risk assessment conducted" = TRUE	"Intimate partner violence or sexual violence risk assessment conducted" = TRUE	Conduct risk assessment as appropriate	WHO does not recommend universal screening for violence of women attending health care. WHO does encourage health-care providers to raise the topic with women who have injuries or conditions that they suspect may be related to violence.
+
+Never raise the issue of partner violence unless a woman is alone. Even if she is with another woman, that woman could be the mother or sister of an abuser.
+If you do ask her about violence, do it in an empathic, nonjudgemental manner. Use language that is appropriate and relevant to the culture and community you are working in. Some women may not like the words “violence” and “abuse”.
+Cultures and communities have ways of referring to the problem with other words. It is important to use the words that women themselves use.
+The job aid on the next page provides examples of the type of statements and questions you can use to ask about intimate partner violence.	WHO, UN Women, UNFPA. (2014). Health care for women subjected to intimate partner violence or sexual violence - A clinical handbook.
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Ongoing stress"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE	Provide first-line support. 4 kinds of needs deserve attention:
+- Immediate emotional/psychological health needs
+- Immediate physical health needs
+- Ongoing safety needs
+- Ongoing support and mental health needs.
+
+Conduct the following 5 tasks: 
+- Listen to the woman closely, with empathy, and without judging. 
+- Inquire about needs and concerns. Assess and respond to her various needs and concerns—emotional, physical, social and practical (e.g. childcare).
+- Validate. Show her that you understand and believe her. Assure her that she is not to blame.
+- Enhance Saftey. Discuss a plan to protect herself from further harm if violence occurs again.
+- Support her by helping her connect to information, services and social support.	You may also suspect a problem of violence if a woman's partner or husband is intrusive during consultations, if she often misses her own or her children's health-care appointments, or if her children have emotional and behavioral problems. 	WHO, UN Women, UNFPA. (2014). Health care for women subjected to intimate partner violence or sexual violence - A clinical handbook.
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Ongoing anxiety"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Ongoing depression"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unspecified ongoing emotional health issues"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Misuse of alcohol"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Misuse of drugs"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unspecified harmful behaviors"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Thoughts of self-harm or (attempted) suicide"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Plans of self-harm or (attempted) suicide"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Acts of self-harm or (attempted) suicide"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Repeated sexually transmitted infections (STIs)"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unwanted pregnancies"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unexplained chronic pain"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			WHO. (2013). Responding to intimate partner violence and sexual violence against women: WHO clinical and policy guidelines. "Figure 1. Care pathway for intimate partner violence (IPV). Box A - Clinical conditions associated with intimate partner violence".
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unexplained chronic gastrointestinal symptoms"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unexplained genitourinary symptoms"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Adverse reproductive outcomes"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unexplained reproductive symptoms"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Repeated vaginal bleeding"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Unexplained traumatic injury"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Problems with central nervous system"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Repeated health consultations with no clear diagnosis"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			WHO, UN Women, UNFPA. (2014). Health care for women subjected to intimate partner violence or sexual violence - A clinical handbook.
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Woman’s partner or husband is intrusive during consultations"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Woman often misses her own or her children’s health-care appointments"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			
+"Risk factors for clients subjected to intimate partner violence or sexual assault" = "Children have emotional and behavioural problems"	"Woman suspected or confirmed to be subjected to intimate partner violence or sexual violence" = TRUE			

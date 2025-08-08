@@ -1,0 +1,262 @@
+`DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Danger signs addressed: Patient managed at facility - OPD due to danger signs: Severe hypertensive crisis
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419585117, lastCount: 1}
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419604524, lastCount: 1}
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419615973, lastCount: 1}
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419663151, lastCount: 1}
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419699293, lastCount: 1}
+TSS: Counted history being pushed
+TSS: Caught history
+TSS: Checking if repeated 500 times for interval 1000 against data:  
+Object {lastTime: 1750419713850, lastCount: 1}
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+
+Error validating phone number: 
+SyntaxError {}
+message: "Unexpected token '<', "<!DOCTYPE "... is not valid JSON"
+stack: "SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object
+
+at t.value (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://22054aba-ce5f-4b15-8484-32e0d9c07953-00-cnomua0afjmj.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

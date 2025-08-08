@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Tabbed Sections with Scrollable Content</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    /* Navigation Bar for Tabs */
+    .nav-bar {
+      display: flex;
+      overflow-x: auto; /* Horizontal scroll if tabs overflow */
+      white-space: nowrap;
+      padding: 10px 0;
+      background-color: #f5f5f5; /* Light background for the tab bar */
+      border-radius: 5px;
+    }
+
+    .nav-bar a {
+      text-decoration: none;
+      color: #333; /* Dark text color */
+      font-size: 16px;
+      padding: 8px 15px;
+      margin: 0 5px;
+      border: 1px solid transparent; /* Default border */
+      border-radius: 5px;
+    }
+
+    .nav-bar a.active {
+      border: 1px solid #000; /* Black border for active tab */
+      background-color: #fff; /* White background for active tab */
+    }
+
+    /* Scrollable Sections */
+    .section {
+      display: none; /* Hide all sections by default */
+      height: 300px; /* Fixed height for scrollable area */
+      overflow-y: auto; /* Vertical scroll when content overflows */
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+    }
+
+    .section.active {
+      display: block; /* Show active section */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .nav-bar a {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+      .section {
+        height: 200px; /* Smaller height on mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <a href="#details" class="active">Details</a>
+    <a href="#vitals-history">Vitals & History</a>
+    <a href="#art-pregnancy">ART & Pregnancy</a>
+    <a href="#reason">Reason</a>
+    <a href="#adverse-drug-reactions">Adverse Drug Reactions</a>
+    <a href="#outcomes">Outcomes</a>
+  </div>
+
+  <!-- Scrollable Sections -->
+  <div id="details" class="section active">
+    <h2>Details</h2>
+    <p>Details content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>More content to trigger scrolling. Adding extra text to ensure the section overflows and shows a scrollbar.</p>
+  </div>
+
+  <div id="vitals-history" class="section">
+    <h2>Vitals & History</h2>
+    <p>Vitals & History content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  </div>
+
+  <div id="art-pregnancy" class="section">
+    <h2>ART & Pregnancy</h2>
+    <p>ART & Pregnancy content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  </div>
+
+  <div id="reason" class="section">
+    <h2>Reason</h2>
+    <p>Reason content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  </div>
+
+  <div id="adverse-drug-reactions" class="section">
+    <h2>Adverse Drug Reactions</h2>
+    <p>Adverse Drug Reactions content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  </div>
+
+  <div id="outcomes" class="section">
+    <h2>Outcomes</h2>
+    <p>Outcomes content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  </div>
+
+  <!-- JavaScript for Section Switching -->
+  <script>
+    const links = document.querySelectorAll('.nav-bar a');
+    const sections = document.querySelectorAll('.section');
+
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Remove active class from all links and sections
+        links.forEach(l => l.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+
+        // Add active class to clicked link and corresponding section
+        link.classList.add('active');
+        const targetId = link.getAttribute('href').substring(1); // Remove the '#'
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

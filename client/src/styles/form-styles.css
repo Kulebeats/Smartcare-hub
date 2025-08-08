@@ -1,0 +1,181 @@
+/* Form styling for patient registration */
+.form-section {
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.section-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0072BC;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.section-content {
+  padding: 1.25rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 1.5rem 0;
+  grid-column: 1 / -1;
+}
+
+.sub-section-title {
+  font-weight: 600;
+  color: #4B5563;
+  margin-bottom: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+/* Select styling */
+[data-radix-select-trigger] {
+  transition: all 0.2s ease;
+  border-color: #e2e8f0;
+}
+
+[data-radix-select-trigger]:hover {
+  border-color: #93c5fd;
+}
+
+[data-radix-select-trigger][data-state="open"] {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Style dropdown items for better visual feedback */
+[data-radix-select-item] {
+  transition: background-color 0.15s ease;
+}
+
+[data-radix-select-item][data-highlighted],
+[data-radix-select-item]:hover {
+  background-color: #e6f2ff;
+}
+
+[data-radix-select-item][data-state="checked"] {
+  background-color: #0072BC;
+  color: white;
+  font-weight: 500;
+}
+
+/* Form field styling */
+.form-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.form-input {
+  height: 2.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Styling for required fields */
+.required-field::after {
+  content: "*";
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+/* Improved styling for select content */
+[data-radix-select-content] {
+  background-color: white;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+[data-radix-select-item] {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+[data-radix-select-item]:hover {
+  background-color: #eff6ff;
+}
+
+[data-radix-select-item][data-state="checked"] {
+  background-color: #dbeafe;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* Navigation buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.next-button {
+  background-color: #0072BC;
+  color: white;
+}
+
+.next-button:hover:not(:disabled) {
+  background-color: #005a99;
+}
+
+.next-button:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.prev-button {
+  border: 1px solid #cbd5e1;
+  background-color: white;
+  color: #4b5563;
+}
+
+.prev-button:hover {
+  background-color: #f1f5f9;
+}

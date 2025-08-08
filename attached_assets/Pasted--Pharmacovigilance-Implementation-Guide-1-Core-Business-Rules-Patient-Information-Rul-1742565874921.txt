@@ -1,0 +1,240 @@
+# Pharmacovigilance Implementation Guide
+
+## 1. Core Business Rules
+
+### Patient Information Rules
+- Patient details are pre-populated and non-editable
+- Patient data is fetched from API using TanStack Query
+- All patient fields must have tooltips explaining why they're non-editable
+
+### Follow-up Reasons Rules
+- At least one reason must be selected
+- Available options:
+  ```typescript
+  const FOLLOW_UP_REASONS = [
+    "TDF+XTC+DTG",
+    "TAF+FTC+DTG",
+    "AZT+3TC+DRV-r",
+    "AZT+3TC+DTG",
+    "ABC+3TC+DTG",
+    "Rifapentine + High-dose Isoniazid (3HP)",
+    "INH",
+    "Pregnant or Breastfeeding Women (PBW)"
+  ] as const;
+  ```
+
+### Symptom Grade Rules
+- Grades range from 1-4
+- Grade selection only appears for non-"None" symptoms
+- Each symptom category prevents duplicate selections
+- "Other" option requires additional text input
+
+### Validation Rules by Section
+
+#### Registration
+```typescript
+registration: z.object({
+  dateOfReporting: z.string(),
+  healthFacility: z.string(),
+  district: z.string(),
+  province: z.string()
+})
+```
+- All fields are pre-populated and non-editable
+- Date of reporting defaults to current date
+
+#### Patient Details
+```typescript
+patientDetails: z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  dateOfBirth: z.string(),
+  sex: z.string(),
+  phoneNumber: z.string(),
+  artNumber: z.string()
+})
+```
+- All fields are pre-populated from patient data
+- Non-editable with tooltips
+
+#### ART History
+```typescript
+artHistory: z.object({
+  hivDiagnosisDate: z.string(),
+  initialArtDate: z.string(),
+  hasArtChanged: z.boolean(),
+  dateOfChange: z.string().optional(),
+  previousRegimen: z.string().optional(),
+  reasonForChange: z.string().optional()
+})
+```
+- Additional fields appear only if hasArtChanged is true
+- All dates must be valid and not in future
+
+#### Medical Tests
+```typescript
+medicalTests: z.object({
+  cd4Count: z.number().optional(),
+  viralLoad: z.number().optional(),
+  alt: z.number().optional(),
+  ast: z.number().optional(),
+  creatinine: z.number().optional(),
+  hbsag: z.enum(["Reactive", "Non Reactive", "Indeterminate"]).optional(),
+  rst: z.string().optional(),
+  hbac1: z.enum(["Normal", "High"]).optional(),
+  rbs: z.number().optional(),
+  cholesterol: z.number().optional(),
+  hb: z.number().optional()
+})
+```
+- All test values are optional
+- Numeric values must be positive
+
+### Symptom Categories and Rules
+
+```typescript
+// Helper for creating symptom schemas
+const createSymptomSchema = <T extends readonly string[]>(symptoms: T) =>
+  z.object({
+    symptom: z.enum(symptoms),
+    grade: z.number().min(1).max(4).optional(),
+    otherSpecify: z.string().optional()
+  });
+
+// Symptom categories
+const GI_SYMPTOMS = ["None", "Nausea", "Vomiting", /* ... */] as const;
+const CNS_SYMPTOMS = ["None", "Insomnia", "Somnolence", /* ... */] as const;
+const CVS_SYMPTOMS = ["None", "Palpitations", /* ... */] as const;
+const SKIN_MUSCULO_SYMPTOMS = ["None", "Rash", /* ... */] as const;
+const GENITAL_URINARY_SYMPTOMS = ["None", "Change in urine colour", /* ... */] as const;
+```
+
+## 2. Implementation Steps
+
+1. Set up form schema:
+```typescript
+import { z } from "zod";
+const pharmacovigilanceSchema = z.object({
+  // ... paste the complete schema from above
+});
+```
+
+2. Create the form component:
+```typescript
+export default function PharmacovigilanceForm() {
+  const form = useForm<PharmacovigilanceForm>({
+    resolver: zodResolver(pharmacovigilanceSchema),
+    defaultValues: {
+      // ... initialize with default values
+    }
+  });
+}
+```
+
+3. Implement the NonEditableField component:
+```typescript
+const NonEditableField = ({ children }: { children: React.ReactNode }) => (
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>
+        <p>This field is non-editable as the information is derived from another module</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+);
+```
+
+4. Implement ADRSection for symptom management:
+```typescript
+const ADRSection = ({
+  title,
+  symptoms,
+  control,
+  name
+}: {
+  title: string;
+  symptoms: readonly string[];
+  control: any;
+  name: string;
+}) => {
+  // ... implement the section with duplicate prevention
+};
+```
+
+## 3. Key Features Implementation
+
+### Duplicate Prevention Logic
+```typescript
+// In symptom selection
+{symptoms.filter(s =>
+  s === "None" ||
+  s === "Other" ||
+  !field.value.some((existing: any) =>
+    existing.symptom === s &&
+    existing !== symptom
+  )
+).map((s) => (
+  <SelectItem key={s} value={s}>
+    {s}
+  </SelectItem>
+))}
+```
+
+### Grade Selection Logic
+```typescript
+{symptom.symptom !== "None" && (
+  <div className="flex items-center gap-2">
+    <span className="text-sm font-medium">Grade:</span>
+    <RadioGroup
+      value={symptom.grade?.toString()}
+      onValueChange={(value) => {
+        const newSymptoms = [...field.value];
+        newSymptoms[index] = {
+          ...symptom,
+          grade: parseInt(value)
+        };
+        field.onChange(newSymptoms);
+      }}
+      className="flex items-center gap-2"
+    >
+      {[1, 2, 3, 4].map((grade) => (
+        <div key={grade} className="flex items-center space-x-1">
+          <RadioGroupItem 
+            value={grade.toString()} 
+            id={`${name}.${index}.grade.${grade}`} 
+          />
+          <label htmlFor={`${name}.${index}.grade.${grade}`}>
+            {grade}
+          </label>
+        </div>
+      ))}
+    </RadioGroup>
+  </div>
+)}
+```
+
+## 4. Testing Requirements
+
+Verify the following functionality:
+1. Non-editable fields show tooltips on hover
+2. Cannot select the same symptom twice in any category
+3. Grade selection only appears for non-"None" symptoms
+4. "Other" option shows text input field
+5. Form validation prevents submission with invalid data
+6. All dates are properly formatted and validated
+7. Numeric fields only accept valid numbers
+8. Required fields are properly enforced
+
+## 5. Integration Steps
+
+1. Copy the schema and type definitions
+2. Implement the components in order:
+   - NonEditableField
+   - ADRSection
+   - PharmacovigilanceForm
+3. Set up API endpoints for:
+   - Patient data fetching
+   - Form submission
+4. Configure form validation
+5. Test all business rules

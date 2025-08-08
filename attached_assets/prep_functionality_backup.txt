@@ -1,0 +1,2721 @@
+=== PrEP COMPONENTS BACKUP ===
+
+=== 1. prep-initial-dialog.tsx ===
+
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+
+// Define form schema for PrEP Initial Assessment
+const prepInitialSchema = z.object({
+  visitDate: z.date({
+    required_error: "Visit date is required",
+  }),
+  hivTestDate: z.date({
+    required_error: "HIV test date is required",
+  }),
+  hivTestResult: z.string({
+    required_error: "HIV test result is required",
+  }),
+  riskFactors: z.array(z.string()).optional(),
+  hasAllergies: z.boolean().default(false),
+  allergies: z.string().optional(),
+  hasMedicalConditions: z.boolean().default(false),
+  medicalConditions: z.string().optional(),
+  weight: z.string().optional(),
+  height: z.string().optional(),
+  systolicBp: z.string().optional(),
+  diastolicBp: z.string().optional(),
+  pulseRate: z.string().optional(),
+  creatinine: z.string().optional(),
+  creatinineClearance: z.string().optional(),
+  hepatitisB: z.string().optional(),
+  hepatitisC: z.string().optional(),
+  isEligible: z.boolean().default(true),
+  notEligibleReason: z.string().optional(),
+  regimenPrescribed: z.string({
+    required_error: "Regimen is required",
+  }),
+  dosage: z.string({
+    required_error: "Dosage is required",
+  }),
+  supplyDuration: z.string({
+    required_error: "Supply duration is required",
+  }),
+  nextVisitDate: z.date({
+    required_error: "Next visit date is required",
+  }),
+  clinicalNotes: z.string().optional(),
+});
+
+type PrepInitialForm = z.infer<typeof prepInitialSchema>;
+
+const riskFactorOptions = [
+  { value: "msm", label: "Men who have sex with men (MSM)" },
+  { value: "fsw", label: "Female sex worker (FSW)" },
+  { value: "discordant_couple", label: "HIV discordant couple" },
+  { value: "multiple_partners", label: "Multiple sexual partners" },
+  { value: "sti_history", label: "Recent history of STI" },
+  { value: "inconsistent_condom", label: "Inconsistent condom use" },
+  { value: "injecting_drug", label: "Injecting drug use" },
+];
+
+const regimenOptions = [
+  { value: "tdf_ftc", label: "TDF/FTC (Truvada) once daily" },
+  { value: "tdf_3tc", label: "TDF/3TC once daily" },
+  { value: "taf_ftc", label: "TAF/FTC once daily" },
+];
+
+interface PrepInitialDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onSave: (data: PrepInitialForm) => void;
+}
+
+export function PrepInitialDialog({
+  open,
+  onClose,
+  onSave,
+}: PrepInitialDialogProps) {
+  const [activeTab, setActiveTab] = useState("patient-info");
+
+  const form = useForm<PrepInitialForm>({
+    resolver: zodResolver(prepInitialSchema),
+    defaultValues: {
+      visitDate: new Date(),
+      hivTestDate: new Date(),
+      hivTestResult: "negative",
+      riskFactors: [],
+      hasAllergies: false,
+      allergies: "",
+      hasMedicalConditions: false,
+      medicalConditions: "",
+      weight: "",
+      height: "",
+      systolicBp: "",
+      diastolicBp: "",
+      pulseRate: "",
+      creatinine: "",
+      creatinineClearance: "",
+      hepatitisB: "negative",
+      hepatitisC: "negative",
+      isEligible: true,
+      notEligibleReason: "",
+      regimenPrescribed: "tdf_ftc",
+      dosage: "1 tablet",
+      supplyDuration: "30",
+      nextVisitDate: new Date(new Date().setDate(new Date().getDate() + 30)),
+      clinicalNotes: "",
+    },
+  });
+
+  const handleSubmit = (data: PrepInitialForm) => {
+    onSave(data);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-[#0072BC]">
+            PrEP Initial Assessment
+          </DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="patient-info">Patient Information</TabsTrigger>
+                <TabsTrigger value="clinical-assessment">Clinical Assessment</TabsTrigger>
+                <TabsTrigger value="prescription">Prescription & Plan</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="patient-info" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="visitDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Visit Date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            captionLayout="dropdown-buttons"
+                            fromYear={2000}
+                            toYear={2030}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="hivTestDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>HIV Test Date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            captionLayout="dropdown-buttons"
+                            fromYear={2000}
+                            toYear={2030}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="hivTestResult"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>HIV Test Result</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-row space-x-4"
+                        >
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="negative" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Negative
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="positive" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Positive
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="indeterminate" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Indeterminate
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="riskFactors"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Risk Factors</FormLabel>
+                        <FormDescription>
+                          Select all applicable risk factors.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {riskFactorOptions.map((option) => (
+                          <FormField
+                            key={option.value}
+                            control={form.control}
+                            name="riskFactors"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={option.value}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...(field.value || []), option.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.value
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="hasAllergies"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>
+                            Has Known Allergies
+                          </FormLabel>
+                          <FormDescription>
+                            Check if patient has any known allergies.
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="hasMedicalConditions"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>
+                            Has Medical Conditions
+                          </FormLabel>
+                          <FormDescription>
+                            Check if patient has any pre-existing medical conditions.
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {form.watch("hasAllergies") && (
+                  <FormField
+                    control={form.control}
+                    name="allergies"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Allergies</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="List all known allergies"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {form.watch("hasMedicalConditions") && (
+                  <FormField
+                    control={form.control}
+                    name="medicalConditions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Medical Conditions</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="List all pre-existing medical conditions"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="clinical-assessment" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Weight (kg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="height"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Height (cm)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="systolicBp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Systolic BP (mmHg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="diastolicBp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Diastolic BP (mmHg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="pulseRate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pulse Rate (bpm)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="creatinine"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Creatinine (μmol/L)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="creatinineClearance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Creatinine Clearance (mL/min)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="hepatitisB"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hepatitis B Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Hepatitis B Status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="negative">Negative</SelectItem>
+                            <SelectItem value="positive">Positive</SelectItem>
+                            <SelectItem value="unknown">Unknown</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="hepatitisC"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hepatitis C Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Hepatitis C Status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="negative">Negative</SelectItem>
+                            <SelectItem value="positive">Positive</SelectItem>
+                            <SelectItem value="unknown">Unknown</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="isEligible"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>
+                          Patient Eligible for PrEP
+                        </FormLabel>
+                        <FormDescription>
+                          Check if patient meets all eligibility criteria for PrEP.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {!form.watch("isEligible") && (
+                  <FormField
+                    control={form.control}
+                    name="notEligibleReason"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reason Not Eligible</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Explain why patient is not eligible"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="prescription" className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="regimenPrescribed"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Regimen Prescribed</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select regimen" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {regimenOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="dosage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Dosage</FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="supplyDuration"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supply Duration (days)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="nextVisitDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Next Visit Date</FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          captionLayout="dropdown-buttons"
+                          fromYear={2000}
+                          toYear={2030}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="clinicalNotes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Clinical Notes</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Additional clinical notes"
+                          className="resize-none min-h-[150px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+            </Tabs>
+
+            <DialogFooter className="flex justify-between">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <div className="flex space-x-2">
+                {activeTab !== "patient-info" && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (activeTab === "clinical-assessment") {
+                        setActiveTab("patient-info");
+                      } else if (activeTab === "prescription") {
+                        setActiveTab("clinical-assessment");
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                )}
+                {activeTab !== "prescription" ? (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (activeTab === "patient-info") {
+                        setActiveTab("clinical-assessment");
+                      } else if (activeTab === "clinical-assessment") {
+                        setActiveTab("prescription");
+                      }
+                    }}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button type="submit">Submit</Button>
+                )}
+              </div>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+=== 2. prep-follow-up-dialog.tsx ===
+
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+
+// Define form schema for PrEP Follow-Up Visit
+const prepFollowUpSchema = z.object({
+  visitDate: z.date({
+    required_error: "Visit date is required",
+  }),
+  visitType: z.string({
+    required_error: "Visit type is required",
+  }),
+  hivTestDate: z.date({
+    required_error: "HIV test date is required",
+  }),
+  hivTestResult: z.string({
+    required_error: "HIV test result is required",
+  }),
+  weight: z.string().optional(),
+  systolicBp: z.string().optional(),
+  diastolicBp: z.string().optional(),
+  sideEffects: z.array(z.string()).optional(),
+  adherenceLevel: z.string({
+    required_error: "Adherence level is required",
+  }),
+  missedDoses: z.string().optional(),
+  regimenPrescribed: z.string({
+    required_error: "Regimen is required",
+  }),
+  dosage: z.string({
+    required_error: "Dosage is required",
+  }),
+  supplyDuration: z.string({
+    required_error: "Supply duration is required",
+  }),
+  nextVisitDate: z.date({
+    required_error: "Next visit date is required",
+  }),
+  clinicalNotes: z.string().optional(),
+});
+
+type PrepFollowUpForm = z.infer<typeof prepFollowUpSchema>;
+
+const visitTypeOptions = [
+  { value: "scheduled", label: "Scheduled Visit" },
+  { value: "unscheduled", label: "Unscheduled Visit" },
+  { value: "refill", label: "Refill Only" },
+];
+
+const sideEffectOptions = [
+  { value: "nausea", label: "Nausea" },
+  { value: "headache", label: "Headache" },
+  { value: "dizziness", label: "Dizziness" },
+  { value: "fatigue", label: "Fatigue" },
+  { value: "diarrhea", label: "Diarrhea" },
+  { value: "rash", label: "Rash" },
+  { value: "renal_abnormalities", label: "Renal Abnormalities" },
+];
+
+const adherenceLevelOptions = [
+  { value: "excellent", label: "Excellent (>95%)" },
+  { value: "good", label: "Good (80-95%)" },
+  { value: "fair", label: "Fair (60-80%)" },
+  { value: "poor", label: "Poor (<60%)" },
+];
+
+const regimenOptions = [
+  { value: "tdf_ftc", label: "TDF/FTC (Truvada) once daily" },
+  { value: "tdf_3tc", label: "TDF/3TC once daily" },
+  { value: "taf_ftc", label: "TAF/FTC once daily" },
+];
+
+interface PrepFollowUpDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onSave: (data: PrepFollowUpForm) => void;
+}
+
+export function PrepFollowUpDialog({
+  open,
+  onClose,
+  onSave,
+}: PrepFollowUpDialogProps) {
+  const [activeTab, setActiveTab] = useState("visit-info");
+
+  const form = useForm<PrepFollowUpForm>({
+    resolver: zodResolver(prepFollowUpSchema),
+    defaultValues: {
+      visitDate: new Date(),
+      visitType: "scheduled",
+      hivTestDate: new Date(),
+      hivTestResult: "negative",
+      weight: "",
+      systolicBp: "",
+      diastolicBp: "",
+      sideEffects: [],
+      adherenceLevel: "excellent",
+      missedDoses: "0",
+      regimenPrescribed: "tdf_ftc",
+      dosage: "1 tablet",
+      supplyDuration: "30",
+      nextVisitDate: new Date(new Date().setDate(new Date().getDate() + 30)),
+      clinicalNotes: "",
+    },
+  });
+
+  const handleSubmit = (data: PrepFollowUpForm) => {
+    onSave(data);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-[#0072BC]">
+            PrEP Follow-Up Visit
+          </DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="visit-info">Visit Information</TabsTrigger>
+                <TabsTrigger value="clinical-assessment">Clinical Assessment</TabsTrigger>
+                <TabsTrigger value="prescription">Prescription & Plan</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="visit-info" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="visitDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Visit Date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            captionLayout="dropdown-buttons"
+                            fromYear={2000}
+                            toYear={2030}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="visitType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Visit Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select visit type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {visitTypeOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="hivTestDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>HIV Test Date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            captionLayout="dropdown-buttons"
+                            fromYear={2000}
+                            toYear={2030}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="hivTestResult"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>HIV Test Result</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex flex-row space-x-4"
+                          >
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="negative" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Negative
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="positive" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Positive
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="indeterminate" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Indeterminate
+                              </FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="sideEffects"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Side Effects</FormLabel>
+                        <FormDescription>
+                          Select all side effects experienced since last visit.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {sideEffectOptions.map((option) => (
+                          <FormField
+                            key={option.value}
+                            control={form.control}
+                            name="sideEffects"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={option.value}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...(field.value || []), option.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.value
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
+              <TabsContent value="clinical-assessment" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Weight (kg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="systolicBp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Systolic BP (mmHg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="diastolicBp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Diastolic BP (mmHg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="adherenceLevel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Adherence Level</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select adherence level" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {adherenceLevelOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="missedDoses"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Missed Doses</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
+              <TabsContent value="prescription" className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="regimenPrescribed"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Regimen Prescribed</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select regimen" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {regimenOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="dosage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Dosage</FormLabel>
+                        <FormControl>
+                          <Input type="text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="supplyDuration"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supply Duration (days)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="nextVisitDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Next Visit Date</FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          captionLayout="dropdown-buttons"
+                          fromYear={2000}
+                          toYear={2030}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="clinicalNotes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Clinical Notes</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Additional clinical notes"
+                          className="resize-none min-h-[150px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+            </Tabs>
+
+            <DialogFooter className="flex justify-between">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <div className="flex space-x-2">
+                {activeTab !== "visit-info" && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (activeTab === "clinical-assessment") {
+                        setActiveTab("visit-info");
+                      } else if (activeTab === "prescription") {
+                        setActiveTab("clinical-assessment");
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                )}
+                {activeTab !== "prescription" ? (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (activeTab === "visit-info") {
+                        setActiveTab("clinical-assessment");
+                      } else if (activeTab === "clinical-assessment") {
+                        setActiveTab("prescription");
+                      }
+                    }}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button type="submit">Submit</Button>
+                )}
+              </div>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+=== 3. prep-page.tsx ===
+
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Plus } from "lucide-react";
+
+export default function PrepPage() {
+  // Mock patient data
+  const patient = {
+    id: 1,
+    name: "John Doe",
+    dob: "15-Jan-1990",
+    gender: "Male",
+    age: 35,
+    phone: "0977000000",
+    nupn: "RRRR-MMMMM-YYYY-K",
+    nrc: "222222/22/2"
+  };
+
+  // Mock PrEP encounters data
+  const encounters = [
+    {
+      id: 1,
+      visitDate: "08-Apr-2025",
+      visitType: "Initial Assessment",
+      riskAssessment: "Medium Risk",
+      hivTestResult: "Negative",
+      prepStatus: "Initiated"
+    },
+    {
+      id: 2,
+      visitDate: "01-Mar-2025",
+      visitType: "Follow-up",
+      riskAssessment: "Low Risk",
+      hivTestResult: "Negative",
+      prepStatus: "Maintained"
+    }
+  ];
+
+  const latestVitals = {
+    weight: 70,
+    height: 175,
+    bmi: 22.9
+  };
+
+  const latestHtsStatus = {
+    testDate: "08-Apr-2025",
+    testResult: "Negative"
+  };
+
+  return (
+    <div className="min-h-screen bg-white relative">
+      {/* Background image with styling */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          backgroundImage: "url('/Carepro_Background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      
+      <header className="bg-white/80 border-b relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <img src="/Logo.ico" alt="Logo" className="h-10" />
+              <h1>
+                <span className="text-[#00A651]">Smart</span>
+                <span className="text-[#0072BC]">Care</span>
+                <span className="text-[#0072BC] font-bold">PRO</span>
+              </h1>
+            </div>
+            <div className="text-lg font-semibold text-blue-700">PrEP Service</div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">PrEP Management</h2>
+          <Link href="/prep/create">
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              New PrEP Visit
+            </Button>
+          </Link>
+        </div>
+
+        <div className="space-y-6">
+          {/* Patient Information Card */}
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-semibold mb-4">Patient Information</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Name</p>
+                  <p className="font-medium">{patient.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Date of Birth</p>
+                  <p className="font-medium">{patient.dob}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Gender</p>
+                  <p className="font-medium">{patient.gender}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Age</p>
+                  <p className="font-medium">{patient.age} years</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-medium">{patient.phone}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">NUPN</p>
+                  <p className="font-medium">{patient.nupn}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">NRC</p>
+                  <p className="font-medium">{patient.nrc}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Current PrEP Status</h3>
+                <p className="text-2xl font-bold text-green-600">Active</p>
+                <p className="text-sm text-gray-500 mt-2">Last visit: 08-Apr-2025</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Latest Vitals</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <p className="text-sm text-gray-500">Weight</p>
+                    <p className="font-medium">{latestVitals.weight} kg</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Height</p>
+                    <p className="font-medium">{latestVitals.height} cm</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">BMI</p>
+                    <p className="font-medium">{latestVitals.bmi}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Latest HTS Status</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-sm text-gray-500">Test Date</p>
+                    <p className="font-medium">{latestHtsStatus.testDate}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Result</p>
+                    <p className="font-medium text-green-600">{latestHtsStatus.testResult}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* PrEP Encounters Table */}
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-semibold mb-4">PrEP Visit History</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Visit Date</TableHead>
+                    <TableHead>Visit Type</TableHead>
+                    <TableHead>Risk Assessment</TableHead>
+                    <TableHead>HIV Test Result</TableHead>
+                    <TableHead>PrEP Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {encounters.map((encounter) => (
+                    <TableRow key={encounter.id}>
+                      <TableCell>{encounter.visitDate}</TableCell>
+                      <TableCell>{encounter.visitType}</TableCell>
+                      <TableCell>{encounter.riskAssessment}</TableCell>
+                      <TableCell className="text-green-600">{encounter.hivTestResult}</TableCell>
+                      <TableCell>{encounter.prepStatus}</TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm">View</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+=== 4. prep-create-page.tsx ===
+
+import { useState } from "react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { ArrowLeft, Save } from "lucide-react";
+
+// Form schema for PrEP visit
+const prepFormSchema = z.object({
+  // Patient info (these will be pre-filled)
+  patientId: z.number(),
+  visitDate: z.string(),
+  visitType: z.string(),
+  
+  // Complaints tab
+  chiefComplaint: z.string().optional(),
+  presentIllness: z.string().optional(),
+  
+  // Examination tab
+  weight: z.number().optional(),
+  height: z.number().optional(),
+  bmi: z.number().optional(),
+  temperature: z.number().optional(),
+  systolicBP: z.number().optional(),
+  diastolicBP: z.number().optional(),
+  pulseRate: z.number().optional(),
+  
+  // HIV Testing tab
+  hivTestDate: z.string().optional(),
+  hivTestResult: z.string().optional(),
+  
+  // Risk Assessment tab
+  riskFactors: z.array(z.string()).optional(),
+  riskLevel: z.string(),
+  
+  // Treatment tab
+  prepRegimen: z.string(),
+  duration: z.number(),
+  dosage: z.string(),
+  
+  // Notes
+  clinicalNotes: z.string().optional(),
+  nextVisitDate: z.string().optional(),
+});
+
+type PrepFormValues = z.infer<typeof prepFormSchema>;
+
+export default function PrepCreatePage() {
+  const [activeTab, setActiveTab] = useState("complaints");
+  
+  // Default form values with dummy patient data
+  const defaultValues: Partial<PrepFormValues> = {
+    patientId: 1,
+    visitDate: new Date().toISOString().split('T')[0],
+    visitType: "Initial Assessment",
+    riskLevel: "Medium",
+    prepRegimen: "TDF/FTC",
+    duration: 30,
+    dosage: "1 tablet once daily",
+  };
+  
+  const form = useForm<PrepFormValues>({
+    resolver: zodResolver(prepFormSchema),
+    defaultValues,
+  });
+  
+  function onSubmit(values: PrepFormValues) {
+    // In a real app, this would submit to the backend
+    console.log(values);
+    // Navigate back to PrEP page
+    window.history.back();
+  }
+  
+  // Mock patient data (would be fetched in a real app)
+  const patient = {
+    id: 1,
+    name: "John Doe",
+    dob: "15-Jan-1990",
+    gender: "Male",
+    age: 35,
+    phone: "0977000000",
+    nupn: "RRRR-MMMMM-YYYY-K",
+    nrc: "222222/22/2"
+  };
+  
+  return (
+    <div className="min-h-screen bg-white relative">
+      {/* Background image with styling */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          backgroundImage: "url('/Carepro_Background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      
+      <header className="bg-white/80 border-b relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <img src="/Logo.ico" alt="Logo" className="h-10" />
+              <h1>
+                <span className="text-[#00A651]">Smart</span>
+                <span className="text-[#0072BC]">Care</span>
+                <span className="text-[#0072BC] font-bold">PRO</span>
+              </h1>
+            </div>
+            <div className="text-lg font-semibold text-blue-700">New PrEP Visit</div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link href="/prep">
+              <Button variant="outline" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to PrEP Page
+              </Button>
+            </Link>
+            <h2 className="text-2xl font-bold text-gray-900 ml-4">New PrEP Visit</h2>
+          </div>
+          <Button 
+            className="flex items-center gap-2"
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            <Save className="h-4 w-4" />
+            Save Visit
+          </Button>
+        </div>
+
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold mb-4">Patient Information</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Name</p>
+                <p className="font-medium">{patient.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Date of Birth</p>
+                <p className="font-medium">{patient.dob}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Gender</p>
+                <p className="font-medium">{patient.gender}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Age</p>
+                <p className="font-medium">{patient.age} years</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="font-medium">{patient.phone}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">NUPN</p>
+                <p className="font-medium">{patient.nupn}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <FormField
+                    control={form.control}
+                    name="visitDate"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Visit Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="visitType"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Visit Type</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select visit type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Initial Assessment">Initial Assessment</SelectItem>
+                            <SelectItem value="Follow-up">Follow-up</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <Tabs 
+                  defaultValue="complaints" 
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="w-full"
+                >
+                  <TabsList className="w-full justify-start border-b mb-6">
+                    <TabsTrigger value="complaints" className="text-lg font-medium">
+                      Complaints
+                    </TabsTrigger>
+                    <TabsTrigger value="examination" className="text-lg font-medium">
+                      Examination
+                    </TabsTrigger>
+                    <TabsTrigger value="hivTesting" className="text-lg font-medium">
+                      HIV Testing
+                    </TabsTrigger>
+                    <TabsTrigger value="riskAssessment" className="text-lg font-medium">
+                      Risk Assessment
+                    </TabsTrigger>
+                    <TabsTrigger value="treatment" className="text-lg font-medium">
+                      Treatment
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="complaints" className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="chiefComplaint"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Chief Complaint</FormLabel>
+                          <FormControl>
+                            <Textarea rows={3} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="presentIllness"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>History of Present Illness</FormLabel>
+                          <FormControl>
+                            <Textarea rows={5} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="examination" className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Weight (kg)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="height"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Height (cm)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="temperature"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Temperature (°C)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="systolicBP"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Systolic BP (mmHg)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="diastolicBP"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Diastolic BP (mmHg)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="pulseRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pulse Rate (bpm)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="hivTesting" className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="hivTestDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>HIV Test Date</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="hivTestResult"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>HIV Test Result</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select result" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Negative">Negative</SelectItem>
+                                <SelectItem value="Positive">Positive</SelectItem>
+                                <SelectItem value="Indeterminate">Indeterminate</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="riskAssessment" className="space-y-4">
+                    <div className="space-y-4">
+                      <h4 className="font-medium">Risk Factors</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {['Multiple sexual partners', 'Inconsistent condom use', 'Sex worker', 'MSM', 'Partner with HIV', 'Injection drug use'].map((factor) => (
+                          <div key={factor} className="flex items-center space-x-2">
+                            <Checkbox id={factor.replace(/\s+/g, '')} />
+                            <label
+                              htmlFor={factor.replace(/\s+/g, '')}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {factor}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="riskLevel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Risk Level</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select risk level" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Low">Low</SelectItem>
+                                <SelectItem value="Medium">Medium</SelectItem>
+                                <SelectItem value="High">High</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="treatment" className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="prepRegimen"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>PrEP Regimen</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select regimen" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="TDF/FTC">TDF/FTC</SelectItem>
+                                <SelectItem value="TDF/3TC">TDF/3TC</SelectItem>
+                                <SelectItem value="TAF/FTC">TAF/FTC</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="duration"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Duration (days)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="dosage"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Dosage</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="nextVisitDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Next Visit Date</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <FormField
+                      control={form.control}
+                      name="clinicalNotes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Clinical Notes</FormLabel>
+                          <FormControl>
+                            <Textarea rows={4} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                <div className="flex justify-between mt-6">
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={() => {
+                      const tabs = ["complaints", "examination", "hivTesting", "riskAssessment", "treatment"];
+                      const currentIndex = tabs.indexOf(activeTab);
+                      if (currentIndex > 0) {
+                        setActiveTab(tabs[currentIndex - 1]);
+                      }
+                    }}
+                    disabled={activeTab === "complaints"}
+                  >
+                    Previous
+                  </Button>
+                  
+                  <Button 
+                    type="button"
+                    onClick={() => {
+                      const tabs = ["complaints", "examination", "hivTesting", "riskAssessment", "treatment"];
+                      const currentIndex = tabs.indexOf(activeTab);
+                      if (currentIndex < tabs.length - 1) {
+                        setActiveTab(tabs[currentIndex + 1]);
+                      } else {
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}
+                  >
+                    {activeTab === "treatment" ? "Save" : "Next"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </form>
+        </Form>
+      </main>
+    </div>
+  );
+}
+
+=== END OF BACKUP ===
+
+
+=== SUPPORTING COMPONENTS ===
+
+
+=== 5. date-picker.tsx ===
+
+"use client"
+ 
+import * as React from "react"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+ 
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+ 
+export interface DatePickerProps {
+  value?: Date
+  onChange: (date: Date | undefined) => void
+}
+ 
+export function DatePicker({ value, onChange }: DatePickerProps) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-full justify-start text-left font-normal",
+            !value && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {value ? format(value, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={value}
+          onSelect={onChange}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+=== 6. calendar.tsx ===
+
+"use client"
+
+import * as React from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { DayPicker } from "react-day-picker"
+
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
+
+export type CalendarProps = React.ComponentProps<typeof DayPicker>
+
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  ...props
+}: CalendarProps) {
+  return (
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      className={cn("p-3", className)}
+      classNames={{
+        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        month: "space-y-4",
+        caption: "flex justify-center pt-1 relative items-center",
+        caption_label: "text-sm font-medium",
+        nav: "space-x-1 flex items-center",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
+        table: "w-full border-collapse space-y-1",
+        head_row: "flex",
+        head_cell:
+          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+        row: "flex w-full mt-2",
+        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
+        ),
+        day_range_end: "day-range-end",
+        day_selected:
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+        day_today: "bg-accent text-accent-foreground",
+        day_outside:
+          "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+        day_disabled: "text-muted-foreground opacity-50",
+        day_range_middle:
+          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+      }}
+      {...props}
+    />
+  )
+}
+Calendar.displayName = "Calendar"
+
+export { Calendar }
+
+=== 7. popover.tsx ===
+
+"use client"
+
+import * as React from "react"
+import * as PopoverPrimitive from "@radix-ui/react-popover"
+
+import { cn } from "@/lib/utils"
+
+const Popover = PopoverPrimitive.Root
+
+const PopoverTrigger = PopoverPrimitive.Trigger
+
+const PopoverContent = React.forwardRef<
+  React.ElementRef<typeof PopoverPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+  <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Content
+      ref={ref}
+      align={align}
+      sideOffset={sideOffset}
+      className={cn(
+        "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        className
+      )}
+      {...props}
+    />
+  </PopoverPrimitive.Portal>
+))
+PopoverContent.displayName = PopoverPrimitive.Content.displayName
+
+export { Popover, PopoverTrigger, PopoverContent }
+
+=== DATABASE AND SERVER CODE ===
+
+
+=== 8. PrepEncounter Schema from shared/schema.ts ===
+
+export const prepEncounters = pgTable("prep_encounters", {
+  id: serial("id").primaryKey(),
+  patientId: integer("patient_id").notNull(),
+  visitDate: timestamp("visit_date").notNull(),
+  visitType: text("visit_type").notNull(), // Initial, Follow-up, etc.
+  
+  // HIV Risk Assessment
+  riskFactors: text("risk_factors").array(),
+  hivTestDate: date("hiv_test_date"),
+  hivTestResult: text("hiv_test_result"),
+  
+  // Medical History
+  hasMedicalConditions: boolean("has_medical_conditions").default(false),
+  medicalConditions: text("medical_conditions"),
+  hasAllergies: boolean("has_allergies").default(false),
+  allergies: text("allergies"),
+  
+  // PrEP Eligibility
+  isEligible: boolean("is_eligible").default(true),
+  notEligibleReason: text("not_eligible_reason"),
+  
+  // Clinical Assessment
+  weight: integer("weight"), // in kg
+  height: integer("height"), // in cm
+  bmi: integer("bmi"),
+  systolicBP: integer("systolic_bp"),
+  diastolicBP: integer("diastolic_bp"),
+  pulseRate: integer("pulse_rate"),
+  
+  // Laboratory Tests
+  creatinine: integer("creatinine"),
+
+
+=== 9. PrepEncounter Types from shared/schema.ts ===
+
+export type PrepEncounter = typeof prepEncounters.$inferSelect;
+export type InsertPrepEncounter = z.infer<typeof insertPrepEncounterSchema>;
+
+
+=== 10. Server Storage Methods for PrEP ===
+
+  getPrepEncounters(patientId: number): Promise<PrepEncounter[]>;
+  getPrepEncounter(id: number): Promise<PrepEncounter | undefined>;
+  createPrepEncounter(encounter: Omit<PrepEncounter, "id">): Promise<PrepEncounter>;
+  updatePrepEncounter(id: number, encounter: Partial<PrepEncounter>): Promise<PrepEncounter | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+--
+  async getPrepEncounters(patientId: number): Promise<PrepEncounter[]> {
+    return db.select()
+      .from(prepEncounters)
+      .where(eq(prepEncounters.patientId, patientId))
+      .orderBy(prepEncounters.visitDate);
+  }
+
+  async getPrepEncounter(id: number): Promise<PrepEncounter | undefined> {
+    const [encounter] = await db.select()
+  getPrepEncounters(patientId: number): Promise<PrepEncounter[]>;
+  getPrepEncounter(id: number): Promise<PrepEncounter | undefined>;
+  createPrepEncounter(encounter: Omit<PrepEncounter, "id">): Promise<PrepEncounter>;
+  updatePrepEncounter(id: number, encounter: Partial<PrepEncounter>): Promise<PrepEncounter | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+  constructor() {
+--
+  async getPrepEncounters(patientId: number): Promise<PrepEncounter[]> {
+    return db.select()
+      .from(prepEncounters)
+      .where(eq(prepEncounters.patientId, patientId))
+      .orderBy(prepEncounters.visitDate);
+  }
+
+  async getPrepEncounter(id: number): Promise<PrepEncounter | undefined> {
+    const [encounter] = await db.select()
+      .from(prepEncounters)
+      .where(eq(prepEncounters.id, id));
+    return encounter;
+  }
+
+  async createPrepEncounter(encounterData: Omit<PrepEncounter, "id">): Promise<PrepEncounter> {
+    const [encounter] = await db.insert(prepEncounters)
+  createPrepEncounter(encounter: Omit<PrepEncounter, "id">): Promise<PrepEncounter>;
+  updatePrepEncounter(id: number, encounter: Partial<PrepEncounter>): Promise<PrepEncounter | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({
+--
+  async createPrepEncounter(encounterData: Omit<PrepEncounter, "id">): Promise<PrepEncounter> {
+    const [encounter] = await db.insert(prepEncounters)
+      .values(encounterData)
+      .returning();
+    return encounter;
+  }
+
+  async updatePrepEncounter(id: number, encounterData: Partial<PrepEncounter>): Promise<PrepEncounter | undefined> {
+    const [updatedEncounter] = await db.update(prepEncounters)
+  updatePrepEncounter(id: number, encounter: Partial<PrepEncounter>): Promise<PrepEncounter | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+--
+  async updatePrepEncounter(id: number, encounterData: Partial<PrepEncounter>): Promise<PrepEncounter | undefined> {
+    const [updatedEncounter] = await db.update(prepEncounters)
+      .set({
+        ...encounterData,
+        updatedAt: new Date()
+      })
+      .where(eq(prepEncounters.id, id))
+      .returning();
+    return updatedEncounter;
+
+
+=== 11. Server API Routes for PrEP ===
+
+
+
+=== 11. Server API Routes for PrEP ===
+
+  app.get("/api/patients/:id/prep-encounters", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    try {
+      const patientId = parseInt(req.params.id);
+      const encounters = await storage.getPrepEncounters(patientId);
+      res.json(encounters);
+    } catch (error) {
+      console.error("Error fetching PrEP encounters:", error);
+      res.status(500).json({ 
+        message: "Error fetching PrEP encounters",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+
+
+  app.get("/api/prep-encounters/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    try {
+      const encounterId = parseInt(req.params.id);
+      const encounter = await storage.getPrepEncounter(encounterId);
+      if (!encounter) return res.sendStatus(404);
+      res.json(encounter);
+    } catch (error) {
+      console.error("Error fetching PrEP encounter:", error);
+      res.status(500).json({ 
+        message: "Error fetching PrEP encounter",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+
+
+  app.post("/api/patients/:id/prep-encounters", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    if (!req.user.facility) return res.status(400).json({ message: "No facility selected" });
+    
+    try {
+      // Parse and validate the request body
+      const validatedData = insertPrepEncounterSchema.parse({
+        ...req.body,
+        patientId: parseInt(req.params.id),
+        facility: req.user.facility
+      });
+
+      // Create the PrEP encounter
+      const encounter = await storage.createPrepEncounter(validatedData);
+      res.status(201).json(encounter);
+    } catch (error) {
+      console.error("Error creating PrEP encounter:", error);
+      res.status(400).json({ 
+        message: "Invalid PrEP encounter data",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+
+
+  app.put("/api/prep-encounters/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const encounterId = parseInt(req.params.id);
+      const updatedEncounter = await storage.updatePrepEncounter(encounterId, req.body);
+      if (!updatedEncounter) return res.sendStatus(404);
+      res.json(updatedEncounter);
+    } catch (error) {
+      console.error("Error updating PrEP encounter:", error);
+      res.status(400).json({ 
+        message: "Invalid PrEP encounter data",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Transfer Route
+  app.post('/api/transfer', ensureAuthenticated, async (req, res) => {
+    try {
+      if (!req.user?.facility) {
+
+
+=== COMPLETE BACKUP ===
+
+
+=== 12. PrEP References in Service Selection & Sidebar ===
+
+
+=== a) Service Selection Component ===
+
+import React from 'react';
+// Assuming Button component is defined elsewhere.  Placeholder for simplicity:
+const Button = ({ variant, size, children, className }) => (
+  <button className={`px-2 py-1 ${variant === 'outline' ? 'border border-gray-400' : 'bg-gray-200 hover:bg-gray-300'} ${size === 'sm' ? 'text-sm' : 'text-base'} ${className}`}>
+    {children}
+  </button>
+);
+
+const ServiceSelection = () => {
+  return (
+    <div>
+      <div className="flex border-b mb-4">
+        <button className="px-4 py-2 border-b-2 border-blue-500 text-blue-500 font-medium">Complaints & Histories</button>
+        <button className="px-4 py-2 text-gray-500">Examination & Diagnosis</button>
+        <button className="px-4 py-2 text-gray-500">Plan</button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Presenting Complaints</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">TB Constitutional Symptoms</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Review of Systems</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Past Medical History</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Past TB History</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">TPT History</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Chronic / Non Chronic Conditions</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Allergies</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Previous ART Exposure</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center py-2">
+          <h3 className="font-medium">Pharmacovigilance</h3>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex items-center">
+              <span className="mr-1">✏️</span> Edit Record
+            </Button>
+            <Button size="sm" className="bg-blue-500 hover:bg-blue-600 flex items-center">
+              <span className="mr-1">➕</span> Add Record
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ServiceSelection;
+
+=== b) Sidebar Component ===
+
+import { Link, useLocation } from "wouter";
+import {
+  LayoutDashboard,
+  FileText,
+  Users,
+  BarChart,
+  Syringe,
+  TestTube2,
+  Microscope,
+  Pill,
+  Thermometer,
+  Activity,
+  Scissors,
+  UserPlus,
+  ArrowRight,
+  ShieldAlert,
+  Settings,
+  Menu,
+  X
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+const navigation = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Medical Records", href: "/medical-records", icon: FileText },
+  { name: "Patients", href: "/patients", icon: Users },
+  { name: "Reports", href: "/reports", icon: BarChart },
+  { name: "PEP", href: "/pep", icon: Syringe },
+  { name: "POC", href: "/poc", icon: TestTube2 },
+  { name: "Investigation", href: "/investigation", icon: Microscope },
+  { name: "PrEP", href: "/prep", icon: Pill },
+  { name: "TB Service", href: "/tb-service", icon: Thermometer },
+  { name: "Pain Scaling Tool", href: "/pain-scaling", icon: Activity },
+  { name: "Surgery", href: "/surgery", icon: Scissors },
+  { name: "VMMC Service", href: "/vmmc", icon: UserPlus },
+  { name: "Referrals", href: "/referrals", icon: ArrowRight },
+  { name: "Vaccinations", href: "/vaccinations", icon: Syringe },
+  { name: "Covid", href: "/covid", icon: ShieldAlert },
+  { name: "Settings", href: "/settings", icon: Settings },
+];
+
+export function Sidebar({ isOpen, onToggle }: SidebarProps) {
+  const [location] = useLocation();
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 left-4 z-50 lg:flex"
+        onClick={onToggle}
+      >
+        {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </Button>
+      <div className={cn(
+        "fixed inset-y-0 z-40 flex w-64 flex-col transition-transform duration-200 ease-in-out",
+        !isOpen && "-translate-x-full"
+      )}>
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+          <div className="flex h-16 shrink-0 items-center">
+            <img src="/Logo.ico" alt="Logo" className="h-8" />
+            <span className="ml-2 text-lg font-semibold">
+              <span className="text-[#00A651]">Smart</span>
+              <span className="text-[#0072BC]">Care</span>
+              <span className="text-[#0072BC] font-bold">PRO</span>
+            </span>
+          </div>
+          <nav className="flex flex-1 flex-col">
+            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <li>
+                <ul role="list" className="-mx-2 space-y-1">
+                  {navigation.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <li key={item.name}>
+                        <Link href={item.href}>
+                          <div
+                            className={cn(
+                              location === item.href
+                                ? "bg-gray-50 text-blue-600"
+                                : "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer"
+                            )}
+                          >
+                            <Icon
+                              className={cn(
+                                location === item.href
+                                  ? "text-blue-600"
+                                  : "text-gray-400 group-hover:text-blue-600",
+                                "h-6 w-6 shrink-0"
+                              )}
+                            />
+                            {item.name}
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </>
+  );
+}
+
+=== THE ABSOLUTELY COMPLETE BACKUP ===

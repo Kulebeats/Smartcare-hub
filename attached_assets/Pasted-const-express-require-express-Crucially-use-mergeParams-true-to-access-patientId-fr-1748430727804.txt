@@ -1,0 +1,105 @@
+const express = require('express');
+// Crucially, use { mergeParams: true } to access :patientId from the parent route
+const router = express.Router({ mergeParams: true });
+const db = require('../database.js');
+
+// --- Clinical Decision Support Logic ---
+function calculateDiscordantStatus(patientStatus, partnerStatus) {
+    if (!patientStatus || !partnerStatus || patientStatus === 'Unknown' || partnerStatus === 'Unknown') {
+        return 'Unknown';
+    }
+    if ((patientStatus === 'Positive' && partnerStatus === 'Negative') || (patientStatus === 'Negative' && partnerStatus === 'Positive')) {
+        return 'Yes';
+    }
+    return 'No';
+}
+
+
+// PUT /api/patients/:patientId/profile - Create or replace a patient's profile
+router.put('/', (req, res) => {
+    const { patientId } = req.params;
+    const {
+        hiv_status,
+        partners_hiv_status,
+        // Add all other profile fields from the data dictionary here
+        lmp_known,
+        ultrasound_done,
+        dating_method,
+        past_medical_history,
+        surgical_history,
+        drug_history,
+        allergies,
+        tt_immunization_status,
+        hepatitis_immunization_status,
+        daily_caffeine_intake,
+        tobacco_use_smoking,
+        tobacco_use_sniffing,
+        household_smokes,
+        tb_screening
+    } = req.body;
+
+    // --- Decision Support Calculation ---
+    const is_discordant = calculateDiscordantStatus(hiv_status, partners_hiv_status);
+    console.log(`Decision Support: HIV Statuses (${hiv_status}, ${partners_hiv_status}) -> Discordant: ${is_discordant}`);
+
+    // --- Database UPSERT (Insert or Replace) ---
+    // This statement will create the row if it doesn't exist for the patient_id,
+    // or replace the entire existing row if it does.
+    const sql = `
+        INSERT OR REPLACE INTO client_profiles (
+            patient_id,
+            hiv_status,
+            partners_hiv_status,
+            is_discordant,
+            lmp_known,
+            ultrasound_done,
+            dating_method,
+            past_medical_history,
+            surgical_history,
+            drug_history,
+            allergies,
+            tt_immunization_status,
+            hepatitis_immunization_status,
+            daily_caffeine_intake,
+            tobacco_use_smoking,
+            tobacco_use_sniffing,
+            household_smokes,
+            tb_screening
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+
+    const params = [
+        patientId,
+        hiv_status,
+        partners_hiv_status,
+        is_discordant, // The system-generated value
+        lmp_known,
+        ultrasound_done,
+        dating_method,
+        JSON.stringify(past_medical_history || []),
+        JSON.stringify(surgical_history || []),
+        JSON.stringify(drug_history || []),
+        JSON.stringify(allergies || []),
+        tt_immunization_status,
+        hepatitis_immunization_status,
+        JSON.stringify(daily_caffeine_intake || []),
+        tobacco_use_smoking,
+        tobacco_use_sniffing,
+        household_smokes,
+        JSON.stringify(tb_screening || [])
+    ];
+
+    db.run(sql, params, function(err) {
+        if (err) {
+            return res.status(500).json({ "error": `Profile update failed: ${err.message}` });
+        }
+        res.status(200).json({
+            message: "Profile created/updated successfully",
+            patient_id: patientId,
+            is_discordant: is_discordant, // Explicitly return the calculated flag
+            data: req.body
+        });
+    });
+});
+
+module.exports = router;

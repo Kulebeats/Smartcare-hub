@@ -1,0 +1,52 @@
+DAK ANC Review and suggested improvements 
+General Implementation 
+-	ALL TICK BOIXES SHOULD BE A SQUAR (white)n and when rick blue with a white tick
+-	Latest encounter to follow UI or pro, which each card has its own box and has a view all , which shows previous information from that card in subsequent encounters  
+
+
+Rapid Assessment 
+1.	Gather patient details 
+Reason for Facility visit 
+-	For initial Visit only have 1st ANC Care 
+-	Follow up Should have the rest of the options  
+-	Follow up Should have Came a s couple a well 
+
+2.	Danger signs and Health concern 
+-	Should appear in follow up 
+-	Change colour of elements 
+-	Default should not be none 
+-	Bring back toaster with “I” if none 
+-	Change color for Select specific danger signs 
+-	Improve description for Select specific danger signs e.g. fever (39 degrees and above)
+-	Allow more than one danger sign to be selected before modal is brought out (ask if there 
+-	When danger sign is selected, it should automatically be selected in an emergency referral  
+-	Urgent Hospital transfer should change to information on how to stabilize the patient or immediate care prior to referral or care in ANC
+
+3.	Emergency Referral 
+-	Should only show emergency referral yes or no , and client health history information at go
+-	Should automatically choose yes and have the on selected in danger signs automatically open e.g. convulsions in danger signs automatically selected in emergency referral 
+-	Remove CDSS modal appearing in emergency referral 
+-	I crease the reasons for referral section to display all of the options
+-	Add other with free text 
+-	Client Health History: Gestational age put LMP for initial visit modal bit use dating if done for follow up visit. 
+-	Bring back EDD 
+-	For Enhanced Obstetric history, add rules (refer to Rules)
+-	Enhanced Obstetric history should only be editable in initial, for follow up should be auto filled from initial visit (client profile --obstetric history)
+-	Pregnancy details - Remove estimated date of delivery / termination 
+-	Fix 6 months gestational age to be full (live or still) fix 
+-	Social habits assessments - Add business rules if note then they don’t appear but if not should not show 
+-	Social habits assessments remove green colour 
+-	Previous Pregnancy complication – have none or present. present to show options. other option to open specify other options 
+-	Previous Pregnancy Social Habits Assessment
+-	NoneSocial habits present
+-	Select all that apply:
+-	SmokingAlcohol consumptionDrug useTraditional medicine useHigh caffeine intakeOther (specify)
+-	Specify details (frequency, amount, duration)
+
+-	Treatment before referral, call up pharmacy prescription  
+-	Date referral was made should be made default on that day but can go forward 
+-	Maternal checklist, make it dynamic according to condition being referred but have the general sections (communication and Coordination, final steps, vital signs be mandatory. have the checklist progress be dynamic according to condition 
+To be added to Follow up 
+-	Gather Client details – Reason for facility visit. came as a couple?
+-	Dange signs and health signs 
+-	Emergency referral (Client Health History Information) to be derived from obstetric history and current pregnancy 

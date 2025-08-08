@@ -1,0 +1,142 @@
+// Patient registration endpoint with proper validation
+app.post('/api/patients', async (req, res) => {
+  try {
+    console.log('Patient registration request:', req.body);
+    
+    const formData = req.body;
+    
+    // Map form data to database schema (snake_case)
+    const patientData = {
+      first_name: formData.firstName,
+      surname: formData.surname,
+      date_of_birth: formData.dateOfBirth,
+      is_estimated_dob: formData.isEstimatedDob || false,
+      sex: formData.sex,
+      nrc: formData.nrc || '',
+      no_nrc: formData.noNrc || false,
+      under_five_card_number: formData.underFiveCardNumber || '',
+      napsa: formData.napsa || '',
+      nupin: formData.nupin || '',
+      country: formData.country,
+      cellphone: formData.cellphoneNumber, // Note: cellphoneNumber -> cellphone
+      other_cellphone: formData.otherCellphoneNumber || '',
+      landline: formData.landlineNumber || '',
+      email: formData.email || '',
+      house_number: formData.houseNumber || '',
+      road_street: formData.roadStreet || '',
+      area: formData.area || '',
+      city_town_village: formData.cityTownVillage || '',
+      landmarks: formData.landmarks || '',
+      mothers_name: formData.mothersName || '',
+      mothers_surname: formData.mothersSurname || '',
+      mother_deceased: formData.motherDeceased || false,
+      mothers_nrc: formData.mothersNrc || '',
+      mothers_napsa_pspf: formData.mothersNapsaPspf || '',
+      mothers_nationality: formData.mothersNationality || '',
+      fathers_name: formData.fathersName || '',
+      fathers_surname: formData.fathersSurname || '',
+      father_deceased: formData.fatherDeceased || false,
+      fathers_nrc: formData.fathersNrc || '',
+      fathers_napsa_pspf: formData.fathersNapsaPspf || '',
+      fathers_nationality: formData.fathersNationality || '',
+      guardian_name: formData.guardianName || '',
+      guardian_surname: formData.guardianSurname || '',
+      guardian_relationship: formData.guardianRelationship || '',
+      guardian_nrc: formData.guardianNrc || '',
+      guardian_napsa_pspf: formData.guardianNapsaPspf || '',
+      guardian_nationality: formData.guardianNationality || '',
+      marital_status: formData.maritalStatus || '',
+      spouse_first_name: formData.spouseFirstName || '',
+      spouse_surname: formData.spouseSurname || '',
+      home_language: formData.homeLanguage || '',
+      other_home_language: formData.otherHomeLanguage || '',
+      is_born_in_zambia: formData.isBornInZambia || false,
+      province_of_birth: formData.provinceOfBirth || '',
+      district_of_birth: formData.districtOfBirth || '',
+      birth_place: formData.birthPlace || '',
+      religious_denomination: formData.religiousDenomination || '',
+      other_religious_denomination: formData.otherReligiousDenomination || '',
+      education_level: formData.educationLevel || '',
+      other_education_level: formData.otherEducationLevel || '',
+      occupation: formData.occupation || '',
+      other_occupation: formData.otherOccupation || '',
+      facility: formData.facility || 'Kuwani Hospital',
+      registration_date: new Date(),
+      last_updated: new Date()
+    };
+
+    // Validate the ORIGINAL form data (camelCase) before mapping
+    const mandatoryFields = [
+      { field: 'firstName', value: formData.firstName },
+      { field: 'surname', value: formData.surname },
+      { field: 'dateOfBirth', value: formData.dateOfBirth },
+      { field: 'sex', value: formData.sex },
+      { field: 'country', value: formData.country },
+      { field: 'nrc', value: formData.nrc },
+      { field: 'cellphoneNumber', value: formData.cellphoneNumber }
+    ];
+
+    console.log('Validating mandatory fields:');
+    const missingFields = [];
+    
+    mandatoryFields.forEach(({ field, value }) => {
+      const isEmpty = !value || value.toString().trim() === '';
+      console.log(`Field ${field}: value="${value}", isEmpty=${isEmpty}`);
+      
+      if (isEmpty) {
+        missingFields.push(field);
+      }
+    });
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        message: 'Missing required fields',
+        missingFields: missingFields,
+        details: `Please provide: ${missingFields.join(', ')}`
+      });
+    }
+
+    // Validate using the insertPatientSchema if available
+    try {
+      const validatedData = insertPatientSchema.parse(patientData);
+      console.log('Schema validation passed');
+    } catch (schemaError) {
+      console.error('Schema validation failed:', schemaError);
+      return res.status(400).json({
+        message: 'Invalid data format',
+        error: schemaError.message
+      });
+    }
+    
+    console.log('ORM data after validation:', patientData);
+    
+    // Check for existing phone number if provided
+    if (patientData.cellphone) {
+      const [existingPatient] = await db
+        .select()
+        .from(patients)
+        .where(eq(patients.cellphone, patientData.cellphone));
+      
+      if (existingPatient) {
+        return res.status(409).json({
+          message: 'A patient with this phone number already exists'
+        });
+      }
+    }
+
+    // Create patient with mapped data
+    const [newPatient] = await db
+      .insert(patients)
+      .values(patientData)
+      .returning();
+
+    console.log('Patient created successfully:', newPatient.id);
+    res.status(201).json(newPatient);
+  } catch (error) {
+    console.error('Error creating patient:', error);
+    res.status(500).json({ 
+      message: 'Failed to create patient',
+      error: error.message 
+    });
+  }
+});

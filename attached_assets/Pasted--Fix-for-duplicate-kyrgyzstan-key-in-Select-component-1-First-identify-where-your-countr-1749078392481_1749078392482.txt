@@ -1,0 +1,173 @@
+// Fix for duplicate "kyrgyzstan" key in Select component
+
+// 1. First, identify where your country data is coming from
+// Look for files like: countries.ts, constants.ts, or any data file with country lists
+
+// 2. Deduplicate the country data
+function deduplicateCountries(countries: Array<{code: string, name: string}>) {
+  const seen = new Set();
+  return countries.filter(country => {
+    const key = country.code.toLowerCase();
+    if (seen.has(key)) {
+      console.warn(`Duplicate country found: ${country.name} (${country.code})`);
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+// 3. Example of how to fix in your component
+// If you're using a countries array in your form component:
+
+const CountrySelect = ({ value, onChange, ...props }) => {
+  // Deduplicate countries on component mount
+  const uniqueCountries = useMemo(() => {
+    const countries = [
+      { code: 'kg', name: 'Kyrgyzstan' },
+      { code: 'kg', name: 'Kyrgyzstan' }, // This is the duplicate
+      { code: 'us', name: 'United States' },
+      // ... other countries
+    ];
+    
+    return deduplicateCountries(countries);
+  }, []);
+
+  return (
+    <Select value={value} onValueChange={onChange} {...props}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select a country" />
+      </SelectTrigger>
+      <SelectContent>
+        {uniqueCountries.map((country) => (
+          <SelectItem 
+            key={country.code} // Use country code as key
+            value={country.code}
+          >
+            {country.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+// 4. If you're importing from a data file, fix the source data:
+// countries.ts or similar file
+export const COUNTRIES = [
+  { code: 'af', name: 'Afghanistan' },
+  { code: 'al', name: 'Albania' },
+  // ... other countries
+  { code: 'kg', name: 'Kyrgyzstan' }, // Remove duplicate entry
+  // Make sure 'kg' only appears once
+];
+
+// 5. Runtime check to prevent future duplicates
+export const VALIDATED_COUNTRIES = (() => {
+  const countries = COUNTRIES;
+  const duplicates = countries
+    .map(c => c.code)
+    .filter((code, index, arr) => arr.indexOf(code) !== index);
+  
+  if (duplicates.length > 0) {
+    console.error('Duplicate country codes found:', [...new Set(duplicates)]);
+  }
+  
+  return deduplicateCountries(countries);
+})();
+
+// 6. Alternative: Use index as fallback key (less ideal)
+// Only use this if you can't fix the data source
+const CountrySelectWithFallback = ({ value, onChange, ...props }) => {
+  return (
+    <Select value={value} onValueChange={onChange} {...props}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select a country" />
+      </SelectTrigger>
+      <SelectContent>
+        {countries.map((country, index) => (
+          <SelectItem 
+            key={`${country.code}-${index}`} // Fallback key with index
+            value={country.code}
+          >
+            {country.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+// 7. Debug utility to find all duplicates
+function findDuplicateCountries(countries: Array<{code: string, name: string}>) {
+  const codeCount = new Map();
+  const nameCount = new Map();
+  
+  countries.forEach((country, index) => {
+    // Track by code
+    if (!codeCount.has(country.code)) {
+      codeCount.set(country.code, []);
+    }
+    codeCount.get(country.code).push({ ...country, index });
+    
+    // Track by name
+    const normalizedName = country.name.toLowerCase();
+    if (!nameCount.has(normalizedName)) {
+      nameCount.set(normalizedName, []);
+    }
+    nameCount.get(normalizedName).push({ ...country, index });
+  });
+  
+  // Find duplicates
+  const duplicateCodes = Array.from(codeCount.entries())
+    .filter(([_, entries]) => entries.length > 1);
+  
+  const duplicateNames = Array.from(nameCount.entries())
+    .filter(([_, entries]) => entries.length > 1);
+  
+  return { duplicateCodes, duplicateNames };
+}
+
+// 8. Usage in your component
+const YourFormComponent = () => {
+  // Debug your country data
+  useEffect(() => {
+    const { duplicateCodes, duplicateNames } = findDuplicateCountries(COUNTRIES);
+    if (duplicateCodes.length > 0) {
+      console.error('Duplicate country codes:', duplicateCodes);
+    }
+    if (duplicateNames.length > 0) {
+      console.error('Duplicate country names:', duplicateNames);
+    }
+  }, []);
+
+  return (
+    <form>
+      {/* Your form fields */}
+      <FormField
+        control={form.control}
+        name="country"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Country</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a country" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {VALIDATED_COUNTRIES.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </form>
+  );
+};

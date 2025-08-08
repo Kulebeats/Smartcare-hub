@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- More detailed Zambia Coat of Arms -->
+  <g transform="translate(100, 20) scale(0.8)">
+    <!-- Main Shield -->
+    <path d="M125 50 L45 80 L45 260 L125 320 L205 260 L205 80 Z" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+    
+    <!-- Shield Vertical Stripes -->
+    <rect x="45" y="80" width="40" height="180" fill="#000000"/>
+    <rect x="85" y="80" width="40" height="180" fill="#DD0000"/>
+    <rect x="125" y="80" width="40" height="180" fill="#FFA500"/>
+    <rect x="165" y="80" width="40" height="180" fill="#008000"/>
+    
+    <!-- Eagle on top -->
+    <g transform="translate(125, 40) scale(1.2)">
+      <path d="M0 -25 L15 -10 L0 5 L-15 -10 Z" fill="#A52A2A" stroke="#000000" stroke-width="2"/>
+      <circle cx="-5" cy="-15" r="2" fill="#000000"/> <!-- Eye -->
+      <circle cx="5" cy="-15" r="2" fill="#000000"/> <!-- Eye -->
+      <path d="M-10 -10 L10 -10" stroke="#000000" stroke-width="1.5" fill="none"/> <!-- Beak -->
+    </g>
+    
+    <!-- Supporters - More detailed -->
+    <g transform="translate(38, 170)">
+      <!-- Left Supporter (Stylized Human) -->
+      <path d="M0 0 C-10 -30 -5 -60 10 -80" stroke="#000000" stroke-width="2.5" fill="none"/>
+      <path d="M0 0 C-5 -15 0 -30 5 -40" stroke="#000000" stroke-width="2.5" fill="none"/>
+      <circle cx="7" cy="-45" r="7" fill="#D2B48C" stroke="#000000" stroke-width="1.5"/> <!-- Head -->
+    </g>
+    
+    <g transform="translate(212, 170)">
+      <!-- Right Supporter (Stylized Human) -->
+      <path d="M0 0 C10 -30 5 -60 -10 -80" stroke="#000000" stroke-width="2.5" fill="none"/>
+      <path d="M0 0 C5 -15 0 -30 -5 -40" stroke="#000000" stroke-width="2.5" fill="none"/>
+      <circle cx="-7" cy="-45" r="7" fill="#D2B48C" stroke="#000000" stroke-width="1.5"/> <!-- Head -->
+    </g>
+    
+    <!-- Banner -->
+    <path d="M25 280 L225 280 L215 310 L35 310 Z" fill="#009E60" stroke="#000000" stroke-width="2"/>
+    <text x="125" y="300" font-family="Arial" font-size="14" fill="white" text-anchor="middle">ONE ZAMBIA ONE NATION</text>
+    
+    <!-- Hoe and Pick Tool symbols -->
+    <g transform="translate(70, 340) rotate(-25)">
+      <rect x="0" y="0" width="5" height="40" fill="#8B4513" stroke="#000000" stroke-width="1"/> <!-- Handle -->
+      <path d="M0 0 L15 -10 L15 0 Z" fill="#A9A9A9" stroke="#000000" stroke-width="1"/> <!-- Hoe Blade -->
+    </g>
+    
+    <g transform="translate(180, 340) rotate(25)">
+      <rect x="-5" y="0" width="5" height="40" fill="#8B4513" stroke="#000000" stroke-width="1"/> <!-- Handle -->
+      <path d="M0 0 L-15 -10 L-15 0 Z" fill="#A9A9A9" stroke="#000000" stroke-width="1"/> <!-- Pick Blade -->
+    </g>
+  </g>
+</svg>

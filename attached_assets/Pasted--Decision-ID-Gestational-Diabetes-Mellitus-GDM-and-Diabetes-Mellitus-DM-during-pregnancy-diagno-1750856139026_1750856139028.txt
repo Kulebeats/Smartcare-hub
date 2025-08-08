@@ -1,0 +1,22 @@
+		Decision ID	Gestational Diabetes Mellitus (GDM) and Diabetes Mellitus (DM) during pregnancy diagnosis						
+Business Rule	If the woman's blood glucose test results are as follows, provide the necessary counselling and treatment.						
+Trigger	ANC.B10.4 Diagnosis and treatment						
+Inputs		Output	Action		Annotations		
+'Blood glucose test type' = 'Fasting plasma glucose'	92 mg/dl <= 'Blood glucose test result' < 126 mg/dl	'Gestational Diabetes Mellitus (GDM) diagnosis' = 'GDM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Gestational Diabetes Mellitus (GDM) counselling	"-The woman has Gestational Diabetes Mellitus (GDM) if her fasting plasma glucose is 92–125 mg/dL.
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) -  fasting glucose'	92 mh/dl <= 'Blood glucose test result' < 126 mg/dl	'Gestational Diabetes Mellitus (GDM) diagnosis' = 'GDM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Gestational Diabetes Mellitus (GDM) counselling	"-The woman has Gestational Diabetes Mellitus (GDM) if her 75g OGTT - fasting glucose is 92–125 mg/dL
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) - 1 hour'	180 mg/dl <= 'Blood glucose test result' < 200 mg/dl	'Gestational Diabetes Mellitus (GDM) diagnosis' = 'GDM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Gestational Diabetes Mellitus (GDM) counselling	"-The woman has Gestational Diabetes Mellitus (GDM) if her 75g OGTT - 1 hr 180–199 mg/dL
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) - 2 hours'	153 mg/dl <=  'Blood glucose test result' < 200 mg/dl	'Gestational Diabetes Mellitus (GDM) diagnosis' = 'GDM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Gestational Diabetes Mellitus (GDM) counselling	"-The woman has Gestational Diabetes Mellitus (GDM) if her 75g OGTT - 2 hrs 153–199 mg/dL
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = 'Fasting plasma glucose'	'Blood glucose test result' => 126 mg/dl	'Diabetes Mellitus (DM) during pregnancy diagnosis' = 'DM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Diabetes Mellitus (DM) counselling	"-The woman has Diabetes Mellitus (DM) in pregnancy if her fasting plasma glucose is 126 mg/dL or higher.
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) -  fasting glucose'	'Blood glucose test result' => 126 mg/dl	'Diabetes Mellitus (DM) during pregnancy diagnosis' = 'DM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Diabetes Mellitus (DM) counselling	"-The woman has Diabetes Mellitus (DM) in pregnancy if her  75g OGTT - fasting glucose 126 mg/dL or higher
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) - 1 hour'	'Blood glucose test result'  => 200 mg/dl	'Diabetes Mellitus (DM) during pregnancy diagnosis' = 'DM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Diabetes Mellitus (DM) counselling	"-The woman has Diabetes Mellitus (DM) in pregnancy if her 75g OGTT - 1 hr 200 mg/dL or higher
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = '75g Oral Glucose Tolerance Test (OGTT) - 2 hours'	'Blood glucose test result'  => 200 mg/dl	'Diabetes Mellitus (DM) during pregnancy diagnosis' = 'DM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Diabetes Mellitus (DM) counselling	"-The woman has Diabetes Mellitus (DM) in pregnancy if her fasting  75g OGTT - 2 hrs 200 mg/dL or higher
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
+'Blood glucose test type' = 'Random plasma glucose'	'Blood glucose test result' =>200 mg/dl	'Diabetes Mellitus (DM) during pregnancy diagnosis' = 'DM Positive'	ANC.B. Diagnosis & treatment	Conduct REQUIRED Diabetes Mellitus (DM) counselling	"-The woman has Diabetes Mellitus (DM) in pregnancy if her Random plasma glucose 200 mg/dL or higher
+-Woman with hyperglycemia, reassert dietary intervention and refer to high level care."		
