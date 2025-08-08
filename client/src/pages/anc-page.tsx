@@ -3226,14 +3226,26 @@ export default function AncPage() {
   const handleSaveVitalSigns = (data: any) => {
     console.log('Saving vital signs data:', data);
     
-    // Update Recent Data Summary with vitals
+    // Calculate BMI from height and weight
+    let calculatedBmi = null;
+    if (data.height && data.weight) {
+      const heightInMeters = parseFloat(data.height) / 100;
+      const weightInKg = parseFloat(data.weight);
+      if (heightInMeters > 0 && weightInKg > 0) {
+        calculatedBmi = (weightInKg / (heightInMeters * heightInMeters)).toFixed(1);
+      }
+    }
+    
+    // Update Recent Data Summary with vitals using correct field names
     updateRecentDataSummary({
       vitals: {
-        weight: data.weight,
-        height: data.height,
-        bmi: data.bmi,
-        bp: data.systolic && data.diastolic ? `${data.systolic}/${data.diastolic}` : data.bp,
-        temperature: data.temperature
+        weight: data.weight ? parseFloat(data.weight) : null,
+        height: data.height ? parseFloat(data.height) : null,
+        bmi: calculatedBmi ? parseFloat(calculatedBmi) : null,
+        bp: data.systolic_blood_pressure && data.diastolic_blood_pressure 
+          ? `${data.systolic_blood_pressure}/${data.diastolic_blood_pressure}` 
+          : null,
+        temperature: data.temperature ? parseFloat(data.temperature) : null
       }
     });
     
