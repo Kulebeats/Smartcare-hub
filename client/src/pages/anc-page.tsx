@@ -2030,11 +2030,7 @@ export default function AncPage() {
     abortions: '',
     livingChildren: ''
   });
-  // Validation modal state instead of inline errors
-  const [obstetricValidationModal, setObstetricValidationModal] = useState<{
-    isOpen: boolean;
-    errors: Record<string, string>;
-  }>({ isOpen: false, errors: {} });
+  const [obstetricValidationErrors, setObstetricValidationErrors] = useState<Record<string, string>>({});
   const [showMedicalHistoryDialog, setShowMedicalHistoryDialog] = useState(false);
   const [showStandardAssessmentDialog, setShowStandardAssessmentDialog] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
@@ -2905,160 +2901,6 @@ export default function AncPage() {
       }
     };
   }, []);
-
-  // Comprehensive obstetric assessment - only when all 4 fields are completed
-  useEffect(() => {
-    // Check if all 4 fields have values
-    const { gravida, para, abortions, livingChildren } = obstetricHistory;
-    
-    if (gravida && para && abortions !== '' && livingChildren !== '') {
-      const assessment = generateComprehensiveObstetricAssessment();
-      setObstetricValidationModal({ isOpen: true, errors: assessment });
-    }
-  }, [obstetricHistory]);
-
-  // Generate comprehensive obstetric assessment
-  const generateComprehensiveObstetricAssessment = () => {
-    const gravida = parseInt(obstetricHistory.gravida) || 0;
-    const para = parseInt(obstetricHistory.para) || 0;
-    const abortions = parseInt(obstetricHistory.abortions) || 0;
-    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-    
-    // Get validation errors
-    const validationErrors = validateAllObstetricRules();
-    
-    // Generate clinical classifications
-    const clinicalClassifications = [];
-    
-    // Multipara classification (2-4 previous live births)
-    if (para >= 2 && para <= 4) {
-      clinicalClassifications.push({
-        type: 'info',
-        title: 'Multipara Classification',
-        message: `Client is classified as Multipara (Para ${para}): 2-4 previous live births`,
-        details: 'Standard monitoring protocols apply with routine assessment for complications.'
-      });
-    }
-    
-    // Grand multipara warnings (≥5 pregnancies or ≥5 births)
-    if (gravida >= 5 || para >= 5) {
-      clinicalClassifications.push({
-        type: 'warning',
-        title: 'Grand Multipara Classification',
-        message: `Client is classified as Grand Multipara (G${gravida}P${para})`,
-        details: 'Increased risk of complications including uterine rupture, placental abnormalities, and postpartum hemorrhage. Enhanced monitoring required.'
-      });
-    }
-    
-    // Recurrent pregnancy loss alerts (≥3 losses)
-    if (abortions >= 3) {
-      clinicalClassifications.push({
-        type: 'critical',
-        title: 'Recurrent Pregnancy Loss',
-        message: `Client has ${abortions} pregnancy losses - meets criteria for recurrent pregnancy loss`,
-        details: 'Requires specialist consultation and comprehensive investigation including genetic, anatomical, endocrine, immunological, and thrombophilia screening.'
-      });
-    }
-    
-    // Child mortality assessments
-    const childDeaths = para - livingChildren;
-    if (childDeaths > 0) {
-      clinicalClassifications.push({
-        type: 'warning',
-        title: 'Previous Child Mortality',
-        message: `${childDeaths} child death(s) recorded (${para} births, ${livingChildren} living)`,
-        details: 'Review previous obstetric history for preventable causes. Consider enhanced antenatal surveillance and specialized care.'
-      });
-    }
-    
-    // Generate risk assessment and recommendations
-    const riskAssessments = [];
-    let overallRisk = 'Low Risk';
-    const recommendations = [];
-    
-    // Risk stratification
-    if (gravida >= 5 || para >= 5) {
-      overallRisk = 'High Risk';
-      recommendations.push('Enhanced antenatal monitoring with increased visit frequency');
-      recommendations.push('Specialist obstetric consultation recommended');
-      recommendations.push('Delivery planning at facility with operative capabilities');
-      recommendations.push('Postpartum hemorrhage prevention protocols');
-    } else if (abortions >= 3) {
-      overallRisk = 'High Risk';
-      recommendations.push('Specialist referral for recurrent pregnancy loss evaluation');
-      recommendations.push('Comprehensive investigation including genetic counseling');
-      recommendations.push('Enhanced first trimester monitoring');
-      recommendations.push('Progesterone supplementation may be considered');
-    } else if (para >= 2 || childDeaths > 0) {
-      overallRisk = 'Moderate Risk';
-      recommendations.push('Standard enhanced monitoring protocols');
-      recommendations.push('Review previous obstetric complications');
-      recommendations.push('Ensure skilled birth attendance');
-    } else {
-      overallRisk = 'Low Risk';
-      recommendations.push('Standard antenatal care protocols');
-      recommendations.push('Routine monitoring and health education');
-    }
-    
-    riskAssessments.push({
-      level: overallRisk,
-      reasoning: `Based on obstetric history: G${gravida}P${para}+${abortions} with ${livingChildren} living children`,
-      recommendations
-    });
-    
-    return {
-      hasValidationErrors: Object.keys(validationErrors).length > 0,
-      validationErrors,
-      clinicalClassifications,
-      riskAssessments,
-      overallRisk
-    };
-  };
-
-  // Comprehensive validation function
-  const validateAllObstetricRules = () => {
-    const gravida = parseInt(obstetricHistory.gravida) || 0;
-    const para = parseInt(obstetricHistory.para) || 0;
-    const abortions = parseInt(obstetricHistory.abortions) || 0;
-    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-    const errors: Record<string, string> = {};
-
-    // Business Rule 1: Gravida ≥ 1 (if currently pregnant)
-    if (gravida < 1) {
-      errors.gravida = 'Must be at least 1 if currently pregnant';
-    }
-
-    // Business Rule 2: Gravida ≥ Para + Abortions
-    if (gravida > 0 && gravida < (para + abortions)) {
-      errors.gravida = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
-    }
-
-    // Business Rule 3: Para cannot exceed Gravida
-    if (para > gravida && gravida > 0) {
-      errors.para = `Live births (${para}) cannot exceed total pregnancies (${gravida})`;
-    }
-
-    // Business Rule 4: Abortions cannot exceed Gravida
-    if (abortions > gravida && gravida > 0) {
-      errors.abortions = `Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`;
-    }
-
-    // Business Rule 5: Para ≥ Living Children (critical rule)
-    if (livingChildren > para && para > 0) {
-      errors.livingChildren = `Living children (${livingChildren}) cannot exceed total live births (Para: ${para}). Please review both fields.`;
-    }
-
-    // Outlier detection warnings
-    if (gravida > 15) {
-      errors.gravidaOutlier = 'Gravida >15 is extremely rare. Please verify data accuracy.';
-    }
-
-    if (para > 15) {
-      errors.paraOutlier = 'Para >15 is extremely rare. Please verify data accuracy.';
-    }
-
-    return errors;
-  };
   
   // Urgent notification modal states
   const [showUrgentNotification, setShowUrgentNotification] = useState(false);
@@ -9580,23 +9422,67 @@ export default function AncPage() {
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // No individual field validation - allow free entry
+                      // Auto-correction logic: If gravida < (para + abortions), reset para and abortions
+                      let correctedPara = para;
+                      let correctedAbortions = abortions;
+                      let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
-                      // Update state with original value (don't auto-correct)
+                      if (gravida > 0 && gravida < (para + abortions)) {
+                        // Reset both para and abortions to 0 to maintain business rules
+                        correctedPara = 0;
+                        correctedAbortions = 0;
+                        correctedLivingChildren = 0; // Living children can't exceed para, so reset too
+                        correctionMessages.push(`Para and Abortions reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
+                      } else if (gravida > 0) {
+                        // Check individual constraints
+                        if (para > gravida) {
+                          correctedPara = 0;
+                          correctedLivingChildren = 0; // Living children can't exceed para
+                          correctionMessages.push(`Para reset to 0: Live births (${para}) cannot exceed total pregnancies (${gravida})`);
+                        }
+                        if (abortions > gravida) {
+                          correctedAbortions = 0;
+                          correctionMessages.push(`Abortions reset to 0: Abortions (${abortions}) cannot exceed total pregnancies (${gravida})`);
+                        }
+                        if (livingChildren > correctedPara) {
+                          correctedLivingChildren = 0;
+                          correctionMessages.push(`Living children reset to 0: Cannot exceed live births (${correctedPara})`);
+                        }
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
+                      }
+                      
+                      // Update state with corrected values
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        gravida: e.target.value
+                        gravida: e.target.value,
+                        para: correctedPara.toString(),
+                        abortions: correctedAbortions.toString(),
+                        livingChildren: correctedLivingChildren.toString()
                       }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
                         gravida: gravida,
-                        para: para,
-                        abortions: abortions,
-                        livingChildren: livingChildren,
+                        para: correctedPara,
+                        abortions: correctedAbortions,
+                        livingChildren: correctedLivingChildren,
                         obstetricHistory: { 
-                          ...obstetricHistory,
-                          gravida: e.target.value
+                          gravida: e.target.value, 
+                          para: correctedPara.toString(),
+                          abortions: correctedAbortions.toString(),
+                          livingChildren: correctedLivingChildren.toString()
                         }
                       });
                       
@@ -9632,22 +9518,56 @@ export default function AncPage() {
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // No individual field validation - allow free entry
+                      // Auto-correction logic
+                      let correctedPara = para;
+                      let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
-                      // Update state with original value (don't auto-correct)
+                      // If para exceeds gravida, reset para to 0
+                      if (para > gravida && gravida > 0) {
+                        correctedPara = 0;
+                        correctedLivingChildren = 0; // Living children can't exceed para
+                        correctionMessages.push(`Para reset to 0: Live births (${para}) cannot exceed total pregnancies (${gravida})`);
+                      } 
+                      // If gravida < (para + abortions), reset para to 0
+                      else if (gravida > 0 && gravida < (para + abortions)) {
+                        correctedPara = 0;
+                        correctedLivingChildren = 0;
+                        correctionMessages.push(`Para reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
+                      }
+                      // If living children exceed corrected para, reset living children
+                      else if (livingChildren > correctedPara) {
+                        correctedLivingChildren = 0;
+                        correctionMessages.push(`Living children reset to 0: Cannot exceed live births (${correctedPara})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
+                      }
+                      
+                      // Update state with corrected values
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        para: e.target.value
+                        para: correctedPara.toString(),
+                        livingChildren: correctedLivingChildren.toString()
                       }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        para: para,
-                        livingChildren: parseInt(obstetricHistory.livingChildren) || 0,
+                        para: correctedPara,
+                        livingChildren: correctedLivingChildren,
                         obstetricHistory: { 
                           ...obstetricHistory, 
-                          para: e.target.value,
-                          livingChildren: obstetricHistory.livingChildren
+                          para: correctedPara.toString(),
+                          livingChildren: correctedLivingChildren.toString()
                         }
                       });
                       
@@ -9711,18 +9631,43 @@ export default function AncPage() {
                       const gravida = parseInt(obstetricHistory.gravida) || 0;
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // No individual field validation - allow free entry
+                      // Auto-correction logic
+                      let correctedAbortions = abortions;
+                      let correctionMessages: string[] = [];
                       
-                      // Update state with original value (don't auto-correct)
+                      // If abortions exceed gravida, reset to 0
+                      if (abortions > gravida && gravida > 0) {
+                        correctedAbortions = 0;
+                        correctionMessages.push(`Abortions reset to 0: Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`);
+                      }
+                      // If gravida < (para + abortions), reset abortions to 0
+                      else if (gravida > 0 && gravida < (para + abortions)) {
+                        correctedAbortions = 0;
+                        correctionMessages.push(`Abortions reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
+                      }
+                      
+                      // Update state with corrected values
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        abortions: e.target.value
+                        abortions: correctedAbortions.toString()
                       }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        abortions: abortions,
-                        obstetricHistory: { ...obstetricHistory, abortions: e.target.value }
+                        abortions: correctedAbortions,
+                        obstetricHistory: { ...obstetricHistory, abortions: correctedAbortions.toString() }
                       });
                       
                       // Recurrent pregnancy loss assessment
@@ -9749,18 +9694,38 @@ export default function AncPage() {
                       // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // No individual field validation - allow free entry
+                      // Auto-correction logic
+                      let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
-                      // Update state with original value (don't auto-correct)
+                      // If living children exceed para, reset to 0
+                      if (livingChildren > para && para > 0) {
+                        correctedLivingChildren = 0;
+                        correctionMessages.push(`Living children reset to 0: Number of living children (${livingChildren}) cannot exceed live births (${para})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
+                      }
+                      
+                      // Update state with corrected values
                       setObstetricHistory(prev => ({ 
                         ...prev, 
-                        livingChildren: e.target.value
+                        livingChildren: correctedLivingChildren.toString()
                       }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        livingChildren: livingChildren,
-                        obstetricHistory: { ...obstetricHistory, livingChildren: e.target.value }
+                        livingChildren: correctedLivingChildren,
+                        obstetricHistory: { ...obstetricHistory, livingChildren: correctedLivingChildren.toString() }
                       });
                       
                       // Child mortality assessment
@@ -9781,7 +9746,20 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Validation handled by modal once all fields are complete */}
+              {/* Auto-correction Notice - Only show when corrections were made */}
+              {Object.keys(obstetricValidationErrors).length > 0 && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-medium text-green-800">Auto-Correction Applied</span>
+                  </div>
+                  <div className="text-xs text-green-700 ml-6">
+                    Invalid entries have been automatically corrected to maintain obstetric history business rules.
+                  </div>
+                </div>
+              )}
               
               {/* Mandatory Fields Reminder */}
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -10414,7 +10392,7 @@ export default function AncPage() {
                 }
                 
                 if (Object.keys(errors).length > 0) {
-                  setObstetricValidationModal({ isOpen: true, errors });
+                  setObstetricValidationErrors(errors);
                   toast({
                     title: "Validation Error",
                     description: "All four fields must be completed for antenatal registration.",
@@ -10449,7 +10427,7 @@ export default function AncPage() {
                 });
                 
                 setShowObstetricHistoryDialog(false);
-                setObstetricValidationModal({ isOpen: false, errors: {} });
+                setObstetricValidationErrors({});
                 toast({
                   title: "Enhanced Obstetric History Saved",
                   description: "Complete obstetric assessment has been recorded successfully.",
@@ -11393,147 +11371,9 @@ export default function AncPage() {
         initialData={referralData}
         dangerSigns={selectedDangerSigns}
       />
+      
 
-      {/* Comprehensive Obstetric Assessment Modal */}
-      <Dialog 
-        open={obstetricValidationModal.isOpen} 
-        onOpenChange={(open) => !open && setObstetricValidationModal({ isOpen: false, errors: {} })}
-      >
-        <DialogContent 
-          className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}
-        >
-          <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
-            Comprehensive Obstetric Assessment
-          </DialogTitle>
-          {obstetricValidationModal.isOpen && (
-            <div className="space-y-6">
-              {(() => {
-                const assessment = generateComprehensiveObstetricAssessment();
-                
-                return (
-                  <>
-                    {/* Section 1: Validation Issues */}
-                    <div className="bg-gradient-to-r from-red-500/8 to-pink-500/8 backdrop-blur-sm rounded-lg p-4 border border-red-200/40">
-                      <h3 className="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
-                        <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-md flex items-center justify-center">
-                          <span className="text-white text-xs">⚠</span>
-                        </div>
-                        Validation Issues
-                      </h3>
-                      {assessment.hasValidationErrors ? (
-                        <div className="space-y-2">
-                          {Object.entries(assessment.validationErrors).map(([field, error], index) => (
-                            <div key={index} className="text-sm text-red-700 bg-red-50 p-2 rounded border-l-4 border-red-500">
-                              <strong>{field.charAt(0).toUpperCase() + field.slice(1)}:</strong> {error}
-                            </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-green-700 bg-green-50 p-2 rounded border-l-4 border-green-500">
-                        <strong>✓ No validation errors</strong> - All obstetric history data is properly formatted and within expected ranges.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 2: Clinical Classification */}
-                  <div className="bg-gradient-to-r from-blue-500/8 to-indigo-500/8 backdrop-blur-sm rounded-lg p-4 border border-blue-200/40">
-                    <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">📊</span>
-                      </div>
-                      Clinical Classification
-                    </h3>
-                    {assessment.clinicalClassifications.length > 0 ? (
-                      <div className="space-y-3">
-                        {assessment.clinicalClassifications.map((classification, index) => (
-                          <div 
-                            key={index} 
-                            className={`p-3 rounded border-l-4 ${
-                              classification.type === 'critical' ? 'bg-red-50 border-red-500 text-red-800' :
-                              classification.type === 'warning' ? 'bg-orange-50 border-orange-500 text-orange-800' :
-                              'bg-blue-50 border-blue-500 text-blue-800'
-                            }`}
-                          >
-                            <div className="font-medium text-sm">{classification.title}</div>
-                            <div className="text-sm mt-1">{classification.message}</div>
-                            <div className="text-xs mt-2 opacity-90">{classification.details}</div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-blue-700">
-                        Standard obstetric profile - no special classifications identified.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 3: Risk Assessment & Recommendations */}
-                  <div className="bg-gradient-to-r from-purple-500/8 to-violet-500/8 backdrop-blur-sm rounded-lg p-4 border border-purple-200/40">
-                    <h3 className="text-sm font-bold text-purple-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">🎯</span>
-                      </div>
-                      Risk Assessment & Recommendations
-                    </h3>
-                    {assessment.riskAssessments.map((risk, index) => (
-                      <div key={index} className="space-y-3">
-                        <div className={`p-3 rounded border-l-4 ${
-                          risk.level === 'High Risk' ? 'bg-red-50 border-red-500' :
-                          risk.level === 'Moderate Risk' ? 'bg-orange-50 border-orange-500' :
-                          'bg-green-50 border-green-500'
-                        }`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">Overall Risk Level:</span>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              risk.level === 'High Risk' ? 'bg-red-100 text-red-800' :
-                              risk.level === 'Moderate Risk' ? 'bg-orange-100 text-orange-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {risk.level}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-600 mb-3">{risk.reasoning}</div>
-                        </div>
-                        
-                        <div className="bg-gradient-to-r from-gray-500/5 to-slate-500/5 backdrop-blur-sm rounded-lg p-3 border border-gray-200/40">
-                          <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                            <div className="w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-700 rounded-md flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
-                            </div>
-                            Clinical Recommendations
-                          </h4>
-                          <ul className="text-xs text-gray-700 space-y-1">
-                            {risk.recommendations.map((rec, recIndex) => (
-                              <li key={recIndex} className="flex items-start gap-2">
-                                <span className="text-gray-400 mt-0.5">•</span>
-                                <span>{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-            
-              {/* Acknowledge Button */}
-              <div className="flex justify-end pt-4 border-t border-gray-200/50">
-                <Button
-                  onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-                >
-                  Acknowledge - Proceed with Care Plan
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
+      
       {/* Danger Sign Info Modal - Simplified */}
       <Dialog open={showDangerSignInfo} onOpenChange={setShowDangerSignInfo}>
         <DialogContent className="bg-white/60 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-xl rounded-2xl font-sans max-w-md p-6" 
@@ -11560,6 +11400,27 @@ export default function AncPage() {
     </div>
   );
 }
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
+
+// Danger Sign Info Modal - Added separately to avoid file conflicts
+const DangerSignInfoModal = ({ open, onClose, title, description }) => (
+  <Dialog open={open} onOpenChange={onClose}>
+    <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-2xl max-h-[85vh] overflow-y-auto" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
+      <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
+        {title}
+      </DialogTitle>
+      <div className="space-y-4">
+        <p className="text-gray-700 leading-relaxed">
+          {description}
+        </p>
+        <div className="flex justify-end pt-4 border-t">
+          <Button 
+            onClick={onClose}
+            className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+);
