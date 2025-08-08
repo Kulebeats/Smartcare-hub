@@ -1,0 +1,38 @@
+5216-
+5217-
+5218:                      {/* Client Health History Information - Standalone Section for All Referrals */}
+5219-                      <div className="space-y-4 col-span-2 border border-blue-200 rounded-lg p-4 bg-blue-50">
+5220-                        <div className="flex items-center justify-between">
+5221:                          <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
+5222-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
+5223-                        </div>
+--
+5279-                        </div>
+5280-
+5281:                        {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */}
+5282-                        <div className="grid grid-cols-4 gap-4">
+5283-                            <div className="space-y-1">
+--
+5498-                        </div>
+5499-
+5500:                          {/* Previous Pregnancies Detailed History */}
+5501-                          <div className="space-y-2">
+5502-                            <label className="block text-xs font-medium">No. of previous pregnancies (excluding current) <span className="text-red-500">*</span></label>
+--
+8048-            )}
+8049-
+8050:            {/* Client Health History Information - Required for all referrals */}
+8051-            <div className="space-y-4 border border-blue-200 rounded-lg p-4 bg-blue-50">
+8052-              <div className="flex items-center justify-between">
+8053:                <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
+8054-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
+8055-              </div>
+--
+8108-                </div>
+8109-                
+8110:                {/* Previous Pregnancies Detailed History */}
+8111-                <div className="space-y-2">
+8112-                  <label className="block text-xs font-medium">No. of previous pregnancies (excluding current) <span className="text-red-500">*</span></label>
+--
+9484-          
+9485-          <div className="space-y-6">
