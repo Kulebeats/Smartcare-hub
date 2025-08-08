@@ -2030,7 +2030,11 @@ export default function AncPage() {
     abortions: '',
     livingChildren: ''
   });
-  const [obstetricValidationErrors, setObstetricValidationErrors] = useState<Record<string, string>>({});
+  // Validation modal state instead of inline errors
+  const [obstetricValidationModal, setObstetricValidationModal] = useState<{
+    isOpen: boolean;
+    errors: Record<string, string>;
+  }>({ isOpen: false, errors: {} });
   const [showMedicalHistoryDialog, setShowMedicalHistoryDialog] = useState(false);
   const [showStandardAssessmentDialog, setShowStandardAssessmentDialog] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
@@ -2901,6 +2905,68 @@ export default function AncPage() {
       }
     };
   }, []);
+
+  // Comprehensive obstetric validation - only when all 4 fields are completed
+  useEffect(() => {
+    // Check if all 4 fields have values
+    const { gravida, para, abortions, livingChildren } = obstetricHistory;
+    
+    if (gravida && para && abortions !== '' && livingChildren !== '') {
+      const errors = validateAllObstetricRules();
+      
+      if (Object.keys(errors).length > 0) {
+        setObstetricValidationModal({ isOpen: true, errors });
+      } else {
+        // Clear modal if all validations pass
+        setObstetricValidationModal({ isOpen: false, errors: {} });
+      }
+    }
+  }, [obstetricHistory]);
+
+  // Comprehensive validation function
+  const validateAllObstetricRules = () => {
+    const gravida = parseInt(obstetricHistory.gravida) || 0;
+    const para = parseInt(obstetricHistory.para) || 0;
+    const abortions = parseInt(obstetricHistory.abortions) || 0;
+    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
+    const errors: Record<string, string> = {};
+
+    // Business Rule 1: Gravida ≥ 1 (if currently pregnant)
+    if (gravida < 1) {
+      errors.gravida = 'Must be at least 1 if currently pregnant';
+    }
+
+    // Business Rule 2: Gravida ≥ Para + Abortions
+    if (gravida > 0 && gravida < (para + abortions)) {
+      errors.gravida = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
+    }
+
+    // Business Rule 3: Para cannot exceed Gravida
+    if (para > gravida && gravida > 0) {
+      errors.para = `Live births (${para}) cannot exceed total pregnancies (${gravida})`;
+    }
+
+    // Business Rule 4: Abortions cannot exceed Gravida
+    if (abortions > gravida && gravida > 0) {
+      errors.abortions = `Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`;
+    }
+
+    // Business Rule 5: Para ≥ Living Children (critical rule)
+    if (livingChildren > para && para > 0) {
+      errors.livingChildren = `Living children (${livingChildren}) cannot exceed total live births (Para: ${para}). Please review both fields.`;
+    }
+
+    // Outlier detection warnings
+    if (gravida > 15) {
+      errors.gravidaOutlier = 'Gravida >15 is extremely rare. Please verify data accuracy.';
+    }
+
+    if (para > 15) {
+      errors.paraOutlier = 'Para >15 is extremely rare. Please verify data accuracy.';
+    }
+
+    return errors;
+  };
   
   // Urgent notification modal states
   const [showUrgentNotification, setShowUrgentNotification] = useState(false);
@@ -9422,51 +9488,7 @@ export default function AncPage() {
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // Validation logic - check business rules
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
-                      // Clear gravida-related errors first
-                      delete errors.gravida;
-                      delete errors.para;
-                      delete errors.abortions;
-                      
-                      // Validate Gravida ≥ 1 (if currently pregnant)
-                      if (gravida < 1 && e.target.value !== '') {
-                        errors.gravida = 'Must be at least 1 if currently pregnant';
-                      }
-                      
-                      if (gravida > 0) {
-                        // Check if Gravida < (Para + Abortions)
-                        if (gravida < (para + abortions)) {
-                          errors.gravida = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
-                        }
-                        
-                        // Check if Para > Gravida
-                        if (para > gravida) {
-                          errors.para = `Live births (${para}) cannot exceed total pregnancies (${gravida})`;
-                        }
-                        
-                        // Check if Abortions > Gravida
-                        if (abortions > gravida) {
-                          errors.abortions = `Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`;
-                        }
-                      }
-                      
-                      // Outlier detection
-                      if (gravida > 15) {
-                        errors.gravida = 'Gravida >15 is extremely rare. Please verify data accuracy.';
-                      }
-                      
-                      // Show toast for validation errors
-                      if (Object.keys(errors).length > 0) {
-                        toast({
-                          title: "Validation Error",
-                          description: Object.values(errors)[0],
-                          variant: "destructive",
-                        });
-                      }
-                      
-                      setObstetricValidationErrors(errors);
+                      // No individual field validation - allow free entry
                       
                       // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
@@ -9518,41 +9540,7 @@ export default function AncPage() {
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // Validation logic - check business rules
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
-                      // Clear para-related errors first
-                      delete errors.para;
-                      delete errors.livingChildren;
-                      
-                      if (para > 0) {
-                        // Para cannot exceed Gravida
-                        if (para > gravida && gravida > 0) {
-                          errors.para = `Live births cannot exceed total pregnancies. Para (${para}) > Gravida (${gravida})`;
-                        }
-                        
-                        // Check if gravida < (para + abortions)
-                        if (gravida > 0 && gravida < (para + abortions)) {
-                          errors.para = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
-                        }
-                        
-                        // Para ≥ Living Children validation
-                        const currentLivingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-                        if (currentLivingChildren > para) {
-                          errors.livingChildren = `Living children cannot exceed total live births (Para). Please review both fields. Current: Para=${para}, Living=${currentLivingChildren}`;
-                        }
-                      }
-                      
-                      // Show toast for validation errors
-                      if (Object.keys(errors).length > 0) {
-                        toast({
-                          title: "Validation Error",
-                          description: Object.values(errors)[0],
-                          variant: "destructive",
-                        });
-                      }
-                      
-                      setObstetricValidationErrors(errors);
+                      // No individual field validation - allow free entry
                       
                       // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
@@ -9631,35 +9619,7 @@ export default function AncPage() {
                       const gravida = parseInt(obstetricHistory.gravida) || 0;
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // Validation logic - check business rules
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
-                      // Clear abortion-related errors first
-                      delete errors.abortions;
-                      delete errors.gravida;
-                      
-                      if (abortions > 0 && gravida > 0) {
-                        // Abortions cannot exceed Gravida
-                        if (abortions > gravida) {
-                          errors.abortions = `Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`;
-                        }
-                        
-                        // Check total relationship: Gravida < (Para + Abortions)
-                        if (gravida < (para + abortions)) {
-                          errors.gravida = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
-                        }
-                      }
-                      
-                      // Show toast for validation errors
-                      if (Object.keys(errors).length > 0) {
-                        toast({
-                          title: "Validation Error",
-                          description: Object.values(errors)[0],
-                          variant: "destructive",
-                        });
-                      }
-                      
-                      setObstetricValidationErrors(errors);
+                      // No individual field validation - allow free entry
                       
                       // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
@@ -9697,25 +9657,7 @@ export default function AncPage() {
                       // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // Validation logic - block invalid entries instead of auto-correcting
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
-                      // Clear living children errors first
-                      delete errors.livingChildren;
-                      
-                      // Validate Para ≥ Living Children rule
-                      if (livingChildren > 0 && para > 0 && livingChildren > para) {
-                        errors.livingChildren = `Living children cannot exceed total live births (Para). Please review both fields. Current: Para=${para}, Living=${livingChildren}`;
-                        
-                        // Show toast notification for validation error
-                        toast({
-                          title: "Validation Error",
-                          description: "Living children cannot exceed total live births (Para). Please review both fields.",
-                          variant: "destructive",
-                        });
-                      }
-                      
-                      setObstetricValidationErrors(errors);
+                      // No individual field validation - allow free entry
                       
                       // Update state with original value (don't auto-correct)
                       setObstetricHistory(prev => ({ 
@@ -9747,25 +9689,7 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Validation Error Messages */}
-              {Object.keys(obstetricValidationErrors).length > 0 && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-center mb-2">
-                    <svg className="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm font-medium text-red-800">Validation Errors</span>
-                  </div>
-                  {Object.entries(obstetricValidationErrors).map(([field, error]) => (
-                    <div key={field} className="text-xs text-red-700 ml-6 mb-1">
-                      <span className="font-medium capitalize">{field}:</span> {error}
-                    </div>
-                  ))}
-                  <div className="text-xs text-red-600 ml-6 mt-2 italic">
-                    Please review and correct the highlighted fields before saving.
-                  </div>
-                </div>
-              )}
+              {/* Validation handled by modal once all fields are complete */}
               
               {/* Mandatory Fields Reminder */}
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -11377,9 +11301,76 @@ export default function AncPage() {
         initialData={referralData}
         dangerSigns={selectedDangerSigns}
       />
-      
 
-      
+      {/* Obstetric Validation Modal */}
+      <Dialog 
+        open={obstetricValidationModal.isOpen} 
+        onOpenChange={(open) => !open && setObstetricValidationModal({ isOpen: false, errors: {} })}
+      >
+        <DialogContent className="bg-white rounded-lg shadow-xl max-w-md">
+          <div className="p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">Obstetric History Validation</h3>
+                <p className="text-sm text-gray-600">Please review and correct the following errors</p>
+              </div>
+            </div>
+            
+            <div className="mb-6 space-y-3">
+              {Object.entries(obstetricValidationModal.errors).map(([field, error]) => (
+                <div key={field} className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="flex items-start">
+                    <div className="w-4 h-4 text-red-500 mt-0.5 mr-2">
+                      <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-red-800 capitalize mb-1">
+                        {field.replace('Outlier', ' (Outlier Check)')}:
+                      </div>
+                      <div className="text-sm text-red-700">{error}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-md mb-6">
+              <div className="flex items-start">
+                <div className="w-5 h-5 text-blue-500 mt-0.5 mr-2">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="text-sm text-blue-700">
+                  <div className="font-medium mb-1">Business Rules Reminder:</div>
+                  <ul className="list-disc list-inside space-y-1 text-xs">
+                    <li>Para ≥ Living Children (every living child must have been counted as a live birth)</li>
+                    <li>Gravida ≥ Para + Abortions (total pregnancies must account for all outcomes)</li>
+                    <li>Count each baby individually in Para (twins = 2, triplets = 3)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <Button
+                onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium"
+              >
+                I Understand - Let Me Correct
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Danger Sign Info Modal - Simplified */}
       <Dialog open={showDangerSignInfo} onOpenChange={setShowDangerSignInfo}>
         <DialogContent className="bg-white/60 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-xl rounded-2xl font-sans max-w-md p-6" 
