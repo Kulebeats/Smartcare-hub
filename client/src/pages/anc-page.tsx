@@ -40,6 +40,7 @@ import { ANCCardWrapper } from "@/components/medical-record/ANCCardWrapper";
 import { PMTCTCardSection } from "@/components/medical-record/PMTCTCardSection";
 import ReferralCard from "@/components/medical-record/referral-card";
 import ReferralModal from "@/components/medical-record/referral-modal";
+import { ClientHealthHistorySection } from "@/components/medical-record/client-health-history-section";
 
 // Zambian ANC Guidelines danger sign descriptions (2022)
 const enhancedDangerSignDescriptions = {
@@ -5213,18 +5214,16 @@ export default function AncPage() {
                         </select>
                       </div>
 
-
-
-                      {/* Client Health History Information - Standalone Section for All Referrals */}
-                      <div className="space-y-4 col-span-2 border border-blue-200 rounded-lg p-4 bg-blue-50">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
-                        </div>
-                        
-                        {/* Business Rule: Current Pregnancy Information */}
-                        <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                          <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Current Pregnancy Information</h5>
+                      {/* Wrap adjacent JSX elements */}
+                      <>
+                        {/* Client Health History Information - Reusable Component */}
+                        <ClientHealthHistorySection 
+                          context="referral" 
+                          onUpdateData={(data) => {
+                            // Handle data updates for referral context
+                            updateLatestEncounterData('clientHealthHistory', data);
+                          }}
+                        />
                           
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -5278,13 +5277,10 @@ export default function AncPage() {
                           </div>
                         </div>
 
-                        {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */}
-                        <div className="grid grid-cols-4 gap-4">
-                            <div className="space-y-1">
-                              <label className="block text-xs font-medium">Para (Live births)</label>
-                              <input 
-                                type="number" 
-                                id="para"
+                        {/* JSX structure fixed - content now handled by ClientHealthHistorySection component */}
+                        {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */
+
+                        {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */
                                 min="0" 
                                 max="20"
                                 className="w-full border rounded p-2 text-sm" 
@@ -5841,10 +5837,8 @@ export default function AncPage() {
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
 
-                      {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */}
+                        {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */}
                         <div id="obstetric-risk-fields" className="space-y-3 border border-amber-300 rounded p-3 bg-amber-50" style={{ display: 'none' }}>
                           <h5 className="text-sm font-medium text-amber-700 border-b border-amber-300 pb-1">Previous Pregnancy Risk Assessment</h5>
                           
@@ -6923,6 +6917,7 @@ export default function AncPage() {
                 </Button>
               </div>
               </div>
+              </>
               </ANCCardWrapper>
             </TabsContent>
 
@@ -8047,12 +8042,14 @@ export default function AncPage() {
               </div>
             )}
 
-            {/* Client Health History Information - Required for all referrals */}
-            <div className="space-y-4 border border-blue-200 rounded-lg p-4 bg-blue-50">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
-              </div>
+            {/* Client Health History Information - Reusable Component */}
+            <ClientHealthHistorySection 
+              context="standard" 
+              onUpdateData={(data) => {
+                // Handle data updates for standard context
+                updateLatestEncounterData('clientHealthHistory', data);
+              }}
+            />
               
               {/* Current Pregnancy Information */}
               <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
