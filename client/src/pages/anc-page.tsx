@@ -9426,24 +9426,38 @@ export default function AncPage() {
                       let correctedPara = para;
                       let correctedAbortions = abortions;
                       let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
                       if (gravida > 0 && gravida < (para + abortions)) {
                         // Reset both para and abortions to 0 to maintain business rules
                         correctedPara = 0;
                         correctedAbortions = 0;
                         correctedLivingChildren = 0; // Living children can't exceed para, so reset too
+                        correctionMessages.push(`Para and Abortions reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
                       } else if (gravida > 0) {
                         // Check individual constraints
                         if (para > gravida) {
                           correctedPara = 0;
                           correctedLivingChildren = 0; // Living children can't exceed para
+                          correctionMessages.push(`Para reset to 0: Live births (${para}) cannot exceed total pregnancies (${gravida})`);
                         }
                         if (abortions > gravida) {
                           correctedAbortions = 0;
+                          correctionMessages.push(`Abortions reset to 0: Abortions (${abortions}) cannot exceed total pregnancies (${gravida})`);
                         }
                         if (livingChildren > correctedPara) {
                           correctedLivingChildren = 0;
+                          correctionMessages.push(`Living children reset to 0: Cannot exceed live births (${correctedPara})`);
                         }
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
                       }
                       
                       // Update state with corrected values
@@ -9507,20 +9521,33 @@ export default function AncPage() {
                       // Auto-correction logic
                       let correctedPara = para;
                       let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
                       // If para exceeds gravida, reset para to 0
                       if (para > gravida && gravida > 0) {
                         correctedPara = 0;
                         correctedLivingChildren = 0; // Living children can't exceed para
+                        correctionMessages.push(`Para reset to 0: Live births (${para}) cannot exceed total pregnancies (${gravida})`);
                       } 
                       // If gravida < (para + abortions), reset para to 0
                       else if (gravida > 0 && gravida < (para + abortions)) {
                         correctedPara = 0;
                         correctedLivingChildren = 0;
+                        correctionMessages.push(`Para reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
                       }
                       // If living children exceed corrected para, reset living children
                       else if (livingChildren > correctedPara) {
                         correctedLivingChildren = 0;
+                        correctionMessages.push(`Living children reset to 0: Cannot exceed live births (${correctedPara})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
                       }
                       
                       // Update state with corrected values
@@ -9606,14 +9633,26 @@ export default function AncPage() {
                       
                       // Auto-correction logic
                       let correctedAbortions = abortions;
+                      let correctionMessages: string[] = [];
                       
                       // If abortions exceed gravida, reset to 0
                       if (abortions > gravida && gravida > 0) {
                         correctedAbortions = 0;
+                        correctionMessages.push(`Abortions reset to 0: Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`);
                       }
                       // If gravida < (para + abortions), reset abortions to 0
                       else if (gravida > 0 && gravida < (para + abortions)) {
                         correctedAbortions = 0;
+                        correctionMessages.push(`Abortions reset to 0: Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
                       }
                       
                       // Update state with corrected values
@@ -9657,10 +9696,21 @@ export default function AncPage() {
                       
                       // Auto-correction logic
                       let correctedLivingChildren = livingChildren;
+                      let correctionMessages: string[] = [];
                       
                       // If living children exceed para, reset to 0
                       if (livingChildren > para && para > 0) {
                         correctedLivingChildren = 0;
+                        correctionMessages.push(`Living children reset to 0: Number of living children (${livingChildren}) cannot exceed live births (${para})`);
+                      }
+                      
+                      // Show toast notification if corrections were made
+                      if (correctionMessages.length > 0) {
+                        toast({
+                          title: "Auto-correction Applied",
+                          description: correctionMessages.join('. '),
+                          variant: "destructive",
+                        });
                       }
                       
                       // Update state with corrected values
