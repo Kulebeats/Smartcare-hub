@@ -2906,20 +2906,14 @@ export default function AncPage() {
     };
   }, []);
 
-  // Comprehensive obstetric validation - only when all 4 fields are completed
+  // Comprehensive obstetric assessment - only when all 4 fields are completed
   useEffect(() => {
     // Check if all 4 fields have values
     const { gravida, para, abortions, livingChildren } = obstetricHistory;
     
     if (gravida && para && abortions !== '' && livingChildren !== '') {
-      const errors = validateAllObstetricRules();
-      
-      if (Object.keys(errors).length > 0) {
-        setObstetricValidationModal({ isOpen: true, errors });
-      } else {
-        // Clear modal if all validations pass
-        setObstetricValidationModal({ isOpen: false, errors: {} });
-      }
+      const assessment = generateComprehensiveObstetricAssessment();
+      setObstetricValidationModal({ isOpen: true, errors: assessment });
     }
   }, [obstetricHistory]);
 
