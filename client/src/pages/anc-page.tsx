@@ -2907,16 +2907,6 @@ export default function AncPage() {
   }, []);
 
   // Comprehensive obstetric assessment - only when all 4 fields are completed
-  useEffect(() => {
-    // Check if all 4 fields have values
-    const { gravida, para, abortions, livingChildren } = obstetricHistory;
-    
-    if (gravida && para && abortions !== '' && livingChildren !== '') {
-      const assessment = generateComprehensiveObstetricAssessment();
-      setObstetricValidationModal({ isOpen: true, errors: assessment });
-    }
-  }, [obstetricHistory]);
-
   // Generate comprehensive obstetric assessment
   const generateComprehensiveObstetricAssessment = () => {
     const gravida = parseInt(obstetricHistory.gravida) || 0;
@@ -3014,6 +3004,16 @@ export default function AncPage() {
       overallRisk
     };
   };
+
+  useEffect(() => {
+    // Check if all 4 fields have values
+    const { gravida, para, abortions, livingChildren } = obstetricHistory;
+    
+    if (gravida && para && abortions !== '' && livingChildren !== '') {
+      const assessment = generateComprehensiveObstetricAssessment();
+      setObstetricValidationModal({ isOpen: true, errors: assessment });
+    }
+  }, [obstetricHistory]);
 
   // Comprehensive validation function
   const validateAllObstetricRules = () => {
@@ -11518,19 +11518,18 @@ export default function AncPage() {
                 </>
               );
             })()}
+          
+          {/* Acknowledge Button */}
+          <div className="flex justify-end pt-4 border-t border-gray-200/50">
+            <Button
+              onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Acknowledge - Proceed with Care Plan
+            </Button>
           </div>
-            
-              {/* Acknowledge Button */}
-              <div className="flex justify-end pt-4 border-t border-gray-200/50">
-                <Button
-                  onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-                >
-                  Acknowledge - Proceed with Care Plan
-                </Button>
-              </div>
-            </div>
-          )}
+        </div>
+      )}
         </DialogContent>
       </Dialog>
 
@@ -11560,6 +11559,3 @@ export default function AncPage() {
     </div>
   );
 }
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
