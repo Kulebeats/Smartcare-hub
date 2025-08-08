@@ -2919,7 +2919,100 @@ export default function AncPage() {
 
   // Generate comprehensive obstetric assessment
   const generateComprehensiveObstetricAssessment = () => {
-    return validateAllObstetricRules();
+    const gravida = parseInt(obstetricHistory.gravida) || 0;
+    const para = parseInt(obstetricHistory.para) || 0;
+    const abortions = parseInt(obstetricHistory.abortions) || 0;
+    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
+    
+    // Get validation errors
+    const validationErrors = validateAllObstetricRules();
+    
+    // Generate clinical classifications
+    const clinicalClassifications = [];
+    
+    // Multipara classification (2-4 previous live births)
+    if (para >= 2 && para <= 4) {
+      clinicalClassifications.push({
+        type: 'info',
+        title: 'Multipara Classification',
+        message: `Client is classified as Multipara (Para ${para}): 2-4 previous live births`,
+        details: 'Standard monitoring protocols apply with routine assessment for complications.'
+      });
+    }
+    
+    // Grand multipara warnings (≥5 pregnancies or ≥5 births)
+    if (gravida >= 5 || para >= 5) {
+      clinicalClassifications.push({
+        type: 'warning',
+        title: 'Grand Multipara Classification',
+        message: `Client is classified as Grand Multipara (G${gravida}P${para})`,
+        details: 'Increased risk of complications including uterine rupture, placental abnormalities, and postpartum hemorrhage. Enhanced monitoring required.'
+      });
+    }
+    
+    // Recurrent pregnancy loss alerts (≥3 losses)
+    if (abortions >= 3) {
+      clinicalClassifications.push({
+        type: 'critical',
+        title: 'Recurrent Pregnancy Loss',
+        message: `Client has ${abortions} pregnancy losses - meets criteria for recurrent pregnancy loss`,
+        details: 'Requires specialist consultation and comprehensive investigation including genetic, anatomical, endocrine, immunological, and thrombophilia screening.'
+      });
+    }
+    
+    // Child mortality assessments
+    const childDeaths = para - livingChildren;
+    if (childDeaths > 0) {
+      clinicalClassifications.push({
+        type: 'warning',
+        title: 'Previous Child Mortality',
+        message: `${childDeaths} child death(s) recorded (${para} births, ${livingChildren} living)`,
+        details: 'Review previous obstetric history for preventable causes. Consider enhanced antenatal surveillance and specialized care.'
+      });
+    }
+    
+    // Generate risk assessment and recommendations
+    const riskAssessments = [];
+    let overallRisk = 'Low Risk';
+    const recommendations = [];
+    
+    // Risk stratification
+    if (gravida >= 5 || para >= 5) {
+      overallRisk = 'High Risk';
+      recommendations.push('Enhanced antenatal monitoring with increased visit frequency');
+      recommendations.push('Specialist obstetric consultation recommended');
+      recommendations.push('Delivery planning at facility with operative capabilities');
+      recommendations.push('Postpartum hemorrhage prevention protocols');
+    } else if (abortions >= 3) {
+      overallRisk = 'High Risk';
+      recommendations.push('Specialist referral for recurrent pregnancy loss evaluation');
+      recommendations.push('Comprehensive investigation including genetic counseling');
+      recommendations.push('Enhanced first trimester monitoring');
+      recommendations.push('Progesterone supplementation may be considered');
+    } else if (para >= 2 || childDeaths > 0) {
+      overallRisk = 'Moderate Risk';
+      recommendations.push('Standard enhanced monitoring protocols');
+      recommendations.push('Review previous obstetric complications');
+      recommendations.push('Ensure skilled birth attendance');
+    } else {
+      overallRisk = 'Low Risk';
+      recommendations.push('Standard antenatal care protocols');
+      recommendations.push('Routine monitoring and health education');
+    }
+    
+    riskAssessments.push({
+      level: overallRisk,
+      reasoning: `Based on obstetric history: G${gravida}P${para}+${abortions} with ${livingChildren} living children`,
+      recommendations
+    });
+    
+    return {
+      hasValidationErrors: Object.keys(validationErrors).length > 0,
+      validationErrors,
+      clinicalClassifications,
+      riskAssessments,
+      overallRisk
+    };
   };
 
   // Comprehensive validation function
@@ -11301,72 +11394,143 @@ export default function AncPage() {
         dangerSigns={selectedDangerSigns}
       />
 
-      {/* Obstetric Validation Modal */}
+      {/* Comprehensive Obstetric Assessment Modal */}
       <Dialog 
         open={obstetricValidationModal.isOpen} 
         onOpenChange={(open) => !open && setObstetricValidationModal({ isOpen: false, errors: {} })}
       >
-        <DialogContent className="bg-white rounded-lg shadow-xl max-w-md">
-          <div className="p-6">
-            <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">Obstetric History Validation</h3>
-                <p className="text-sm text-gray-600">Please review and correct the following errors</p>
-              </div>
-            </div>
-            
-            <div className="mb-6 space-y-3">
-              {Object.entries(obstetricValidationModal.errors).map(([field, error]) => (
-                <div key={field} className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <div className="flex items-start">
-                    <div className="w-4 h-4 text-red-500 mt-0.5 mr-2">
-                      <svg fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-red-800 capitalize mb-1">
-                        {field.replace('Outlier', ' (Outlier Check)')}:
+        <DialogContent 
+          className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl max-h-[85vh] overflow-y-auto" 
+          style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}
+        >
+          <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
+            Comprehensive Obstetric Assessment
+          </DialogTitle>
+          {obstetricValidationModal.isOpen && (
+            <div className="space-y-6">
+              {(() => {
+                const assessment = generateComprehensiveObstetricAssessment();
+                
+                return (
+                  <>
+                    {/* Section 1: Validation Issues */}
+                    <div className="bg-gradient-to-r from-red-500/8 to-pink-500/8 backdrop-blur-sm rounded-lg p-4 border border-red-200/40">
+                      <h3 className="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
+                        <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-md flex items-center justify-center">
+                          <span className="text-white text-xs">⚠</span>
+                        </div>
+                        Validation Issues
+                      </h3>
+                      {assessment.hasValidationErrors ? (
+                        <div className="space-y-2">
+                          {Object.entries(assessment.validationErrors).map(([field, error], index) => (
+                            <div key={index} className="text-sm text-red-700 bg-red-50 p-2 rounded border-l-4 border-red-500">
+                              <strong>{field.charAt(0).toUpperCase() + field.slice(1)}:</strong> {error}
+                            </div>
+                        ))}
                       </div>
-                      <div className="text-sm text-red-700">{error}</div>
-                    </div>
+                    ) : (
+                      <div className="text-sm text-green-700 bg-green-50 p-2 rounded border-l-4 border-green-500">
+                        <strong>✓ No validation errors</strong> - All obstetric history data is properly formatted and within expected ranges.
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
-            </div>
 
-            <div className="bg-blue-50 p-4 rounded-md mb-6">
-              <div className="flex items-start">
-                <div className="w-5 h-5 text-blue-500 mt-0.5 mr-2">
-                  <svg fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="text-sm text-blue-700">
-                  <div className="font-medium mb-1">Business Rules Reminder:</div>
-                  <ul className="list-disc list-inside space-y-1 text-xs">
-                    <li>Para ≥ Living Children (every living child must have been counted as a live birth)</li>
-                    <li>Gravida ≥ Para + Abortions (total pregnancies must account for all outcomes)</li>
-                    <li>Count each baby individually in Para (twins = 2, triplets = 3)</li>
-                  </ul>
-                </div>
+                  {/* Section 2: Clinical Classification */}
+                  <div className="bg-gradient-to-r from-blue-500/8 to-indigo-500/8 backdrop-blur-sm rounded-lg p-4 border border-blue-200/40">
+                    <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
+                      <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
+                        <span className="text-white text-xs">📊</span>
+                      </div>
+                      Clinical Classification
+                    </h3>
+                    {assessment.clinicalClassifications.length > 0 ? (
+                      <div className="space-y-3">
+                        {assessment.clinicalClassifications.map((classification, index) => (
+                          <div 
+                            key={index} 
+                            className={`p-3 rounded border-l-4 ${
+                              classification.type === 'critical' ? 'bg-red-50 border-red-500 text-red-800' :
+                              classification.type === 'warning' ? 'bg-orange-50 border-orange-500 text-orange-800' :
+                              'bg-blue-50 border-blue-500 text-blue-800'
+                            }`}
+                          >
+                            <div className="font-medium text-sm">{classification.title}</div>
+                            <div className="text-sm mt-1">{classification.message}</div>
+                            <div className="text-xs mt-2 opacity-90">{classification.details}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-blue-700">
+                        Standard obstetric profile - no special classifications identified.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Section 3: Risk Assessment & Recommendations */}
+                  <div className="bg-gradient-to-r from-purple-500/8 to-violet-500/8 backdrop-blur-sm rounded-lg p-4 border border-purple-200/40">
+                    <h3 className="text-sm font-bold text-purple-800 mb-3 flex items-center gap-2">
+                      <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
+                        <span className="text-white text-xs">🎯</span>
+                      </div>
+                      Risk Assessment & Recommendations
+                    </h3>
+                    {assessment.riskAssessments.map((risk, index) => (
+                      <div key={index} className="space-y-3">
+                        <div className={`p-3 rounded border-l-4 ${
+                          risk.level === 'High Risk' ? 'bg-red-50 border-red-500' :
+                          risk.level === 'Moderate Risk' ? 'bg-orange-50 border-orange-500' :
+                          'bg-green-50 border-green-500'
+                        }`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">Overall Risk Level:</span>
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              risk.level === 'High Risk' ? 'bg-red-100 text-red-800' :
+                              risk.level === 'Moderate Risk' ? 'bg-orange-100 text-orange-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {risk.level}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-600 mb-3">{risk.reasoning}</div>
+                        </div>
+                        
+                        <div className="bg-gradient-to-r from-gray-500/5 to-slate-500/5 backdrop-blur-sm rounded-lg p-3 border border-gray-200/40">
+                          <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                            <div className="w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-700 rounded-md flex items-center justify-center">
+                              <span className="text-white text-xs">✓</span>
+                            </div>
+                            Clinical Recommendations
+                          </h4>
+                          <ul className="text-xs text-gray-700 space-y-1">
+                            {risk.recommendations.map((rec, recIndex) => (
+                              <li key={recIndex} className="flex items-start gap-2">
+                                <span className="text-gray-400 mt-0.5">•</span>
+                                <span>{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+            
+              {/* Acknowledge Button */}
+              <div className="flex justify-end pt-4 border-t border-gray-200/50">
+                <Button
+                  onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+                >
+                  Acknowledge - Proceed with Care Plan
+                </Button>
               </div>
             </div>
-
-            <div className="flex justify-end space-x-3">
-              <Button
-                onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium"
-              >
-                I Understand - Let Me Correct
-              </Button>
-            </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -11396,27 +11560,6 @@ export default function AncPage() {
     </div>
   );
 }
-
-// Danger Sign Info Modal - Added separately to avoid file conflicts
-const DangerSignInfoModal = ({ open, onClose, title, description }) => (
-  <Dialog open={open} onOpenChange={onClose}>
-    <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-2xl max-h-[85vh] overflow-y-auto" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
-      <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
-        {title}
-      </DialogTitle>
-      <div className="space-y-4">
-        <p className="text-gray-700 leading-relaxed">
-          {description}
-        </p>
-        <div className="flex justify-end pt-4 border-t">
-          <Button 
-            onClick={onClose}
-            className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
-          >
-            Close
-          </Button>
-        </div>
-      </div>
-    </DialogContent>
-  </Dialog>
-);
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
