@@ -5492,7 +5492,6 @@ export default function AncPage() {
                                     }
                                   }
                                 }
-                                }}
                               />
                             </div>
                           </div>
