@@ -2022,6 +2022,15 @@ export default function AncPage() {
 
   const [showCurrentPregnancyDialog, setShowCurrentPregnancyDialog] = useState(false);
   const [showObstetricHistoryDialog, setShowObstetricHistoryDialog] = useState(false);
+  
+  // Obstetric History State Management
+  const [obstetricHistory, setObstetricHistory] = useState({
+    gravida: '',
+    para: '',
+    abortions: '',
+    livingChildren: ''
+  });
+  const [obstetricValidationErrors, setObstetricValidationErrors] = useState<Record<string, string>>({});
   const [showMedicalHistoryDialog, setShowMedicalHistoryDialog] = useState(false);
   const [showStandardAssessmentDialog, setShowStandardAssessmentDialog] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
@@ -9404,8 +9413,50 @@ export default function AncPage() {
                     className="w-full border rounded p-2 text-sm"
                     placeholder="e.g., 3"
                     required
+                    value={obstetricHistory.gravida}
                     onChange={(e) => {
-                      const gravida = parseInt(e.target.value);
+                      const gravida = parseInt(e.target.value) || 0;
+                      setObstetricHistory(prev => ({ ...prev, gravida: e.target.value }));
+                      
+                      // Enhanced Business Rule Validation
+                      const errors: Record<string, string> = {};
+                      
+                      // Validate Gravida ≥ 1
+                      if (gravida < 1 && e.target.value !== '') {
+                        errors.gravida = 'Must be at least 1 if currently pregnant';
+                      }
+                      
+                      // Validate relationships with existing values
+                      const para = parseInt(obstetricHistory.para) || 0;
+                      const abortions = parseInt(obstetricHistory.abortions) || 0;
+                      const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
+                      
+                      if (gravida > 0) {
+                        // Check if Gravida < (Para + Abortions/Miscarriages)
+                        if (gravida < (para + abortions)) {
+                          errors.gravida = 'Sum of live births and abortions/miscarriages cannot exceed total pregnancies.';
+                        }
+                        
+                        // Check if Para > Gravida
+                        if (para > gravida) {
+                          errors.para = 'Live births cannot exceed total pregnancies.';
+                        }
+                      }
+                      
+                      // Outlier detection
+                      if (gravida > 15) {
+                        errors.gravida = 'Gravida >15 is extremely rare. Please verify data accuracy.';
+                      }
+                      
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update Latest Encounter data
+                      updateLatestEncounterData('clientProfile', {
+                        gravida: gravida,
+                        obstetricHistory: { ...obstetricHistory, gravida: gravida }
+                      });
+                      
+                      // Show/hide risk assessment fields
                       const obstetricRiskFields = document.getElementById('obstetric-modal-risk-fields');
                       const grandMultiparaWarning = document.getElementById('obstetric-grandmultipara-warning');
                       
@@ -9414,26 +9465,7 @@ export default function AncPage() {
                       }
                       
                       if (grandMultiparaWarning) {
-                        if (gravida >= 5) {
-                          grandMultiparaWarning.style.display = 'block';
-                        } else {
-                          grandMultiparaWarning.style.display = 'none';
-                        }
-                      }
-                      
-                      // Validate existing Para and Abortions values
-                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
-                      const abortions = parseInt((document.getElementById('obstetric_abortions') as HTMLInputElement)?.value || '0');
-                      const validationMessage = document.getElementById('obstetric-modal-validation');
-                      
-                      if (validationMessage && gravida > 0) {
-                        if (para + abortions > gravida) {
-                          validationMessage.textContent = 'Warning: Para + Abortions cannot exceed total pregnancies (Gravida)';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                        } else {
-                          validationMessage.style.display = 'none';
-                        }
+                        grandMultiparaWarning.style.display = gravida >= 5 ? 'block' : 'none';
                       }
                     }}
                   />
@@ -9447,43 +9479,46 @@ export default function AncPage() {
                     max="20"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 2"
+                    value={obstetricHistory.para}
                     onChange={(e) => {
                       const para = parseInt(e.target.value) || 0;
-                      const gravida = parseInt((document.getElementById('obstetric_gravida') as HTMLInputElement)?.value || '0');
-                      const abortions = parseInt((document.getElementById('obstetric_abortions') as HTMLInputElement)?.value || '0');
-                      const validationMessage = document.getElementById('obstetric-modal-validation');
+                      setObstetricHistory(prev => ({ ...prev, para: e.target.value }));
                       
-                      // Clinical Business Rules: Para validation
-                      if (validationMessage) {
+                      // Enhanced Business Rule Validation
+                      const errors: Record<string, string> = { ...obstetricValidationErrors };
+                      
+                      const gravida = parseInt(obstetricHistory.gravida) || 0;
+                      const abortions = parseInt(obstetricHistory.abortions) || 0;
+                      const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
+                      
+                      // Clear para errors first
+                      delete errors.para;
+                      delete errors.livingChildren;
+                      
+                      if (para > 0) {
+                        // Cannot exceed Gravida
+                        if (para > gravida && gravida > 0) {
+                          errors.para = 'Live births cannot exceed total pregnancies.';
+                        }
+                        
+                        // Living children ≤ Para
+                        if (livingChildren > para) {
+                          errors.livingChildren = 'Number of living children cannot exceed number of live births.';
+                        }
+                        
+                        // Outlier detection
                         if (para > 15) {
-                          validationMessage.textContent = 'Alert: Para >15 is extremely rare. Please verify data accuracy.';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                        } else if (para + abortions > gravida && gravida > 0) {
-                          validationMessage.textContent = 'Error: Para + Abortions cannot exceed total pregnancies (Gravida)';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                          (document.getElementById('obstetric_para') as HTMLInputElement).value = Math.max(0, gravida - abortions).toString();
-                          return;
-                        } else if (para > gravida && gravida > 0) {
-                          validationMessage.textContent = 'Error: Live births (Para) cannot exceed total pregnancies (Gravida)';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                          (document.getElementById('obstetric_para') as HTMLInputElement).value = gravida.toString();
-                          return;
-                        } else {
-                          const livingChildren = parseInt((document.getElementById('obstetric_living_children') as HTMLInputElement)?.value || '0');
-                          if (livingChildren > para && para > 0) {
-                            validationMessage.textContent = 'Error: Living children cannot exceed live births (Para)';
-                            validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                            validationMessage.style.display = 'block';
-                            (document.getElementById('obstetric_living_children') as HTMLInputElement).value = para.toString();
-                            return;
-                          } else {
-                            validationMessage.style.display = 'none';
-                          }
+                          errors.para = 'Para >15 is extremely rare. Please verify data accuracy.';
                         }
                       }
+                      
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update Latest Encounter data
+                      updateLatestEncounterData('clientProfile', {
+                        para: para,
+                        obstetricHistory: { ...obstetricHistory, para: para }
+                      });
                       
                       // Business Rule: Parity classification
                       const parityClassification = document.getElementById('obstetric-parity-classification');
@@ -9537,37 +9572,45 @@ export default function AncPage() {
                     max="15"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 0"
+                    value={obstetricHistory.abortions}
                     onChange={(e) => {
                       const abortions = parseInt(e.target.value) || 0;
-                      const gravida = parseInt((document.getElementById('obstetric_gravida') as HTMLInputElement)?.value || '0');
-                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
-                      const validationMessage = document.getElementById('obstetric-modal-validation');
+                      setObstetricHistory(prev => ({ ...prev, abortions: e.target.value }));
                       
-                      // Business Rule: Para + Abortions should not exceed Gravida
-                      if (validationMessage) {
-                        if (para + abortions > gravida && gravida > 0) {
-                          validationMessage.textContent = 'Warning: Para + Abortions cannot exceed total pregnancies (Gravida)';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                        } else if (abortions > gravida && gravida > 0) {
-                          validationMessage.textContent = 'Error: Abortions cannot exceed total pregnancies';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                          (document.getElementById('obstetric_abortions') as HTMLInputElement).value = gravida.toString();
-                          return;
-                        } else {
-                          validationMessage.style.display = 'none';
+                      // Enhanced Business Rule Validation
+                      const errors: Record<string, string> = { ...obstetricValidationErrors };
+                      
+                      const gravida = parseInt(obstetricHistory.gravida) || 0;
+                      const para = parseInt(obstetricHistory.para) || 0;
+                      
+                      // Clear abortion errors first
+                      delete errors.abortions;
+                      delete errors.gravida;
+                      
+                      if (abortions > 0 && gravida > 0) {
+                        // Cannot exceed Gravida
+                        if (abortions > gravida) {
+                          errors.abortions = 'Abortions/miscarriages cannot exceed total pregnancies.';
+                        }
+                        
+                        // Check total relationship: Gravida < (Para + Abortions)
+                        if (gravida < (para + abortions)) {
+                          errors.gravida = 'Sum of live births and abortions/miscarriages cannot exceed total pregnancies.';
                         }
                       }
                       
-                      // Business Rule: Recurrent pregnancy loss assessment
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update Latest Encounter data
+                      updateLatestEncounterData('clientProfile', {
+                        abortions: abortions,
+                        obstetricHistory: { ...obstetricHistory, abortions: abortions }
+                      });
+                      
+                      // Recurrent pregnancy loss assessment
                       const recurrentLossWarning = document.getElementById('obstetric-recurrent-loss-warning');
                       if (recurrentLossWarning) {
-                        if (abortions >= 3) {
-                          recurrentLossWarning.style.display = 'block';
-                        } else {
-                          recurrentLossWarning.style.display = 'none';
-                        }
+                        recurrentLossWarning.style.display = abortions >= 3 ? 'block' : 'none';
                       }
                     }}
                   />
@@ -9581,25 +9624,35 @@ export default function AncPage() {
                     max="20"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 2"
+                    value={obstetricHistory.livingChildren}
                     onChange={(e) => {
                       const livingChildren = parseInt(e.target.value) || 0;
-                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
-                      const validationMessage = document.getElementById('obstetric-modal-validation');
+                      setObstetricHistory(prev => ({ ...prev, livingChildren: e.target.value }));
                       
-                      // Clinical Business Rules: Living children validation
-                      if (validationMessage) {
-                        if (livingChildren > para && para > 0) {
-                          validationMessage.textContent = 'Error: Living children cannot exceed live births (Para)';
-                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                          validationMessage.style.display = 'block';
-                          (document.getElementById('obstetric_living_children') as HTMLInputElement).value = para.toString();
-                          return;
-                        } else {
-                          validationMessage.style.display = 'none';
+                      // Enhanced Business Rule Validation
+                      const errors: Record<string, string> = { ...obstetricValidationErrors };
+                      
+                      const para = parseInt(obstetricHistory.para) || 0;
+                      
+                      // Clear living children errors first
+                      delete errors.livingChildren;
+                      
+                      if (livingChildren > 0 && para > 0) {
+                        // Living children ≤ Para
+                        if (livingChildren > para) {
+                          errors.livingChildren = 'Number of living children cannot exceed number of live births.';
                         }
                       }
                       
-                      // Business Rule: Child mortality assessment
+                      setObstetricValidationErrors(errors);
+                      
+                      // Update Latest Encounter data
+                      updateLatestEncounterData('clientProfile', {
+                        livingChildren: livingChildren,
+                        obstetricHistory: { ...obstetricHistory, livingChildren: livingChildren }
+                      });
+                      
+                      // Child mortality assessment
                       const childMortalityWarning = document.getElementById('obstetric-child-mortality-warning');
                       if (childMortalityWarning) {
                         const childDeaths = para - livingChildren;
@@ -9617,7 +9670,37 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Validation Messages and Clinical Assessments */}
+              {/* Enhanced Validation Messages */}
+              {Object.keys(obstetricValidationErrors).length > 0 && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <svg className="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-medium text-red-800">Validation Errors</span>
+                  </div>
+                  {Object.entries(obstetricValidationErrors).map(([field, error]) => (
+                    <div key={field} className="text-xs text-red-700 ml-6 mb-1">
+                      <span className="font-medium capitalize">{field}:</span> {error}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Mandatory Fields Reminder */}
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center mb-2">
+                  <svg className="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm font-medium text-blue-800">Clinical Decision Support</span>
+                </div>
+                <div className="text-xs text-blue-700 ml-6">
+                  All four fields must be completed for every new antenatal registration.
+                  For antenatal visits: <strong>Gravida = (Para + Abortions/Miscarriages) + 1</strong>
+                </div>
+              </div>
+              
               <div id="obstetric-modal-validation" className="text-xs text-red-600 font-medium mt-2" style={{ display: 'none' }}></div>
               
               {/* Parity Classification Display */}
@@ -10218,7 +10301,59 @@ export default function AncPage() {
             <Button 
               className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
               onClick={() => {
+                // Validate mandatory fields before saving
+                const errors: Record<string, string> = {};
+                
+                if (!obstetricHistory.gravida || parseInt(obstetricHistory.gravida) < 1) {
+                  errors.gravida = 'Gravida is mandatory and must be at least 1 if currently pregnant';
+                }
+                if (!obstetricHistory.para) {
+                  errors.para = 'Para is mandatory for antenatal registration';
+                }
+                if (!obstetricHistory.abortions && obstetricHistory.abortions !== '0') {
+                  errors.abortions = 'Abortions/Miscarriages field is mandatory';
+                }
+                if (!obstetricHistory.livingChildren && obstetricHistory.livingChildren !== '0') {
+                  errors.livingChildren = 'Living children field is mandatory';
+                }
+                
+                if (Object.keys(errors).length > 0) {
+                  setObstetricValidationErrors(errors);
+                  toast({
+                    title: "Validation Error",
+                    description: "All four fields must be completed for antenatal registration.",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // Final validation of business rules
+                const gravida = parseInt(obstetricHistory.gravida);
+                const para = parseInt(obstetricHistory.para);
+                const abortions = parseInt(obstetricHistory.abortions);
+                const livingChildren = parseInt(obstetricHistory.livingChildren);
+                
+                if (gravida !== (para + abortions + 1)) {
+                  toast({
+                    title: "Business Rule Validation",
+                    description: `For antenatal visits: Gravida (${gravida}) should equal Para (${para}) + Abortions (${abortions}) + 1 = ${para + abortions + 1}`,
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // Save successful - update Latest Encounter
+                updateLatestEncounterData('clientProfile', {
+                  obstetricHistoryComplete: true,
+                  gravida,
+                  para,
+                  abortions,
+                  livingChildren,
+                  obstetricSummary: `G${gravida}P${para}A${abortions}L${livingChildren}`
+                });
+                
                 setShowObstetricHistoryDialog(false);
+                setObstetricValidationErrors({});
                 toast({
                   title: "Enhanced Obstetric History Saved",
                   description: "Complete obstetric assessment has been recorded successfully.",
