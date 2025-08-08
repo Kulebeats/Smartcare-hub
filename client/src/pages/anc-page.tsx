@@ -545,6 +545,9 @@ export default function AncPage() {
   useEffect(() => {
     const generatedSMN = generateSafeMotherhoodNumber(serialNumber);
     setSafeMotherhoodNumber(generatedSMN);
+    updateLatestEncounterData('rapidAssessment', {
+      safeMotherhoodNumber: generatedSMN
+    });
   }, [facilityCode, serialNumber]);
 
   // Event listener for partner selection from search results
@@ -849,6 +852,13 @@ export default function AncPage() {
       const updated = checked 
         ? [...prev, value]
         : prev.filter(sign => sign !== value);
+      
+      // Update Latest Encounter data
+      updateLatestEncounterData('rapidAssessment', {
+        dangerSigns: updated,
+        dangerSignsPresent: updated.length > 0,
+        assessmentDate: new Date().toISOString()
+      });
       
       // Sync to referral with delay to ensure DOM is ready
       setTimeout(() => {
@@ -3104,6 +3114,14 @@ export default function AncPage() {
       setDangerSignsConfirmed(false);
       setShowEmergencyReferralAuto(false);
       handleNoneDangerSigns();
+      
+      // Update Latest Encounter data to show no danger signs
+      updateLatestEncounterData('rapidAssessment', {
+        dangerSigns: [],
+        dangerSignsPresent: false,
+        assessmentDate: new Date().toISOString()
+      });
+      
       // Clear emergency referral when no danger signs
       setTimeout(() => {
         const emergencyNoRadio = document.getElementById('refNo') as HTMLInputElement;
@@ -3485,6 +3503,11 @@ export default function AncPage() {
                           className="w-full border rounded p-2" 
                           id="contact_date"
                           max={new Date().toISOString().split('T')[0]}
+                          onChange={(e) => {
+                            updateLatestEncounterData('rapidAssessment', {
+                              contactDate: e.target.value || 'Not recorded'
+                            });
+                          }}
                           required
                         />
                       </div>
@@ -3668,7 +3691,12 @@ export default function AncPage() {
                         <select 
                           className="w-full border rounded p-2" 
                           value={origin}
-                          onChange={(e) => setOrigin(e.target.value)}
+                          onChange={(e) => {
+                            setOrigin(e.target.value);
+                            updateLatestEncounterData('rapidAssessment', {
+                              origin: e.target.value || 'Not specified'
+                            });
+                          }}
                         >
                           <option value="">Select origin...</option>
                           <option value="From within 5 KM, within catchment area">From within 5 KM, within catchment area</option>
@@ -3687,7 +3715,12 @@ export default function AncPage() {
                         <select 
                           className="w-full border rounded p-2" 
                           value={cameAsCouple}
-                          onChange={(e) => setCameAsCouple(e.target.value as "" | "yes" | "no")}
+                          onChange={(e) => {
+                            setCameAsCouple(e.target.value as "" | "yes" | "no");
+                            updateLatestEncounterData('rapidAssessment', {
+                              cameAsCouple: e.target.value === "yes"
+                            });
+                          }}
                           required
                         >
                           <option value="">Select</option>
@@ -4466,6 +4499,13 @@ export default function AncPage() {
                                 if (referralDateField) referralDateField.style.display = isChecked ? 'block' : 'none';
                                 if (referralNotesField) referralNotesField.style.display = isChecked ? 'block' : 'none';
                                 if (checklistField) checklistField.style.display = isChecked ? 'block' : 'none';
+                                
+                                // Update Latest Encounter data
+                                if (isChecked) {
+                                  updateLatestEncounterData('rapidAssessment', {
+                                    emergencyReferral: true
+                                  });
+                                }
 
                                 // Initialize checklist progress tracking when shown
                                 if (isChecked && checklistField) {
@@ -4589,6 +4629,13 @@ export default function AncPage() {
                                 if (providerPhoneField) providerPhoneField.style.display = 'none';
                                 if (referralDateField) referralDateField.style.display = 'none';
                                 if (referralNotesField) referralNotesField.style.display = 'none';
+                                
+                                // Update Latest Encounter data
+                                if (isChecked) {
+                                  updateLatestEncounterData('rapidAssessment', {
+                                    emergencyReferral: false
+                                  });
+                                }
                               }}
                             />
                             <label htmlFor="refNo" className="text-sm">No</label>

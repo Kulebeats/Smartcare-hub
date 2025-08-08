@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, AlertCircle, Baby, Stethoscope, FlaskConical, Pill, Users, Activity, Calendar, Heart, TestTube, BookOpen, ArrowRightLeft, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FileText, AlertCircle, Baby, Stethoscope, FlaskConical, Pill, Users, Activity, Calendar, Heart, TestTube, BookOpen, ArrowRightLeft, Shield, Edit, Plus, ChevronRight } from 'lucide-react';
 
 interface LatestEncounterProps {
   activeSection: string;
@@ -100,6 +101,25 @@ const sectionPlaceholders = {
 };
 
 export function LatestEncounterCard({ activeSection, encounterData }: LatestEncounterProps) {
+  // Extract data from encounterData for the three sections
+  const clientDetailsData = {
+    contactDate: encounterData?.contactDate || encounterData?.rapidAssessment?.contactDate || 'Not recorded',
+    safeMotherhoodNumber: encounterData?.safeMotherhoodNumber || 'Not assigned',
+    origin: encounterData?.origin || 'Not specified',
+    cameAsCouple: encounterData?.cameAsCouple !== undefined ? (encounterData.cameAsCouple ? 'Yes' : 'No') : 'Not recorded'
+  };
+
+  const dangerSignsData = {
+    dangerSigns: encounterData?.dangerSigns || encounterData?.rapidAssessment?.dangerSigns || [],
+    healthConcerns: encounterData?.healthConcerns || []
+  };
+
+  const emergencyReferralData = {
+    emergencyReferral: encounterData?.emergencyReferral !== undefined ? (encounterData.emergencyReferral ? 'Yes' : 'No') : 'No',
+    checklistCompleted: encounterData?.checklistCompleted !== undefined ? (encounterData.checklistCompleted ? 'Yes' : 'No') : 'No',
+    feedbackReceived: encounterData?.feedbackReceived !== undefined ? (encounterData.feedbackReceived ? 'Yes' : 'No') : 'No'
+  };
+
   const getCurrentSectionData = () => {
     const sectionData = sectionPlaceholders[activeSection as keyof typeof sectionPlaceholders];
     if (!sectionData) {
@@ -382,19 +402,150 @@ export function LatestEncounterCard({ activeSection, encounterData }: LatestEnco
   const currentSectionData = getCurrentSectionData();
 
   return (
-    <Card className="border-2 border-blue-200 shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
-          {currentSectionData.icon}
-          <span>Latest Encounter</span>
-        </CardTitle>
-        <p className="text-sm text-gray-600 mt-1">
-          {currentSectionData.title}
-        </p>
-      </CardHeader>
-      <CardContent>
-        {renderSectionContent()}
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {/* Container 1: Gather Client Details */}
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-gray-800">Gather Client Details</CardTitle>
+            <Button 
+              variant="ghost" 
+              className="text-xs text-blue-600 hover:text-blue-700 p-0 h-auto font-normal"
+            >
+              View All
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="px-4 pb-3 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Contact Date:</span>
+              <span className="font-medium text-gray-900">{clientDetailsData.contactDate}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Safe Motherhood Number:</span>
+              <span className="font-medium text-gray-900">{clientDetailsData.safeMotherhoodNumber}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Origin:</span>
+              <span className="font-medium text-gray-900">{clientDetailsData.origin}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Came as a Couple:</span>
+              <span className={`font-medium ${clientDetailsData.cameAsCouple === 'Yes' ? 'text-green-600' : 'text-gray-900'}`}>
+                {clientDetailsData.cameAsCouple}
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
+              <Edit className="w-3 h-3 mr-1" />
+              Edit Record
+            </Button>
+            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-3 h-3 mr-1" />
+              Add Record
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Container 2: Danger Signs & Health Concerns */}
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-gray-800">Danger Signs & Health Concerns</CardTitle>
+            <Button 
+              variant="ghost" 
+              className="text-xs text-blue-600 hover:text-blue-700 p-0 h-auto font-normal"
+            >
+              View All
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="px-4 pb-3 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Danger Signs:</span>
+              <span className={`font-medium ${dangerSignsData.dangerSigns.length > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                {dangerSignsData.dangerSigns.length > 0 
+                  ? dangerSignsData.dangerSigns.join(', ') 
+                  : 'None identified'}
+              </span>
+            </div>
+            {dangerSignsData.dangerSigns.length > 0 && (
+              <div className="mt-2 p-2 bg-red-50 rounded text-xs">
+                <div className="flex items-center text-red-700 font-medium mb-1">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  Danger Signs Present
+                </div>
+                <ul className="text-red-600 list-disc list-inside ml-4">
+                  {dangerSignsData.dangerSigns.map((sign: string, index: number) => (
+                    <li key={index}>{sign}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
+              <Edit className="w-3 h-3 mr-1" />
+              Edit Record
+            </Button>
+            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-3 h-3 mr-1" />
+              Add Record
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Container 3: Emergency Referral */}
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-gray-800">Emergency Referral</CardTitle>
+            <Button 
+              variant="ghost" 
+              className="text-xs text-blue-600 hover:text-blue-700 p-0 h-auto font-normal"
+            >
+              View All
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="px-4 pb-3 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Emergency Referral:</span>
+              <span className={`font-medium ${emergencyReferralData.emergencyReferral === 'Yes' ? 'text-red-600' : 'text-green-600'}`}>
+                {emergencyReferralData.emergencyReferral}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Checklist Completed:</span>
+              <span className={`font-medium ${emergencyReferralData.checklistCompleted === 'Yes' ? 'text-green-600' : 'text-gray-900'}`}>
+                {emergencyReferralData.checklistCompleted}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Feedback Received:</span>
+              <span className={`font-medium ${emergencyReferralData.feedbackReceived === 'Yes' ? 'text-green-600' : 'text-gray-900'}`}>
+                {emergencyReferralData.feedbackReceived}
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button variant="secondary" size="sm" className="flex-1 text-xs h-7">
+              <Edit className="w-3 h-3 mr-1" />
+              Edit Record
+            </Button>
+            <Button variant="default" size="sm" className="flex-1 text-xs h-7 bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-3 h-3 mr-1" />
+              Add Record
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
