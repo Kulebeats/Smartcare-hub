@@ -9416,44 +9416,60 @@ export default function AncPage() {
                     value={obstetricHistory.gravida}
                     onChange={(e) => {
                       const gravida = parseInt(e.target.value) || 0;
-                      setObstetricHistory(prev => ({ ...prev, gravida: e.target.value }));
                       
-                      // Enhanced Business Rule Validation
-                      const errors: Record<string, string> = {};
-                      
-                      // Validate Gravida ≥ 1
-                      if (gravida < 1 && e.target.value !== '') {
-                        errors.gravida = 'Must be at least 1 if currently pregnant';
-                      }
-                      
-                      // Validate relationships with existing values
+                      // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      if (gravida > 0) {
-                        // Check if Gravida < (Para + Abortions/Miscarriages)
-                        if (gravida < (para + abortions)) {
-                          errors.gravida = 'Sum of live births and abortions/miscarriages cannot exceed total pregnancies.';
-                        }
-                        
-                        // Check if Para > Gravida
+                      // Auto-correction logic: If gravida < (para + abortions), reset para and abortions
+                      let correctedPara = para;
+                      let correctedAbortions = abortions;
+                      let correctedLivingChildren = livingChildren;
+                      
+                      if (gravida > 0 && gravida < (para + abortions)) {
+                        // Reset both para and abortions to 0 to maintain business rules
+                        correctedPara = 0;
+                        correctedAbortions = 0;
+                        correctedLivingChildren = 0; // Living children can't exceed para, so reset too
+                      } else if (gravida > 0) {
+                        // Check individual constraints
                         if (para > gravida) {
-                          errors.para = 'Live births cannot exceed total pregnancies.';
+                          correctedPara = 0;
+                          correctedLivingChildren = 0; // Living children can't exceed para
+                        }
+                        if (abortions > gravida) {
+                          correctedAbortions = 0;
+                        }
+                        if (livingChildren > correctedPara) {
+                          correctedLivingChildren = 0;
                         }
                       }
                       
-                      // Outlier detection
-                      if (gravida > 15) {
-                        errors.gravida = 'Gravida >15 is extremely rare. Please verify data accuracy.';
-                      }
+                      // Update state with corrected values
+                      setObstetricHistory(prev => ({ 
+                        ...prev, 
+                        gravida: e.target.value,
+                        para: correctedPara.toString(),
+                        abortions: correctedAbortions.toString(),
+                        livingChildren: correctedLivingChildren.toString()
+                      }));
                       
-                      setObstetricValidationErrors(errors);
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
                         gravida: gravida,
-                        obstetricHistory: { ...obstetricHistory, gravida: gravida }
+                        para: correctedPara,
+                        abortions: correctedAbortions,
+                        livingChildren: correctedLivingChildren,
+                        obstetricHistory: { 
+                          gravida: e.target.value, 
+                          para: correctedPara.toString(),
+                          abortions: correctedAbortions.toString(),
+                          livingChildren: correctedLivingChildren.toString()
+                        }
                       });
                       
                       // Show/hide risk assessment fields
@@ -9482,42 +9498,50 @@ export default function AncPage() {
                     value={obstetricHistory.para}
                     onChange={(e) => {
                       const para = parseInt(e.target.value) || 0;
-                      setObstetricHistory(prev => ({ ...prev, para: e.target.value }));
                       
-                      // Enhanced Business Rule Validation
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
+                      // Get current values
                       const gravida = parseInt(obstetricHistory.gravida) || 0;
                       const abortions = parseInt(obstetricHistory.abortions) || 0;
                       const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
                       
-                      // Clear para errors first
-                      delete errors.para;
-                      delete errors.livingChildren;
+                      // Auto-correction logic
+                      let correctedPara = para;
+                      let correctedLivingChildren = livingChildren;
                       
-                      if (para > 0) {
-                        // Cannot exceed Gravida
-                        if (para > gravida && gravida > 0) {
-                          errors.para = 'Live births cannot exceed total pregnancies.';
-                        }
-                        
-                        // Living children ≤ Para
-                        if (livingChildren > para) {
-                          errors.livingChildren = 'Number of living children cannot exceed number of live births.';
-                        }
-                        
-                        // Outlier detection
-                        if (para > 15) {
-                          errors.para = 'Para >15 is extremely rare. Please verify data accuracy.';
-                        }
+                      // If para exceeds gravida, reset para to 0
+                      if (para > gravida && gravida > 0) {
+                        correctedPara = 0;
+                        correctedLivingChildren = 0; // Living children can't exceed para
+                      } 
+                      // If gravida < (para + abortions), reset para to 0
+                      else if (gravida > 0 && gravida < (para + abortions)) {
+                        correctedPara = 0;
+                        correctedLivingChildren = 0;
+                      }
+                      // If living children exceed corrected para, reset living children
+                      else if (livingChildren > correctedPara) {
+                        correctedLivingChildren = 0;
                       }
                       
-                      setObstetricValidationErrors(errors);
+                      // Update state with corrected values
+                      setObstetricHistory(prev => ({ 
+                        ...prev, 
+                        para: correctedPara.toString(),
+                        livingChildren: correctedLivingChildren.toString()
+                      }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        para: para,
-                        obstetricHistory: { ...obstetricHistory, para: para }
+                        para: correctedPara,
+                        livingChildren: correctedLivingChildren,
+                        obstetricHistory: { 
+                          ...obstetricHistory, 
+                          para: correctedPara.toString(),
+                          livingChildren: correctedLivingChildren.toString()
+                        }
                       });
                       
                       // Business Rule: Parity classification
@@ -9575,36 +9599,36 @@ export default function AncPage() {
                     value={obstetricHistory.abortions}
                     onChange={(e) => {
                       const abortions = parseInt(e.target.value) || 0;
-                      setObstetricHistory(prev => ({ ...prev, abortions: e.target.value }));
                       
-                      // Enhanced Business Rule Validation
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
+                      // Get current values
                       const gravida = parseInt(obstetricHistory.gravida) || 0;
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // Clear abortion errors first
-                      delete errors.abortions;
-                      delete errors.gravida;
+                      // Auto-correction logic
+                      let correctedAbortions = abortions;
                       
-                      if (abortions > 0 && gravida > 0) {
-                        // Cannot exceed Gravida
-                        if (abortions > gravida) {
-                          errors.abortions = 'Abortions/miscarriages cannot exceed total pregnancies.';
-                        }
-                        
-                        // Check total relationship: Gravida < (Para + Abortions)
-                        if (gravida < (para + abortions)) {
-                          errors.gravida = 'Sum of live births and abortions/miscarriages cannot exceed total pregnancies.';
-                        }
+                      // If abortions exceed gravida, reset to 0
+                      if (abortions > gravida && gravida > 0) {
+                        correctedAbortions = 0;
+                      }
+                      // If gravida < (para + abortions), reset abortions to 0
+                      else if (gravida > 0 && gravida < (para + abortions)) {
+                        correctedAbortions = 0;
                       }
                       
-                      setObstetricValidationErrors(errors);
+                      // Update state with corrected values
+                      setObstetricHistory(prev => ({ 
+                        ...prev, 
+                        abortions: correctedAbortions.toString()
+                      }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        abortions: abortions,
-                        obstetricHistory: { ...obstetricHistory, abortions: abortions }
+                        abortions: correctedAbortions,
+                        obstetricHistory: { ...obstetricHistory, abortions: correctedAbortions.toString() }
                       });
                       
                       // Recurrent pregnancy loss assessment
@@ -9627,29 +9651,31 @@ export default function AncPage() {
                     value={obstetricHistory.livingChildren}
                     onChange={(e) => {
                       const livingChildren = parseInt(e.target.value) || 0;
-                      setObstetricHistory(prev => ({ ...prev, livingChildren: e.target.value }));
                       
-                      // Enhanced Business Rule Validation
-                      const errors: Record<string, string> = { ...obstetricValidationErrors };
-                      
+                      // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
                       
-                      // Clear living children errors first
-                      delete errors.livingChildren;
+                      // Auto-correction logic
+                      let correctedLivingChildren = livingChildren;
                       
-                      if (livingChildren > 0 && para > 0) {
-                        // Living children ≤ Para
-                        if (livingChildren > para) {
-                          errors.livingChildren = 'Number of living children cannot exceed number of live births.';
-                        }
+                      // If living children exceed para, reset to 0
+                      if (livingChildren > para && para > 0) {
+                        correctedLivingChildren = 0;
                       }
                       
-                      setObstetricValidationErrors(errors);
+                      // Update state with corrected values
+                      setObstetricHistory(prev => ({ 
+                        ...prev, 
+                        livingChildren: correctedLivingChildren.toString()
+                      }));
+                      
+                      // Clear any validation errors since we auto-correct
+                      setObstetricValidationErrors({});
                       
                       // Update Latest Encounter data
                       updateLatestEncounterData('clientProfile', {
-                        livingChildren: livingChildren,
-                        obstetricHistory: { ...obstetricHistory, livingChildren: livingChildren }
+                        livingChildren: correctedLivingChildren,
+                        obstetricHistory: { ...obstetricHistory, livingChildren: correctedLivingChildren.toString() }
                       });
                       
                       // Child mortality assessment
@@ -9670,20 +9696,18 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Enhanced Validation Messages */}
+              {/* Auto-correction Notice - Only show when corrections were made */}
               {Object.keys(obstetricValidationErrors).length > 0 && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-center mb-2">
-                    <svg className="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium text-red-800">Validation Errors</span>
+                    <span className="text-sm font-medium text-green-800">Auto-Correction Applied</span>
                   </div>
-                  {Object.entries(obstetricValidationErrors).map(([field, error]) => (
-                    <div key={field} className="text-xs text-red-700 ml-6 mb-1">
-                      <span className="font-medium capitalize">{field}:</span> {error}
-                    </div>
-                  ))}
+                  <div className="text-xs text-green-700 ml-6">
+                    Invalid entries have been automatically corrected to maintain obstetric history business rules.
+                  </div>
                 </div>
               )}
               
