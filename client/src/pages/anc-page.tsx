@@ -5279,6 +5279,7 @@ export default function AncPage() {
                         </div>
 
                         {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */}
+                        <div className="grid grid-cols-4 gap-4">
                             <div className="space-y-1">
                               <label className="block text-xs font-medium">Para (Live births)</label>
                               <input 
@@ -5494,6 +5495,7 @@ export default function AncPage() {
                               />
                             </div>
                           </div>
+                        </div>
 
                           {/* Previous Pregnancies Detailed History */}
                           <div className="space-y-2">
