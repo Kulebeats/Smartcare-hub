@@ -2034,7 +2034,8 @@ export default function AncPage() {
   const [obstetricValidationModal, setObstetricValidationModal] = useState<{
     isOpen: boolean;
     errors: Record<string, string>;
-  }>({ isOpen: false, errors: {} });
+    showDetailedView: boolean;
+  }>({ isOpen: false, errors: {}, showDetailedView: false });
   const [showMedicalHistoryDialog, setShowMedicalHistoryDialog] = useState(false);
   const [showStandardAssessmentDialog, setShowStandardAssessmentDialog] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
@@ -4571,9 +4572,8 @@ export default function AncPage() {
                     <form id="emergency-referral-form-data">
                     
                     {/* Intelligent Checklist Relevance System */}
-                    <script>
-                      {`
-                        window.updateChecklistRelevance = function() {
+                    {/* Removed invalid script tag - functionality should be moved to React event handlers
+                        // Removed invalid JavaScript function
                           const selectedReasons = Array.from(document.querySelectorAll('input[name="referral_reasons"]:checked')).map(cb => cb.value);
                           
                           // Define checklist section requirements based on emergency conditions
@@ -4731,9 +4731,7 @@ export default function AncPage() {
                           
                           // Update progress after visibility changes
                           setTimeout(updateProgress, 100);
-                        };
-                      `}
-                    </script>
+                    */
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2" id="emergency-referral-field">
@@ -5280,53 +5278,7 @@ export default function AncPage() {
                           </div>
                         </div>
 
-                        {/* Enhanced Obstetric History Assessment with Conditional Logic */}
-                        <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                          <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Enhanced Obstetric History Assessment</h5>
-                          
-                          <div className="grid grid-cols-4 gap-3">
-                            <div className="space-y-1">
-                              <label className="block text-xs font-medium">Gravida (Total pregnancies) <span className="text-red-500">*</span></label>
-                              <input 
-                                type="number" 
-                                id="emergency_gravida"
-                                min="1" 
-                                max="20" 
-                                className="w-full border rounded p-2 text-sm"
-                                required
-                                onChange={(e) => {
-                                  const gravida = parseInt(e.target.value);
-                                  const obstetricRiskFields = document.getElementById('obstetric-risk-fields');
-                                  const grandMultiparaWarning = document.getElementById('grandmultipara-warning');
-                                  
-                                  if (obstetricRiskFields) {
-                                    obstetricRiskFields.style.display = gravida > 1 ? 'block' : 'none';
-                                  }
-                                  
-                                  if (grandMultiparaWarning) {
-                                    if (gravida >= 5) {
-                                      grandMultiparaWarning.style.display = 'block';
-                                    } else {
-                                      grandMultiparaWarning.style.display = 'none';
-                                    }
-                                  }
-                                  
-                                  // Validate existing Para and Abortions values
-                                  const para = parseInt((document.getElementById('emergency_para') as HTMLInputElement)?.value || '0');
-                                  const abortions = parseInt((document.getElementById('emergency_abortions') as HTMLInputElement)?.value || '0');
-                                  const validationMessage = document.getElementById('emergency-obstetric-validation');
-                                  
-                                  if (validationMessage && gravida > 0) {
-                                    if (para + abortions > gravida) {
-                                      validationMessage.textContent = 'Warning: Para + Abortions cannot exceed total pregnancies (Gravida)';
-                                      validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
-                                      validationMessage.style.display = 'block';
-                                    } else {
-                                      validationMessage.style.display = 'none';
-                                    }
-                                  }
-                                }}
-                              />
+                        {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */}
                             </div>
                             <div className="space-y-1">
                               <label className="block text-xs font-medium">Para (Live births)</label>
@@ -5535,11 +5487,8 @@ export default function AncPage() {
                                       largeFamilyNote.innerHTML = 
                                         '<div class="text-xs text-blue-600 font-medium">Large Family Considerations:</div>' +
                                         '<div class="text-xs text-blue-700">• ' + livingChildren + ' living children</div>' +
-                                        '<div class="text-xs text-blue-700">• Consider family planning counseling</div>' +
-                                        '<div class="text-xs text-blue-700">• Assess social support systems</div>';
-                                      largeFamilyNote.style.display = 'block';
-                                    } else {
-                                      largeFamilyNote.style.display = 'none';
+                                      // Large family counseling display logic
+                                      // Display logic handled by React state
                                     }
                                   }
                                 }}
@@ -5637,72 +5586,77 @@ export default function AncPage() {
                                   for (let i = 0; i < count; i++) {
                                     const pregnancyRow = document.createElement('div');
                                     pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
-                                    pregnancyRow.innerHTML = 
-                                      '<h6 class="text-xs font-medium text-gray-700">Pregnancy ' + (i + 1) + '</h6>' +
-                                      '<div class="grid grid-cols-2 gap-3">' +
-                                        '<div>' +
-                                          '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>' +
-                                          '<input type="date" class="w-full border rounded p-1 text-xs" id="emergency_delivery_date_' + i + '" />' +
-                                        '</div>' +
-                                        '<div>' +
-                                          '<label class="block text-xs font-medium mb-1">Estimated date of delivery/termination</label>' +
-                                          '<input type="date" class="w-full border rounded p-1 text-xs" id="emergency_estimated_delivery_' + i + '" />' +
-                                        '</div>' +
-                                      '</div>' +
-                                      '<div class="grid grid-cols-2 gap-3">' +
-                                        '<div>' +
-                                          '<label class="block text-xs font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>' +
-                                          '<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="emergency_gestational_age_' + i + '" onChange="updateEmergencyConditionalFields(' + i + ')" placeholder="e.g., 8" />' +
-                                        '</div>' +
-                                        '<div id="emergency_outcome_section_' + i + '" style="display: none;">' +
-                                          '<label class="block text-xs font-medium mb-1">Outcome</label>' +
-                                          '<select class="w-full border rounded p-1 text-xs" id="emergency_outcome_' + i + '">' +
-                                            '<option value="">Select outcome...</option>' +
-                                          '</select>' +
-                                        '</div>' +
-                                      '</div>' +
-                                      '<div id="emergency_delivery_mode_section_' + i + '" style="display: none;">' +
-                                        '<label class="block text-xs font-medium mb-1">Mode of delivery</label>' +
-                                        '<select class="w-full border rounded p-1 text-xs" id="emergency_mode_of_delivery_' + i + '" onChange="updateEmergencyDeliveryFields(' + i + ')">' +
-                                          '<option value="">Select mode...</option>' +
-                                          '<option value="normal_vertex">Normal Vertex Delivery</option>' +
-                                          '<option value="assisted_vaginal">Assisted Vaginal Delivery</option>' +
-                                          '<option value="assisted_breech">Assisted Breech Delivery</option>' +
-                                          '<option value="c_section">C-section</option>' +
-                                        '</select>' +
-                                      '</div>' +
-                                      '<div id="emergency_labour_type_section_' + i + '" style="display: none;">' +
-                                        '<label class="block text-xs font-medium mb-1">Type of labour</label>' +
-                                        '<select class="w-full border rounded p-1 text-xs" id="emergency_labour_type_' + i + '" onChange="updateEmergencyInfantSex(' + i + ')">' +
-                                          '<option value="">Select type...</option>' +
-                                          '<option value="induced">Induced</option>' +
-                                          '<option value="spontaneous">Spontaneous</option>' +
-                                        '</select>' +
-                                      '</div>' +
-                                      '<div id="emergency_assisted_vaginal_type_section_' + i + '" style="display: none;">' +
-                                        '<label class="block text-xs font-medium mb-1">Type of assisted vaginal delivery</label>' +
-                                        '<select class="w-full border rounded p-1 text-xs" id="emergency_assisted_vaginal_type_' + i + '">' +
-                                          '<option value="">Select type...</option>' +
-                                          '<option value="forceps">Forceps</option>' +
-                                          '<option value="vacuum">Vacuum</option>' +
-                                        '</select>' +
-                                      '</div>' +
-                                      '<div id="emergency_csection_type_section_' + i + '" style="display: none;">' +
-                                        '<label class="block text-xs font-medium mb-1">Type of C-section</label>' +
-                                        '<select class="w-full border rounded p-1 text-xs" id="emergency_csection_type_' + i + '">' +
-                                          '<option value="">Select type...</option>' +
-                                          '<option value="planned">Planned/Elective</option>' +
-                                          '<option value="emergency">Emergency</option>' +
-                                        '</select>' +
-                                      '</div>' +
-                                      '<div id="emergency_infant_sex_section_' + i + '" style="display: none;">' +
-                                        '<label class="block text-xs font-medium mb-1">Sex of infant</label>' +
-                                        '<select class="w-full border rounded p-1 text-xs" id="emergency_infant_sex_' + i + '">' +
-                                          '<option value="">Select sex...</option>' +
-                                          '<option value="male">Male</option>' +
-                                          '<option value="female">Female</option>' +
-                                        '</select>' +
-                                      '</div>';
+                                    
+                                    // Create HTML string properly
+                                    const htmlContent = [
+                                      `<h6 class="text-xs font-medium text-gray-700">Pregnancy ${i + 1}</h6>`,
+                                      '<div class="grid grid-cols-2 gap-3">',
+                                        '<div>',
+                                          '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>',
+                                          `<input type="date" class="w-full border rounded p-1 text-xs" id="emergency_delivery_date_${i}" />`,
+                                        '</div>',
+                                        '<div>',
+                                          '<label class="block text-xs font-medium mb-1">Estimated date of delivery/termination</label>',
+                                          `<input type="date" class="w-full border rounded p-1 text-xs" id="emergency_estimated_delivery_${i}" />`,
+                                        '</div>',
+                                      '</div>',
+                                      '<div class="grid grid-cols-2 gap-3">',
+                                        '<div>',
+                                          '<label class="block text-xs font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>',
+                                          `<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="emergency_gestational_age_${i}" onChange="updateEmergencyConditionalFields(${i})" placeholder="e.g., 8" />`,
+                                        '</div>',
+                                        `<div id="emergency_outcome_section_${i}" style="display: none;">`,
+                                          '<label class="block text-xs font-medium mb-1">Outcome</label>',
+                                          `<select class="w-full border rounded p-1 text-xs" id="emergency_outcome_${i}">`,
+                                            '<option value="">Select outcome...</option>',
+                                          '</select>',
+                                        '</div>',
+                                      '</div>',
+                                      `<div id="emergency_delivery_mode_section_${i}" style="display: none;">`,
+                                        '<label class="block text-xs font-medium mb-1">Mode of delivery</label>',
+                                        `<select class="w-full border rounded p-1 text-xs" id="emergency_mode_of_delivery_${i}" onChange="updateEmergencyDeliveryFields(${i})">`,
+                                          '<option value="">Select mode...</option>',
+                                          '<option value="normal_vertex">Normal Vertex Delivery</option>',
+                                          '<option value="assisted_vaginal">Assisted Vaginal Delivery</option>',
+                                          '<option value="assisted_breech">Assisted Breech Delivery</option>',
+                                          '<option value="c_section">C-section</option>',
+                                        '</select>',
+                                      '</div>',
+                                      `<div id="emergency_labour_type_section_${i}" style="display: none;">`,
+                                        '<label class="block text-xs font-medium mb-1">Type of labour</label>',
+                                        `<select class="w-full border rounded p-1 text-xs" id="emergency_labour_type_${i}" onChange="updateEmergencyInfantSex(${i})">`,
+                                          '<option value="">Select type...</option>',
+                                          '<option value="induced">Induced</option>',
+                                          '<option value="spontaneous">Spontaneous</option>',
+                                        '</select>',
+                                      '</div>',
+                                      `<div id="emergency_assisted_vaginal_type_section_${i}" style="display: none;">`,
+                                        '<label class="block text-xs font-medium mb-1">Type of assisted vaginal delivery</label>',
+                                        `<select class="w-full border rounded p-1 text-xs" id="emergency_assisted_vaginal_type_${i}">`,
+                                          '<option value="">Select type...</option>',
+                                          '<option value="forceps">Forceps</option>',
+                                          '<option value="vacuum">Vacuum</option>',
+                                        '</select>',
+                                      '</div>',
+                                      `<div id="emergency_csection_type_section_${i}" style="display: none;">`,
+                                        '<label class="block text-xs font-medium mb-1">Type of C-section</label>',
+                                        `<select class="w-full border rounded p-1 text-xs" id="emergency_csection_type_${i}">`,
+                                          '<option value="">Select type...</option>',
+                                          '<option value="planned">Planned/Elective</option>',
+                                          '<option value="emergency">Emergency</option>',
+                                        '</select>',
+                                      '</div>',
+                                      `<div id="emergency_infant_sex_section_${i}" style="display: none;">`,
+                                        '<label class="block text-xs font-medium mb-1">Sex of infant</label>',
+                                        `<select class="w-full border rounded p-1 text-xs" id="emergency_infant_sex_${i}">`,
+                                          '<option value="">Select sex...</option>',
+                                          '<option value="male">Male</option>',
+                                          '<option value="female">Female</option>',
+                                        '</select>',
+                                      '</div>'
+                                    ].join('');
+                                    
+                                    pregnancyRow.innerHTML = htmlContent;
                                     historyContainer.appendChild(pregnancyRow);
                                   }
                                 }
@@ -8126,42 +8080,13 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Obstetric History Assessment */}
-              <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Obstetric History Assessment</h5>
-                
-                <div className="grid grid-cols-4 gap-3">
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Gravida (Total pregnancies) <span className="text-red-500">*</span></label>
-                    <input 
-                      type="number" 
-                      id="referral_gravida"
-                      min="1" 
-                      max="15" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 3"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Para (Live births)</label>
-                    <input 
-                      type="number" 
-                      id="referral_para"
-                      min="0" 
-                      max="15" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 2"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Abortions/Miscarriages</label>
-                    <input 
-                      type="number" 
-                      id="referral_abortions"
-                      min="0" 
-                      max="10" 
+              {/* Obstetric History Assessment - Available in modal */}
+              <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                <p className="text-sm text-blue-700 text-center">
+                  <InfoIcon className="inline w-4 h-4 mr-1" />
+                  Complete obstetric assessment available in dedicated modal
+                </p>
+              </div> 
                       className="w-full border rounded p-2 text-sm"
                       placeholder="e.g., 0"
                     />
@@ -11447,7 +11372,7 @@ export default function AncPage() {
                       
                       <button
                         onClick={() => {
-                          // Show detailed assessment info
+                          setObstetricValidationModal(prev => ({ ...prev, showDetailedView: !prev.showDetailedView }));
                         }}
                         className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-blue-600 hover:bg-blue-700 text-white"
                       >
@@ -11456,7 +11381,7 @@ export default function AncPage() {
                             <InfoIcon className="w-6 h-6" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-bold text-base">Detailed Assessment</h3>
+                            <h3 className="font-bold text-base">{!obstetricValidationModal.showDetailedView ? 'Show' : 'Hide'} Detailed Assessment</h3>
                             <p className="text-sm opacity-90">View full validation & recommendations</p>
                           </div>
                         </div>
