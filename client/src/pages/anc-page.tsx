@@ -5491,7 +5491,8 @@ export default function AncPage() {
                                       largeFamilyNote.style.display = 'none';
                                     }
                                   }
-                                }}
+                                }
+                              }}
                               />
                             </div>
                           </div>
