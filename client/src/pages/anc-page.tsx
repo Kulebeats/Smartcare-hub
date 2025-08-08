@@ -854,7 +854,7 @@ export default function AncPage() {
         : prev.filter(sign => sign !== value);
       
       // Update Latest Encounter data
-      updateLatestEncounterData('rapidAssessment', {
+      updateLatestEncounterData('dangerSigns', {
         dangerSigns: updated,
         dangerSignsPresent: updated.length > 0,
         assessmentDate: new Date().toISOString()
@@ -3190,7 +3190,7 @@ export default function AncPage() {
       handleNoneDangerSigns();
       
       // Update Latest Encounter data to show no danger signs
-      updateLatestEncounterData('rapidAssessment', {
+      updateLatestEncounterData('dangerSigns', {
         dangerSigns: [],
         dangerSignsPresent: false,
         assessmentDate: new Date().toISOString()
@@ -3591,6 +3591,7 @@ export default function AncPage() {
                       background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%)',
                       boxShadow: '0 20px 50px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)'
                     }}>
+                    
                     <DialogTitle>Gather Client Details</DialogTitle>
                     <form id="patient-details-form-data">
                     <div className="grid grid-cols-2 gap-4">
@@ -3602,7 +3603,7 @@ export default function AncPage() {
                           id="contact_date"
                           max={new Date().toISOString().split('T')[0]}
                           onChange={(e) => {
-                            updateLatestEncounterData('rapidAssessment', {
+                            updateLatestEncounterData('clientDetails', {
                               contactDate: e.target.value || 'Not recorded'
                             });
                           }}
@@ -3791,7 +3792,7 @@ export default function AncPage() {
                           value={origin}
                           onChange={(e) => {
                             setOrigin(e.target.value);
-                            updateLatestEncounterData('rapidAssessment', {
+                            updateLatestEncounterData('clientDetails', {
                               origin: e.target.value || 'Not specified'
                             });
                           }}
@@ -3815,7 +3816,7 @@ export default function AncPage() {
                           value={cameAsCouple}
                           onChange={(e) => {
                             setCameAsCouple(e.target.value as "" | "yes" | "no");
-                            updateLatestEncounterData('rapidAssessment', {
+                            updateLatestEncounterData('clientDetails', {
                               cameAsCouple: e.target.value === "yes"
                             });
                           }}
@@ -4600,8 +4601,10 @@ export default function AncPage() {
                                 
                                 // Update Latest Encounter data
                                 if (isChecked) {
-                                  updateLatestEncounterData('rapidAssessment', {
-                                    emergencyReferral: true
+                                  updateLatestEncounterData('emergencyReferral', {
+                                    emergencyReferral: true,
+                                    checklistCompleted: false,
+                                    feedbackReceived: false
                                   });
                                 }
 
@@ -4730,8 +4733,10 @@ export default function AncPage() {
                                 
                                 // Update Latest Encounter data
                                 if (isChecked) {
-                                  updateLatestEncounterData('rapidAssessment', {
-                                    emergencyReferral: false
+                                  updateLatestEncounterData('emergencyReferral', {
+                                    emergencyReferral: false,
+                                    checklistCompleted: false,
+                                    feedbackReceived: false
                                   });
                                 }
                               }}
