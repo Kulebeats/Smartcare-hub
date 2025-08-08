@@ -5280,15 +5280,10 @@ export default function AncPage() {
                         {/* JSX structure fixed - content now handled by ClientHealthHistorySection component */}
                         {/* Note: Obstetric Assessment moved to modal - triggered automatically when fields are completed */
 
-                        {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */
-                                min="0" 
-                                max="20"
-                                className="w-full border rounded p-2 text-sm" 
+                        {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */}
+                        <div id="obstetric-risk-fields" className="space-y-3 border border-amber-300 rounded p-3 bg-amber-50" style={{ display: 'none' }}> 
                                 onChange={(e) => {
                                   const para = parseInt(e.target.value) || 0;
-                                  const gravida = parseInt((document.getElementById('gravida') as HTMLInputElement)?.value || '0');
-                                  const abortions = parseInt((document.getElementById('abortions') as HTMLInputElement)?.value || '0');
-                                  const validationMessage = document.getElementById('obstetric-validation');
                                   
                                   // Clinical Business Rules: Para validation
                                   if (validationMessage) {
@@ -5841,6 +5836,7 @@ export default function AncPage() {
                         {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */}
                         <div id="obstetric-risk-fields" className="space-y-3 border border-amber-300 rounded p-3 bg-amber-50" style={{ display: 'none' }}>
                           <h5 className="text-sm font-medium text-amber-700 border-b border-amber-300 pb-1">Previous Pregnancy Risk Assessment</h5>
+                          </div>
                           
                           <div className="space-y-2">
                             <label className="block text-sm font-medium">Any complications in previous pregnancies? <span className="text-red-500">*</span></label>
