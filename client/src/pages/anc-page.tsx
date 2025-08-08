@@ -1438,11 +1438,11 @@ export default function AncPage() {
   const handleSaveHIVTesting = (data: HIVTestingData) => {
     setHivTestingData(data);
     
-    // Update Recent Data Summary with HTS status
+    // Update Recent Data Summary with HTS status using correct field names
     updateRecentDataSummary({
-      testResult: data.bioline === 'Reactive' ? 'Positive' : data.bioline === 'Non-Reactive' ? 'Negative' : data.bioline,
-      testDate: data.testDate || new Date().toISOString().split('T')[0],
-      hivType: data.bioline === 'Reactive' ? (data.confirmatory || 'HIV+') : null
+      testResult: data.bioline === 'Reactive' ? 'Positive' : data.bioline === 'Non-reactive' ? 'Negative' : data.bioline,
+      testDate: data.testDate ? new Date(data.testDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      hivType: data.bioline === 'Reactive' ? (data.hivType || 'HIV+') : null
     });
     
     // Check if HIV test is positive (bioline is Reactive)
@@ -1494,9 +1494,9 @@ export default function AncPage() {
   const handleSavePOCTests = (data: POCTestData[]) => {
     setPocTestsData(data);
     
-    // Update Recent Data Summary with investigation results
-    const completedTests = data.filter(test => test.result && test.result !== 'Pending').length;
-    const pendingTests = data.filter(test => !test.result || test.result === 'Pending').length;
+    // Update Recent Data Summary with investigation results using correct field mapping
+    const completedTests = data.filter(test => test.results?.value && test.results?.resultStatus !== 'pending').length;
+    const pendingTests = data.filter(test => !test.results?.value || test.results?.resultStatus === 'pending').length;
     const investigationSummary = data.length > 0 
       ? `${completedTests} completed, ${pendingTests} pending`
       : 'No tests conducted';
@@ -1544,21 +1544,37 @@ export default function AncPage() {
     setInterventionsData(data);
     updateInterventionsTreatmentsStatus(data);
     
-    // Update Recent Data Summary with treatment plan
+    // Update Recent Data Summary with treatment plan using correct field mapping
     const treatmentSummary = [];
-    if (data.medications && data.medications.length > 0) {
-      treatmentSummary.push(`${data.medications.length} medications prescribed`);
+    
+    // Check nutrition supplements
+    const nutritionGiven = [];
+    if (data.iron_given === 'yes') nutritionGiven.push('Iron');
+    if (data.folic_acid_given === 'yes') nutritionGiven.push('Folic Acid');
+    if (data.calcium_given === 'yes') nutritionGiven.push('Calcium');
+    if (nutritionGiven.length > 0) {
+      treatmentSummary.push(`${nutritionGiven.length} nutrition supplements given`);
     }
-    if (data.procedures && data.procedures.length > 0) {
-      treatmentSummary.push(`${data.procedures.length} procedures planned`);
+    
+    // Check immunizations 
+    const immunizations = [];
+    if (data.tt1_given === 'yes') immunizations.push('TT1');
+    if (data.tt2_given === 'yes') immunizations.push('TT2');
+    if (data.tt3_given === 'yes') immunizations.push('TT3');
+    if (data.tt4_given === 'yes') immunizations.push('TT4');
+    if (data.tt5_given === 'yes') immunizations.push('TT5');
+    if (immunizations.length > 0) {
+      treatmentSummary.push(`${immunizations.length} immunizations given`);
     }
-    if (data.referrals && data.referrals.length > 0) {
-      treatmentSummary.push(`${data.referrals.length} referrals made`);
+    
+    // Check preventive therapy
+    if (data.ipt_given === 'yes') {
+      treatmentSummary.push('IPT therapy given');
     }
     
     updateRecentDataSummary({
       treatmentPlan: treatmentSummary.length > 0 ? treatmentSummary.join(', ') : 'No active interventions',
-      activeMedications: data.medications || []
+      activeMedications: nutritionGiven
     });
     
     toast({
