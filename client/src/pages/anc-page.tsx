@@ -2917,6 +2917,11 @@ export default function AncPage() {
     }
   }, [obstetricHistory]);
 
+  // Generate comprehensive obstetric assessment
+  const generateComprehensiveObstetricAssessment = () => {
+    return validateAllObstetricRules();
+  };
+
   // Comprehensive validation function
   const validateAllObstetricRules = () => {
     const gravida = parseInt(obstetricHistory.gravida) || 0;
@@ -10316,7 +10321,7 @@ export default function AncPage() {
                 }
                 
                 if (Object.keys(errors).length > 0) {
-                  setObstetricValidationErrors(errors);
+                  setObstetricValidationModal({ isOpen: true, errors });
                   toast({
                     title: "Validation Error",
                     description: "All four fields must be completed for antenatal registration.",
@@ -10351,7 +10356,7 @@ export default function AncPage() {
                 });
                 
                 setShowObstetricHistoryDialog(false);
-                setObstetricValidationErrors({});
+                setObstetricValidationModal({ isOpen: false, errors: {} });
                 toast({
                   title: "Enhanced Obstetric History Saved",
                   description: "Complete obstetric assessment has been recorded successfully.",
