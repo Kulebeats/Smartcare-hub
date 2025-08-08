@@ -1438,6 +1438,13 @@ export default function AncPage() {
   const handleSaveHIVTesting = (data: HIVTestingData) => {
     setHivTestingData(data);
     
+    // Update Recent Data Summary with HTS status
+    updateRecentDataSummary({
+      testResult: data.bioline === 'Reactive' ? 'Positive' : data.bioline === 'Non-Reactive' ? 'Negative' : data.bioline,
+      testDate: data.testDate || new Date().toISOString().split('T')[0],
+      hivType: data.bioline === 'Reactive' ? (data.confirmatory || 'HIV+') : null
+    });
+    
     // Check if HIV test is positive (bioline is Reactive)
     if (data.bioline === 'Reactive') {
       toast({
@@ -1486,6 +1493,19 @@ export default function AncPage() {
 
   const handleSavePOCTests = (data: POCTestData[]) => {
     setPocTestsData(data);
+    
+    // Update Recent Data Summary with investigation results
+    const completedTests = data.filter(test => test.result && test.result !== 'Pending').length;
+    const pendingTests = data.filter(test => !test.result || test.result === 'Pending').length;
+    const investigationSummary = data.length > 0 
+      ? `${completedTests} completed, ${pendingTests} pending`
+      : 'No tests conducted';
+    
+    updateRecentDataSummary({
+      investigations: investigationSummary,
+      pocTests: data
+    });
+    
     toast({
       title: "POC Tests Updated",
       description: `${data.length} POC test(s) have been saved successfully.`,
@@ -1495,6 +1515,15 @@ export default function AncPage() {
   // Laboratory Tests handler
   const handleSaveLaboratoryTests = (data: any) => {
     setLaboratoryTestsData(data);
+    
+    // Update Recent Data Summary with HTS status from lab results
+    if (data.hiv_status) {
+      updateRecentDataSummary({
+        testResult: data.hiv_status,
+        testDate: data.test_date || new Date().toISOString().split('T')[0]
+      });
+    }
+    
     toast({
       title: "Laboratory Tests Saved",
       description: "All laboratory test results have been saved successfully.",
@@ -1514,6 +1543,24 @@ export default function AncPage() {
   const handleSaveInterventionsTreatments = (data: InterventionsTreatmentsData) => {
     setInterventionsData(data);
     updateInterventionsTreatmentsStatus(data);
+    
+    // Update Recent Data Summary with treatment plan
+    const treatmentSummary = [];
+    if (data.medications && data.medications.length > 0) {
+      treatmentSummary.push(`${data.medications.length} medications prescribed`);
+    }
+    if (data.procedures && data.procedures.length > 0) {
+      treatmentSummary.push(`${data.procedures.length} procedures planned`);
+    }
+    if (data.referrals && data.referrals.length > 0) {
+      treatmentSummary.push(`${data.referrals.length} referrals made`);
+    }
+    
+    updateRecentDataSummary({
+      treatmentPlan: treatmentSummary.length > 0 ? treatmentSummary.join(', ') : 'No active interventions',
+      activeMedications: data.medications || []
+    });
+    
     toast({
       title: "Interventions & Treatments Saved",
       description: "All nutrition, preventive therapy, and immunization data have been saved successfully.",
@@ -1546,6 +1593,17 @@ export default function AncPage() {
   const handlePrescriptionSaveComplete = () => {
     setShowPrescriptionModal(false);
     setPrePopulatedDrug(null);
+    
+    // Update Recent Data Summary with medication plan from prescription
+    if (prescriptionData?.medications) {
+      updateRecentDataSummary({
+        activeMedications: prescriptionData.medications,
+        treatmentPlan: prescriptionData.medications.length > 0 
+          ? `${prescriptionData.medications.length} medications prescribed` 
+          : 'No active prescriptions'
+      });
+    }
+    
     toast({
       title: "Prescription Saved",
       description: "Prescription has been saved successfully.",
@@ -3167,6 +3225,18 @@ export default function AncPage() {
 
   const handleSaveVitalSigns = (data: any) => {
     console.log('Saving vital signs data:', data);
+    
+    // Update Recent Data Summary with vitals
+    updateRecentDataSummary({
+      vitals: {
+        weight: data.weight,
+        height: data.height,
+        bmi: data.bmi,
+        bp: data.systolic && data.diastolic ? `${data.systolic}/${data.diastolic}` : data.bp,
+        temperature: data.temperature
+      }
+    });
+    
     toast({
       title: "Vital Signs Saved",
       description: "Vital signs and measurements have been recorded successfully.",

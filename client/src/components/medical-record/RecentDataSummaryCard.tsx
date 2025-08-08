@@ -166,7 +166,9 @@ export function RecentDataSummaryCard({ summaryData }: RecentDataSummaryProps) {
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Status:</span>
-              <span className="font-medium text-gray-900">Pending</span>
+              <span className="font-medium text-gray-900">
+                {summaryData.investigations || 'Pending'}
+              </span>
             </div>
           </div>
         </CardContent>
