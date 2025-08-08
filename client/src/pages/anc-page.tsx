@@ -5487,6 +5487,8 @@ export default function AncPage() {
                                       // Large family display logic - TODO: move to React state
                                       largeFamilyNote.innerHTML = `<div class="text-xs text-blue-600 font-medium">Large Family Considerations:</div><div class="text-xs text-blue-700">• ${livingChildren} living children</div>`;
                                       largeFamilyNote.style.display = 'block';
+                                    } else {
+                                      largeFamilyNote.style.display = 'none';
                                     }
                                   }
                                 }}
