@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRoute } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users, ClipboardCheck } from "lucide-react";
+import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users, ClipboardCheck, X, Zap, Info as InfoIcon, Phone } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -3611,8 +3611,8 @@ export default function AncPage() {
               </p>
             </div>
           </div>
-        </div>
-      )}
+          </div>
+        )}
 
       {/* Main Content Area */}
       <div className={`w-full mb-6 ${recordClosed ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -11394,141 +11394,117 @@ export default function AncPage() {
         dangerSigns={selectedDangerSigns}
       />
 
-      {/* Comprehensive Obstetric Assessment Modal */}
+      {/* Comprehensive Obstetric Assessment Modal - Urgent Alert Style */}
       <Dialog 
         open={obstetricValidationModal.isOpen} 
         onOpenChange={(open) => !open && setObstetricValidationModal({ isOpen: false, errors: {} })}
       >
         <DialogContent 
-          className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}
+          className="bg-white border-none ring-0 rounded-2xl font-sans max-w-2xl p-0 overflow-hidden" 
         >
-          <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
-            Comprehensive Obstetric Assessment
-          </DialogTitle>
           {obstetricValidationModal.isOpen && (
-            <div className="space-y-6">
+            <div>
               {(() => {
                 const assessment = generateComprehensiveObstetricAssessment();
                 
                 return (
                   <>
-                    {/* Section 1: Validation Issues */}
-                    <div className="bg-gradient-to-r from-red-500/8 to-pink-500/8 backdrop-blur-sm rounded-lg p-4 border border-red-200/40">
-                      <h3 className="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
-                        <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-md flex items-center justify-center">
-                          <span className="text-white text-xs">⚠</span>
-                        </div>
-                        Validation Issues
-                      </h3>
-                      {assessment.hasValidationErrors ? (
-                        <div className="space-y-2">
-                          {Object.entries(assessment.validationErrors).map(([field, error], index) => (
-                            <div key={index} className="text-sm text-red-700 bg-red-50 p-2 rounded border-l-4 border-red-500">
-                              <strong>{field.charAt(0).toUpperCase() + field.slice(1)}:</strong> {error}
-                            </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-green-700 bg-green-50 p-2 rounded border-l-4 border-green-500">
-                        <strong>✓ No validation errors</strong> - All obstetric history data is properly formatted and within expected ranges.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 2: Clinical Classification */}
-                  <div className="bg-gradient-to-r from-blue-500/8 to-indigo-500/8 backdrop-blur-sm rounded-lg p-4 border border-blue-200/40">
-                    <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">📊</span>
-                      </div>
-                      Clinical Classification
-                    </h3>
-                    {assessment.clinicalClassifications.length > 0 ? (
-                      <div className="space-y-3">
-                        {assessment.clinicalClassifications.map((classification, index) => (
-                          <div 
-                            key={index} 
-                            className={`p-3 rounded border-l-4 ${
-                              classification.type === 'critical' ? 'bg-red-50 border-red-500 text-red-800' :
-                              classification.type === 'warning' ? 'bg-orange-50 border-orange-500 text-orange-800' :
-                              'bg-blue-50 border-blue-500 text-blue-800'
-                            }`}
-                          >
-                            <div className="font-medium text-sm">{classification.title}</div>
-                            <div className="text-sm mt-1">{classification.message}</div>
-                            <div className="text-xs mt-2 opacity-90">{classification.details}</div>
+                    {/* Critical Header */}
+                    <div className="bg-gradient-to-r from-orange-600 to-orange-700 px-6 py-4 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-orange-500 opacity-20 animate-pulse"></div>
+                      <div className="relative flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center animate-bounce">
+                            <AlertTriangle className="w-5 h-5 text-white" />
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-blue-700">
-                        Standard obstetric profile - no special classifications identified.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 3: Risk Assessment & Recommendations */}
-                  <div className="bg-gradient-to-r from-purple-500/8 to-violet-500/8 backdrop-blur-sm rounded-lg p-4 border border-purple-200/40">
-                    <h3 className="text-sm font-bold text-purple-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">🎯</span>
-                      </div>
-                      Risk Assessment & Recommendations
-                    </h3>
-                    {assessment.riskAssessments.map((risk, index) => (
-                      <div key={index} className="space-y-3">
-                        <div className={`p-3 rounded border-l-4 ${
-                          risk.level === 'High Risk' ? 'bg-red-50 border-red-500' :
-                          risk.level === 'Moderate Risk' ? 'bg-orange-50 border-orange-500' :
-                          'bg-green-50 border-green-500'
-                        }`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">Overall Risk Level:</span>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              risk.level === 'High Risk' ? 'bg-red-100 text-red-800' :
-                              risk.level === 'Moderate Risk' ? 'bg-orange-100 text-orange-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {risk.level}
-                            </span>
+                          <div>
+                            <h2 className="text-white font-bold text-lg">OBSTETRIC ASSESSMENT</h2>
+                            <p className="text-orange-100 text-xs">Comprehensive evaluation required</p>
                           </div>
-                          <div className="text-xs text-gray-600 mb-3">{risk.reasoning}</div>
                         </div>
-                        
-                        <div className="bg-gradient-to-r from-gray-500/5 to-slate-500/5 backdrop-blur-sm rounded-lg p-3 border border-gray-200/40">
-                          <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                            <div className="w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-700 rounded-md flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
-                            </div>
-                            Clinical Recommendations
-                          </h4>
-                          <ul className="text-xs text-gray-700 space-y-1">
-                            {risk.recommendations.map((rec, recIndex) => (
-                              <li key={recIndex} className="flex items-start gap-2">
-                                <span className="text-gray-400 mt-0.5">•</span>
-                                <span>{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                        <button 
+                          onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
+                          className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          
-          {/* Acknowledge Button */}
-          <div className="flex justify-end pt-4 border-t border-gray-200/50">
-            <Button
-              onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
-              Acknowledge - Proceed with Care Plan
-            </Button>
-          </div>
-        </div>
+                    </div>
+
+                    {/* Assessment Results */}
+                    <div className="px-6 py-4 bg-orange-50 border-l-4 border-orange-500">
+                      <div className="flex items-center space-x-2">
+                        <Zap className="w-4 h-4 text-orange-600" />
+                        <span className="font-semibold text-orange-800 text-sm">
+                          Risk Level: {assessment.overallRisk} | {assessment.hasValidationErrors ? 'Validation Issues Found' : 'Data Validated'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="p-6 space-y-3">
+                      <p className="text-sm font-medium text-gray-700 mb-4">Select immediate action:</p>
+                      
+                      <button
+                        onClick={() => {
+                          // Show detailed assessment info
+                        }}
+                        className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <InfoIcon className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-base">Detailed Assessment</h3>
+                            <p className="text-sm opacity-90">View full validation & recommendations</p>
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          // Handle clinical decision support
+                        }}
+                        className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <ClipboardCheck className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-base">Clinical Decision Support</h3>
+                            <p className="text-sm opacity-90">Evidence-based recommendations</p>
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
+                        className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-gray-600 hover:bg-gray-700 text-white"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <ArrowRight className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-base">Proceed with Care Plan</h3>
+                            <p className="text-sm opacity-90">Continue with documented assessment</p>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-6 py-4 bg-gray-50 border-t">
+                      <div className="flex items-center justify-center text-xs text-gray-500">
+                        <span>Protocol Zambia ANC Guidelines 2022</span>
+                      </div>
+                    </div>
+
+                  </>
+                );
+              })()}
       )}
         </DialogContent>
       </Dialog>
