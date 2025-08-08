@@ -25,132 +25,172 @@ interface RecentDataSummaryProps {
 
 export function RecentDataSummaryCard({ summaryData }: RecentDataSummaryProps) {
   return (
-    <Card className="border-2 border-blue-200 shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Activity className="w-5 h-5 text-blue-500" />
-          <span>Recent Data Summary</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Vitals Section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+    <div className="space-y-4">
+      {/* Vitals Card */}
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
             <Heart className="w-4 h-4 text-red-500" />
             Vitals
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-2">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex justify-between">
               <span className="text-gray-600">Weight(kg):</span>
-              <span className="ml-2 font-medium">{summaryData.vitals?.weight || '-'}</span>
+              <span className="font-medium text-gray-900">{summaryData.vitals?.weight || '-'}</span>
             </div>
-            <div>
+            <div className="flex justify-between">
               <span className="text-gray-600">Height(cm):</span>
-              <span className="ml-2 font-medium">{summaryData.vitals?.height || '-'}</span>
+              <span className="font-medium text-gray-900">{summaryData.vitals?.height || '-'}</span>
             </div>
-            <div>
+            <div className="flex justify-between">
               <span className="text-gray-600">BMI:</span>
-              <span className="ml-2 font-medium">{summaryData.vitals?.bmi?.toFixed(1) || '-'}</span>
+              <span className="font-medium text-gray-900">{summaryData.vitals?.bmi?.toFixed(1) || '-'}</span>
             </div>
-            <div>
+            <div className="flex justify-between">
               <span className="text-gray-600">BP:</span>
-              <span className="ml-2 font-medium">{summaryData.vitals?.bp || '-'}</span>
+              <span className="font-medium text-gray-900">{summaryData.vitals?.bp || '-'}</span>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* HTS Status */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+      {/* HTS Status Card */}
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
             <TestTube className="w-4 h-4 text-green-500" />
             HTS Status
-          </div>
-          <div className="text-sm">
-            <div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">Test Date:</span>
-              <span className="ml-2 font-medium">{summaryData.testDate || 'Not tested'}</span>
+              <span className="font-medium text-gray-900">{summaryData.testDate || 'Not tested'}</span>
             </div>
-            <div>
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">Test Result:</span>
-              <span className={`ml-2 font-medium ${
+              <span className={`font-medium ${
                 summaryData.testResult === 'Positive' ? 'text-red-600' : 
                 summaryData.testResult === 'Negative' ? 'text-green-600' : 
-                'text-gray-600'
+                'text-gray-900'
               }`}>
                 {summaryData.testResult || '-'}
               </span>
             </div>
             {summaryData.hivType && (
-              <div>
+              <div className="flex justify-between text-xs">
                 <span className="text-gray-600">HIV Type:</span>
-                <span className="ml-2 font-medium">{summaryData.hivType}</span>
+                <span className="font-medium text-gray-900">{summaryData.hivType}</span>
               </div>
             )}
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Diagnosis */}
-        {summaryData.diagnoses && summaryData.diagnoses.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+      {/* Diagnosis Card - Only show if diagnoses exist */}
+      {summaryData.diagnoses && summaryData.diagnoses.length > 0 && (
+        <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
               <Activity className="w-4 h-4 text-purple-500" />
               Diagnosis
-            </div>
-            <div className="text-sm">
-              <div className="text-gray-600 mb-1">NTS / ICD 11:</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4 pt-2">
+            <div className="space-y-2">
+              <div className="text-xs text-gray-600">NTS / ICD 11:</div>
               <ul className="list-disc list-inside text-xs text-gray-700">
                 {summaryData.diagnoses.map((diagnosis, index) => (
                   <li key={index}>{diagnosis}</li>
                 ))}
               </ul>
             </div>
-          </div>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Treatment Plan */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+      {/* Treatment Plan Card */}
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
             <Syringe className="w-4 h-4 text-blue-500" />
             Treatment Plan
-          </div>
-          <div className="text-sm">
-            <div className="text-gray-600">Treatment Plan:</div>
-            <div className="text-xs text-gray-700 mt-1">
-              {summaryData.treatmentPlan || 'No active treatment plan'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Treatment Plan:</span>
+              <span className="font-medium text-gray-900">
+                {summaryData.treatmentPlan || 'No active treatment plan'}
+              </span>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Medication Plan */}
-        {summaryData.activeMedications && summaryData.activeMedications.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+      {/* Medication Plan Card - Only show if medications exist */}
+      {summaryData.activeMedications && summaryData.activeMedications.length > 0 && (
+        <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
               <Pill className="w-4 h-4 text-orange-500" />
               Medication Plan
-            </div>
-            <div className="text-sm">
-              <div className="text-gray-600 mb-1">LAR Connected:</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4 pt-2">
+            <div className="space-y-2">
+              <div className="text-xs text-gray-600">LAR Connected:</div>
               <ul className="list-disc list-inside text-xs text-gray-700">
                 {summaryData.activeMedications.map((medication, index) => (
                   <li key={index}>{medication}</li>
                 ))}
               </ul>
             </div>
-          </div>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Next Appointment */}
-        {summaryData.nextAppointment && (
-          <div className="p-2 bg-blue-50 rounded">
-            <div className="flex items-center gap-1 text-sm">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-700 font-medium">
-                Next Visit: {summaryData.nextAppointment}
-              </span>
+      {/* Investigation Card - Always show as per screenshot */}
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <CardHeader className="pb-2 pt-3 px-4">
+          <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <TestTube className="w-4 h-4 text-blue-500" />
+            Investigation
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-2">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Status:</span>
+              <span className="font-medium text-gray-900">Pending</span>
             </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Next Appointment Card - Only show if appointment exists */}
+      {summaryData.nextAppointment && (
+        <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-600" />
+              Next Visit
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4 pt-2">
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-600">Scheduled:</span>
+                <span className="font-medium text-blue-700">{summaryData.nextAppointment}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }
