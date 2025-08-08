@@ -11505,6 +11505,7 @@ export default function AncPage() {
                   </>
                 );
               })()}
+          </div>
       )}
         </DialogContent>
       </Dialog>
