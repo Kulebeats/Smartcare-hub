@@ -4,10 +4,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRoute } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users, ClipboardCheck } from "lucide-react";
+import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader, DialogDescription } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AncInitialDialog } from "@/components/medical-record/anc-initial-dialog";
 import { AncDecisionSupportAlert, DecisionRuleTable } from "@/components/medical-record/anc-decision-support";
 import { SmartCareHeader } from "@/components/layout/smartcare-header";
@@ -38,78 +37,8 @@ import { LatestEncounterCard } from "@/components/medical-record/LatestEncounter
 import { RecentDataSummaryCard } from "@/components/medical-record/RecentDataSummaryCard";
 import { ANCCardWrapper } from "@/components/medical-record/ANCCardWrapper";
 import { PMTCTCardSection } from "@/components/medical-record/PMTCTCardSection";
-import ReferralCard from "@/components/medical-record/referral-card";
-import ReferralModal from "@/components/medical-record/referral-modal";
 
-// Zambian ANC Guidelines danger sign descriptions (2022)
-const enhancedDangerSignDescriptions = {
-  // Bleeding & Delivery Complications
-  'Vaginal bleeding': 'Any amount of vaginal bleeding during pregnancy may indicate placental abruption, placenta previa, cervical issues, or threatened abortion. According to the guidelines, bleeding can occur anytime from conception to birth, and all bleeding must be treated as serious and be immediately attended to. Bleeding in the 2nd and 3rd trimester is a possible sign of problems. Assess amount, color, and associated pain. Always requires immediate evaluation.',
-  'Draining': 'Amniotic fluid leak or rupture of membranes (PROM/PPROM) may be a gush or a slow, steady trickle of clear, straw-colored, or greenish fluid from the vagina. It indicates the protective barrier around the fetus is broken, increasing the risk of infection (chorioamnionitis) and preterm labor. If the baby\'s head is not engaged, there is a risk of umbilical cord prolapse, which is a medical emergency.',
-  'Imminent delivery': 'This refers to signs that birth is about to happen immediately. Key indicators include an overwhelming urge to bear down or push, strong and frequent contractions (less than 2 minutes apart), the mother grunting with contractions, or the baby\'s head being visible at the vaginal opening (crowning). This requires immediate preparation for a safe birth, regardless of location.',
-  'Labour': 'This is defined as regular, painful uterine contractions that cause progressive changes to the cervix (effacement and dilation). When this occurs before 37 completed weeks of gestation, it is preterm labor, a significant danger sign that can lead to premature birth. The guidelines define preterm labor as labor that occurs after 20 weeks but before 37 weeks of pregnancy. Infants born before 37 weeks are at an increased risk for health problems.',
-  
-  // Neurological & Pre-eclampsia Signs
-  'Convulsing': 'Also known as an eclamptic seizure, this is a life-threatening emergency. It involves tonic-clonic (shaking and stiffening) movements and loss of consciousness. It is a sign of eclampsia, a severe complication of high blood pressure in pregnancy. The priority is to manage the patient\'s airway, prevent injury, and administer magnesium sulfate to control the seizure.',
-  'Severe headache': 'A new-onset, persistent, and often throbbing headache that is not relieved by usual painkillers like paracetamol. It is a hallmark symptom of pre-eclampsia, a condition which the guidelines identify as a serious medical condition. Severe headaches are listed as a key symptom.',
-  'Visual disturbance': 'New vision problems such as seeing flashing lights or spots (scotomata), double vision, or temporary loss of vision. Like a severe headache, this is a key sign of severe pre-eclampsia or impending eclampsia. The guidelines list "blurred vision" as a symptom of pre-eclampsia.',
-  'Unconscious': 'A state of unresponsiveness where the patient cannot be roused. This is a critical emergency with many potential causes in pregnancy, including eclampsia, severe blood loss (hypovolemic shock), septic shock, or diabetic coma. Immediate assessment of airway, breathing, and circulation (ABC) is vital.',
-  
-  // Systemic & Infectious Signs
-  'Fever': 'A body temperature ≥38°C (100.4°F) with chills or rigors. It often signals a serious infection, such as chorioamnionitis (infection of the amniotic sac), pyelonephritis (kidney infection), or sepsis. Fever significantly increases the metabolic demands on both the mother and fetus and requires urgent investigation to find and treat the source.',
-  'Looks very ill': 'This is a crucial clinical sign based on professional judgment. The patient may appear lethargic, confused, pale, or have cool, clammy skin. It often signifies the onset of sepsis or shock before vital signs dramatically change. Trusting this "gut feeling" can lead to earlier life-saving interventions.',
-  'Severe vomiting': 'Persistent vomiting that prevents the patient from keeping down any food or fluids. The guidelines recognize "Nausea and Vomiting" as a physiological complication of pregnancy. While many women experience this in the first trimester, some may experience it beyond 20 weeks, and pharmacological treatments may be required for distressing symptoms. Severe cases can lead to dehydration, electrolyte imbalances, and nutritional deficiencies (ketosis), which can harm both mother and fetus.',
-  'Severe abdominal pain': 'Intense, non-contraction pain in the abdomen. The guidelines recognize "Lower Back and Pelvic Pain" as a common physiological symptom in pregnancy. The location of severe pain can provide clues: upper right abdomen pain may suggest HELLP syndrome (a severe form of pre-eclampsia); sharp, constant pain could indicate placental abruption; generalized tenderness with fever may suggest infection.',
-  'Other': 'Any other concerning symptoms or signs not listed above that require clinical assessment.'
-};
-
-// Helper component for danger sign with info modal
-const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description, onInfoClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
-  // Smart contextual display: show icon when selected OR hovered
-  const showInfoIcon = checked || isHovered;
-  
-  return (
-    <div 
-      className="flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-gray-100/70" 
-      style={{ boxShadow: '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }} 
-      onMouseEnter={(e) => { 
-        e.currentTarget.style.boxShadow = '0 3px 6px hsla(223.58deg, 50.96%, 59.22%, 0.35)';
-        setIsHovered(true);
-      }} 
-      onMouseLeave={(e) => { 
-        e.currentTarget.style.boxShadow = '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)';
-        setIsHovered(false);
-      }}
-    >
-      <input 
-        type="checkbox" 
-        id={id}
-        name={name}
-        value={value}
-        checked={checked}
-        onChange={onChange}
-        className="rounded border-gray-300 text-red-600 w-3.5 h-3.5"
-      />
-      <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
-        <span className="text-gray-800">{label}</span>
-        {showInfoIcon && (
-          <button 
-            type="button" 
-            onClick={() => onInfoClick(label, description)}
-            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1"
-            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 8px hsla(223.58deg, 50.96%, 59.22%, 0.5)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-          >
-            i
-          </button>
-        )}
-      </label>
-    </div>
-  );
-};
+// Zambian coat of arms placeholder
 
 export default function AncPage() {
   const { user } = useAuth();
@@ -150,27 +79,6 @@ export default function AncPage() {
   // Clinical Decision Support Modal State
   const [cdssModalOpen, setCdssModalOpen] = useState(false);
   const [currentCdssCondition, setCurrentCdssCondition] = useState<CDSSCondition | null>(null);
-  
-  // Danger Signs Info Modal State  
-  const [showDangerSignInfo, setShowDangerSignInfo] = useState(false);
-  const [selectedDangerSignInfo, setSelectedDangerSignInfo] = useState<{title: string, description: string} | null>(null);
-  
-  // Handler for opening danger sign info modal
-  const handleDangerSignInfoClick = (title: string, description: string) => {
-    setSelectedDangerSignInfo({ title, description });
-    setShowDangerSignInfo(true);
-  };
-  
-  // Auto-close timer for danger sign info modal
-  useEffect(() => {
-    if (showDangerSignInfo) {
-      const timer = setTimeout(() => {
-        setShowDangerSignInfo(false);
-      }, 7000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [showDangerSignInfo]);
   
   // Function to trigger CDSS evaluation and modal
   const triggerCDSSEvaluation = (condition: CDSSCondition) => {
@@ -545,9 +453,6 @@ export default function AncPage() {
   useEffect(() => {
     const generatedSMN = generateSafeMotherhoodNumber(serialNumber);
     setSafeMotherhoodNumber(generatedSMN);
-    updateLatestEncounterData('rapidAssessment', {
-      safeMotherhoodNumber: generatedSMN
-    });
   }, [facilityCode, serialNumber]);
 
   // Event listener for partner selection from search results
@@ -591,9 +496,6 @@ export default function AncPage() {
   const [showHealthEducationModal, setShowHealthEducationModal] = useState(false);
   const [pmtctData, setPmtctData] = useState<any>({});
   
-  // Referral Modal State
-  const [showReferralModal, setShowReferralModal] = useState(false);
-  
   // PMTCT Update Handler
   const handlePMTCTUpdate = (updatedData: any) => {
     setPmtctData(updatedData);
@@ -605,21 +507,6 @@ export default function AncPage() {
     });
     toast({
       title: "PMTCT Data Updated",
-      description: "Changes have been saved successfully",
-    });
-  };
-  
-  // Referral Update Handler
-  const handleReferralSave = (updatedData: any) => {
-    setReferralData(updatedData);
-    updateLatestEncounterData('referral', {
-      referralStatus: updatedData.emergencyReferral || 'No referral',
-      referralType: updatedData.referralType || 'Not specified',
-      facility: updatedData.receivingFacility || 'Not selected',
-      reason: updatedData.referralReasons?.join(', ') || 'Not specified'
-    });
-    toast({
-      title: "Referral Data Updated",
       description: "Changes have been saved successfully",
     });
   };
@@ -642,7 +529,7 @@ export default function AncPage() {
   const [routineVisitType, setRoutineVisitType] = useState<"initial" | "routine">("routine");
   const [activeTab, setActiveTab] = useState("rapidAssessment");
   const [selectedDangerSigns, setSelectedDangerSigns] = useState<string[]>([]);
-  const [dangerSignMode, setDangerSignMode] = useState<'none' | 'present' | undefined>(undefined);
+  const [dangerSignMode, setDangerSignMode] = useState<'none' | 'present'>('none');
   
   // Shared state for bi-directional sync between Danger Signs and Emergency Referral
   const [sharedReferralReasons, setSharedReferralReasons] = useState<string[]>([]);
@@ -779,71 +666,6 @@ export default function AncPage() {
     }
   }, []);
 
-  // Enhanced danger sign descriptions with comprehensive clinical relevance for ANC
-  const enhancedDangerSignDescriptions = {
-    // Bleeding & Delivery Complications
-    'Vaginal bleeding': 'Any amount of vaginal bleeding during pregnancy - may indicate placental abruption, placenta previa, cervical issues, or threatened abortion. Assess amount, color, and associated pain. Always requires immediate evaluation.',
-    'Draining': 'Amniotic fluid leak or rupture of membranes (PROM/PPROM) - clear, blood-stained, or greenish fluid leaking from vagina. May indicate preterm labor, infection risk, or cord prolapse. Check gestational age and fetal movement.',
-    'Imminent delivery': 'Active labor with cervical dilation >7cm, baby crowning, or uncontrollable urge to push. Prepare for immediate delivery or urgent transfer. Check fetal presentation and cord visibility.',
-    'Labour': 'Regular uterine contractions before 37 weeks gestation (preterm labor) - contractions every 5-10 minutes lasting 30+ seconds. May lead to premature birth. Assess cervical changes and fetal wellbeing.',
-    
-    // Neurological & Pre-eclampsia Signs
-    'Convulsing': 'Seizures, fits, or uncontrolled muscle contractions - may indicate eclampsia (BP >140/90 + proteinuria + seizures), severe pre-eclampsia, or epilepsy. IMMEDIATE ACTIONS: Position on left side, protect airway, give MgSO4 4g IV loading dose + 1g/hr maintenance. Life-threatening emergency.',
-    'Severe headache': 'Persistent, throbbing headache not relieved by rest or paracetamol, often frontal or occipital - classic sign of severe pre-eclampsia (BP >160/110). Check: BP, urine protein, deep tendon reflexes (DTRs), and epigastric pain. May progress to eclampsia.',
-    'Visual disturbance': 'Blurred vision, seeing spots/scotomata, flashing lights, or temporary vision loss - indicates severe pre-eclampsia with possible cerebral edema or retinal changes. URGENT: Check BP, fundoscopy for papilledema/hemorrhages. High risk for eclampsia within hours.',
-    'Unconscious': 'Not responding to voice, touch, or painful stimuli (GCS <8) - may indicate post-ictal state (eclampsia), severe hypoglycemia (<2.2mmol/L), or cerebral complications. IMMEDIATE: Secure airway, check blood glucose, vital signs, and neurological assessment.',
-    
-    // Systemic & Infectious Signs
-    'Fever': 'Body temperature ≥39°C (102.2°F) or ≥38°C with chills/rigors - may indicate chorioamnionitis, UTI, malaria, or sepsis. Higher risk if membranes ruptured. Check for source and culture specimens.',
-    'Looks very ill': 'Appears distressed, lethargic, pale, sweating, or critically unwell - non-specific but important danger sign. May indicate sepsis, severe anemia, or multi-organ dysfunction. Assess vital signs and oxygen saturation.',
-    'Severe vomiting': 'Persistent vomiting unable to keep fluids/food down >24 hours, signs of dehydration - may indicate hyperemesis gravidarum, pre-eclampsia, or gastroenteritis. Check for ketones and electrolyte imbalance.',
-    'Severe abdominal pain': 'Constant severe cramping, knife-like, or tearing abdominal pain - may indicate placental abruption, uterine rupture, appendicitis, or ectopic pregnancy. Assess uterine tenderness and fetal heart rate.'
-  };
-
-  // Critical danger signs that auto-trigger emergency referral
-  const criticalDangerSigns = [
-    'Convulsing', 'Unconscious', 'Severe headache', 'Visual disturbance',
-    'Vaginal bleeding', 'Imminent delivery', 'Severe abdominal pain'
-  ];
-
-  // Handle danger sign confirmation
-  const handleDangerSignConfirmation = useCallback(() => {
-    setDangerSignsConfirmed(true);
-    
-    // Auto-trigger emergency referral if critical signs present
-    const hasCriticalSigns = selectedDangerSigns.some(sign => 
-      criticalDangerSigns.includes(sign)
-    );
-    
-    if (hasCriticalSigns) {
-      setShowEmergencyReferralAuto(true);
-      toast({
-        title: "Emergency Referral Required",
-        description: `Critical danger signs detected: ${selectedDangerSigns.filter(sign => criticalDangerSigns.includes(sign)).join(', ')}. Emergency referral has been auto-populated.`,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Danger Signs Confirmed",
-        description: `${selectedDangerSigns.length} danger sign(s) documented. Please proceed with appropriate clinical management.`,
-        variant: "default",
-      });
-    }
-  }, [selectedDangerSigns, toast]);
-
-  // Handle "none" selection with informational toast
-  const handleNoneDangerSigns = useCallback(() => {
-    setSelectedDangerSigns([]);
-    setDangerSignsConfirmed(false);
-    setShowEmergencyReferralAuto(false);
-    
-    toast({
-      title: "No Danger Signs Identified",
-      description: "Continue with routine ANC care.",
-      variant: "default",
-    });
-  }, [toast]);
-
   // Handle danger signs change with sync
   const handleDangerSignsChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -853,13 +675,6 @@ export default function AncPage() {
         ? [...prev, value]
         : prev.filter(sign => sign !== value);
       
-      // Update Latest Encounter data
-      updateLatestEncounterData('dangerSigns', {
-        dangerSigns: updated,
-        dangerSignsPresent: updated.length > 0,
-        assessmentDate: new Date().toISOString()
-      });
-      
       // Sync to referral with delay to ensure DOM is ready
       setTimeout(() => {
         syncDangerSignsToReferral(updated);
@@ -867,9 +682,6 @@ export default function AncPage() {
       
       return updated;
     });
-    
-    // Reset confirmation when selection changes
-    setDangerSignsConfirmed(false);
   }, [syncDangerSignsToReferral]);
 
   // Handle referral reasons change with sync
@@ -1288,7 +1100,7 @@ export default function AncPage() {
 
 
 
-  const [showSpecializedTestsModal, setShowSpecializedTestsModal] = useState(false);
+  const [showSpecializedTests, setShowSpecializedTests] = useState(false);
   const [showClinicalInvestigations, setShowClinicalInvestigations] = useState(false);
   
   // Behavioral counselling state
@@ -1315,10 +1127,6 @@ export default function AncPage() {
   const [counsellingData, setCounsellingData] = useState<any>({});
   const [referralData, setReferralData] = useState<any>({});
   
-  // Enhanced danger signs state
-  const [dangerSignsConfirmed, setDangerSignsConfirmed] = useState(false);
-  const [showEmergencyReferralAuto, setShowEmergencyReferralAuto] = useState(false);
-  
   // Medical History CDSS state - now trigger-based only
   
   // Form trigger-based CDSS modal state
@@ -1332,13 +1140,9 @@ export default function AncPage() {
     
     switch (activeTab) {
       case 'rapidAssessment':
-        // Get contact date from the form input element
-        const contactDateInput = document.getElementById('contact_date') as HTMLInputElement;
-        const contactDateValue = contactDateInput?.value || 'Not recorded';
-        
         encounterData.title = 'Rapid Assessment';
         encounterData.fields = [
-          { label: 'Contact Date', value: contactDateValue },
+          { label: 'Contact Date', value: rapidAssessmentData?.contact_date || 'Not recorded' },
           { label: 'Gestational Age', value: rapidAssessmentData?.gestational_age_weeks ? `${rapidAssessmentData.gestational_age_weeks} weeks` : 'Not calculated' },
           { label: 'Pregnancy Status', value: rapidAssessmentData?.pregnancy_status || 'Not assessed' },
           { label: 'Risk Level', value: rapidAssessmentData?.risk_level || 'Not assessed' }
@@ -1438,13 +1242,6 @@ export default function AncPage() {
   const handleSaveHIVTesting = (data: HIVTestingData) => {
     setHivTestingData(data);
     
-    // Update Recent Data Summary with HTS status using correct field names
-    updateRecentDataSummary({
-      testResult: data.bioline === 'Reactive' ? 'Positive' : data.bioline === 'Non-reactive' ? 'Negative' : data.bioline,
-      testDate: data.testDate ? new Date(data.testDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      hivType: data.bioline === 'Reactive' ? (data.hivType || 'HIV+') : null
-    });
-    
     // Check if HIV test is positive (bioline is Reactive)
     if (data.bioline === 'Reactive') {
       toast({
@@ -1493,19 +1290,6 @@ export default function AncPage() {
 
   const handleSavePOCTests = (data: POCTestData[]) => {
     setPocTestsData(data);
-    
-    // Update Recent Data Summary with investigation results using correct field mapping
-    const completedTests = data.filter(test => test.results?.value && test.results?.resultStatus !== 'pending').length;
-    const pendingTests = data.filter(test => !test.results?.value || test.results?.resultStatus === 'pending').length;
-    const investigationSummary = data.length > 0 
-      ? `${completedTests} completed, ${pendingTests} pending`
-      : 'No tests conducted';
-    
-    updateRecentDataSummary({
-      investigations: investigationSummary,
-      pocTests: data
-    });
-    
     toast({
       title: "POC Tests Updated",
       description: `${data.length} POC test(s) have been saved successfully.`,
@@ -1515,15 +1299,6 @@ export default function AncPage() {
   // Laboratory Tests handler
   const handleSaveLaboratoryTests = (data: any) => {
     setLaboratoryTestsData(data);
-    
-    // Update Recent Data Summary with HTS status from lab results
-    if (data.hiv_status) {
-      updateRecentDataSummary({
-        testResult: data.hiv_status,
-        testDate: data.test_date || new Date().toISOString().split('T')[0]
-      });
-    }
-    
     toast({
       title: "Laboratory Tests Saved",
       description: "All laboratory test results have been saved successfully.",
@@ -1543,40 +1318,6 @@ export default function AncPage() {
   const handleSaveInterventionsTreatments = (data: InterventionsTreatmentsData) => {
     setInterventionsData(data);
     updateInterventionsTreatmentsStatus(data);
-    
-    // Update Recent Data Summary with treatment plan using correct field mapping
-    const treatmentSummary = [];
-    
-    // Check nutrition supplements
-    const nutritionGiven = [];
-    if (data.iron_given === 'yes') nutritionGiven.push('Iron');
-    if (data.folic_acid_given === 'yes') nutritionGiven.push('Folic Acid');
-    if (data.calcium_given === 'yes') nutritionGiven.push('Calcium');
-    if (nutritionGiven.length > 0) {
-      treatmentSummary.push(`${nutritionGiven.length} nutrition supplements given`);
-    }
-    
-    // Check immunizations 
-    const immunizations = [];
-    if (data.tt1_given === 'yes') immunizations.push('TT1');
-    if (data.tt2_given === 'yes') immunizations.push('TT2');
-    if (data.tt3_given === 'yes') immunizations.push('TT3');
-    if (data.tt4_given === 'yes') immunizations.push('TT4');
-    if (data.tt5_given === 'yes') immunizations.push('TT5');
-    if (immunizations.length > 0) {
-      treatmentSummary.push(`${immunizations.length} immunizations given`);
-    }
-    
-    // Check preventive therapy
-    if (data.ipt_given === 'yes') {
-      treatmentSummary.push('IPT therapy given');
-    }
-    
-    updateRecentDataSummary({
-      treatmentPlan: treatmentSummary.length > 0 ? treatmentSummary.join(', ') : 'No active interventions',
-      activeMedications: nutritionGiven
-    });
-    
     toast({
       title: "Interventions & Treatments Saved",
       description: "All nutrition, preventive therapy, and immunization data have been saved successfully.",
@@ -1609,17 +1350,6 @@ export default function AncPage() {
   const handlePrescriptionSaveComplete = () => {
     setShowPrescriptionModal(false);
     setPrePopulatedDrug(null);
-    
-    // Update Recent Data Summary with medication plan from prescription
-    if (prescriptionData?.medications) {
-      updateRecentDataSummary({
-        activeMedications: prescriptionData.medications,
-        treatmentPlan: prescriptionData.medications.length > 0 
-          ? `${prescriptionData.medications.length} medications prescribed` 
-          : 'No active prescriptions'
-      });
-    }
-    
     toast({
       title: "Prescription Saved",
       description: "Prescription has been saved successfully.",
@@ -2022,19 +1752,6 @@ export default function AncPage() {
 
   const [showCurrentPregnancyDialog, setShowCurrentPregnancyDialog] = useState(false);
   const [showObstetricHistoryDialog, setShowObstetricHistoryDialog] = useState(false);
-  
-  // Obstetric History State Management
-  const [obstetricHistory, setObstetricHistory] = useState({
-    gravida: '',
-    para: '',
-    abortions: '',
-    livingChildren: ''
-  });
-  // Validation modal state instead of inline errors
-  const [obstetricValidationModal, setObstetricValidationModal] = useState<{
-    isOpen: boolean;
-    errors: Record<string, string>;
-  }>({ isOpen: false, errors: {} });
   const [showMedicalHistoryDialog, setShowMedicalHistoryDialog] = useState(false);
   const [showStandardAssessmentDialog, setShowStandardAssessmentDialog] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
@@ -2905,160 +2622,6 @@ export default function AncPage() {
       }
     };
   }, []);
-
-  // Comprehensive obstetric assessment - only when all 4 fields are completed
-  useEffect(() => {
-    // Check if all 4 fields have values
-    const { gravida, para, abortions, livingChildren } = obstetricHistory;
-    
-    if (gravida && para && abortions !== '' && livingChildren !== '') {
-      const assessment = generateComprehensiveObstetricAssessment();
-      setObstetricValidationModal({ isOpen: true, errors: assessment });
-    }
-  }, [obstetricHistory]);
-
-  // Generate comprehensive obstetric assessment
-  const generateComprehensiveObstetricAssessment = () => {
-    const gravida = parseInt(obstetricHistory.gravida) || 0;
-    const para = parseInt(obstetricHistory.para) || 0;
-    const abortions = parseInt(obstetricHistory.abortions) || 0;
-    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-    
-    // Get validation errors
-    const validationErrors = validateAllObstetricRules();
-    
-    // Generate clinical classifications
-    const clinicalClassifications = [];
-    
-    // Multipara classification (2-4 previous live births)
-    if (para >= 2 && para <= 4) {
-      clinicalClassifications.push({
-        type: 'info',
-        title: 'Multipara Classification',
-        message: `Client is classified as Multipara (Para ${para}): 2-4 previous live births`,
-        details: 'Standard monitoring protocols apply with routine assessment for complications.'
-      });
-    }
-    
-    // Grand multipara warnings (≥5 pregnancies or ≥5 births)
-    if (gravida >= 5 || para >= 5) {
-      clinicalClassifications.push({
-        type: 'warning',
-        title: 'Grand Multipara Classification',
-        message: `Client is classified as Grand Multipara (G${gravida}P${para})`,
-        details: 'Increased risk of complications including uterine rupture, placental abnormalities, and postpartum hemorrhage. Enhanced monitoring required.'
-      });
-    }
-    
-    // Recurrent pregnancy loss alerts (≥3 losses)
-    if (abortions >= 3) {
-      clinicalClassifications.push({
-        type: 'critical',
-        title: 'Recurrent Pregnancy Loss',
-        message: `Client has ${abortions} pregnancy losses - meets criteria for recurrent pregnancy loss`,
-        details: 'Requires specialist consultation and comprehensive investigation including genetic, anatomical, endocrine, immunological, and thrombophilia screening.'
-      });
-    }
-    
-    // Child mortality assessments
-    const childDeaths = para - livingChildren;
-    if (childDeaths > 0) {
-      clinicalClassifications.push({
-        type: 'warning',
-        title: 'Previous Child Mortality',
-        message: `${childDeaths} child death(s) recorded (${para} births, ${livingChildren} living)`,
-        details: 'Review previous obstetric history for preventable causes. Consider enhanced antenatal surveillance and specialized care.'
-      });
-    }
-    
-    // Generate risk assessment and recommendations
-    const riskAssessments = [];
-    let overallRisk = 'Low Risk';
-    const recommendations = [];
-    
-    // Risk stratification
-    if (gravida >= 5 || para >= 5) {
-      overallRisk = 'High Risk';
-      recommendations.push('Enhanced antenatal monitoring with increased visit frequency');
-      recommendations.push('Specialist obstetric consultation recommended');
-      recommendations.push('Delivery planning at facility with operative capabilities');
-      recommendations.push('Postpartum hemorrhage prevention protocols');
-    } else if (abortions >= 3) {
-      overallRisk = 'High Risk';
-      recommendations.push('Specialist referral for recurrent pregnancy loss evaluation');
-      recommendations.push('Comprehensive investigation including genetic counseling');
-      recommendations.push('Enhanced first trimester monitoring');
-      recommendations.push('Progesterone supplementation may be considered');
-    } else if (para >= 2 || childDeaths > 0) {
-      overallRisk = 'Moderate Risk';
-      recommendations.push('Standard enhanced monitoring protocols');
-      recommendations.push('Review previous obstetric complications');
-      recommendations.push('Ensure skilled birth attendance');
-    } else {
-      overallRisk = 'Low Risk';
-      recommendations.push('Standard antenatal care protocols');
-      recommendations.push('Routine monitoring and health education');
-    }
-    
-    riskAssessments.push({
-      level: overallRisk,
-      reasoning: `Based on obstetric history: G${gravida}P${para}+${abortions} with ${livingChildren} living children`,
-      recommendations
-    });
-    
-    return {
-      hasValidationErrors: Object.keys(validationErrors).length > 0,
-      validationErrors,
-      clinicalClassifications,
-      riskAssessments,
-      overallRisk
-    };
-  };
-
-  // Comprehensive validation function
-  const validateAllObstetricRules = () => {
-    const gravida = parseInt(obstetricHistory.gravida) || 0;
-    const para = parseInt(obstetricHistory.para) || 0;
-    const abortions = parseInt(obstetricHistory.abortions) || 0;
-    const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-    const errors: Record<string, string> = {};
-
-    // Business Rule 1: Gravida ≥ 1 (if currently pregnant)
-    if (gravida < 1) {
-      errors.gravida = 'Must be at least 1 if currently pregnant';
-    }
-
-    // Business Rule 2: Gravida ≥ Para + Abortions
-    if (gravida > 0 && gravida < (para + abortions)) {
-      errors.gravida = `Total pregnancies (${gravida}) cannot be less than Para + Abortions (${para + abortions})`;
-    }
-
-    // Business Rule 3: Para cannot exceed Gravida
-    if (para > gravida && gravida > 0) {
-      errors.para = `Live births (${para}) cannot exceed total pregnancies (${gravida})`;
-    }
-
-    // Business Rule 4: Abortions cannot exceed Gravida
-    if (abortions > gravida && gravida > 0) {
-      errors.abortions = `Abortions/miscarriages (${abortions}) cannot exceed total pregnancies (${gravida})`;
-    }
-
-    // Business Rule 5: Para ≥ Living Children (critical rule)
-    if (livingChildren > para && para > 0) {
-      errors.livingChildren = `Living children (${livingChildren}) cannot exceed total live births (Para: ${para}). Please review both fields.`;
-    }
-
-    // Outlier detection warnings
-    if (gravida > 15) {
-      errors.gravidaOutlier = 'Gravida >15 is extremely rare. Please verify data accuracy.';
-    }
-
-    if (para > 15) {
-      errors.paraOutlier = 'Para >15 is extremely rare. Please verify data accuracy.';
-    }
-
-    return errors;
-  };
   
   // Urgent notification modal states
   const [showUrgentNotification, setShowUrgentNotification] = useState(false);
@@ -3352,17 +2915,6 @@ export default function AncPage() {
     if (mode === 'none') {
       setSelectedDangerSigns([]);
       setSharedReferralReasons([]);
-      setDangerSignsConfirmed(false);
-      setShowEmergencyReferralAuto(false);
-      handleNoneDangerSigns();
-      
-      // Update Latest Encounter data to show no danger signs
-      updateLatestEncounterData('dangerSigns', {
-        dangerSigns: [],
-        dangerSignsPresent: false,
-        assessmentDate: new Date().toISOString()
-      });
-      
       // Clear emergency referral when no danger signs
       setTimeout(() => {
         const emergencyNoRadio = document.getElementById('refNo') as HTMLInputElement;
@@ -3408,30 +2960,6 @@ export default function AncPage() {
 
   const handleSaveVitalSigns = (data: any) => {
     console.log('Saving vital signs data:', data);
-    
-    // Calculate BMI from height and weight
-    let calculatedBmi = null;
-    if (data.height && data.weight) {
-      const heightInMeters = parseFloat(data.height) / 100;
-      const weightInKg = parseFloat(data.weight);
-      if (heightInMeters > 0 && weightInKg > 0) {
-        calculatedBmi = (weightInKg / (heightInMeters * heightInMeters)).toFixed(1);
-      }
-    }
-    
-    // Update Recent Data Summary with vitals using correct field names
-    updateRecentDataSummary({
-      vitals: {
-        weight: data.weight ? parseFloat(data.weight) : null,
-        height: data.height ? parseFloat(data.height) : null,
-        bmi: calculatedBmi ? parseFloat(calculatedBmi) : null,
-        bp: data.systolic_blood_pressure && data.diastolic_blood_pressure 
-          ? `${data.systolic_blood_pressure}/${data.diastolic_blood_pressure}` 
-          : null,
-        temperature: data.temperature ? parseFloat(data.temperature) : null
-      }
-    });
-    
     toast({
       title: "Vital Signs Saved",
       description: "Vital signs and measurements have been recorded successfully.",
@@ -3753,12 +3281,7 @@ export default function AncPage() {
                 </div>
 
                 <Dialog open={showContactDialog} onOpenChange={setShowContactDialog}>
-                  <DialogContent className="bg-white/98 backdrop-blur-3xl border border-white/20 ring-1 ring-white/40 shadow-2xl rounded-3xl max-w-4xl max-h-[95vh] overflow-y-auto" 
-                    style={{ 
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%)',
-                      boxShadow: '0 20px 50px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)'
-                    }}>
-                    
+                  <DialogContent>
                     <DialogTitle>Gather Client Details</DialogTitle>
                     <form id="patient-details-form-data">
                     <div className="grid grid-cols-2 gap-4">
@@ -3769,11 +3292,6 @@ export default function AncPage() {
                           className="w-full border rounded p-2" 
                           id="contact_date"
                           max={new Date().toISOString().split('T')[0]}
-                          onChange={(e) => {
-                            updateLatestEncounterData('clientDetails', {
-                              contactDate: e.target.value || 'Not recorded'
-                            });
-                          }}
                           required
                         />
                       </div>
@@ -3957,12 +3475,7 @@ export default function AncPage() {
                         <select 
                           className="w-full border rounded p-2" 
                           value={origin}
-                          onChange={(e) => {
-                            setOrigin(e.target.value);
-                            updateLatestEncounterData('clientDetails', {
-                              origin: e.target.value || 'Not specified'
-                            });
-                          }}
+                          onChange={(e) => setOrigin(e.target.value)}
                         >
                           <option value="">Select origin...</option>
                           <option value="From within 5 KM, within catchment area">From within 5 KM, within catchment area</option>
@@ -3981,12 +3494,7 @@ export default function AncPage() {
                         <select 
                           className="w-full border rounded p-2" 
                           value={cameAsCouple}
-                          onChange={(e) => {
-                            setCameAsCouple(e.target.value as "" | "yes" | "no");
-                            updateLatestEncounterData('clientDetails', {
-                              cameAsCouple: e.target.value === "yes"
-                            });
-                          }}
+                          onChange={(e) => setCameAsCouple(e.target.value as "" | "yes" | "no")}
                           required
                         >
                           <option value="">Select</option>
@@ -4070,6 +3578,7 @@ export default function AncPage() {
                       className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
                       onClick={() => {
                         setSelectedDangerSigns([]);
+                        setDangerSignMode('none');
                         setShowDangerSignsDialog(true);
                       }}
                     >
@@ -4085,8 +3594,8 @@ export default function AncPage() {
                 </div>
 
                 <Dialog open={showDangerSignsDialog} onOpenChange={setShowDangerSignsDialog}>
-                  <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
-                    <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">Danger Signs & Health Concerns</DialogTitle>
+                  <DialogContent>
+                    <DialogTitle>Danger Signs & Health Concerns</DialogTitle>
                     <form id="danger-signs-form-data">
                       <div className="space-y-4">
                         <div>
@@ -4123,200 +3632,193 @@ export default function AncPage() {
 
                         {/* Detailed Danger Signs (only shown when "present" is selected) */}
                         {dangerSignMode === 'present' && (
-                          <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-                            <div className="flex justify-between items-center mb-2">
-                              <h4 className="font-semibold text-gray-800 text-base">Select specific danger signs:</h4>
-                              {selectedDangerSigns.length > 0 && (
-                                <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                                  {selectedDangerSigns.length} danger sign{selectedDangerSigns.length > 1 ? 's' : ''} selected
-                                </span>
-                              )}
-                            </div>
+                          <div className="mt-4 p-4 border-l-4 border-red-500 bg-red-50">
+                            <h4 className="font-medium text-red-800 mb-3">Select specific danger signs:</h4>
                             
                             {/* Bleeding and Delivery Issues */}
-                            <div className="mb-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm transition-all duration-200 hover:bg-white/40" style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }}>
-                              <h5 className="text-xs font-semibold text-gray-800 mb-1.5 pb-0.5 border-b border-gray-200/50">Bleeding & Delivery</h5>
-                              <div className="grid grid-cols-3 gap-1.5">
-                                <DangerSignWithTooltip
-                                  id="danger_bleeding"
-                                  name="danger_sign_bleeding"
-                                  value="Vaginal bleeding"
-                                  checked={selectedDangerSigns.includes('Vaginal bleeding')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Vaginal bleeding"
-                                  description={enhancedDangerSignDescriptions['Vaginal bleeding']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_draining"
-                                  name="danger_sign_draining"
-                                  value="Draining"
-                                  checked={selectedDangerSigns.includes('Draining')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Draining"
-                                  description={enhancedDangerSignDescriptions['Draining']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_imminent_delivery"
-                                  name="danger_sign_imminent_delivery"
-                                  value="Imminent delivery"
-                                  checked={selectedDangerSigns.includes('Imminent delivery')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Imminent delivery"
-                                  description={enhancedDangerSignDescriptions['Imminent delivery']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_labour"
-                                  name="danger_sign_labour"
-                                  value="Labour"
-                                  checked={selectedDangerSigns.includes('Labour')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Labour"
-                                  description={enhancedDangerSignDescriptions['Labour']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
+                            <div className="mb-4">
+                              <h5 className="text-sm font-medium text-gray-700 mb-2">Bleeding & Delivery</h5>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_bleeding" 
+                                    name="danger_sign_bleeding"
+                                    value="Vaginal bleeding"
+                                    checked={selectedDangerSigns.includes('Vaginal bleeding')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_bleeding" className="text-sm">Vaginal bleeding</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_draining" 
+                                    name="danger_sign_draining"
+                                    value="Draining"
+                                    checked={selectedDangerSigns.includes('Draining')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_draining" className="text-sm">Draining</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_imminent_delivery" 
+                                    name="danger_sign_imminent_delivery"
+                                    value="Imminent delivery"
+                                    checked={selectedDangerSigns.includes('Imminent delivery')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_imminent_delivery" className="text-sm">Imminent delivery</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_labour" 
+                                    name="danger_sign_labour"
+                                    value="Labour"
+                                    checked={selectedDangerSigns.includes('Labour')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_labour" className="text-sm">Labour</label>
+                                </div>
                               </div>
                             </div>
 
                             {/* Neurological Signs */}
-                            <div className="mb-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm transition-all duration-200 hover:bg-white/40" style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }}>
-                              <h5 className="text-xs font-semibold text-gray-800 mb-1.5 pb-0.5 border-b border-gray-200/50">Neurological</h5>
-                              <div className="grid grid-cols-3 gap-1.5">
-                                <DangerSignWithTooltip
-                                  id="danger_convulsions"
-                                  name="danger_sign_convulsions"
-                                  value="Convulsing"
-                                  checked={selectedDangerSigns.includes('Convulsing')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Convulsing"
-                                  description={enhancedDangerSignDescriptions['Convulsing']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="severe_headache"
-                                  name="danger_sign_severe_headache"
-                                  value="Severe headache"
-                                  checked={selectedDangerSigns.includes('Severe headache')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Severe headache"
-                                  description={enhancedDangerSignDescriptions['Severe headache']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="visual_disturbance"
-                                  name="danger_sign_visual_disturbance"
-                                  value="Visual disturbance"
-                                  checked={selectedDangerSigns.includes('Visual disturbance')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Visual disturbance"
-                                  description={enhancedDangerSignDescriptions['Visual disturbance']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_unconscious"
-                                  name="danger_sign_unconscious"
-                                  value="Unconscious"
-                                  checked={selectedDangerSigns.includes('Unconscious')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Unconscious"
-                                  description={enhancedDangerSignDescriptions['Unconscious']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
+                            <div className="mb-4">
+                              <h5 className="text-sm font-medium text-gray-700 mb-2">Neurological</h5>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_convulsions" 
+                                    name="danger_sign_convulsions"
+                                    value="Convulsing"
+                                    checked={selectedDangerSigns.includes('Convulsing')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_convulsions" className="text-sm">Convulsing</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="severe_headache" 
+                                    name="danger_sign_severe_headache"
+                                    value="Severe headache"                           
+                                    checked={selectedDangerSigns.includes('Severe headache')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="severe_headache" className="text-sm">Severe headache</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="visual_disturbance" 
+                                    name="danger_sign_visual_disturbance"
+                                    value="Visual disturbance"
+                                    checked={selectedDangerSigns.includes('Visual disturbance')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="visual_disturbance" className="text-sm">Visual disturbance</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_unconscious" 
+                                    name="danger_sign_unconscious"
+                                    value="Unconscious"
+                                    checked={selectedDangerSigns.includes('Unconscious')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_unconscious" className="text-sm">Unconscious</label>
+                                </div>
                               </div>
                             </div>
 
                             {/* Systemic Signs */}
-                            <div className="mb-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm transition-all duration-200 hover:bg-white/40" style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }}>
-                              <h5 className="text-xs font-semibold text-gray-800 mb-1.5 pb-0.5 border-b border-gray-200/50">Systemic</h5>
-                              <div className="grid grid-cols-3 gap-1.5">
-                                <DangerSignWithTooltip
-                                  id="fever"
-                                  name="danger_sign_fever"
-                                  value="Fever"
-                                  checked={selectedDangerSigns.includes('Fever')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Fever"
-                                  description={enhancedDangerSignDescriptions['Fever']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_looks_very_ill"
-                                  name="danger_sign_looks_very_ill"
-                                  value="Looks very ill"
-                                  checked={selectedDangerSigns.includes('Looks very ill')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Looks very ill"
-                                  description={enhancedDangerSignDescriptions['Looks very ill']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_severe_vomiting"
-                                  name="danger_sign_severe_vomiting"
-                                  value="Severe vomiting"
-                                  checked={selectedDangerSigns.includes('Severe vomiting')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Severe vomiting"
-                                  description={enhancedDangerSignDescriptions['Severe vomiting']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_severe_abdominal_pain"
-                                  name="danger_sign_severe_abdominal_pain"
-                                  value="Severe abdominal pain"
-                                  checked={selectedDangerSigns.includes('Severe abdominal pain')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Severe abdominal pain"
-                                  description={enhancedDangerSignDescriptions['Severe abdominal pain']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                                <DangerSignWithTooltip
-                                  id="danger_other"
-                                  name="danger_sign_other"
-                                  value="Other"
-                                  checked={selectedDangerSigns.includes('Other')}
-                                  onChange={handleDangerSignsChange}
-                                  label="Other"
-                                  description={enhancedDangerSignDescriptions['Other']}
-                                  onInfoClick={handleDangerSignInfoClick}
-                                />
-                              </div>
-                            </div>
-                            
-                            {/* Confirmation Button */}
-                            {selectedDangerSigns.length > 0 && !dangerSignsConfirmed && (
-                              <div className="mt-3 flex justify-center">
-                                <Button 
-                                  onClick={handleDangerSignConfirmation}
-                                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2"
-                                >
-                                  Confirm Selection ({selectedDangerSigns.length} danger sign{selectedDangerSigns.length > 1 ? 's' : ''})
-                                </Button>
-                              </div>
-                            )}
-                            
-                            {/* Confirmation Status */}
-                            {dangerSignsConfirmed && selectedDangerSigns.length > 0 && (
-                              <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">
-                                <div className="flex items-center">
-                                  <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                  <span className="text-sm text-green-800 font-medium">
-                                    Danger signs confirmed: {selectedDangerSigns.join(', ')}
-                                  </span>
+                            <div className="mb-4">
+                              <h5 className="text-sm font-medium text-gray-700 mb-2">Systemic</h5>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="fever" 
+                                    name="danger_sign_fever"
+                                    value="Fever"
+                                    checked={selectedDangerSigns.includes('Fever')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="fever" className="text-sm">Fever</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_looks_very_ill" 
+                                    name="danger_sign_looks_very_ill"
+                                    value="Looks very ill"
+                                    checked={selectedDangerSigns.includes('Looks very ill')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_looks_very_ill" className="text-sm">Looks very ill</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_severe_vomiting" 
+                                    name="danger_sign_severe_vomiting"
+                                    value="Severe vomiting"
+                                    checked={selectedDangerSigns.includes('Severe vomiting')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_severe_vomiting" className="text-sm">Severe vomiting</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_severe_abdominal_pain" 
+                                    name="danger_sign_severe_abdominal_pain"
+                                    value="Severe abdominal pain"
+                                    checked={selectedDangerSigns.includes('Severe abdominal pain')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_severe_abdominal_pain" className="text-sm">Severe abdominal pain</label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input 
+                                    type="checkbox" 
+                                    id="danger_other" 
+                                    name="danger_sign_other"
+                                    value="Other"
+                                    checked={selectedDangerSigns.includes('Other')}
+                                    onChange={handleDangerSignsChange}
+                                    className="rounded border-gray-300 text-red-600"
+                                  />
+                                  <label htmlFor="danger_other" className="text-sm">Other</label>
                                 </div>
                               </div>
-                            )}
+                            </div>
                           </div>
                         )}
 
                         </div>
                       </div>
 
-                      {/* Decision Support Alert - Only trigger after confirmation */}
-                      {dangerSignMode === 'present' && selectedDangerSigns.length > 0 && dangerSignsConfirmed && (
+                      {/* Decision Support Alert */}
+                      {dangerSignMode === 'present' && selectedDangerSigns.length > 0 && (
                         <AncDecisionSupportAlert 
                           dangerSigns={selectedDangerSigns} 
                           onRecordClosure={handleRecordClosure}
@@ -4554,13 +4056,8 @@ export default function AncPage() {
                 </div>
 
                 <Dialog open={showEmergencyReferralDialog} onOpenChange={setShowEmergencyReferralDialog}>
-                  <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-3xl max-h-[85vh] overflow-y-auto" 
-                    style={{ 
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-                    }}>
+                  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogTitle>Emergency Referral</DialogTitle>
-                    
                     
                     {/* Emergency Conditions Alert */}
                     <div id="emergency-conditions-alert" style={{ display: 'none' }}></div>
@@ -4765,15 +4262,6 @@ export default function AncPage() {
                                 if (referralDateField) referralDateField.style.display = isChecked ? 'block' : 'none';
                                 if (referralNotesField) referralNotesField.style.display = isChecked ? 'block' : 'none';
                                 if (checklistField) checklistField.style.display = isChecked ? 'block' : 'none';
-                                
-                                // Update Latest Encounter data
-                                if (isChecked) {
-                                  updateLatestEncounterData('emergencyReferral', {
-                                    emergencyReferral: true,
-                                    checklistCompleted: false,
-                                    feedbackReceived: false
-                                  });
-                                }
 
                                 // Initialize checklist progress tracking when shown
                                 if (isChecked && checklistField) {
@@ -4897,15 +4385,6 @@ export default function AncPage() {
                                 if (providerPhoneField) providerPhoneField.style.display = 'none';
                                 if (referralDateField) referralDateField.style.display = 'none';
                                 if (referralNotesField) referralNotesField.style.display = 'none';
-                                
-                                // Update Latest Encounter data
-                                if (isChecked) {
-                                  updateLatestEncounterData('emergencyReferral', {
-                                    emergencyReferral: false,
-                                    checklistCompleted: false,
-                                    feedbackReceived: false
-                                  });
-                                }
                               }}
                             />
                             <label htmlFor="refNo" className="text-sm">No</label>
@@ -5029,17 +4508,6 @@ export default function AncPage() {
                                   name="referral_reasons"
                                 />
                                 <span className="text-sm">Patient appears critically ill - Comprehensive assessment</span>
-                              </label>
-                              
-                              <label className="flex items-start space-x-2 cursor-pointer hover:bg-blue-50 p-2 rounded">
-                                <input 
-                                  type="checkbox" 
-                                  value="draining"
-                                  className="mt-1 border-gray-300 text-blue-600"
-                                  onChange={createReferralCheckboxHandler()}
-                                  name="referral_reasons"
-                                />
-                                <span className="text-sm">Draining/Amniotic fluid leak - Risk of infection</span>
                               </label>
                             </div>
                             {/* Standard Clinical Reasons moved to Routine Referral section */}
@@ -6973,8 +6441,167 @@ export default function AncPage() {
             <TabsContent value="clientProfile">
               <ANCCardWrapper>
                 <div className="space-y-6">
+                {/* Current Pregnancy Card */}
+                <Card className="mb-6">
+                  <CardContent className="flex items-center justify-between p-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2v20m8-10H4"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900">Current Pregnancy</h3>
+                        <p className="text-sm text-gray-500">Current pregnancy details and dating information</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowCurrentPregnancyDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 
+                {/* Obstetric History Card */}
+                <Card className="mb-6">
+                  <CardContent className="flex items-center justify-between p-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900">Obstetric History</h3>
+                        <p className="text-sm text-gray-500">Previous pregnancies and social habits assessment</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowObstetricHistoryDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 
+                {/* Medical History Card */}
+                <Card className="mb-6">
+                  <CardContent className="flex items-center justify-between p-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900">Medical History</h3>
+                        <p className="text-sm text-gray-500">Past medical conditions and health information</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowMedicalHistoryDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Standard ANC Assessment Card */}
+                <Card className="mb-6">
+                  <CardContent className="flex items-center justify-between p-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 11H5a2 2 0 0 0-2 2v3c0 3.866 3.134 7 7 7h4a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-4z"></path>
+                          <path d="M17 7h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900">Standard ANC Assessment</h3>
+                        <p className="text-sm text-gray-500">Comprehensive antenatal care assessment following WHO guidelines</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowStandardAssessmentDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Current Pregnancy Card */}
                 <Card className="mb-6">
@@ -7069,35 +6696,142 @@ export default function AncPage() {
                   </CardContent>
                 </Card>
 
-                {/* Standard ANC Assessment Card */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <ClipboardCheck className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-gray-900">Standard ANC Assessment</h3>
-                        <p className="text-sm text-gray-500">Comprehensive antenatal care assessment following WHO guidelines</p>
-                      </div>
+                {/* Navigation buttons - Client Profile */}
+                <div className="flex justify-between space-x-4 mt-6">
+                  <div 
+                    className="flex justify-between items-center bg-gray-100 p-3 rounded cursor-pointer" 
+                    onClick={() => setShowObstetricHistory(!showObstetricHistory)}
+                  >
+                    <div className="flex items-center">
+                      <h3 className="font-semibold">Obstetric History</h3>
                     </div>
                     <div className="flex space-x-2">
                       <Button 
                         variant="outline" 
                         className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
                       >
-                        <Edit className="w-4 h-4" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowObstetricHistoryDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {showObstetricHistory && (
+                  <div className="border rounded-md p-4 mt-2">
+                        <h5 className="text-sm font-medium text-green-600 border-b border-green-200 pb-1">Social Habits Assessment</h5>
+                        
+                        <div className="space-y-2">
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="text-green-600" />
+                            <span className="text-xs">Tobacco use during pregnancy</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="text-green-600" />
+                            <span className="text-xs">Alcohol consumption during pregnancy</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="text-green-600" />
+                            <span className="text-xs">Substance abuse history</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="text-green-600" />
+                            <span className="text-xs">Intimate partner violence exposure</span>
+                          </label>
+                          <div className="mt-2">
+                            <label className="block text-xs font-medium mb-1">Additional social risk factors</label>
+                            <textarea 
+                              className="w-full border rounded p-2 text-xs" 
+                              rows={2} 
+                              placeholder="Describe any additional social risk factors or concerns..."
+                            ></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                </div>
+
+                {/* Medical History Section */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
+                    <div className="flex items-center">
+                      <h3 className="font-semibold">Medical History</h3>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        Edit Record
+                      </Button>
+                      <Button 
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                        onClick={() => setShowMedicalHistoryDialog(true)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Add Record
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Standard ANC Assessment Section */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
+                    <div className="flex items-center">
+                      <h3 className="font-semibold">Standard ANC Assessment</h3>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
                         Edit Record
                       </Button>
                       <Button 
                         className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
                         onClick={() => setShowStandardAssessmentDialog(true)}
                       >
-                        <Plus className="w-4 h-4" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
+                  </div>
+                </div>
+              </div>
+
+
+                    </CardContent>
+                  )}
                 </Card>
 
                 {/* Navigation buttons - Client Profile */}
@@ -7275,6 +7009,1519 @@ export default function AncPage() {
                     </div>
                   </CardContent>
                 </Card>
+                  {showLabInvestigations && (
+                    <Card>
+                      <CardContent>
+              <div className="space-y-6">
+                {/* Laboratory Tests with WHO Guidelines */}
+                <div className="p-4 rounded-lg border">
+                  <h3 className="font-semibold text-gray-700 mb-4 flex items-center">
+                    <TestTube className="w-5 h-5 mr-2" />
+                    Laboratory Tests & Results
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 gap-6">
+                    {/* Laboratory Tests */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-gray-800 border-b pb-2">Laboratory Tests</h4>
+                      
+                      <div className="grid gap-4">
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Hemoglobin Level (g/dL) *</label>
+                          <div className="flex space-x-2">
+                            <input 
+                              type="number" 
+                              step="0.1" 
+                              placeholder="e.g., 12.5" 
+                              className="flex-1 border rounded p-2 text-sm"
+                              id="hemoglobin_level_labs"
+                              onChange={(e) => {
+                                const hb = parseFloat(e.target.value);
+                                if (hb && hb < 11.0) {
+                                  if (hb < 7.0) {
+                                    // Severe anemia - critical alert
+                                    showUrgentAlert({
+                                      type: 'critical',
+                                      title: 'CRITICAL: Severe Anemia Detected',
+                                      message: 'Patient has severe anemia requiring immediate intervention',
+                                      condition: `Hemoglobin: ${hb} g/dL (Normal: ≥11.0 g/dL in pregnancy)`,
+                                      recommendations: [
+                                        'URGENT: Consider blood transfusion',
+                                        'Refer to specialist immediately',
+                                        'Start iron 120mg + folic acid 5mg daily',
+                                        'Monitor for signs of heart failure',
+                                        'Daily hemoglobin monitoring required'
+                                      ],
+                                      requiresReferral: true
+                                    });
+                                  } else if (hb < 9.0) {
+                                    // Moderate anemia - urgent alert
+                                    showUrgentAlert({
+                                      type: 'urgent',
+                                      title: 'Moderate Anemia Alert',
+                                      message: 'Patient has moderate anemia requiring immediate treatment',
+                                      condition: `Hemoglobin: ${hb} g/dL (Normal: ≥11.0 g/dL in pregnancy)`,
+                                      recommendations: [
+                                        'Start iron 120mg + folic acid 5mg daily',
+                                        'Monitor weekly hemoglobin levels',
+                                        'Consider specialist referral',
+                                        'Nutritional counseling required',
+                                        'Investigate underlying causes'
+                                      ],
+                                      requiresReferral: true
+                                    });
+                                  } else {
+                                    // Mild anemia - warning alert
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Mild Anemia Detected',
+                                      message: 'Patient has mild anemia requiring iron supplementation',
+                                      condition: `Hemoglobin: ${hb} g/dL (Normal: ≥11.0 g/dL in pregnancy)`,
+                                      recommendations: [
+                                        'Iron supplementation 60mg daily',
+                                        'Nutritional counseling on iron-rich foods',
+                                        'Recheck hemoglobin in 4 weeks',
+                                        'Monitor for worsening symptoms'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }
+                              }}
+                            />
+                            <input 
+                              type="date" 
+                              className="flex-1 border rounded p-2 text-sm"
+                              id="hemoglobin_date"
+                            />
+                          </div>
+                          <div id="hemoglobin_alert_labs" className="hidden mt-2">
+                            <div className="bg-red-50 border border-red-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-red-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="hb-severity font-medium"></span>
+                              </div>
+                              <p className="hb-action text-red-600 text-xs mt-1"></p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Syphilis Screening *</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Type</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="syphilis_test_type"
+                                onChange={(e) => {
+                                  const testType = e.target.value;
+                                  const resultField = document.getElementById('syphilis_result_field');
+                                  const dateField = document.getElementById('syphilis_date_field');
+                                  
+                                  if (testType) {
+                                    if (resultField) resultField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else {
+                                    if (resultField) resultField.style.display = 'none';
+                                    if (dateField) dateField.style.display = 'none';
+                                  }
+                                }}
+                              >
+                                <option value="">Select test type...</option>
+                                <option value="Dual HIV/Syphilis RDT">Dual HIV/Syphilis RDT</option>
+                                <option value="Syphilis RDT">Syphilis RDT</option>
+                                <option value="RPR">RPR</option>
+                                <option value="VDRL">VDRL</option>
+                              </select>
+                            </div>
+                            
+                            <div id="syphilis_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Test Result</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="syphilis_result"
+                                onChange={(e) => {
+                                  const result = e.target.value;
+                                  if (result === 'Positive') {
+                                    showUrgentAlert({
+                                      type: 'critical',
+                                      title: 'CRITICAL: Positive Syphilis Result',
+                                      message: 'Patient has tested positive for syphilis requiring immediate treatment',
+                                      condition: 'Syphilis VDRL/RPR: POSITIVE',
+                                      recommendations: [
+                                        'URGENT: Start benzathine penicillin 2.4 MU IM immediately',
+                                        'Test and treat sexual partner(s)',
+                                        'Schedule follow-up VDRL at delivery',
+                                        'Counsel on prevention and transmission',
+                                        'Monitor for treatment response'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              >
+                                <option value="">Select result...</option>
+                                <option value="Negative">Negative</option>
+                                <option value="Positive">Positive</option>
+                                <option value="Not Done">Not Done</option>
+                                <option value="Pending">Pending</option>
+                              </select>
+                            </div>
+                            
+                            <div id="syphilis_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Date Tested</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                                id="syphilis_date"
+                              />
+                            </div>
+                          </div>
+                          
+
+                        </div>
+                        
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Urine Analysis *</label>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Protein</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const protein = e.target.value;
+                                  const alert = document.getElementById('proteinuria_alert_labs');
+                                  if (protein === 'trace' || protein === '1+' || protein === '2+' || protein === '3+' || protein === '4+') {
+                                    if (alert) {
+                                      alert.classList.remove('hidden');
+                                      const message = alert.querySelector('.protein-message');
+                                      if (message) {
+                                        if (protein === 'trace' || protein === '1+') {
+                                          message.textContent = 'Mild proteinuria detected. Monitor BP closely. Repeat in 1 week.';
+                                        } else {
+                                          message.textContent = 'Significant proteinuria - possible pre-eclampsia. Check BP immediately and consider urgent referral.';
+                                        }
+                                      }
+                                    }
+                                  } else {
+                                    if (alert) alert.classList.add('hidden');
+                                  }
+                                }}
+                              >
+                                <option value="">Select...</option>
+                                <option value="negative">Negative</option>
+                                <option value="trace">Trace</option>
+                                <option value="1+">1+</option>
+                                <option value="2+">2+</option>
+                                <option value="3+">3+</option>
+                                <option value="4+">4+</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Glucose</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const glucose = e.target.value;
+                                  const alert = document.getElementById('glucosuria_alert_labs');
+                                  if (glucose === 'trace' || glucose === '1+' || glucose === '2+' || glucose === '3+' || glucose === '4+') {
+                                    if (alert) alert.classList.remove('hidden');
+                                  } else {
+                                    if (alert) alert.classList.add('hidden');
+                                  }
+                                }}
+                              >
+                                <option value="">Select...</option>
+                                <option value="negative">Negative</option>
+                                <option value="trace">Trace</option>
+                                <option value="1+">1+</option>
+                                <option value="2+">2+</option>
+                                <option value="3+">3+</option>
+                                <option value="4+">4+</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Nitrites</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select...</option>
+                                <option value="negative">Negative</option>
+                                <option value="positive">Positive</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Leukocyte esterase</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const le = e.target.value;
+                                  if (le === 'positive' || le === '1+' || le === '2+' || le === '3+') {
+                                    showUrgentAlert({
+                                      type: 'urgent',
+                                      title: 'Possible Urinary Tract Infection',
+                                      message: 'Patient may have a urinary tract infection requiring further investigation',
+                                      condition: `Leukocyte Esterase: ${le} (Normal: Negative)`,
+                                      recommendations: [
+                                        'Send urine for culture and sensitivity',
+                                        'Consider empirical antibiotics if symptomatic',
+                                        'Increase fluid intake counseling',
+                                        'Monitor for worsening symptoms',
+                                        'Follow up in 3-5 days'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              >
+                                <option value="">Select...</option>
+                                <option value="negative">Negative</option>
+                                <option value="positive">Positive</option>
+                                <option value="1+">1+</option>
+                                <option value="2+">2+</option>
+                                <option value="3+">3+</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          {/* Urine Analysis Alerts */}
+                          <div id="proteinuria_alert_labs" className="hidden mt-2">
+                            <div className="bg-orange-50 border border-orange-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-orange-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Proteinuria Detected</span>
+                              </div>
+                              <p className="protein-message text-orange-600 text-xs mt-1"></p>
+                            </div>
+                          </div>
+                          
+                          <div id="glucosuria_alert_labs" className="hidden mt-2">
+                            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-yellow-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Glucosuria Detected</span>
+                              </div>
+                              <p className="text-yellow-600 text-xs mt-1">
+                                Screen for gestational diabetes. Consider OGTT if not already done.
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div id="uti_alert_labs" className="hidden mt-2">
+                            <div className="bg-red-50 border border-red-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-red-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Possible UTI</span>
+                              </div>
+                              <p className="text-red-600 text-xs mt-1">
+                                Send urine for culture and sensitivity. Consider empirical antibiotics if symptomatic.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Blood Group Test */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Blood Group Test *</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="blood_group_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const bloodTypeField = document.getElementById('blood_type_field');
+                                  const testDateField = document.getElementById('blood_group_date_field');
+                                  const reasonField = document.getElementById('blood_group_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (bloodTypeField) bloodTypeField.style.display = 'none';
+                                  if (testDateField) testDateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (bloodTypeField) bloodTypeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (bloodTypeField) bloodTypeField.style.display = 'block';
+                                    if (testDateField) testDateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="blood_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Blood Group</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="blood_group"
+                                onChange={(e) => {
+                                  const bloodGroup = e.target.value;
+                                  const rhField = document.getElementById('rh_factor_field');
+                                  if (bloodGroup && (bloodGroup === 'A' || bloodGroup === 'B' || bloodGroup === 'AB' || bloodGroup === 'O')) {
+                                    if (rhField) rhField.style.display = 'block';
+                                  } else {
+                                    if (rhField) rhField.style.display = 'none';
+                                  }
+                                }}
+                              >
+                                <option value="">Select blood group...</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                              </select>
+                              
+                              <div id="rh_factor_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">Rh Factor</label>
+                                <select className="w-full border rounded p-2 text-sm">
+                                  <option value="">Select Rh factor...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div id="blood_group_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Blood Group Test Date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="blood_group_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="stock_out" />
+                                  Stock out
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="expired" />
+                                  Expired
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="other" />
+                                  Other (specify)
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* POC Tests Card */}
+                        <POCTestsCard 
+                          data={pocTestsData}
+                          onUpdate={handleSavePOCTests}
+                        />
+
+                        {/* HIV Testing Card */}
+                        <HIVTestingCard 
+                          data={hivTestingData}
+                          onUpdate={handleSaveHIVTesting}
+                        />
+
+                        {/* Partner HIV Test */}
+                        <div className="bg-blue-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Partner's HIV Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="partner_hiv_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const resultField = document.getElementById('partner_hiv_result_field');
+                                  const dateField = document.getElementById('partner_hiv_date_field');
+                                  const reasonField = document.getElementById('partner_hiv_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (resultField) resultField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (resultField) resultField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (resultField) resultField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="partner_hiv_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Record Result</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select result...</option>
+                                <option value="positive">Positive</option>
+                                <option value="negative">Negative</option>
+                                <option value="inconclusive">Inconclusive</option>
+                              </select>
+                            </div>
+                            
+                            <div id="partner_hiv_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Partner's HIV Test Date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="partner_hiv_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="stock_out" />
+                                  Stock out
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="expired_stock" />
+                                  Expired stock
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="declined" />
+                                  Declined
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="not_available" />
+                                  Not available
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="counsellor_not_available" />
+                                  Counsellor not available
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="other" />
+                                  Other specify
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Hepatitis B Test */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Hepatitis B Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="hep_b_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const typeField = document.getElementById('hep_b_type_field');
+                                  const dateField = document.getElementById('hep_b_date_field');
+                                  const reasonField = document.getElementById('hep_b_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (typeField) typeField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (typeField) typeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (typeField) typeField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="hep_b_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Hep B Test Type</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="hep_b_test_type"
+                                onChange={(e) => {
+                                  const testType = e.target.value;
+                                  const labField = document.getElementById('hep_b_lab_result_field');
+                                  const rdtField = document.getElementById('hep_b_rdt_result_field');
+                                  const dbsField = document.getElementById('hep_b_dbs_result_field');
+                                  
+                                  // Hide all result fields first
+                                  if (labField) labField.style.display = 'none';
+                                  if (rdtField) rdtField.style.display = 'none';
+                                  if (dbsField) dbsField.style.display = 'none';
+                                  
+                                  if (testType === 'laboratory_immunoassay') {
+                                    if (labField) labField.style.display = 'block';
+                                  } else if (testType === 'rapid_diagnostic') {
+                                    if (rdtField) rdtField.style.display = 'block';
+                                  } else if (testType === 'dried_blood_spot') {
+                                    if (dbsField) dbsField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select test type...</option>
+                                <option value="laboratory_immunoassay">HBsAg laboratory-based immunoassay (recommended)</option>
+                                <option value="rapid_diagnostic">HBsAg rapid diagnostic test (RDT)</option>
+                                <option value="dried_blood_spot">Dried Blood Spot (DBS) HBsAg test</option>
+                              </select>
+                              
+                              <div id="hep_b_lab_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">HBsAg laboratory-based immunoassay result</label>
+                                <select 
+                                  className="w-full border rounded p-2 text-sm"
+                                  onChange={(e) => {
+                                    const result = e.target.value;
+                                    const condition = evaluateHepatitisB(result);
+                                    if (condition) {
+                                      triggerCDSSEvaluation(condition);
+                                    }
+                                  }}
+                                >
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                              
+                              <div id="hep_b_rdt_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">HBsAg rapid diagnostic test result</label>
+                                <select 
+                                  className="w-full border rounded p-2 text-sm"
+                                  onChange={(e) => {
+                                    const result = e.target.value;
+                                    const condition = evaluateHepatitisB(result);
+                                    if (condition) {
+                                      triggerCDSSEvaluation(condition);
+                                    }
+                                  }}
+                                >
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                              
+                              <div id="hep_b_dbs_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">Dried Blood Spot HBsAg test result</label>
+                                <select 
+                                  className="w-full border rounded p-2 text-sm"
+                                  onChange={(e) => {
+                                    const result = e.target.value;
+                                    const condition = evaluateHepatitisB(result);
+                                    if (condition) {
+                                      triggerCDSSEvaluation(condition);
+                                    }
+                                  }}
+                                >
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div id="hep_b_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Hep B Test Date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="hep_b_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="stock_out" />
+                                  Stock out
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="expired_stock" />
+                                  Expired stock
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="other" />
+                                  Other (specify)
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Partner Hepatitis B Test */}
+                        <div className="bg-blue-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Partner's Hepatitis B Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="partner_hep_b_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const typeField = document.getElementById('partner_hep_b_type_field');
+                                  const dateField = document.getElementById('partner_hep_b_date_field');
+                                  const reasonField = document.getElementById('partner_hep_b_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (typeField) typeField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (typeField) typeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (typeField) typeField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="partner_hep_b_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Hep B Test Type</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="partner_hep_b_test_type"
+                                onChange={(e) => {
+                                  const testType = e.target.value;
+                                  const labField = document.getElementById('partner_hep_b_lab_result_field');
+                                  const rdtField = document.getElementById('partner_hep_b_rdt_result_field');
+                                  const dbsField = document.getElementById('partner_hep_b_dbs_result_field');
+                                  
+                                  // Hide all result fields first
+                                  if (labField) labField.style.display = 'none';
+                                  if (rdtField) rdtField.style.display = 'none';
+                                  if (dbsField) dbsField.style.display = 'none';
+                                  
+                                  if (testType === 'laboratory_immunoassay') {
+                                    if (labField) labField.style.display = 'block';
+                                  } else if (testType === 'rapid_diagnostic') {
+                                    if (rdtField) rdtField.style.display = 'block';
+                                  } else if (testType === 'dried_blood_spot') {
+                                    if (dbsField) dbsField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select test type...</option>
+                                <option value="laboratory_immunoassay">HBsAg laboratory-based immunoassay (recommended)</option>
+                                <option value="rapid_diagnostic">HBsAg rapid diagnostic test (RDT)</option>
+                                <option value="dried_blood_spot">Dried Blood Spot (DBS) HBsAg test</option>
+                              </select>
+                              
+                              <div id="partner_hep_b_lab_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">HBsAg laboratory-based immunoassay result</label>
+                                <select className="w-full border rounded p-2 text-sm">
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                              
+                              <div id="partner_hep_b_rdt_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">HBsAg rapid diagnostic test result</label>
+                                <select className="w-full border rounded p-2 text-sm">
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                              
+                              <div id="partner_hep_b_dbs_result_field" style={{ display: 'none' }} className="mt-2">
+                                <label className="block text-xs text-gray-600 mb-1">Dried Blood Spot HBsAg test result</label>
+                                <select className="w-full border rounded p-2 text-sm">
+                                  <option value="">Select result...</option>
+                                  <option value="positive">Positive</option>
+                                  <option value="negative">Negative</option>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div id="partner_hep_b_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Partner's Hep B Test Date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="partner_hep_b_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="stock_out" />
+                                  Stock out
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="expired_stock" />
+                                  Expired stock
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="other" />
+                                  Other (specify)
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Urine Test with Multiple Selection and Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Urine Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="urine_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const typeField = document.getElementById('urine_test_type_field');
+                                  const dateField = document.getElementById('urine_test_date_field');
+                                  const reasonField = document.getElementById('urine_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (typeField) typeField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  // Hide all result fields
+                                  const cultureField = document.getElementById('midstream_culture_result_field');
+                                  const gramField = document.getElementById('midstream_gram_result_field');
+                                  const dipstickField = document.getElementById('urine_dipstick_results_field');
+                                  if (cultureField) cultureField.style.display = 'none';
+                                  if (gramField) gramField.style.display = 'none';
+                                  if (dipstickField) dipstickField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (typeField) typeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (typeField) typeField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="urine_test_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Urine test type (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="midstream_culture"
+                                    id="midstream_culture_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('midstream_culture_result_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Midstream urine culture (recommended)
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="midstream_gram"
+                                    id="midstream_gram_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('midstream_gram_result_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Midstream urine Gram-staining
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="urine_dipstick"
+                                    id="urine_dipstick_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('urine_dipstick_results_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Urine dipstick
+                                </label>
+                              </div>
+                            </div>
+                            
+                            {/* Midstream Urine Culture Results */}
+                            <div id="midstream_culture_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Midstream urine culture (recommended)</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const result = e.target.value;
+                                  if (result === 'positive_any' || result === 'positive_gbs') {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Positive Urine Culture',
+                                      message: 'Positive urine culture detected requiring antibiotic treatment',
+                                      condition: 'Urine Culture: POSITIVE',
+                                      recommendations: [
+                                        'Start appropriate antibiotic therapy',
+                                        'Consider antibiotic sensitivity testing',
+                                        'Monitor for treatment response',
+                                        'Follow-up urine culture after treatment'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              >
+                                <option value="">Select result...</option>
+                                <option value="positive_any">Positive - any agent</option>
+                                <option value="positive_gbs">Positive - Group B Streptococcus (GBS)</option>
+                                <option value="negative">Negative</option>
+                              </select>
+                            </div>
+                            
+                            {/* Midstream Urine Gram-staining Results */}
+                            <div id="midstream_gram_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Midstream urine Gram-staining</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const result = e.target.value;
+                                  if (result === 'positive') {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Positive Gram Staining',
+                                      message: 'Positive Gram staining indicates bacterial infection',
+                                      condition: 'Urine Gram Staining: POSITIVE',
+                                      recommendations: [
+                                        'Consider empirical antibiotic therapy',
+                                        'Send for formal culture and sensitivity',
+                                        'Monitor clinical symptoms',
+                                        'Ensure adequate hydration'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              >
+                                <option value="">Select result...</option>
+                                <option value="positive">Positive</option>
+                                <option value="negative">Negative</option>
+                              </select>
+                            </div>
+                            
+                            {/* Urine Dipstick Results */}
+                            <div id="urine_dipstick_results_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-2">Urine dipstick results</label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Urine dipstick result - nitrites</label>
+                                  <select 
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const result = e.target.value;
+                                      if (result !== 'none' && result !== '') {
+                                        showUrgentAlert({
+                                          type: 'warning',
+                                          title: 'Positive Nitrites',
+                                          message: 'Nitrites in urine suggest bacterial infection',
+                                          condition: 'Urine Nitrites: POSITIVE',
+                                          recommendations: [
+                                            'Consider UTI diagnosis',
+                                            'Start appropriate antibiotic therapy',
+                                            'Encourage increased fluid intake',
+                                            'Follow-up to ensure treatment response'
+                                          ],
+                                          requiresReferral: false
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="+">+</option>
+                                    <option value="++">++</option>
+                                    <option value="+++">+++</option>
+                                    <option value="++++">++++</option>
+                                  </select>
+                                </div>
+                                
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Urine dipstick result - leukocytes</label>
+                                  <select 
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const leukocyteLevel = e.target.value;
+                                      // Get other urine test values for comprehensive evaluation
+                                      const proteinSelect = document.querySelector('select[onChange*="protein"]');
+                                      const nitriteSelect = document.querySelector('select[onChange*="nitrite"]');
+                                      
+                                      if (leukocyteLevel === '+++' || leukocyteLevel === '++++') {
+                                        const condition = evaluateASB({ 
+                                          cultureResult: 'pending',
+                                          proteinLevel: proteinSelect?.value || 'normal',
+                                          nitriteLevel: nitriteSelect?.value || 'normal',
+                                          leukocyteLevel: leukocyteLevel
+                                        });
+                                        if (condition) {
+                                          triggerCDSSEvaluation(condition);
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="+">+</option>
+                                    <option value="++">++</option>
+                                    <option value="+++">+++</option>
+                                    <option value="++++">++++</option>
+                                  </select>
+                                </div>
+                                
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Urine dipstick result - protein</label>
+                                  <select 
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const proteinLevel = e.target.value;
+                                      // Get other urine test values for comprehensive evaluation
+                                      const leukocyteSelect = document.querySelector('select[onChange*="leukocytes"]');
+                                      const nitriteSelect = document.querySelector('select[onChange*="nitrite"]');
+                                      
+                                      if (proteinLevel === '++' || proteinLevel === '+++' || proteinLevel === '++++') {
+                                        const condition = evaluateASB({ 
+                                          cultureResult: 'pending',
+                                          proteinLevel: proteinLevel,
+                                          nitriteLevel: nitriteSelect?.value || 'normal',
+                                          leukocyteLevel: leukocyteSelect?.value || 'normal'
+                                        });
+                                        if (condition) {
+                                          triggerCDSSEvaluation(condition);
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="+">+</option>
+                                    <option value="++">++</option>
+                                    <option value="+++">+++</option>
+                                    <option value="++++">++++</option>
+                                  </select>
+                                </div>
+                                
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Urine dipstick result - glucose</label>
+                                  <select 
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const result = e.target.value;
+                                      if (result !== 'none' && result !== '') {
+                                        showUrgentAlert({
+                                          type: 'warning',
+                                          title: 'Glucose in Urine',
+                                          message: 'Glucose in urine may indicate diabetes or gestational diabetes',
+                                          condition: 'Urine Glucose: POSITIVE',
+                                          recommendations: [
+                                            'Check blood glucose levels',
+                                            'Consider OGTT if not done',
+                                            'Monitor for gestational diabetes',
+                                            'Dietary counseling recommended'
+                                          ],
+                                          requiresReferral: false
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="none">None</option>
+                                    <option value="+">+</option>
+                                    <option value="++">++</option>
+                                    <option value="+++">+++</option>
+                                    <option value="++++">++++</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div id="urine_test_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Urine test date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="urine_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select reason...</option>
+                                <option value="stock_out">Stock out</option>
+                                <option value="expired_stock">Expired stock</option>
+                                <option value="other">Other (specify)</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Haemoglobin Test with Multiple Selection and Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Haemoglobin Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="haemoglobin_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const typeField = document.getElementById('haemoglobin_test_type_field');
+                                  const dateField = document.getElementById('haemoglobin_test_date_field');
+                                  const reasonField = document.getElementById('haemoglobin_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (typeField) typeField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  // Hide all result fields
+                                  const cbcField = document.getElementById('complete_blood_count_field');
+                                  const fbcField = document.getElementById('full_blood_count_field');
+                                  const wbcField = document.getElementById('wbc_count_field');
+                                  const plateletField = document.getElementById('platelet_count_field');
+                                  const hbResultField = document.getElementById('hb_test_result_field');
+                                  const hbColourField = document.getElementById('hb_test_colour_field');
+                                  
+                                  if (cbcField) cbcField.style.display = 'none';
+                                  if (fbcField) fbcField.style.display = 'none';
+                                  if (wbcField) wbcField.style.display = 'none';
+                                  if (plateletField) plateletField.style.display = 'none';
+                                  if (hbResultField) hbResultField.style.display = 'none';
+                                  if (hbColourField) hbColourField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (typeField) typeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (typeField) typeField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="haemoglobin_test_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Haemoglobin test type (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="complete_blood_count"
+                                    id="complete_blood_count_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('complete_blood_count_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Complete blood count test result
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="full_blood_count"
+                                    id="full_blood_count_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('full_blood_count_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Full blood count test result
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="wbc_count"
+                                    id="wbc_count_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('wbc_count_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  White blood cell (WBC) count
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="platelet_count"
+                                    id="platelet_count_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('platelet_count_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Platelet count
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="hb_test_result"
+                                    id="hb_test_result_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('hb_test_result_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Hb test result - haemoglobin
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="hb_test_colour"
+                                    id="hb_test_colour_checkbox"
+                                    onChange={(e) => {
+                                      const resultField = document.getElementById('hb_test_colour_field');
+                                      if (e.target.checked) {
+                                        if (resultField) resultField.style.display = 'block';
+                                      } else {
+                                        if (resultField) resultField.style.display = 'none';
+                                      }
+                                    }}
+                                  />
+                                  Hb test result - haemoglobin colour
+                                </label>
+                              </div>
+                            </div>
+                            
+
+                            {/* Complete Blood Count Results */}
+                            <div id="complete_blood_count_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-2">Complete blood count test result</label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">RBC count (×10⁶/μL)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="4.5"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Hematocrit (%)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="35"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">MCV (fL)</label>
+                                  <input 
+                                    type="number" 
+                                    placeholder="85"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">MCH (pg)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="30"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Full Blood Count Results */}
+                            <div id="full_blood_count_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-2">Full blood count test result</label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">WBC count (×10³/μL)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="7.5"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Neutrophils (%)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="60"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Lymphocytes (%)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="30"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Monocytes (%)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="8"
+                                    className="w-full border rounded p-2 text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* WBC Count Results */}
+                            <div id="wbc_count_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">White blood cell (WBC) count</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="Enter WBC count (×10³/μL)"
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const wbcCount = parseFloat(e.target.value);
+                                  if (wbcCount > 15.0) {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Elevated WBC Count',
+                                      message: 'High white blood cell count may indicate infection',
+                                      condition: 'WBC Count: ' + wbcCount + ' ×10³/μL (Normal: 4.0-11.0)',
+                                      recommendations: [
+                                        'Investigate source of infection',
+                                        'Consider blood culture if fever present',
+                                        'Monitor clinical symptoms',
+                                        'Consider antibiotic therapy if indicated'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  } else if (wbcCount < 4.0) {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Low WBC Count',
+                                      message: 'Low white blood cell count may indicate immune compromise',
+                                      condition: 'WBC Count: ' + wbcCount + ' ×10³/μL (Normal: 4.0-11.0)',
+                                      recommendations: [
+                                        'Monitor for signs of infection',
+                                        'Consider hematology consultation',
+                                        'Avoid exposure to infections',
+                                        'Repeat test to confirm'
+                                      ],
+                                      requiresReferral: true
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
+                            
+                            {/* Platelet Count Results */}
+                            <div id="platelet_count_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Platelet count</label>
+                              <input 
+                                type="number" 
+                                placeholder="Enter platelet count (×10³/μL)"
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const plateletCount = parseInt(e.target.value);
+                                  if (plateletCount < 150) {
+                                    showUrgentAlert({
+                                      type: 'critical',
+                                      title: 'Thrombocytopenia',
+                                      message: 'Low platelet count increases bleeding risk',
+                                      condition: 'Platelet Count: ' + plateletCount + ' ×10³/μL (Normal: 150-450)',
+                                      recommendations: [
+                                        'URGENT: Monitor for bleeding',
+                                        'Avoid medications that affect platelets',
+                                        'Consider hematology consultation',
+                                        'Plan delivery management carefully'
+                                      ],
+                                      requiresReferral: true
+                                    });
+                                  } else if (plateletCount > 450) {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Thrombocytosis',
+                                      message: 'High platelet count may increase clotting risk',
+                                      condition: 'Platelet Count: ' + plateletCount + ' ×10³/μL (Normal: 150-450)',
+                                      recommendations: [
+                                        'Monitor for thrombotic complications',
+                                        'Consider underlying causes',
+                                        'Assess bleeding and clotting history',
+                                        'Consider anticoagulation if indicated'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
+                            
+                            {/* Hb Test Result - Haemoglobin */}
+                            <div id="hb_test_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Hb test result - haemoglobin</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="Enter Hb level (g/dL)"
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            {/* Hb Test Result - Haemoglobin Colour */}
+                            <div id="hb_test_colour_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Hb test result - haemoglobin colour</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select colour...</option>
+                                <option value="normal">Normal (bright red)</option>
+                                <option value="pale">Pale</option>
+                                <option value="dark">Dark</option>
+                                <option value="other">Other</option>
+                              </select>
+                            </div>
+                            
+                            <div id="haemoglobin_test_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Haemoglobin test date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="haemoglobin_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select reason...</option>
+                                <option value="stock_out">Stock out</option>
+                                <option value="expired_stock">Expired stock</option>
+                                <option value="other">Other (specify)</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* CDSS Lab Reminders - Smart alerts appear only when tests are due */}
+                </div>
+                
+                {/* Lab Results Interpretation */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">Laboratory Notes & Interpretation</label>
+                  <textarea 
+                    className="w-full border rounded p-3 text-sm min-h-[100px]" 
+                    placeholder="Record laboratory result interpretations, follow-up actions needed, and clinical correlation..."
+                  ></textarea>
+                </div>
+                
+                      <div className="flex justify-end space-x-2">
+                        <Button 
+                          variant="outline" 
+                          className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm"
+                          onClick={() => setShowLaboratoryTestsModal(false)}
+                        >
+                          Close
+                        </Button>
+                        <Button 
+                          className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm"
+                          onClick={() => setShowLaboratoryTestsModal(true)}
+                        >
+                          Open Laboratory Tests
+                        </Button>
+                      </div>
+                    </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {/* Specialized Diagnostic Tests Card - Client Profile Style */}
                 <Card className="mb-6">
@@ -7292,14 +8539,14 @@ export default function AncPage() {
                       <Button 
                         variant="outline" 
                         className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
-                        onClick={() => setShowSpecializedTestsModal(true)}
+                        onClick={() => setShowSpecializedTests(true)}
                       >
                         <Edit className="w-4 h-4" />
                         Edit Record
                       </Button>
                       <Button 
                         className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
-                        onClick={() => setShowSpecializedTestsModal(true)}
+                        onClick={() => setShowSpecializedTests(true)}
                       >
                         <Plus className="w-4 h-4" />
                         Add Record
@@ -7307,19 +8554,843 @@ export default function AncPage() {
                     </div>
                   </CardContent>
                 </Card>
+                  {showSpecializedTests && (
+                    <Card>
+                      <CardContent>
+                      <div className="space-y-4">
+                        {/* Blood Glucose Test with Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Blood Glucose Test</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="blood_glucose_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const typeField = document.getElementById('blood_glucose_type_field');
+                                  const dateField = document.getElementById('blood_glucose_date_field');
+                                  const reasonField = document.getElementById('blood_glucose_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (typeField) typeField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  // Hide all result fields
+                                  const fastingField = document.getElementById('fasting_plasma_result_field');
+                                  const ogttField = document.getElementById('ogtt_results_field');
+                                  const randomField = document.getElementById('random_plasma_result_field');
+                                  if (fastingField) fastingField.style.display = 'none';
+                                  if (ogttField) ogttField.style.display = 'none';
+                                  if (randomField) randomField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (typeField) typeField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (typeField) typeField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="blood_glucose_type_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Blood Glucose Test Type</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="blood_glucose_test_type"
+                                onChange={(e) => {
+                                  const testType = e.target.value;
+                                  const fastingField = document.getElementById('fasting_plasma_result_field');
+                                  const ogttField = document.getElementById('ogtt_results_field');
+                                  const randomField = document.getElementById('random_plasma_result_field');
+                                  
+                                  // Hide all result fields first
+                                  if (fastingField) fastingField.style.display = 'none';
+                                  if (ogttField) ogttField.style.display = 'none';
+                                  if (randomField) randomField.style.display = 'none';
+                                  
+                                  if (testType === 'fasting_plasma') {
+                                    if (fastingField) fastingField.style.display = 'block';
+                                  } else if (testType === '75g_ogtt') {
+                                    if (ogttField) ogttField.style.display = 'block';
+                                  } else if (testType === 'random_plasma') {
+                                    if (randomField) randomField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select test type...</option>
+                                <option value="fasting_plasma">Fasting plasma glucose</option>
+                                <option value="75g_ogtt">75g OGTT</option>
+                                <option value="random_plasma">Random plasma glucose</option>
+                              </select>
+                            </div>
+                            
+                            {/* Fasting Plasma Glucose Results */}
+                            <div id="fasting_plasma_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Fasting plasma glucose results (mmol/l)</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="Enter fasting glucose result"
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const result = parseFloat(e.target.value);
+                                  if (!isNaN(result)) {
+                                    // Convert mmol/L to mg/dL for evaluation (multiply by 18.0182)
+                                    const resultMgDl = result * 18.0182;
+                                    const condition = evaluateGlucose('fasting_plasma_glucose', resultMgDl);
+                                    if (condition) {
+                                      triggerCDSSEvaluation(condition);
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                            
+                            {/* 75g OGTT Results */}
+                            <div id="ogtt_results_field" style={{ display: 'none' }}>
+                              <div className="space-y-2">
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">75g OGTT - fasting glucose results (mmol/l)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="Enter fasting result"
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const result = parseFloat(e.target.value);
+                                      if (!isNaN(result)) {
+                                        // Convert mmol/L to mg/dL for evaluation (multiply by 18.0182)
+                                        const resultMgDl = result * 18.0182;
+                                        const condition = evaluateGlucose('75g_ogtt_fasting', resultMgDl);
+                                        if (condition) {
+                                          triggerCDSSEvaluation(condition);
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">1 hr results (mmol/l)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="Enter 1-hour result"
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const result = parseFloat(e.target.value);
+                                      if (!isNaN(result)) {
+                                        // Convert mmol/L to mg/dL for evaluation (multiply by 18.0182)
+                                        const resultMgDl = result * 18.0182;
+                                        const condition = evaluateGlucose('75g_ogtt_1hour', resultMgDl);
+                                        if (condition) {
+                                          triggerCDSSEvaluation(condition);
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">2 hr results (mmol/l)</label>
+                                  <input 
+                                    type="number" 
+                                    step="0.1"
+                                    placeholder="Enter 2-hour result"
+                                    className="w-full border rounded p-2 text-sm"
+                                    onChange={(e) => {
+                                      const result = parseFloat(e.target.value);
+                                      if (!isNaN(result)) {
+                                        // Convert mmol/L to mg/dL for evaluation (multiply by 18.0182)
+                                        const resultMgDl = result * 18.0182;
+                                        const condition = evaluateGlucose('75g_ogtt_2hour', resultMgDl);
+                                        if (condition) {
+                                          triggerCDSSEvaluation(condition);
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Random Plasma Glucose Results */}
+                            <div id="random_plasma_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Random plasma glucose results (mmol/l)</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="Enter random glucose result"
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const result = parseFloat(e.target.value);
+                                  if (!isNaN(result)) {
+                                    // Convert mmol/L to mg/dL for evaluation (multiply by 18.0182)
+                                    const resultMgDl = result * 18.0182;
+                                    const condition = evaluateGlucose('random_plasma_glucose', resultMgDl);
+                                    if (condition) {
+                                      triggerCDSSEvaluation(condition);
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                            
+                            <div id="blood_glucose_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Blood glucose test date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="blood_glucose_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="stock_out" />
+                                  Stock out
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="expired_stock" />
+                                  Expired stock
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input type="checkbox" className="mr-2" value="other" />
+                                  Other (specify)
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-                {/* HIV Testing Card */}
-                <HIVTestingCard 
-                  data={hivTestingData}
-                  onUpdate={setHivTestingData}
-                  isANCContext={true}
-                />
+                        {/* Glucose Tolerance Test with Clinical Decision Support */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium">Oral Glucose Tolerance Test (OGTT)</label>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Fasting glucose (mmol/L)</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="5.1" 
+                                className="w-full border rounded p-2 text-sm"
+                                id="fasting_glucose_ogtt"
+                                onChange={(e) => {
+                                  const glucose = parseFloat(e.target.value);
+                                  const alert = document.getElementById('gdm_alert');
+                                  if (glucose >= 5.1) {
+                                    if (alert) {
+                                      alert.classList.remove('hidden');
+                                      const message = alert.querySelector('.gdm-message');
+                                      if (message) message.textContent = 'Fasting glucose ≥5.1 mmol/L indicates GDM. Initiate diabetes management protocol.';
+                                    }
+                                  } else {
+                                    if (alert) alert.classList.add('hidden');
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">1-hour glucose (mmol/L)</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="10.0" 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const glucose = parseFloat(e.target.value);
+                                  const alert = document.getElementById('gdm_alert');
+                                  if (glucose >= 10.0) {
+                                    if (alert) {
+                                      alert.classList.remove('hidden');
+                                      const message = alert.querySelector('.gdm-message');
+                                      if (message) message.textContent = '1-hour glucose ≥10.0 mmol/L indicates GDM. Start dietary management and glucose monitoring.';
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">2-hour glucose (mmol/L)</label>
+                              <input 
+                                type="number" 
+                                step="0.1"
+                                placeholder="8.5" 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const glucose = parseFloat(e.target.value);
+                                  const alert = document.getElementById('gdm_alert');
+                                  if (glucose >= 8.5) {
+                                    if (alert) {
+                                      alert.classList.remove('hidden');
+                                      const message = alert.querySelector('.gdm-message');
+                                      if (message) message.textContent = '2-hour glucose ≥8.5 mmol/L indicates GDM. Refer to endocrinologist if needed.';
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* GDM Decision Support Alert */}
+                          <div id="gdm_alert" className="hidden">
+                            <div className="bg-red-50 border border-red-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-red-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Gestational Diabetes Mellitus (GDM)</span>
+                              </div>
+                              <p className="gdm-message text-red-600 text-xs mt-1"></p>
+                            </div>
+                          </div>
+                        </div>
 
-                {/* Point of Care Tests Card */}
-                <POCTestsCard 
-                  data={pocTestsData}
-                  onSave={setPocTestsData}
-                />
+                        {/* Ultrasound Scan with Comprehensive Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Ultrasound Scan</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Ultrasound Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="ultrasound_scan_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const resultsField = document.getElementById('ultrasound_results_field');
+                                  const dateField = document.getElementById('ultrasound_date_field');
+                                  const reasonField = document.getElementById('ultrasound_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (resultsField) resultsField.style.display = 'none';
+                                  if (dateField) dateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (resultsField) resultsField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (resultsField) resultsField.style.display = 'block';
+                                    if (dateField) dateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            {/* Ultrasound Results Fields */}
+                            <div id="ultrasound_results_field" style={{ display: 'none' }}>
+                              <div className="space-y-3">
+                                {/* No. of fetuses */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">No. of fetuses</label>
+                                  <select className="w-full border rounded p-2 text-sm" id="no_of_fetuses">
+                                    <option value="">Select number...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                                
+                                {/* Fetal heartbeat with conditional heart rate */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Fetal heartbeat</label>
+                                  <select 
+                                    className="w-full border rounded p-2 text-sm"
+                                    id="fetal_heartbeat"
+                                    onChange={(e) => {
+                                      const heartbeat = e.target.value;
+                                      const heartRateField = document.getElementById('fetal_heart_rate_field');
+                                      
+                                      if (heartbeat === 'present') {
+                                        if (heartRateField) heartRateField.style.display = 'block';
+                                      } else {
+                                        if (heartRateField) heartRateField.style.display = 'none';
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="present">Present</option>
+                                    <option value="absent">Absent</option>
+                                  </select>
+                                  
+                                  <div id="fetal_heart_rate_field" style={{ display: 'none' }} className="mt-2">
+                                    <label className="block text-xs text-gray-600 mb-1">Fetal heart rate (bpm)</label>
+                                    <input 
+                                      type="number" 
+                                      placeholder="140"
+                                      className="w-full border rounded p-2 text-sm"
+                                      onChange={(e) => {
+                                        const heartRate = parseInt(e.target.value);
+                                        const alert = document.getElementById('fetal_heart_rate_alert');
+                                        if (heartRate < 110 || heartRate > 160) {
+                                          if (alert) {
+                                            alert.classList.remove('hidden');
+                                            const message = alert.querySelector('.heart-rate-message');
+                                            if (message) {
+                                              message.textContent = heartRate < 110 
+                                                ? 'Fetal bradycardia detected. Consider immediate obstetric consultation.'
+                                                : 'Fetal tachycardia detected. Monitor closely and consider causes.';
+                                            }
+                                          }
+                                        } else {
+                                          if (alert) alert.classList.add('hidden');
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                
+                                {/* Fetal lie */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Fetal lie</label>
+                                  <select className="w-full border rounded p-2 text-sm" id="fetal_lie">
+                                    <option value="">Select fetal lie...</option>
+                                    <option value="longitudinal">Longitudinal</option>
+                                    <option value="transverse">Transverse</option>
+                                    <option value="oblique">Oblique</option>
+                                    <option value="undetermined">Undetermined</option>
+                                  </select>
+                                </div>
+                                
+                                {/* Estimated fetal weight */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Estimated fetal weight (grams)</label>
+                                  <input 
+                                    type="number" 
+                                    placeholder="2500"
+                                    className="w-full border rounded p-2 text-sm"
+                                    id="fetal_weight_estimated"
+                                    onChange={(e) => {
+                                      const weight = parseInt(e.target.value);
+                                      const alert = document.getElementById('fetal_weight_alert');
+                                      if (weight < 2500 || weight > 4000) {
+                                        if (alert) {
+                                          alert.classList.remove('hidden');
+                                          const message = alert.querySelector('.weight-message');
+                                          if (message) {
+                                            message.textContent = weight < 2500 
+                                              ? 'Low estimated fetal weight. Monitor for IUGR and consider delivery planning.'
+                                              : 'High estimated fetal weight. Screen for GDM and consider delivery planning.';
+                                          }
+                                        }
+                                      } else {
+                                        if (alert) alert.classList.add('hidden');
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                
+                                {/* Fetal presentation */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Fetal presentation</label>
+                                  <select className="w-full border rounded p-2 text-sm" id="fetal_presentation">
+                                    <option value="">Select presentation...</option>
+                                    <option value="breech">Breech</option>
+                                    <option value="cephalic">Cephalic</option>
+                                    <option value="undetermined">Undetermined</option>
+                                  </select>
+                                </div>
+                                
+                                {/* Amniotic fluid */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Amniotic fluid</label>
+                                  <select className="w-full border rounded p-2 text-sm" id="amniotic_fluid">
+                                    <option value="">Select fluid level...</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="reduced">Reduced (Oligohydramnios)</option>
+                                    <option value="increased">Increased (Polyhydramnios)</option>
+                                  </select>
+                                </div>
+                                
+                                {/* Placenta location (multiple selection) */}
+                                <div>
+                                  <label className="block text-xs text-gray-600 mb-1">Placenta location (Multiple selection allowed)</label>
+                                  <div className="space-y-1">
+                                    <label className="flex items-center text-xs">
+                                      <input type="checkbox" className="mr-2" value="praevia" />
+                                      Praevia
+                                    </label>
+                                    <label className="flex items-center text-xs">
+                                      <input type="checkbox" className="mr-2" value="low" />
+                                      Low
+                                    </label>
+                                    <label className="flex items-center text-xs">
+                                      <input type="checkbox" className="mr-2" value="anterior" />
+                                      Anterior
+                                    </label>
+                                    <label className="flex items-center text-xs">
+                                      <input type="checkbox" className="mr-2" value="posterior" />
+                                      Posterior
+                                    </label>
+                                    <label className="flex items-center text-xs">
+                                      <input type="checkbox" className="mr-2" value="fundal" />
+                                      Fundal
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Ultrasound date (conditional on "Done earlier") */}
+                            <div id="ultrasound_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Ultrasound date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            {/* Reason (conditional on "Not done") */}
+                            <div id="ultrasound_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select reason...</option>
+                                <option value="delayed">Delayed to next contact</option>
+                                <option value="not_available">Not available</option>
+                                <option value="other">Other (specify)</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          {/* Clinical Decision Support Alerts */}
+                          {/* Fetal Heart Rate Alert */}
+                          <div id="fetal_heart_rate_alert" className="hidden mt-3">
+                            <div className="bg-red-50 border border-red-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-red-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Fetal Heart Rate Alert</span>
+                              </div>
+                              <p className="heart-rate-message text-red-600 text-xs mt-1"></p>
+                            </div>
+                          </div>
+                          
+                          {/* Fetal Weight Alert */}
+                          <div id="fetal_weight_alert" className="hidden mt-3">
+                            <div className="bg-orange-50 border border-orange-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-orange-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Fetal Weight Concern</span>
+                              </div>
+                              <p className="weight-message text-orange-600 text-xs mt-1"></p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Additional Biochemical Tests */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium">Additional Biochemical Investigations</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Serum ferritin (μg/L)</label>
+                              <input 
+                                type="number" 
+                                placeholder="30" 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const ferritin = parseFloat(e.target.value);
+                                  const alert = document.getElementById('ferritin_alert');
+                                  if (ferritin < 15) {
+                                    if (alert) alert.classList.remove('hidden');
+                                  } else {
+                                    if (alert) alert.classList.add('hidden');
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Vitamin D (nmol/L)</label>
+                              <input 
+                                type="number" 
+                                placeholder="75" 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const vitD = parseFloat(e.target.value);
+                                  const alert = document.getElementById('vitd_alert');
+                                  if (vitD < 50) {
+                                    if (alert) alert.classList.remove('hidden');
+                                  } else {
+                                    if (alert) alert.classList.add('hidden');
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Ferritin Alert */}
+                          <div id="ferritin_alert" className="hidden">
+                            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-yellow-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Iron Deficiency</span>
+                              </div>
+                              <p className="text-yellow-600 text-xs mt-1">
+                                Low ferritin (less than 15 μg/L) indicates iron deficiency. Increase iron supplementation to 120mg daily.
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Vitamin D Alert */}
+                          <div id="vitd_alert" className="hidden">
+                            <div className="bg-blue-50 border border-blue-200 p-3 rounded text-sm">
+                              <div className="flex items-center text-blue-700">
+                                <AlertTriangle className="w-4 h-4 mr-2" />
+                                <span className="font-medium">Vitamin D Deficiency</span>
+                              </div>
+                              <p className="text-blue-600 text-xs mt-1">
+                                Low vitamin D detected. Recommend 1000-2000 IU daily supplementation.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* TB Imaging (Chest X-ray) with Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">TB Imaging (Chest X-ray)</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">TB Imaging Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="tb_imaging_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const recordResultField = document.getElementById('tb_record_result_field');
+                                  const testDateField = document.getElementById('tb_test_date_field');
+                                  const reasonField = document.getElementById('tb_reason_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (recordResultField) recordResultField.style.display = 'none';
+                                  if (testDateField) testDateField.style.display = 'none';
+                                  if (reasonField) reasonField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (recordResultField) recordResultField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (recordResultField) recordResultField.style.display = 'block';
+                                    if (testDateField) testDateField.style.display = 'block';
+                                  } else if (status === 'not_done') {
+                                    if (reasonField) reasonField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                                <option value="not_done">Not done</option>
+                              </select>
+                            </div>
+                            
+                            <div id="tb_record_result_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Record result</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                onChange={(e) => {
+                                  const result = e.target.value;
+                                  if (result === 'suggestive_tb') {
+                                    showUrgentAlert({
+                                      type: 'critical',
+                                      title: 'TB Suggestive Findings',
+                                      message: 'Chest X-ray findings suggestive of tuberculosis',
+                                      condition: 'TB Imaging: Suggestive findings detected',
+                                      recommendations: [
+                                        'URGENT: Refer for TB evaluation',
+                                        'Initiate airborne precautions immediately',
+                                        'Collect sputum samples for testing',
+                                        'Contact infection control team',
+                                        'Start directly observed therapy if confirmed'
+                                      ],
+                                      requiresReferral: true
+                                    });
+                                  } else if (result === 'inconclusive') {
+                                    showUrgentAlert({
+                                      type: 'warning',
+                                      title: 'Inconclusive TB Imaging',
+                                      message: 'Chest X-ray results are inconclusive for TB',
+                                      condition: 'TB Imaging: Inconclusive findings',
+                                      recommendations: [
+                                        'Consider repeat imaging',
+                                        'Correlate with clinical symptoms',
+                                        'Additional TB testing may be needed',
+                                        'Monitor for respiratory symptoms'
+                                      ],
+                                      requiresReferral: false
+                                    });
+                                  }
+                                }}
+                              >
+                                <option value="">Select result...</option>
+                                <option value="suggestive_tb">Suggestive TB</option>
+                                <option value="no_signs_tb">No signs of TB</option>
+                                <option value="inconclusive">Inconclusive</option>
+                              </select>
+                            </div>
+                            
+                            <div id="tb_test_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">TB test date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="tb_reason_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Reason (Multiple selection allowed)</label>
+                              <div className="space-y-1">
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="xray_not_available"
+                                  />
+                                  X-ray machine not available
+                                </label>
+                                <label className="flex items-center text-xs">
+                                  <input 
+                                    type="checkbox" 
+                                    className="mr-2" 
+                                    value="other"
+                                  />
+                                  Other (specify)
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Other Tests with Conditional Logic */}
+                        <div className="bg-gray-50 border rounded-lg p-4">
+                          <label className="block text-sm font-medium mb-3 text-gray-800">Other Tests</label>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Other Test Status</label>
+                              <select 
+                                className="w-full border rounded p-2 text-sm"
+                                id="other_test_status"
+                                onChange={(e) => {
+                                  const status = e.target.value;
+                                  const whichTestField = document.getElementById('which_test_field');
+                                  const testDateField = document.getElementById('other_test_date_field');
+                                  const testResultsField = document.getElementById('other_test_results_field');
+                                  
+                                  // Hide all conditional fields first
+                                  if (whichTestField) whichTestField.style.display = 'none';
+                                  if (testDateField) testDateField.style.display = 'none';
+                                  if (testResultsField) testResultsField.style.display = 'none';
+                                  
+                                  if (status === 'done_today') {
+                                    if (whichTestField) whichTestField.style.display = 'block';
+                                    if (testResultsField) testResultsField.style.display = 'block';
+                                  } else if (status === 'done_earlier') {
+                                    if (whichTestField) whichTestField.style.display = 'block';
+                                    if (testDateField) testDateField.style.display = 'block';
+                                    if (testResultsField) testResultsField.style.display = 'block';
+                                  }
+                                }}
+                              >
+                                <option value="">Select status...</option>
+                                <option value="done_today">Done today</option>
+                                <option value="done_earlier">Done earlier</option>
+                                <option value="ordered">Ordered</option>
+                              </select>
+                            </div>
+                            
+                            <div id="which_test_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Which test?</label>
+                              <input 
+                                type="text" 
+                                placeholder="Specify which test was conducted"
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="other_test_date_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Test date</label>
+                              <input 
+                                type="date" 
+                                className="w-full border rounded p-2 text-sm"
+                              />
+                            </div>
+                            
+                            <div id="other_test_results_field" style={{ display: 'none' }}>
+                              <label className="block text-xs text-gray-600 mb-1">Test results</label>
+                              <textarea 
+                                className="w-full border rounded p-2 text-sm min-h-[80px]"
+                                placeholder="Enter test results and interpretation..."
+                              ></textarea>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Cervical Screening */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium">Cervical Screening</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Pap smear result</label>
+                              <select className="w-full border rounded p-2 text-sm">
+                                <option value="">Select result...</option>
+                                <option value="normal">Normal (NILM)</option>
+                                <option value="ascus">ASCUS</option>
+                                <option value="lsil">LSIL</option>
+                                <option value="hsil">HSIL</option>
+                                <option value="asc_h">ASC-H</option>
+                                <option value="agc">AGC</option>
+                                <option value="not_done">Not performed</option>
+                                <option value="unsatisfactory">Unsatisfactory</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-xs text-gray-600">Date performed</label>
+                              <input type="date" className="w-full border rounded p-2 text-sm" />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Specialized Diagnostic Tests Modal Buttons */}
+                        <div className="flex justify-end space-x-2 pt-4 border-t">
+                          <Button 
+                            variant="outline" 
+                            className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-4 py-2 text-sm flex items-center gap-1"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit Record
+                          </Button>
+                          <Button 
+                            className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                            onClick={() => setShowLaboratoryTestsModal(true)}
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add Record
+                          </Button>
+                        </div>
+                      </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {/* Navigation buttons - Labs */}
                 <div className="flex justify-between mt-6">
@@ -7581,12 +9652,8 @@ export default function AncPage() {
                         Edit Record
                       </Button>
                       <Button 
-                        data-referral-modal-trigger
                         className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
-                        onClick={() => {
-                          console.log('🎯 Referral modal button clicked - opening with danger signs:', selectedDangerSigns);
-                          setShowReferralModal(true);
-                        }}
+                        onClick={() => setShowReferralReasonsDialog(true)}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -7598,6 +9665,8 @@ export default function AncPage() {
                       </Button>
                     </div>
                   </div>
+
+
                 </div>
 
                 {/* Card 2: Routine Referral Checklist */}
@@ -7615,12 +9684,8 @@ export default function AncPage() {
                         Edit Record
                       </Button>
                       <Button 
-                        data-referral-modal-trigger
                         className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
-                        onClick={() => {
-                          console.log('🎯 Referral modal button clicked - opening with danger signs:', selectedDangerSigns);
-                          setShowReferralModal(true);
-                        }}
+                        onClick={() => setShowReferralChecklistDialog(true)}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -7632,7 +9697,30 @@ export default function AncPage() {
                       </Button>
                     </div>
                   </div>
+
+                  <div className="bg-white border border-gray-200 rounded-b-lg p-4">
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span>Communication</span>
+                        <span id="checklist_communication_status">Not completed</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Documentation</span>
+                        <span id="checklist_documentation_status">Not completed</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Patient Preparation</span>
+                        <span id="checklist_preparation_status">Not completed</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Overall Progress</span>
+                        <span id="checklist_overall_progress">0% completed</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+
 
                 {/* Card 3: Receiving Facility Information */}
                 <div className="mb-4">
@@ -7649,15 +9737,11 @@ export default function AncPage() {
                         Edit Record
                       </Button>
                       <Button 
-                        data-referral-modal-trigger
                         className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
-                        onClick={() => {
-                          console.log('🎯 Referral modal button clicked - opening with danger signs:', selectedDangerSigns);
-                          setShowReferralModal(true);
-                        }}
+                        onClick={() => setShowFacilityInfoDialog(true)}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                           <polyline points="14 2 14 8 20 8"></polyline>
                           <line x1="12" y1="18" x2="12" y2="12"></line>
                           <line x1="9" y1="15" x2="15" y2="15"></line>
@@ -7666,22 +9750,48 @@ export default function AncPage() {
                       </Button>
                     </div>
                   </div>
+
+                  <div className="bg-white border border-gray-200 rounded-b-lg p-4">
+                    <div className="space-y-3 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span>Receiving Facility</span>
+                        <span id="facility_name_display">Not selected</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Contact Person</span>
+                        <span id="facility_contact_display">Not specified</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Appointment Date</span>
+                        <span id="facility_appointment_display">Not scheduled</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Status</span>
+                        <span id="facility_status_display">Pending completion</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Navigation buttons - Referral */}
-                <div className="flex justify-between mt-6">
+                <div className="flex justify-end space-x-4 mt-6">
                   <Button 
                     variant="outline"
                     className="px-6"
                     onClick={() => handleTabNavigation('counseling')}
                   >
-                    Back
+                    Previous
                   </Button>
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6"
-                    onClick={() => handleTabNavigation('pmtct')}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6"
+                    onClick={() => {
+                      toast({
+                        title: "Referral Process Completed",
+                        description: "All referral information has been saved successfully.",
+                      });
+                    }}
                   >
-                    Next: PMTCT
+                    Complete Referral
                   </Button>
                 </div>
               </div>
@@ -7736,34 +9846,13 @@ export default function AncPage() {
     
     {/* Referral Reasons Dialog */}
     <Dialog open={showReferralReasonsDialog} onOpenChange={setShowReferralReasonsDialog}>
-        <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
-          <div className="flex items-center justify-between mb-4">
-            <DialogTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              Referral Reasons - Contact {currentContactNumber}
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowReferralReasonsDialog(false)}
-              className="h-8 w-8 p-0 rounded-full hover:bg-gray-100/50 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </Button>
-          </div>
-          <DialogDescription className="text-gray-600 text-sm mb-4">
-            Select the appropriate reasons for referral (may select multiple categories)
-          </DialogDescription>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-blue-600">Referral Reasons - Contact {currentContactNumber}</DialogTitle>
+            <DialogDescription>
+              Select the appropriate reasons for referral (may select multiple categories)
+            </DialogDescription>
+          </DialogHeader>
           
           <div className="space-y-6 mt-4">
             {/* Multi-select dropdown */}
@@ -8567,13 +10656,13 @@ export default function AncPage() {
             <div className="flex justify-end space-x-3 pt-4 border-t">
               <Button 
                 variant="outline" 
-                className="rounded-xl bg-gray-100/60 hover:bg-gray-200/60 text-gray-700 border border-gray-200/50 px-6 py-2 text-sm font-medium transition-all duration-200"
+                className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
                 onClick={() => setShowReferralReasonsDialog(false)}
               >
-                Cancel
+                Close
               </Button>
               <Button 
-                className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-none px-6 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200"
+                className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
                 onClick={() => {
                   // Update display elements
                   const categoryDisplay = document.getElementById('referral_category_display');
@@ -8594,11 +10683,10 @@ export default function AncPage() {
                   toast({
                     title: "Referral Reasons Saved",
                     description: "Referral reasons have been recorded successfully.",
-                    duration: 2000,
                   });
                 }}
               >
-                Save & Apply
+                Save
               </Button>
             </div>
           </div>
@@ -8606,23 +10694,10 @@ export default function AncPage() {
       </Dialog>
       {/* Referral Checklist Dialog */}
       <Dialog open={showReferralChecklistDialog} onOpenChange={setShowReferralChecklistDialog}>
-        <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white shadow-lg">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                Routine Referral Checklist
-              </div>
-            </DialogTitle>
-            <DialogDescription className="text-gray-600 text-base">
+            <DialogTitle className="text-xl font-semibold text-blue-600">Routine Referral Checklist</DialogTitle>
+            <DialogDescription>
               Complete all required steps before referring the patient
             </DialogDescription>
           </DialogHeader>
@@ -8915,23 +10990,10 @@ export default function AncPage() {
       </Dialog>
       {/* Facility Information Dialog */}
       <Dialog open={showFacilityInfoDialog} onOpenChange={setShowFacilityInfoDialog}>
-        <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
-                Receiving Facility Information
-              </div>
-            </DialogTitle>
-            <DialogDescription className="text-gray-600 text-base">
+            <DialogTitle className="text-xl font-semibold text-blue-600">Receiving Facility Information</DialogTitle>
+            <DialogDescription>
               Select and configure details for the receiving healthcare facility
             </DialogDescription>
           </DialogHeader>
@@ -9571,36 +11633,8 @@ export default function AncPage() {
                     className="w-full border rounded p-2 text-sm"
                     placeholder="e.g., 3"
                     required
-                    value={obstetricHistory.gravida}
                     onChange={(e) => {
-                      const gravida = parseInt(e.target.value) || 0;
-                      
-                      // Get current values
-                      const para = parseInt(obstetricHistory.para) || 0;
-                      const abortions = parseInt(obstetricHistory.abortions) || 0;
-                      const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-                      
-                      // No individual field validation - allow free entry
-                      
-                      // Update state with original value (don't auto-correct)
-                      setObstetricHistory(prev => ({ 
-                        ...prev, 
-                        gravida: e.target.value
-                      }));
-                      
-                      // Update Latest Encounter data
-                      updateLatestEncounterData('clientProfile', {
-                        gravida: gravida,
-                        para: para,
-                        abortions: abortions,
-                        livingChildren: livingChildren,
-                        obstetricHistory: { 
-                          ...obstetricHistory,
-                          gravida: e.target.value
-                        }
-                      });
-                      
-                      // Show/hide risk assessment fields
+                      const gravida = parseInt(e.target.value);
                       const obstetricRiskFields = document.getElementById('obstetric-modal-risk-fields');
                       const grandMultiparaWarning = document.getElementById('obstetric-grandmultipara-warning');
                       
@@ -9609,7 +11643,26 @@ export default function AncPage() {
                       }
                       
                       if (grandMultiparaWarning) {
-                        grandMultiparaWarning.style.display = gravida >= 5 ? 'block' : 'none';
+                        if (gravida >= 5) {
+                          grandMultiparaWarning.style.display = 'block';
+                        } else {
+                          grandMultiparaWarning.style.display = 'none';
+                        }
+                      }
+                      
+                      // Validate existing Para and Abortions values
+                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
+                      const abortions = parseInt((document.getElementById('obstetric_abortions') as HTMLInputElement)?.value || '0');
+                      const validationMessage = document.getElementById('obstetric-modal-validation');
+                      
+                      if (validationMessage && gravida > 0) {
+                        if (para + abortions > gravida) {
+                          validationMessage.textContent = 'Warning: Para + Abortions cannot exceed total pregnancies (Gravida)';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                        } else {
+                          validationMessage.style.display = 'none';
+                        }
                       }
                     }}
                   />
@@ -9623,33 +11676,43 @@ export default function AncPage() {
                     max="20"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 2"
-                    value={obstetricHistory.para}
                     onChange={(e) => {
                       const para = parseInt(e.target.value) || 0;
+                      const gravida = parseInt((document.getElementById('obstetric_gravida') as HTMLInputElement)?.value || '0');
+                      const abortions = parseInt((document.getElementById('obstetric_abortions') as HTMLInputElement)?.value || '0');
+                      const validationMessage = document.getElementById('obstetric-modal-validation');
                       
-                      // Get current values
-                      const gravida = parseInt(obstetricHistory.gravida) || 0;
-                      const abortions = parseInt(obstetricHistory.abortions) || 0;
-                      const livingChildren = parseInt(obstetricHistory.livingChildren) || 0;
-                      
-                      // No individual field validation - allow free entry
-                      
-                      // Update state with original value (don't auto-correct)
-                      setObstetricHistory(prev => ({ 
-                        ...prev, 
-                        para: e.target.value
-                      }));
-                      
-                      // Update Latest Encounter data
-                      updateLatestEncounterData('clientProfile', {
-                        para: para,
-                        livingChildren: parseInt(obstetricHistory.livingChildren) || 0,
-                        obstetricHistory: { 
-                          ...obstetricHistory, 
-                          para: e.target.value,
-                          livingChildren: obstetricHistory.livingChildren
+                      // Clinical Business Rules: Para validation
+                      if (validationMessage) {
+                        if (para > 15) {
+                          validationMessage.textContent = 'Alert: Para >15 is extremely rare. Please verify data accuracy.';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                        } else if (para + abortions > gravida && gravida > 0) {
+                          validationMessage.textContent = 'Error: Para + Abortions cannot exceed total pregnancies (Gravida)';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                          (document.getElementById('obstetric_para') as HTMLInputElement).value = Math.max(0, gravida - abortions).toString();
+                          return;
+                        } else if (para > gravida && gravida > 0) {
+                          validationMessage.textContent = 'Error: Live births (Para) cannot exceed total pregnancies (Gravida)';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                          (document.getElementById('obstetric_para') as HTMLInputElement).value = gravida.toString();
+                          return;
+                        } else {
+                          const livingChildren = parseInt((document.getElementById('obstetric_living_children') as HTMLInputElement)?.value || '0');
+                          if (livingChildren > para && para > 0) {
+                            validationMessage.textContent = 'Error: Living children cannot exceed live births (Para)';
+                            validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                            validationMessage.style.display = 'block';
+                            (document.getElementById('obstetric_living_children') as HTMLInputElement).value = para.toString();
+                            return;
+                          } else {
+                            validationMessage.style.display = 'none';
+                          }
                         }
-                      });
+                      }
                       
                       // Business Rule: Parity classification
                       const parityClassification = document.getElementById('obstetric-parity-classification');
@@ -9703,32 +11766,37 @@ export default function AncPage() {
                     max="15"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 0"
-                    value={obstetricHistory.abortions}
                     onChange={(e) => {
                       const abortions = parseInt(e.target.value) || 0;
+                      const gravida = parseInt((document.getElementById('obstetric_gravida') as HTMLInputElement)?.value || '0');
+                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
+                      const validationMessage = document.getElementById('obstetric-modal-validation');
                       
-                      // Get current values
-                      const gravida = parseInt(obstetricHistory.gravida) || 0;
-                      const para = parseInt(obstetricHistory.para) || 0;
+                      // Business Rule: Para + Abortions should not exceed Gravida
+                      if (validationMessage) {
+                        if (para + abortions > gravida && gravida > 0) {
+                          validationMessage.textContent = 'Warning: Para + Abortions cannot exceed total pregnancies (Gravida)';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                        } else if (abortions > gravida && gravida > 0) {
+                          validationMessage.textContent = 'Error: Abortions cannot exceed total pregnancies';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                          (document.getElementById('obstetric_abortions') as HTMLInputElement).value = gravida.toString();
+                          return;
+                        } else {
+                          validationMessage.style.display = 'none';
+                        }
+                      }
                       
-                      // No individual field validation - allow free entry
-                      
-                      // Update state with original value (don't auto-correct)
-                      setObstetricHistory(prev => ({ 
-                        ...prev, 
-                        abortions: e.target.value
-                      }));
-                      
-                      // Update Latest Encounter data
-                      updateLatestEncounterData('clientProfile', {
-                        abortions: abortions,
-                        obstetricHistory: { ...obstetricHistory, abortions: e.target.value }
-                      });
-                      
-                      // Recurrent pregnancy loss assessment
+                      // Business Rule: Recurrent pregnancy loss assessment
                       const recurrentLossWarning = document.getElementById('obstetric-recurrent-loss-warning');
                       if (recurrentLossWarning) {
-                        recurrentLossWarning.style.display = abortions >= 3 ? 'block' : 'none';
+                        if (abortions >= 3) {
+                          recurrentLossWarning.style.display = 'block';
+                        } else {
+                          recurrentLossWarning.style.display = 'none';
+                        }
                       }
                     }}
                   />
@@ -9742,28 +11810,25 @@ export default function AncPage() {
                     max="20"
                     className="w-full border rounded p-2 text-sm" 
                     placeholder="e.g., 2"
-                    value={obstetricHistory.livingChildren}
                     onChange={(e) => {
                       const livingChildren = parseInt(e.target.value) || 0;
+                      const para = parseInt((document.getElementById('obstetric_para') as HTMLInputElement)?.value || '0');
+                      const validationMessage = document.getElementById('obstetric-modal-validation');
                       
-                      // Get current values
-                      const para = parseInt(obstetricHistory.para) || 0;
+                      // Clinical Business Rules: Living children validation
+                      if (validationMessage) {
+                        if (livingChildren > para && para > 0) {
+                          validationMessage.textContent = 'Error: Living children cannot exceed live births (Para)';
+                          validationMessage.className = 'text-xs text-red-600 font-medium mt-2';
+                          validationMessage.style.display = 'block';
+                          (document.getElementById('obstetric_living_children') as HTMLInputElement).value = para.toString();
+                          return;
+                        } else {
+                          validationMessage.style.display = 'none';
+                        }
+                      }
                       
-                      // No individual field validation - allow free entry
-                      
-                      // Update state with original value (don't auto-correct)
-                      setObstetricHistory(prev => ({ 
-                        ...prev, 
-                        livingChildren: e.target.value
-                      }));
-                      
-                      // Update Latest Encounter data
-                      updateLatestEncounterData('clientProfile', {
-                        livingChildren: livingChildren,
-                        obstetricHistory: { ...obstetricHistory, livingChildren: e.target.value }
-                      });
-                      
-                      // Child mortality assessment
+                      // Business Rule: Child mortality assessment
                       const childMortalityWarning = document.getElementById('obstetric-child-mortality-warning');
                       if (childMortalityWarning) {
                         const childDeaths = para - livingChildren;
@@ -9781,22 +11846,7 @@ export default function AncPage() {
                 </div>
               </div>
               
-              {/* Validation handled by modal once all fields are complete */}
-              
-              {/* Mandatory Fields Reminder */}
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center mb-2">
-                  <svg className="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-sm font-medium text-blue-800">Clinical Decision Support</span>
-                </div>
-                <div className="text-xs text-blue-700 ml-6">
-                  All four fields must be completed for every new antenatal registration.
-                  For antenatal visits: <strong>Gravida = (Para + Abortions/Miscarriages) + 1</strong>
-                </div>
-              </div>
-              
+              {/* Validation Messages and Clinical Assessments */}
               <div id="obstetric-modal-validation" className="text-xs text-red-600 font-medium mt-2" style={{ display: 'none' }}></div>
               
               {/* Parity Classification Display */}
@@ -10397,59 +12447,7 @@ export default function AncPage() {
             <Button 
               className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
               onClick={() => {
-                // Validate mandatory fields before saving
-                const errors: Record<string, string> = {};
-                
-                if (!obstetricHistory.gravida || parseInt(obstetricHistory.gravida) < 1) {
-                  errors.gravida = 'Gravida is mandatory and must be at least 1 if currently pregnant';
-                }
-                if (!obstetricHistory.para) {
-                  errors.para = 'Para is mandatory for antenatal registration';
-                }
-                if (!obstetricHistory.abortions && obstetricHistory.abortions !== '0') {
-                  errors.abortions = 'Abortions/Miscarriages field is mandatory';
-                }
-                if (!obstetricHistory.livingChildren && obstetricHistory.livingChildren !== '0') {
-                  errors.livingChildren = 'Living children field is mandatory';
-                }
-                
-                if (Object.keys(errors).length > 0) {
-                  setObstetricValidationModal({ isOpen: true, errors });
-                  toast({
-                    title: "Validation Error",
-                    description: "All four fields must be completed for antenatal registration.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                // Final validation of business rules
-                const gravida = parseInt(obstetricHistory.gravida);
-                const para = parseInt(obstetricHistory.para);
-                const abortions = parseInt(obstetricHistory.abortions);
-                const livingChildren = parseInt(obstetricHistory.livingChildren);
-                
-                if (gravida !== (para + abortions + 1)) {
-                  toast({
-                    title: "Business Rule Validation",
-                    description: `For antenatal visits: Gravida (${gravida}) should equal Para (${para}) + Abortions (${abortions}) + 1 = ${para + abortions + 1}`,
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                // Save successful - update Latest Encounter
-                updateLatestEncounterData('clientProfile', {
-                  obstetricHistoryComplete: true,
-                  gravida,
-                  para,
-                  abortions,
-                  livingChildren,
-                  obstetricSummary: `G${gravida}P${para}A${abortions}L${livingChildren}`
-                });
-                
                 setShowObstetricHistoryDialog(false);
-                setObstetricValidationModal({ isOpen: false, errors: {} });
                 toast({
                   title: "Enhanced Obstetric History Saved",
                   description: "Complete obstetric assessment has been recorded successfully.",
@@ -10463,11 +12461,7 @@ export default function AncPage() {
       </Dialog>
       {/* Medical History Modal */}
       <Dialog open={showMedicalHistoryDialog} onOpenChange={setShowMedicalHistoryDialog}>
-        <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-3xl max-h-[85vh] overflow-y-auto" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center text-lg font-semibold text-green-600">
               <Heart className="w-5 h-5 mr-2" />
@@ -11351,15 +13345,6 @@ export default function AncPage() {
         initialData={laboratoryTestsData}
       />
 
-      {/* Specialized Diagnostic Tests Modal */}
-      <LaboratoryTestsModal
-        isOpen={showSpecializedTestsModal}
-        onClose={() => setShowSpecializedTestsModal(false)}
-        onSave={handleSaveLaboratoryTests}
-        initialData={laboratoryTestsData}
-        defaultTab="specialized"
-      />
-
       {/* Health Education Modal */}
       <HealthEducationModal
         isOpen={showHealthEducationModal}
@@ -11384,182 +13369,6 @@ export default function AncPage() {
         onClose={handleClosePrescriptionModal}
         prePopulatedDrug={prePopulatedDrug}
       />
-
-      {/* Referral Modal */}
-      <ReferralModal
-        isOpen={showReferralModal}
-        onClose={() => setShowReferralModal(false)}
-        onSave={handleReferralSave}
-        initialData={referralData}
-        dangerSigns={selectedDangerSigns}
-      />
-
-      {/* Comprehensive Obstetric Assessment Modal */}
-      <Dialog 
-        open={obstetricValidationModal.isOpen} 
-        onOpenChange={(open) => !open && setObstetricValidationModal({ isOpen: false, errors: {} })}
-      >
-        <DialogContent 
-          className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}
-        >
-          <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
-            Comprehensive Obstetric Assessment
-          </DialogTitle>
-          {obstetricValidationModal.isOpen && (
-            <div className="space-y-6">
-              {(() => {
-                const assessment = generateComprehensiveObstetricAssessment();
-                
-                return (
-                  <>
-                    {/* Section 1: Validation Issues */}
-                    <div className="bg-gradient-to-r from-red-500/8 to-pink-500/8 backdrop-blur-sm rounded-lg p-4 border border-red-200/40">
-                      <h3 className="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
-                        <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-md flex items-center justify-center">
-                          <span className="text-white text-xs">⚠</span>
-                        </div>
-                        Validation Issues
-                      </h3>
-                      {assessment.hasValidationErrors ? (
-                        <div className="space-y-2">
-                          {Object.entries(assessment.validationErrors).map(([field, error], index) => (
-                            <div key={index} className="text-sm text-red-700 bg-red-50 p-2 rounded border-l-4 border-red-500">
-                              <strong>{field.charAt(0).toUpperCase() + field.slice(1)}:</strong> {error}
-                            </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-green-700 bg-green-50 p-2 rounded border-l-4 border-green-500">
-                        <strong>✓ No validation errors</strong> - All obstetric history data is properly formatted and within expected ranges.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 2: Clinical Classification */}
-                  <div className="bg-gradient-to-r from-blue-500/8 to-indigo-500/8 backdrop-blur-sm rounded-lg p-4 border border-blue-200/40">
-                    <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">📊</span>
-                      </div>
-                      Clinical Classification
-                    </h3>
-                    {assessment.clinicalClassifications.length > 0 ? (
-                      <div className="space-y-3">
-                        {assessment.clinicalClassifications.map((classification, index) => (
-                          <div 
-                            key={index} 
-                            className={`p-3 rounded border-l-4 ${
-                              classification.type === 'critical' ? 'bg-red-50 border-red-500 text-red-800' :
-                              classification.type === 'warning' ? 'bg-orange-50 border-orange-500 text-orange-800' :
-                              'bg-blue-50 border-blue-500 text-blue-800'
-                            }`}
-                          >
-                            <div className="font-medium text-sm">{classification.title}</div>
-                            <div className="text-sm mt-1">{classification.message}</div>
-                            <div className="text-xs mt-2 opacity-90">{classification.details}</div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-blue-700">
-                        Standard obstetric profile - no special classifications identified.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 3: Risk Assessment & Recommendations */}
-                  <div className="bg-gradient-to-r from-purple-500/8 to-violet-500/8 backdrop-blur-sm rounded-lg p-4 border border-purple-200/40">
-                    <h3 className="text-sm font-bold text-purple-800 mb-3 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
-                        <span className="text-white text-xs">🎯</span>
-                      </div>
-                      Risk Assessment & Recommendations
-                    </h3>
-                    {assessment.riskAssessments.map((risk, index) => (
-                      <div key={index} className="space-y-3">
-                        <div className={`p-3 rounded border-l-4 ${
-                          risk.level === 'High Risk' ? 'bg-red-50 border-red-500' :
-                          risk.level === 'Moderate Risk' ? 'bg-orange-50 border-orange-500' :
-                          'bg-green-50 border-green-500'
-                        }`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">Overall Risk Level:</span>
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              risk.level === 'High Risk' ? 'bg-red-100 text-red-800' :
-                              risk.level === 'Moderate Risk' ? 'bg-orange-100 text-orange-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {risk.level}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-600 mb-3">{risk.reasoning}</div>
-                        </div>
-                        
-                        <div className="bg-gradient-to-r from-gray-500/5 to-slate-500/5 backdrop-blur-sm rounded-lg p-3 border border-gray-200/40">
-                          <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                            <div className="w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-700 rounded-md flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
-                            </div>
-                            Clinical Recommendations
-                          </h4>
-                          <ul className="text-xs text-gray-700 space-y-1">
-                            {risk.recommendations.map((rec, recIndex) => (
-                              <li key={recIndex} className="flex items-start gap-2">
-                                <span className="text-gray-400 mt-0.5">•</span>
-                                <span>{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-            
-              {/* Acknowledge Button */}
-              <div className="flex justify-end pt-4 border-t border-gray-200/50">
-                <Button
-                  onClick={() => setObstetricValidationModal({ isOpen: false, errors: {} })}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-                >
-                  Acknowledge - Proceed with Care Plan
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Danger Sign Info Modal - Simplified */}
-      <Dialog open={showDangerSignInfo} onOpenChange={setShowDangerSignInfo}>
-        <DialogContent className="bg-white/60 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-xl rounded-2xl font-sans max-w-md p-6" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(248,250,252,0.55) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowDangerSignInfo(false)}
-            className="absolute top-3 right-3 h-6 w-6 p-0 rounded-full hover:bg-gray-100/50 transition-colors z-10"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Button>
-          
-          <p className="text-gray-700 leading-relaxed text-sm pr-4">
-            {selectedDangerSignInfo?.description}
-          </p>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
