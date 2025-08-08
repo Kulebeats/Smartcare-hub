@@ -5484,11 +5484,9 @@ export default function AncPage() {
                                   const largeFamilyNote = document.getElementById('large-family-note');
                                   if (largeFamilyNote) {
                                     if (livingChildren >= 6) {
-                                      largeFamilyNote.innerHTML = 
-                                        '<div class="text-xs text-blue-600 font-medium">Large Family Considerations:</div>' +
-                                        '<div class="text-xs text-blue-700">• ' + livingChildren + ' living children</div>' +
-                                      // Large family counseling display logic
-                                      // Display logic handled by React state
+                                      // Large family display logic - TODO: move to React state
+                                      largeFamilyNote.innerHTML = `<div class="text-xs text-blue-600 font-medium">Large Family Considerations:</div><div class="text-xs text-blue-700">• ${livingChildren} living children</div>`;
+                                      largeFamilyNote.style.display = 'block';
                                     }
                                   }
                                 }}
