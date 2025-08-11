@@ -27,7 +27,7 @@ import VitalsPage from "@/pages/vitals-page"; // Vital Signs page
 import HTSPage from "@/pages/hts-page"; // HIV Testing Services page
 import PharmacovigilancePage from "@/pages/pharmacovigilance-page"; // Pharmacovigilance page
 import PatientTransferPage from "@/pages/patient-transfer"; // Smart Transfer System
-import PatientJourneyPage from "@/pages/patient-journey"; // Patient Journey Dashboard
+
 import AdminPanel from "@/pages/admin-panel"; // Admin panel
 import AdminLogin from "@/pages/admin-login"; // Admin login
 import AdminDAK from "@/pages/AdminDAK"; // DAK Clinical Decision Support Admin
@@ -98,7 +98,6 @@ function Router() {
           </Route>
 
           <Route path="/transfers" component={PatientTransferPage} />
-          <Route path="/journey" component={PatientJourneyPage} />
 
           <Route path="/reports" component={ReportsDashboard} />
           <Route path="/admin-login" component={AdminLogin} />
