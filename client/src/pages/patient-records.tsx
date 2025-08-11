@@ -433,6 +433,27 @@ export default function PatientRecords() {
           </Tabs>
         </div>
 
+        {/* Demo ANC Module Access */}
+        <div className="mt-8 text-center p-6 border rounded-3xl bg-blue-50">
+          <p className="text-gray-700 mb-4">Demo: Test the ANC module with sample data</p>
+          <div className="flex gap-4 justify-center">
+            <Button 
+              variant="outline"
+              className="bg-green-500 text-white hover:bg-green-600 border-green-500 rounded-full py-3 px-6 text-sm font-medium shadow-lg"
+              onClick={() => setLocation("/anc/demo")}
+            >
+              Demo ANC Module
+            </Button>
+            <Button 
+              variant="outline"
+              className="bg-blue-500 text-white hover:bg-blue-600 border-blue-500 rounded-full py-3 px-6 text-sm font-medium shadow-lg"
+              onClick={() => setLocation("/patients/new")}
+            >
+              Add New Patient
+            </Button>
+          </div>
+        </div>
+
         {showNoResults && (
           <div className="mt-8 text-center p-6 border rounded-3xl">
             <p className="text-gray-600 mb-4">Didn't find the client you were looking for?</p>

@@ -36,6 +36,7 @@ import { PrEPTab } from './tabs/PrEPTab';
 import { useAncEncounter } from '@/hooks/anc/useAncEncounter';
 import { useFeatureFlag } from '@/config/feature-flags';
 import { safeLog } from '@/utils/anc/safe-logger';
+import { MockPatientService } from '@/services/anc/mock-patient.service';
 
 // Tab configuration
 const ANC_TABS = [
@@ -57,7 +58,8 @@ interface ANCTabsPageParams {
 export const ANCTabsPage: React.FC = () => {
   const [location, setLocation] = useLocation();
   const params = useParams() as ANCTabsPageParams;
-  const patientId = params.patientId || null;
+  // Use 'demo' patient ID if none provided for development
+  const patientId = params.patientId || 'demo';
   const encounterId = params.encounterId || null;
   
   // Feature flags

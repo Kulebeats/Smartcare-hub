@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { patientApi } from '@/api/anc.api';
 import { PatientData } from '@/types/anc';
 import { useFeatureFlag } from '@/config/feature-flags';
+import { MockPatientService } from '@/services/anc/mock-patient.service';
 
 /**
  * Fetch patient data
@@ -15,7 +16,16 @@ export const usePatientData = (patientId: string | null) => {
   
   return useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => patientId ? patientApi.fetchPatient(patientId) : Promise.reject('No patient ID'),
+    queryFn: async () => {
+      if (!patientId) return Promise.reject('No patient ID');
+      
+      // Use mock data in development or for demo patient
+      if (MockPatientService.isMockMode() || patientId === 'demo') {
+        return await MockPatientService.getPatient(patientId);
+      }
+      
+      return await patientApi.fetchPatient(patientId);
+    },
     enabled: !!patientId && useReactQuery,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes cache

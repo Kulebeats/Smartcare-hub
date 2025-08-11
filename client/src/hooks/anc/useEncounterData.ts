@@ -7,6 +7,7 @@ import { encounterApi, vitalSignsApi, dangerSignsApi } from '@/api/anc.api';
 import { ANCEncounter, VitalSigns } from '@/types/anc';
 import { useFeatureFlag } from '@/config/feature-flags';
 import { DangerSign } from '@/constants/anc/danger-signs';
+import { MockPatientService } from '@/services/anc/mock-patient.service';
 
 /**
  * Fetch single encounter
@@ -16,7 +17,16 @@ export const useEncounterData = (encounterId: string | null) => {
   
   return useQuery({
     queryKey: ['encounter', encounterId],
-    queryFn: () => encounterId ? encounterApi.fetchEncounter(encounterId) : Promise.reject('No encounter ID'),
+    queryFn: async () => {
+      if (!encounterId) return Promise.reject('No encounter ID');
+      
+      // Use mock data in development
+      if (MockPatientService.isMockMode()) {
+        return await MockPatientService.getEncounter(encounterId);
+      }
+      
+      return await encounterApi.fetchEncounter(encounterId);
+    },
     enabled: !!encounterId && useReactQuery,
     staleTime: 30 * 1000, // 30 seconds
     refetchOnWindowFocus: true,
