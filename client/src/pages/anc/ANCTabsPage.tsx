@@ -24,6 +24,9 @@ import {
 // Tab Components
 import { RapidAssessmentTab } from './tabs/RapidAssessmentTab';
 import { ClientProfileTab } from './tabs/ClientProfileTab';
+import { ExaminationTab } from './tabs/ExaminationTab';
+import { LabsTab } from './tabs/LabsTab';
+import { CounselingTab } from './tabs/CounselingTab';
 
 // Hooks and services
 import { useAncEncounter } from '@/hooks/anc/useAncEncounter';
@@ -34,16 +37,21 @@ import { safeLog } from '@/utils/anc/safe-logger';
 const ANC_TABS = [
   { id: 'rapid-assessment', label: 'Rapid Assessment', icon: AlertTriangle, component: RapidAssessmentTab },
   { id: 'client-profile', label: 'Client Profile', icon: User, component: ClientProfileTab },
-  { id: 'examination', label: 'Examination', icon: Activity, component: null }, // To be implemented
-  { id: 'labs', label: 'Labs & Tests', icon: Flask, component: null }, // To be implemented
-  { id: 'counseling', label: 'Counseling', icon: MessageSquare, component: null }, // To be implemented
+  { id: 'examination', label: 'Examination', icon: Activity, component: ExaminationTab },
+  { id: 'labs', label: 'Labs & Tests', icon: Flask, component: LabsTab },
+  { id: 'counseling', label: 'Counseling', icon: MessageSquare, component: CounselingTab },
   { id: 'referral', label: 'Referral', icon: Send, component: null }, // To be implemented
   { id: 'pmtct', label: 'PMTCT', icon: Baby, component: null }, // To be implemented
 ];
 
+interface ANCTabsPageParams {
+  patientId?: string;
+  encounterId?: string;
+}
+
 export const ANCTabsPage: React.FC = () => {
   const [location, setLocation] = useLocation();
-  const params = useParams();
+  const params = useParams() as ANCTabsPageParams;
   const patientId = params.patientId || null;
   const encounterId = params.encounterId || null;
   

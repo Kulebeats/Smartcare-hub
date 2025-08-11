@@ -3,6 +3,12 @@
 ## Overview
 SmartCare PRO is a comprehensive Electronic Health Record (EHR) system tailored for Zambian healthcare facilities. It integrates patient management, clinical decision support, and healthcare workflow automation across Zambia's healthcare landscape. The system aims to enhance patient care, streamline operations, and provide robust, secure data management for over 3,600 facilities. Key capabilities include dynamic alert systems, comprehensive PrEP risk assessment, form-triggered clinical decision support, advanced pharmacy dispensation, and enterprise-grade security.
 
+## Recent Changes (January 2025)
+- **ANC Module Refactoring**: Decomposed monolithic 11,425-line ANC page into modular tab-based architecture with React Query integration
+- **Clinical Decision Support System**: Implemented real-time clinical rules engine with evidence-based guidelines from Zambian ANC Guidelines 2022
+- **Performance Optimization**: Added optimized React Query hooks with intelligent caching and prefetching strategies
+- **Real-time Monitoring**: Implemented monitoring service for tracking vital signs and clinical changes with trend analysis
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 

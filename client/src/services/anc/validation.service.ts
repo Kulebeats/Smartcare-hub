@@ -1,143 +1,130 @@
 /**
- * ANC Validation Service
- * Clinical data validation with Zod schemas
+ * Validation Service for ANC Forms
+ * Handles clinical data validation and range checking
  */
 
-import { z } from 'zod';
-import { DangerSign, isDangerSign } from '@/constants/anc/danger-signs';
-import { VitalSignsSchema, GestationalAgeSchema } from '@/types/anc';
+import { VitalSigns, MaternalAssessment, FetalAssessment, GestationalAge } from '@/types/anc';
 
-// ============= Validation Schemas =============
-
-/**
- * LMP Date validation
- */
-export const LMPDateSchema = z.date().refine(
-  (date) => {
-    const today = new Date();
-    const maxDaysPregnant = 44 * 7; // 44 weeks max
-    const daysSince = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    return date <= today && daysSince >= 0 && daysSince <= maxDaysPregnant;
-  },
-  { message: 'LMP date must be within the last 44 weeks' }
-);
-
-/**
- * Blood Pressure validation
- */
-export const BloodPressureSchema = z.object({
-  systolic: z.number()
-    .min(70, 'Systolic BP too low - verify reading')
-    .max(250, 'Systolic BP critically high - immediate action required'),
-  diastolic: z.number()
-    .min(40, 'Diastolic BP too low - verify reading')
-    .max(150, 'Diastolic BP critically high - immediate action required')
-}).refine(
-  (data) => data.systolic > data.diastolic,
-  { message: 'Systolic must be greater than diastolic' }
-);
-
-/**
- * Fetal Heart Rate validation
- */
-export const FetalHeartRateSchema = z.number()
-  .min(100, 'Bradycardia detected - investigate cause')
-  .max(180, 'Tachycardia detected - investigate cause');
-
-/**
- * BMI validation for pregnancy
- */
-export const PregnancyBMISchema = z.number()
-  .min(15, 'Severely underweight - nutritional assessment required')
-  .max(50, 'BMI requires specialist consultation');
-
-/**
- * Danger Signs validation
- */
-export const DangerSignsSchema = z.array(z.string()).refine(
-  (signs) => signs.every(sign => isDangerSign(sign)),
-  { message: 'Invalid danger sign selected' }
-);
-
-/**
- * Referral validation
- */
-export const ReferralSchema = z.object({
-  type: z.enum(['emergency', 'routine', 'specialist']),
-  reasons: z.array(z.string()).min(1, 'At least one referral reason required'),
-  facility: z.string().min(1, 'Referral facility required'),
-  urgency: z.enum(['immediate', 'urgent', 'scheduled']),
-  transportArranged: z.boolean().optional(),
-  notes: z.string().optional()
-});
-
-/**
- * Complete ANC Encounter validation
- */
-export const ANCEncounterSchema = z.object({
-  patientId: z.string().min(1),
-  facilityId: z.string().min(1),
-  providerId: z.string().min(1),
-  visitNumber: z.number().min(1).max(20),
-  visitType: z.enum(['initial', 'followup', 'emergency']),
-  encounterDate: z.date(),
-  
-  // Optional clinical data
-  dangerSigns: DangerSignsSchema.optional(),
-  vitalSigns: VitalSignsSchema.optional(),
-  gestationalAge: GestationalAgeSchema.optional(),
-  
-  status: z.enum(['in-progress', 'completed', 'cancelled']),
-  nextAppointment: z.date().optional()
-});
-
-// ============= Validation Functions =============
-
-/**
- * Validate vital signs with clinical rules
- */
-export const validateVitalSigns = (vitalSigns: any): {
+export interface ValidationResult {
   valid: boolean;
   errors: string[];
   warnings: string[];
-} => {
+  field?: string;
+}
+
+export interface ValidationRule {
+  field: string;
+  min?: number;
+  max?: number;
+  required?: boolean;
+  pattern?: RegExp;
+  custom?: (value: any, context?: any) => boolean;
+  message: string;
+}
+
+// Vital signs normal ranges
+const VITAL_SIGNS_RANGES = {
+  temperature: { min: 35.5, max: 37.5, warning_min: 36, warning_max: 37.8, unit: '°C' },
+  pulseRate: { min: 60, max: 100, warning_min: 50, warning_max: 110, unit: 'bpm' },
+  respiratoryRate: { min: 12, max: 20, warning_max: 24, unit: '/min' },
+  bloodPressure: {
+    systolic: { min: 90, max: 140, warning_max: 150, critical_max: 160, unit: 'mmHg' },
+    diastolic: { min: 60, max: 90, warning_max: 95, critical_max: 110, unit: 'mmHg' }
+  },
+  weight: { min: 30, max: 200, unit: 'kg' },
+  height: { min: 100, max: 250, unit: 'cm' }
+};
+
+// Fetal assessment normal ranges
+const FETAL_RANGES = {
+  fetalHeartRate: { 
+    firstTrimester: { min: 110, max: 170 },
+    secondTrimester: { min: 110, max: 160 },
+    thirdTrimester: { min: 110, max: 160 }
+  },
+  symphysisFundalHeight: {
+    // SFH should be +/- 3cm of gestational age after 20 weeks
+    tolerance: 3
+  }
+};
+
+/**
+ * Validate vital signs
+ */
+export const validateVitalSigns = (vitalSigns: Partial<VitalSigns>): ValidationResult => {
   const errors: string[] = [];
   const warnings: string[] = [];
   
-  try {
-    VitalSignsSchema.parse(vitalSigns);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      errors.push(...error.errors.map(e => e.message));
+  // Temperature validation
+  if (vitalSigns.temperature !== undefined) {
+    const temp = vitalSigns.temperature;
+    const range = VITAL_SIGNS_RANGES.temperature;
+    
+    if (temp < range.min || temp > range.max * 1.1) {
+      errors.push(`Temperature ${temp}°C is outside acceptable range (${range.min}-${range.max * 1.1}°C)`);
+    } else if (temp < range.warning_min || temp > range.warning_max) {
+      warnings.push(`Temperature ${temp}°C is abnormal (normal: ${range.min}-${range.max}°C)`);
     }
   }
   
-  // Clinical warnings
-  if (vitalSigns.temperature) {
-    if (vitalSigns.temperature >= 38) {
-      warnings.push('Fever present - investigate for infection');
-    }
-    if (vitalSigns.temperature < 36) {
-      warnings.push('Hypothermia - check for shock');
+  // Pulse rate validation
+  if (vitalSigns.pulseRate !== undefined) {
+    const pulse = vitalSigns.pulseRate;
+    const range = VITAL_SIGNS_RANGES.pulseRate;
+    
+    if (pulse < 40 || pulse > 200) {
+      errors.push(`Pulse rate ${pulse} bpm is outside acceptable range (40-200 bpm)`);
+    } else if (pulse < range.warning_min || pulse > range.warning_max) {
+      warnings.push(`Pulse rate ${pulse} bpm is abnormal (normal: ${range.min}-${range.max} bpm)`);
     }
   }
   
+  // Respiratory rate validation
+  if (vitalSigns.respiratoryRate !== undefined) {
+    const resp = vitalSigns.respiratoryRate;
+    const range = VITAL_SIGNS_RANGES.respiratoryRate;
+    
+    if (resp < 8 || resp > 40) {
+      errors.push(`Respiratory rate ${resp}/min is outside acceptable range (8-40/min)`);
+    } else if (resp > range.warning_max) {
+      warnings.push(`Respiratory rate ${resp}/min is elevated (normal: ${range.min}-${range.max}/min)`);
+    }
+  }
+  
+  // Blood pressure validation
   if (vitalSigns.bloodPressure) {
-    const { systolic, diastolic } = vitalSigns.bloodPressure;
-    if (systolic >= 140 || diastolic >= 90) {
-      warnings.push('Hypertension detected - assess for pre-eclampsia');
+    const bp = vitalSigns.bloodPressure;
+    const sysRange = VITAL_SIGNS_RANGES.bloodPressure.systolic;
+    const diaRange = VITAL_SIGNS_RANGES.bloodPressure.diastolic;
+    
+    // Systolic validation
+    if (bp.systolic < 70 || bp.systolic > 250) {
+      errors.push(`Systolic BP ${bp.systolic} mmHg is outside acceptable range (70-250 mmHg)`);
+    } else if (bp.systolic >= sysRange.critical_max) {
+      warnings.push(`CRITICAL: Systolic BP ${bp.systolic} mmHg indicates severe hypertension (≥${sysRange.critical_max} mmHg)`);
+    } else if (bp.systolic >= sysRange.warning_max) {
+      warnings.push(`Systolic BP ${bp.systolic} mmHg is elevated (normal: ${sysRange.min}-${sysRange.max} mmHg)`);
+    } else if (bp.systolic < sysRange.min) {
+      warnings.push(`Systolic BP ${bp.systolic} mmHg is low (normal: ${sysRange.min}-${sysRange.max} mmHg)`);
     }
-    if (systolic < 90 || diastolic < 60) {
-      warnings.push('Hypotension - assess for hemorrhage or dehydration');
+    
+    // Diastolic validation
+    if (bp.diastolic < 40 || bp.diastolic > 150) {
+      errors.push(`Diastolic BP ${bp.diastolic} mmHg is outside acceptable range (40-150 mmHg)`);
+    } else if (bp.diastolic >= diaRange.critical_max) {
+      warnings.push(`CRITICAL: Diastolic BP ${bp.diastolic} mmHg indicates severe hypertension (≥${diaRange.critical_max} mmHg)`);
+    } else if (bp.diastolic >= diaRange.warning_max) {
+      warnings.push(`Diastolic BP ${bp.diastolic} mmHg is elevated (normal: ${diaRange.min}-${diaRange.max} mmHg)`);
+    } else if (bp.diastolic < diaRange.min) {
+      warnings.push(`Diastolic BP ${bp.diastolic} mmHg is low (normal: ${diaRange.min}-${diaRange.max} mmHg)`);
     }
-  }
-  
-  if (vitalSigns.pulseRate) {
-    if (vitalSigns.pulseRate > 100) {
-      warnings.push('Tachycardia - investigate cause');
-    }
-    if (vitalSigns.pulseRate < 60) {
-      warnings.push('Bradycardia - verify and investigate');
+    
+    // Pulse pressure check
+    const pulsePressure = bp.systolic - bp.diastolic;
+    if (pulsePressure < 20) {
+      warnings.push(`Narrow pulse pressure (${pulsePressure} mmHg) - check for measurement error`);
+    } else if (pulsePressure > 100) {
+      warnings.push(`Wide pulse pressure (${pulsePressure} mmHg) - evaluate for cardiac issues`);
     }
   }
   
@@ -149,157 +136,283 @@ export const validateVitalSigns = (vitalSigns: any): {
 };
 
 /**
- * Validate gestational age consistency
+ * Validate maternal assessment
  */
-export const validateGestationalAgeConsistency = (
-  lmpGA?: { weeks: number; days: number },
-  ultrasoundGA?: { weeks: number; days: number },
-  sfhGA?: { weeks: number; days: number }
-): {
-  consistent: boolean;
-  discrepancies: string[];
-} => {
-  const discrepancies: string[] = [];
+export const validateMaternalAssessment = (
+  assessment: Partial<MaternalAssessment>,
+  gestationalAge?: GestationalAge
+): ValidationResult => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
   
-  if (lmpGA && ultrasoundGA) {
-    const lmpTotal = lmpGA.weeks * 7 + lmpGA.days;
-    const usTotal = ultrasoundGA.weeks * 7 + ultrasoundGA.days;
-    const diff = Math.abs(lmpTotal - usTotal);
+  // Symphysis-fundal height validation
+  if (assessment.symphysisFundalHeight && gestationalAge && gestationalAge.weeks >= 20) {
+    const sfh = assessment.symphysisFundalHeight;
+    const expectedSFH = gestationalAge.weeks;
+    const tolerance = FETAL_RANGES.symphysisFundalHeight.tolerance;
     
-    if (diff > 14) {
-      discrepancies.push(`LMP and ultrasound differ by ${diff} days`);
+    if (Math.abs(sfh - expectedSFH) > tolerance) {
+      if (sfh < expectedSFH - tolerance) {
+        warnings.push(`SFH ${sfh}cm is small for GA ${expectedSFH} weeks (expected: ${expectedSFH}±${tolerance}cm) - consider IUGR`);
+      } else {
+        warnings.push(`SFH ${sfh}cm is large for GA ${expectedSFH} weeks (expected: ${expectedSFH}±${tolerance}cm) - consider polyhydramnios, multiple pregnancy, or macrosomia`);
+      }
     }
   }
   
-  if (sfhGA && ultrasoundGA) {
-    const sfhTotal = sfhGA.weeks * 7 + sfhGA.days;
-    const usTotal = ultrasoundGA.weeks * 7 + ultrasoundGA.days;
-    const diff = Math.abs(sfhTotal - usTotal);
-    
-    if (diff > 21) {
-      discrepancies.push(`SFH and ultrasound differ by ${diff} days - possible IUGR or macrosomia`);
+  // Oedema validation
+  if (assessment.oedema && assessment.oedema !== 'none') {
+    if (assessment.oedema === 'generalised') {
+      warnings.push('Generalised oedema present - evaluate for pre-eclampsia');
+    } else if (assessment.oedemaGrade && assessment.oedemaGrade >= 3) {
+      warnings.push(`Significant oedema (Grade ${assessment.oedemaGrade}) - monitor for pre-eclampsia`);
     }
+  }
+  
+  // Pallor validation
+  if (assessment.pallor === 'severe') {
+    warnings.push('Severe pallor - check hemoglobin urgently');
+  } else if (assessment.pallor === 'moderate') {
+    warnings.push('Moderate pallor - consider anemia evaluation');
   }
   
   return {
-    consistent: discrepancies.length === 0,
-    discrepancies
+    valid: errors.length === 0,
+    errors,
+    warnings
   };
 };
 
 /**
- * Validate danger sign combinations
+ * Validate fetal assessment
  */
-export const validateDangerSignCombinations = (signs: DangerSign[]): {
-  valid: boolean;
-  issues: string[];
-  recommendations: string[];
-} => {
-  const issues: string[] = [];
-  const recommendations: string[] = [];
+export const validateFetalAssessment = (
+  assessment: Partial<FetalAssessment>,
+  gestationalAge?: GestationalAge
+): ValidationResult => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
   
-  // Check for illogical combinations
-  if (signs.includes('Unconscious')) {
-    if (signs.includes('Severe headache')) {
-      issues.push('Unconscious patient cannot report headache');
+  // Fetal heart rate validation
+  if (assessment.fetalHeartRate && gestationalAge) {
+    const fhr = assessment.fetalHeartRate;
+    let range;
+    
+    if (gestationalAge.weeks < 14) {
+      range = FETAL_RANGES.fetalHeartRate.firstTrimester;
+    } else if (gestationalAge.weeks < 28) {
+      range = FETAL_RANGES.fetalHeartRate.secondTrimester;
+    } else {
+      range = FETAL_RANGES.fetalHeartRate.thirdTrimester;
     }
-    if (signs.includes('Visual disturbance')) {
-      issues.push('Unconscious patient cannot report visual symptoms');
+    
+    if (fhr < 100 || fhr > 200) {
+      errors.push(`Fetal heart rate ${fhr} bpm is outside acceptable range (100-200 bpm)`);
+    } else if (fhr < range.min) {
+      warnings.push(`CRITICAL: Fetal bradycardia (${fhr} bpm) - immediate assessment needed`);
+    } else if (fhr > range.max) {
+      warnings.push(`Fetal tachycardia (${fhr} bpm) - evaluate for fetal distress`);
     }
-    recommendations.push('Focus on objective signs for unconscious patient');
   }
   
-  // Check for related signs that should be investigated together
-  if (signs.includes('Severe headache') && !signs.includes('Visual disturbance')) {
-    recommendations.push('Check for visual disturbances with severe headache (pre-eclampsia screen)');
+  // Fetal movement validation
+  if (assessment.fetalMovement === 'absent') {
+    warnings.push('CRITICAL: Absent fetal movements - immediate CTG and ultrasound required');
+  } else if (assessment.fetalMovement === 'reduced') {
+    warnings.push('Reduced fetal movements - perform kick count and consider CTG');
   }
   
-  if (signs.includes('Fever') && !signs.includes('Looks very ill')) {
-    recommendations.push('Assess general appearance with fever');
-  }
-  
-  if (signs.includes('Vaginal bleeding') && signs.includes('Severe abdominal pain')) {
-    recommendations.push('URGENT: Possible placental abruption - immediate assessment required');
+  // Amniotic fluid validation
+  if (assessment.amnioticFluidVolume === 'oligohydramnios') {
+    warnings.push('Oligohydramnios detected - monitor for fetal compromise');
+  } else if (assessment.amnioticFluidVolume === 'polyhydramnios') {
+    warnings.push('Polyhydramnios detected - evaluate for GDM and fetal anomalies');
   }
   
   return {
-    valid: issues.length === 0,
-    issues,
-    recommendations
+    valid: errors.length === 0,
+    errors,
+    warnings
   };
 };
 
 /**
- * Validate required fields for encounter completion
+ * Validate lab results
  */
-export const validateEncounterCompletion = (encounter: any): {
-  complete: boolean;
-  missingFields: string[];
-} => {
-  const requiredFields = [
-    'patientId',
-    'facilityId',
-    'providerId',
-    'visitNumber',
-    'visitType',
-    'encounterDate'
-  ];
+export const validateLabResults = (labResults: any): ValidationResult => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
   
-  const missingFields = requiredFields.filter(field => !encounter[field]);
+  // Hemoglobin validation
+  if (labResults.hemoglobin !== undefined) {
+    const hb = parseFloat(labResults.hemoglobin);
+    if (hb < 5 || hb > 20) {
+      errors.push(`Hemoglobin ${hb} g/dL is outside acceptable range (5-20 g/dL)`);
+    } else if (hb < 7) {
+      warnings.push(`CRITICAL: Severe anemia (Hb ${hb} g/dL) - urgent transfusion may be needed`);
+    } else if (hb < 11) {
+      warnings.push(`Anemia detected (Hb ${hb} g/dL) - iron supplementation required`);
+    }
+  }
   
-  // Additional validation for first visit
-  if (encounter.visitNumber === 1) {
-    if (!encounter.lmpDate && !encounter.ultrasoundDate) {
-      missingFields.push('LMP or ultrasound date required for first visit');
+  // Glucose validation
+  if (labResults.glucose !== undefined) {
+    const glucose = parseFloat(labResults.glucose);
+    if (glucose < 30 || glucose > 600) {
+      errors.push(`Glucose ${glucose} mg/dL is outside acceptable range (30-600 mg/dL)`);
+    } else if (glucose < 70) {
+      warnings.push(`Hypoglycemia (${glucose} mg/dL) - immediate intervention needed`);
+    } else if (glucose > 200) {
+      warnings.push(`Hyperglycemia (${glucose} mg/dL) - evaluate for diabetes`);
+    } else if (glucose > 140) {
+      warnings.push(`Elevated glucose (${glucose} mg/dL) - consider OGTT`);
     }
-    if (!encounter.vitalSigns?.weight) {
-      missingFields.push('Baseline weight required for first visit');
-    }
-    if (!encounter.vitalSigns?.height) {
-      missingFields.push('Height required for first visit');
+  }
+  
+  // Proteinuria validation
+  if (labResults.urineProtein) {
+    const protein = labResults.urineProtein;
+    if (protein === '2+' || protein === '3+' || protein === '4+') {
+      warnings.push(`Significant proteinuria (${protein}) - evaluate for pre-eclampsia`);
+    } else if (protein === '1+' || protein === 'trace') {
+      warnings.push(`Trace proteinuria detected - monitor blood pressure`);
     }
   }
   
   return {
-    complete: missingFields.length === 0,
-    missingFields
+    valid: errors.length === 0,
+    errors,
+    warnings
   };
 };
 
 /**
- * Validate medication dosages
+ * Validate required fields for form submission
  */
-export const validateMedicationDosage = (
-  medication: string,
-  dosage: string
-): {
-  valid: boolean;
-  warning?: string;
-} => {
-  const pregnancyMedications: Record<string, { min: number; max: number; unit: string }> = {
-    'folic acid': { min: 0.4, max: 5, unit: 'mg' },
-    'iron': { min: 30, max: 120, unit: 'mg' },
-    'calcium': { min: 1000, max: 2500, unit: 'mg' },
-    'vitamin d': { min: 600, max: 4000, unit: 'IU' }
-  };
+export const validateRequiredFields = (
+  data: any,
+  requiredFields: string[]
+): ValidationResult => {
+  const errors: string[] = [];
+  const missingFields: string[] = [];
   
-  const med = medication.toLowerCase();
-  if (pregnancyMedications[med]) {
-    const { min, max, unit } = pregnancyMedications[med];
-    const doseValue = parseFloat(dosage);
-    
-    if (isNaN(doseValue)) {
-      return { valid: false, warning: 'Invalid dosage format' };
+  requiredFields.forEach(field => {
+    const value = getNestedValue(data, field);
+    if (value === undefined || value === null || value === '') {
+      missingFields.push(field);
     }
-    
-    if (doseValue < min) {
-      return { valid: false, warning: `Dosage below recommended minimum of ${min}${unit}` };
-    }
-    
-    if (doseValue > max) {
-      return { valid: false, warning: `Dosage exceeds maximum safe dose of ${max}${unit}` };
+  });
+  
+  if (missingFields.length > 0) {
+    errors.push(`Missing required fields: ${missingFields.join(', ')}`);
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings: []
+  };
+};
+
+/**
+ * Get nested object value by path
+ */
+const getNestedValue = (obj: any, path: string): any => {
+  return path.split('.').reduce((current, key) => current?.[key], obj);
+};
+
+/**
+ * Validate date ranges
+ */
+export const validateDateRange = (
+  startDate: Date | string,
+  endDate: Date | string,
+  maxDays?: number
+): ValidationResult => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  if (isNaN(start.getTime())) {
+    errors.push('Invalid start date');
+  }
+  
+  if (isNaN(end.getTime())) {
+    errors.push('Invalid end date');
+  }
+  
+  if (start > end) {
+    errors.push('Start date cannot be after end date');
+  }
+  
+  if (maxDays) {
+    const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays > maxDays) {
+      warnings.push(`Date range exceeds ${maxDays} days`);
     }
   }
   
-  return { valid: true };
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings
+  };
+};
+
+/**
+ * Validate gestational age
+ */
+export const validateGestationalAge = (
+  lmp?: Date | string,
+  edd?: Date | string,
+  currentDate: Date = new Date()
+): { valid: boolean; gestationalAge?: GestationalAge; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!lmp && !edd) {
+    errors.push('Either LMP or EDD is required to calculate gestational age');
+    return { valid: false, errors };
+  }
+  
+  let lmpDate: Date;
+  
+  if (lmp) {
+    lmpDate = new Date(lmp);
+  } else if (edd) {
+    // Calculate LMP from EDD (EDD = LMP + 280 days)
+    const eddDate = new Date(edd);
+    lmpDate = new Date(eddDate.getTime() - (280 * 24 * 60 * 60 * 1000));
+  } else {
+    return { valid: false, errors: ['Invalid dates provided'] };
+  }
+  
+  if (isNaN(lmpDate.getTime())) {
+    errors.push('Invalid LMP date');
+    return { valid: false, errors };
+  }
+  
+  // Calculate gestational age
+  const diffMs = currentDate.getTime() - lmpDate.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    errors.push('LMP cannot be in the future');
+    return { valid: false, errors };
+  }
+  
+  if (diffDays > 315) { // 45 weeks
+    errors.push('Gestational age exceeds 45 weeks - please verify dates');
+    return { valid: false, errors };
+  }
+  
+  const weeks = Math.floor(diffDays / 7);
+  const days = diffDays % 7;
+  
+  return {
+    valid: true,
+    gestationalAge: { weeks, days },
+    errors: []
+  };
 };
