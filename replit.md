@@ -8,6 +8,8 @@ SmartCare PRO is a comprehensive Electronic Health Record (EHR) system tailored 
 - **Clinical Decision Support System**: Implemented real-time clinical rules engine with evidence-based guidelines from Zambian ANC Guidelines 2022
 - **Performance Optimization**: Added optimized React Query hooks with intelligent caching and prefetching strategies
 - **Real-time Monitoring**: Implemented monitoring service for tracking vital signs and clinical changes with trend analysis
+- **PrEP Integration**: Added comprehensive Pre-Exposure Prophylaxis (PrEP) module as 8th tab in ANC system with risk assessment, eligibility screening, and prescription management
+- **PrEP API**: Created dedicated PrEP endpoints for assessment, prescription, and follow-up tracking
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -38,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Components
 - **Patient Management**: Comprehensive registration, advanced search, secure data, and CSV import/export.
-- **Clinical Modules**: ANC, PrEP (20-point risk scoring), ART, PMTCT, Pharmacovigilance, and Pharmacy management.
+- **Clinical Modules**: ANC (8-tab architecture including PrEP), PrEP (20-point risk scoring with eligibility assessment), ART, PMTCT, Pharmacovigilance, and Pharmacy management.
 - **Emergency & Referral**: 3-Card Referral system, real-time Clinical Decision Support with dynamic alerts, and Danger Signs Assessment with Zambian ANC Guidelines (2022) integration.
 - **Administrative**: Multi-facility management, user access control (RBAC), performance monitoring, and audit trails.
 

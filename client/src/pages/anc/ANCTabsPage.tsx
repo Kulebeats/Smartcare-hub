@@ -17,6 +17,7 @@ import {
   MessageSquare, 
   Send,
   Baby,
+  Shield,
   Loader2,
   CheckCircle
 } from 'lucide-react';
@@ -29,6 +30,7 @@ import { LabsTab } from './tabs/LabsTab';
 import { CounselingTab } from './tabs/CounselingTab';
 import { ReferralTab } from './tabs/ReferralTab';
 import { PMTCTTab } from './tabs/PMTCTTab';
+import { PrEPTab } from './tabs/PrEPTab';
 
 // Hooks and services
 import { useAncEncounter } from '@/hooks/anc/useAncEncounter';
@@ -44,6 +46,7 @@ const ANC_TABS = [
   { id: 'counseling', label: 'Counseling', icon: MessageSquare, component: CounselingTab },
   { id: 'referral', label: 'Referral', icon: Send, component: ReferralTab },
   { id: 'pmtct', label: 'PMTCT', icon: Baby, component: PMTCTTab },
+  { id: 'prep', label: 'PrEP', icon: Shield, component: PrEPTab },
 ];
 
 interface ANCTabsPageParams {
