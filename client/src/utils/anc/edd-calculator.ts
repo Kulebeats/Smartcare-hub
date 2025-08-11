@@ -126,8 +126,9 @@ export const getTrimester = (weeks: number): 1 | 2 | 3 => {
   return 3;
 };
 
-// Export calculateEDD as an alias for calculateEDDFromLMP for backward compatibility
-export const calculateEDD = calculateEDDFromLMP;
+// Export calculateEDD and calculateEDDFromLMP as aliases for eddFromLMP for backward compatibility
+export const calculateEDD = eddFromLMP;
+export const calculateEDDFromLMP = eddFromLMP;
 
 /**
  * Get trimester label

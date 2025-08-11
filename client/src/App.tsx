@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import PrepPage from "@/pages/prep-page"; 
 import ArtPageNew from "@/pages/art-page-new"; // Updated import for ART page
 
-import AncPage from "@/pages/anc-page"; // Antenatal Care page
+import { ANCTabsPage } from "@/pages/anc/ANCTabsPage"; // Refactored Antenatal Care page
 import ANCFollowupPage from "@/pages/anc-followup-page";
 import ANCFollowupSelectionPage from "@/pages/anc-followup-selection";
 import VitalsPage from "@/pages/vitals-page"; // Vital Signs page
@@ -69,8 +69,8 @@ function Router() {
           <Route path="/medical-record" component={MedicalRecords} />
           <Route path="/prep" component={PrepPage} />
           <Route path="/art" component={ArtPageNew} />
-          <Route path="/anc" component={AncPage} />
-          <Route path="/anc/:patientId" component={AncPage} />
+          <Route path="/anc" component={ANCTabsPage} />
+          <Route path="/anc/:patientId" component={ANCTabsPage} />
           <Route path="/vitals" component={VitalsPage} />
           <Route path="/hts" component={HTSPage} />
           <Route path="/anc/followup-selection" component={ANCFollowupSelectionPage} />

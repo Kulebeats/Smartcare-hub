@@ -298,7 +298,7 @@ export const PMTCTTab: React.FC<PMTCTTabProps> = ({
                         <SelectContent>
                           <SelectItem value="good">Good (≥95%)</SelectItem>
                           <SelectItem value="fair">Fair (85-94%)</SelectItem>
-                          <SelectItem value="poor">Poor (<85%)</SelectItem>
+                          <SelectItem value="poor">Poor (&lt;85%)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

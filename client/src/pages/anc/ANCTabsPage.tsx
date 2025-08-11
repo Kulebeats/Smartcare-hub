@@ -13,7 +13,7 @@ import {
   AlertTriangle, 
   User, 
   Activity, 
-  FlaskRoundIcon as Flask, 
+  TestTube as Flask, 
   MessageSquare, 
   Send,
   Baby,

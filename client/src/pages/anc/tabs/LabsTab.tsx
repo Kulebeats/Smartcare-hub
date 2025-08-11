@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Flask, AlertTriangle, CheckCircle, Calendar, Loader2 } from 'lucide-react';
+import { TestTube as Flask, AlertTriangle, CheckCircle, Calendar, Loader2 } from 'lucide-react';
 import { useAncEncounter } from '@/hooks/anc/useAncEncounter';
 import { safeLog } from '@/utils/anc/safe-logger';
 

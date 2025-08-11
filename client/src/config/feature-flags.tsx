@@ -3,6 +3,8 @@
  * Controls incremental rollout of ANC refactoring
  */
 
+import React from 'react';
+
 // Feature flag names
 export const FEATURE_FLAGS = {
   NEW_ANC_TABS: 'NEW_ANC_TABS',
@@ -152,8 +154,6 @@ export const isInRollout = (
 };
 
 // Export React components
-import React from 'react';
-
 export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
