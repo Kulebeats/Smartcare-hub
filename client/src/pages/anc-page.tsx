@@ -6889,7 +6889,7 @@ export default function AncPage() {
                       </div>
                       <div>
                         <h3 className="font-medium text-gray-900">Medical History</h3>
-                        <p className="text-sm text-gray-500">Past medical conditions, chronic diseases, and health status</p>
+
                       </div>
                     </div>
                     <div className="flex space-x-2">
