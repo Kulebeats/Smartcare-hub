@@ -2,8 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import pharmacyRoutes from "./routes/pharmacy";
-import ancRoutes from "./routes/anc.routes";
-import prepRoutes from "./routes/prep.routes";
 import * as net from 'net';
 import { createBullBoard } from '@bull-board/api';
 import { BullAdapter } from '@bull-board/api/bullAdapter.js';
@@ -109,12 +107,6 @@ app.use((req, res, next) => {
   
   // Register pharmacy routes
   app.use('/api/pharmacy', pharmacyRoutes);
-  
-  // Register ANC routes
-  app.use('/api/anc', ancRoutes);
-  
-  // Register PrEP routes
-  app.use('/api/prep', prepRoutes);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

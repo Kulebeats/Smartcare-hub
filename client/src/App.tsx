@@ -20,14 +20,14 @@ import { cn } from "@/lib/utils";
 import PrepPage from "@/pages/prep-page"; 
 import ArtPageNew from "@/pages/art-page-new"; // Updated import for ART page
 
-import { ANCTabsPage } from "@/pages/anc/ANCTabsPage"; // Refactored Antenatal Care page
+import AncPage from "@/pages/anc-page"; // Antenatal Care page
 import ANCFollowupPage from "@/pages/anc-followup-page";
 import ANCFollowupSelectionPage from "@/pages/anc-followup-selection";
 import VitalsPage from "@/pages/vitals-page"; // Vital Signs page
 import HTSPage from "@/pages/hts-page"; // HIV Testing Services page
 import PharmacovigilancePage from "@/pages/pharmacovigilance-page"; // Pharmacovigilance page
 import PatientTransferPage from "@/pages/patient-transfer"; // Smart Transfer System
-
+import PatientJourneyPage from "@/pages/patient-journey"; // Patient Journey Dashboard
 import AdminPanel from "@/pages/admin-panel"; // Admin panel
 import AdminLogin from "@/pages/admin-login"; // Admin login
 import AdminDAK from "@/pages/AdminDAK"; // DAK Clinical Decision Support Admin
@@ -69,8 +69,8 @@ function Router() {
           <Route path="/medical-record" component={MedicalRecords} />
           <Route path="/prep" component={PrepPage} />
           <Route path="/art" component={ArtPageNew} />
-          <Route path="/anc" component={ANCTabsPage} />
-          <Route path="/anc/:patientId" component={ANCTabsPage} />
+          <Route path="/anc" component={AncPage} />
+          <Route path="/anc/:patientId" component={AncPage} />
           <Route path="/vitals" component={VitalsPage} />
           <Route path="/hts" component={HTSPage} />
           <Route path="/anc/followup-selection" component={ANCFollowupSelectionPage} />
@@ -98,6 +98,7 @@ function Router() {
           </Route>
 
           <Route path="/transfers" component={PatientTransferPage} />
+          <Route path="/journey" component={PatientJourneyPage} />
 
           <Route path="/reports" component={ReportsDashboard} />
           <Route path="/admin-login" component={AdminLogin} />
