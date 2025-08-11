@@ -21,11 +21,11 @@ export type FeatureFlagName = keyof typeof FEATURE_FLAGS;
 
 // Default flag states (can be overridden by environment variables)
 const defaultFlags: Record<FeatureFlagName, boolean> = {
-  NEW_ANC_TABS: false,
-  REACT_QUERY_DATA: false,
-  NEW_DANGER_SIGNS_FLOW: false,
-  NEW_EDD_CALCULATOR: false,
-  NEW_REFERRAL_FLOW: false,
+  NEW_ANC_TABS: true,
+  REACT_QUERY_DATA: true,
+  NEW_DANGER_SIGNS_FLOW: true,
+  NEW_EDD_CALCULATOR: true,
+  NEW_REFERRAL_FLOW: true,
   CLINICAL_AUDIT_TRAIL: false,
   ENHANCED_TELEMETRY: false,
   OFFLINE_SYNC: false

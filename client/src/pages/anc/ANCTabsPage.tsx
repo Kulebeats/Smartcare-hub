@@ -122,8 +122,13 @@ export const ANCTabsPage: React.FC = () => {
   };
   
   // Check if using old page (feature flag disabled)
+  useEffect(() => {
+    if (!useTabsLayout) {
+      setLocation(`/anc/${patientId}`);
+    }
+  }, [useTabsLayout, patientId, setLocation]);
+
   if (!useTabsLayout) {
-    setLocation(`/anc/${patientId}`);
     return null;
   }
   
