@@ -3468,10 +3468,10 @@ export default function AncPage() {
             onTabChange={handleTabNavigation}
           />
 
-          {/* Aligned Three-Column Layout - Compact with no gaps */}
-          <div className="flex flex-col lg:flex-row gap-0 items-start min-h-screen">
+          {/* Aligned Three-Column Layout - Completely Flush */}
+          <div className="flex flex-col lg:flex-row min-h-screen">
             {/* Left Sidebar - Latest Encounter */}
-            <div className="w-full lg:w-80 order-2 lg:order-1 border-r border-gray-200">
+            <div className="w-full lg:w-80 order-2 lg:order-1 border-r border-gray-200 bg-white">
               <LatestEncounterCard 
                 activeSection={activeTab}
                 encounterData={latestEncounterData}
@@ -3479,7 +3479,7 @@ export default function AncPage() {
             </div>
             
             {/* Main Content - Center */}
-            <div className="flex-1 min-w-0 order-1 lg:order-2 border-r border-gray-200">
+            <div className="flex-1 min-w-0 order-1 lg:order-2 border-r border-gray-200 bg-white">
 
             <TabsContent value="rapidAssessment">
               <AnimatePresence mode="wait">
@@ -3491,7 +3491,7 @@ export default function AncPage() {
                   transition={{ duration: 0.4, ease: "easeOut" }}
                 >
                   <ANCCardWrapper>
-                    <div className="space-y-4">
+                    <div className="p-4 space-y-4">
                 {/* Contact Date Section */}
               <div className="mb-4">
                 <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
@@ -7567,7 +7567,7 @@ export default function AncPage() {
           </div>
 
           {/* Right Sidebar - Recent Data Summary */}
-          <div className="w-full lg:w-80 order-3">
+          <div className="w-full lg:w-80 order-3 bg-white">
             <RecentDataSummaryCard 
               summaryData={recentDataSummary}
             />

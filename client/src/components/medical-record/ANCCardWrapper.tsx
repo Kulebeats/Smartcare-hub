@@ -8,8 +8,8 @@ interface ANCCardWrapperProps {
 
 export function ANCCardWrapper({ children, className = '' }: ANCCardWrapperProps) {
   return (
-    <Card className={`border-2 border-blue-200 shadow-sm bg-white ${className}`}>
-      <div className="p-6">
+    <Card className={`border-0 shadow-none bg-white ${className}`}>
+      <div className="p-0">
         {children}
       </div>
     </Card>
