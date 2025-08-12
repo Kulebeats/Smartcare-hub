@@ -199,7 +199,7 @@ export const Dock: FC<DockProps> = ({
               onClick={item.onClick}
               className={`${item.className || ''} ${
                 item.isActive 
-                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg' 
+                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
                   : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
               }`} 
               mouseX={mouseX}
