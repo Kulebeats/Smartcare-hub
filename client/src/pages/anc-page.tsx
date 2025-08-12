@@ -3433,11 +3433,7 @@ export default function AncPage() {
               </svg>
               <p className="text-sm">{patient.mothersName}</p>
             </div>
-            <div className="absolute right-8 top-[230px]">
-              <Button className="bg-green-500 hover:bg-green-600 text-white rounded-md py-1">
-                Actions <ChevronRight size={16} />
-              </Button>
-            </div>
+
           </div>
         </div>
       </div>
@@ -3519,6 +3515,9 @@ export default function AncPage() {
                         <line x1="9" y1="15" x2="15" y2="15"></line>
                       </svg>
                       Add Record
+                    </Button>
+                    <Button className="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2 text-sm flex items-center gap-1">
+                      Actions <ChevronRight size={16} />
                     </Button>
                   </div>
                 </div>
