@@ -3435,8 +3435,8 @@ export default function AncPage() {
                 </svg>
                 <p className="text-sm">{patient.mothersName}</p>
               </div>
-              <Button className="bg-green-500 hover:bg-green-600 text-white rounded-md py-1 px-3 text-xs flex items-center gap-1">
-                Actions <ChevronRight size={14} />
+              <Button className="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2 text-sm flex items-center gap-1">
+                Actions <ChevronRight size={16} />
               </Button>
             </div>
           </div>
