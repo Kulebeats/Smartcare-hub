@@ -73,10 +73,7 @@ export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({
 
   return (
     <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 pb-4 mb-6">
-      <div className="flex flex-col items-center space-y-3">
-        <h2 className="text-xl font-semibold text-blue-800 text-center">
-          ANC Care Modules
-        </h2>
+      <div className="flex justify-center">
         <Dock 
           items={dockItems}
           className="border-blue-200 bg-blue-50/80 backdrop-blur-md"

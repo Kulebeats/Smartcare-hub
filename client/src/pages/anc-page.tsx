@@ -3460,7 +3460,12 @@ export default function AncPage() {
       {/* Main Content Area */}
       <div className={`w-full mb-6 ${recordClosed ? 'opacity-50 pointer-events-none' : ''}`}>
         <Tabs value={activeTab} onValueChange={handleTabNavigation} className="w-full">
-
+          
+          {/* ANC Header Dock - positioned where section headers were */}
+          <ANCHeaderDock 
+            currentTab={activeTab}
+            onTabChange={handleTabNavigation}
+          />
 
           {/* Aligned Three-Column Layout */}
           <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -3474,12 +3479,6 @@ export default function AncPage() {
             
             {/* Main Content - Center */}
             <div className="flex-1 min-w-0 order-1 lg:order-2">
-              
-              {/* ANC Header Dock */}
-              <ANCHeaderDock 
-                currentTab={activeTab}
-                onTabChange={handleTabNavigation}
-              />
 
             <TabsContent value="rapidAssessment">
               <ANCCardWrapper>
