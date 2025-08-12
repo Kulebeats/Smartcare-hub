@@ -3463,7 +3463,7 @@ export default function AncPage() {
                 </Button>
                 
                 {isActionsDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
                     <div className="bg-green-500 text-white px-4 py-2 rounded-t-lg">
                       <h3 className="font-semibold text-sm">Patients Actions</h3>
                     </div>
