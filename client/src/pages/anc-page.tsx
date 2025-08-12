@@ -3380,7 +3380,7 @@ export default function AncPage() {
           <h1 className="text-xl font-bold text-blue-800">ANC Service Initial Visit</h1>
         </div>
         {/* Patient Info Bar */}
-        <div className="rounded-md p-3 mb-4 bg-[#e8f7ff]">
+        <div className="rounded-md p-3 mb-4 bg-[#e8f7ff] shadow-md border border-blue-100">
         <div className="grid grid-cols-7 gap-4">
           <div className="col-span-1">
             <h2 className="text-blue-700 font-bold text-lg">{patient.name}</h2>
