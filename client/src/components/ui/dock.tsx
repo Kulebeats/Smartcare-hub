@@ -185,10 +185,10 @@ export const Dock: FC<DockProps> = ({
         className={`${className} 
                     flex items-end justify-between w-full
                     rounded-xl sm:rounded-2xl 
-                    border-blue-200 dark:border-blue-600 border-2 
+                    border-gray-300 border-2 
                     pb-2 sm:pb-3 px-3 sm:px-4
-                    bg-blue-50/80 dark:bg-blue-900/40 backdrop-blur-md 
-                    shadow-2xl transition-colors duration-300`}
+                    bg-white backdrop-blur-md 
+                    shadow-lg transition-colors duration-300`}
         style={{ height: panelHeight }} 
         role="toolbar"
         aria-label="ANC Section Navigation"
@@ -200,7 +200,7 @@ export const Dock: FC<DockProps> = ({
               className={`${item.className || ''} ${
                 item.isActive 
                   ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg' 
-                  : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 border-blue-200 dark:border-blue-700'
+                  : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
               }`} 
               mouseX={mouseX}
               spring={spring}
@@ -211,10 +211,10 @@ export const Dock: FC<DockProps> = ({
               <DockIcon>{item.icon}</DockIcon>
               <DockLabel>{item.label}</DockLabel>
             </DockItem>
-            <span className={`text-xs font-medium mt-1 text-center leading-tight max-w-[70px] ${
+            <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap ${
               item.isActive 
                 ? 'text-blue-600 font-semibold' 
-                : 'text-blue-700 dark:text-blue-300'
+                : 'text-gray-700'
             }`}>
               {item.label}
             </span>

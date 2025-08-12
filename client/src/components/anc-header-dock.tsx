@@ -41,7 +41,7 @@ export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({
     },
     {
       icon: <TestTube size={18} className={currentTab === 'labs' ? 'text-white' : 'text-blue-600'} />,
-      label: 'Laboratory Tests',
+      label: 'Laboratory',
       onClick: () => onTabChange('labs'),
       isActive: currentTab === 'labs',
     },
