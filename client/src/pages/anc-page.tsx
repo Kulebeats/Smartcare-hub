@@ -3459,7 +3459,7 @@ export default function AncPage() {
       )}
 
       {/* Main Content Area */}
-      <div className={`w-full mb-6 ${recordClosed ? 'opacity-50 pointer-events-none' : ''}`}>
+      <div className={`w-full ${recordClosed ? 'opacity-50 pointer-events-none' : ''}`}>
         <Tabs value={activeTab} onValueChange={handleTabNavigation} className="w-full">
           
           {/* ANC Header Dock - positioned where section headers were */}
@@ -3468,10 +3468,10 @@ export default function AncPage() {
             onTabChange={handleTabNavigation}
           />
 
-          {/* Aligned Three-Column Layout */}
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Aligned Three-Column Layout - Compact with no gaps */}
+          <div className="flex flex-col lg:flex-row gap-0 items-start min-h-screen">
             {/* Left Sidebar - Latest Encounter */}
-            <div className="w-full lg:w-80 order-2 lg:order-1">
+            <div className="w-full lg:w-80 order-2 lg:order-1 border-r border-gray-200">
               <LatestEncounterCard 
                 activeSection={activeTab}
                 encounterData={latestEncounterData}
@@ -3479,7 +3479,7 @@ export default function AncPage() {
             </div>
             
             {/* Main Content - Center */}
-            <div className="flex-1 min-w-0 order-1 lg:order-2">
+            <div className="flex-1 min-w-0 order-1 lg:order-2 border-r border-gray-200">
 
             <TabsContent value="rapidAssessment">
               <AnimatePresence mode="wait">
