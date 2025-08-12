@@ -163,10 +163,7 @@ export const Dock: FC<DockProps> = ({
   baseItemSize = 50,
 }) => {
   const mouseX = useMotionValue(Infinity); 
-  const isPanelHovered = useMotionValue(0);
-  const [highlightStyle, setHighlightStyle] = useState({});
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<{ [key: string]: HTMLElement }>({}); 
+  const isPanelHovered = useMotionValue(0); 
 
   const calculatedMaxHeight = useMemo(
     () => Math.max(panelHeight, magnification + baseItemSize / 4 + 4), 
@@ -174,25 +171,6 @@ export const Dock: FC<DockProps> = ({
   );
   const heightRow = useTransform(isPanelHovered, [0, 1], [panelHeight, calculatedMaxHeight]);
   const animatedHeight = useSpring(heightRow, spring);
-
-  // Update highlight position when active item changes
-  useEffect(() => {
-    const activeItem = items.find(item => item.isActive);
-    if (activeItem && containerRef.current) {
-      const activeRef = itemRefs.current[activeItem.label?.toString() || ''];
-      if (activeRef) {
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const itemRect = activeRef.getBoundingClientRect();
-        
-        setHighlightStyle({
-          transform: `translateX(${itemRect.left - containerRect.left - 12}px)`,
-          width: `${itemRect.width + 24}px`,
-          height: `${itemRect.height + 24}px`,
-          opacity: 1,
-        });
-      }
-    }
-  }, [items]);
 
   return (
     <motion.div
@@ -202,10 +180,9 @@ export const Dock: FC<DockProps> = ({
       onHoverEnd={() => isPanelHovered.set(0)}
     >
       <motion.div
-        ref={containerRef}
         onMouseMove={({ pageX }) => mouseX.set(pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
-        className={`${className} relative
+        className={`${className} 
                     flex items-end justify-between w-full
                     rounded-xl sm:rounded-2xl 
                     border-gray-300 border-2 
@@ -216,26 +193,13 @@ export const Dock: FC<DockProps> = ({
         role="toolbar"
         aria-label="ANC Section Navigation"
       >
-        {/* Animated blue gradient highlight */}
-        <div
-          className="absolute bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg transition-all duration-300 ease-out z-0"
-          style={{
-            ...highlightStyle,
-            top: '8px',
-            borderRadius: '12px',
-          }}
-        />
         {items.map((item, index) => (
-          <div 
-            key={item.label?.toString() + index || index} 
-            ref={el => el && (itemRefs.current[item.label?.toString() || ''] = el)}
-            className="flex flex-col items-center relative z-10"
-          >
+          <div key={item.label?.toString() + index || index} className="flex flex-col items-center">
             <DockItem
               onClick={item.onClick}
               className={`${item.className || ''} ${
                 item.isActive 
-                  ? 'bg-white/90 border-white/60 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
+                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
                   : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
               }`} 
               mouseX={mouseX}
@@ -249,7 +213,7 @@ export const Dock: FC<DockProps> = ({
             </DockItem>
             <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap ${
               item.isActive 
-                ? 'text-white font-semibold drop-shadow-md' 
+                ? 'text-blue-600 font-semibold' 
                 : 'text-gray-700'
             }`}>
               {item.label}
