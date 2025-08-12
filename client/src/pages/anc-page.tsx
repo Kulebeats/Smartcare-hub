@@ -40,6 +40,7 @@ import { ANCCardWrapper } from "@/components/medical-record/ANCCardWrapper";
 import { PMTCTCardSection } from "@/components/medical-record/PMTCTCardSection";
 import ReferralCard from "@/components/medical-record/referral-card";
 import ReferralModal from "@/components/medical-record/referral-modal";
+import { ANCHeaderDock } from "@/components/anc-header-dock";
 
 // Zambian ANC Guidelines danger sign descriptions (2022)
 const enhancedDangerSignDescriptions = {
@@ -3559,6 +3560,12 @@ export default function AncPage() {
             
             {/* Main Content - Center */}
             <div className="flex-1 min-w-0 order-1 lg:order-2">
+              
+              {/* ANC Header Dock */}
+              <ANCHeaderDock 
+                currentTab={activeTab}
+                onTabChange={handleTabNavigation}
+              />
 
             <TabsContent value="rapidAssessment">
               <ANCCardWrapper>
@@ -6826,7 +6833,7 @@ export default function AncPage() {
                         <Baby className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Current Pregnancy</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Current Pregnancy</h3>
                         <p className="text-sm text-gray-500">Current pregnancy status, gravida, para, and pregnancy history</p>
                       </div>
                     </div>
@@ -6857,7 +6864,7 @@ export default function AncPage() {
                         <FileText className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Obstetric History</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Obstetric History</h3>
                         <p className="text-sm text-gray-500">Previous pregnancies, deliveries, and obstetric outcomes</p>
                       </div>
                     </div>
@@ -6888,7 +6895,7 @@ export default function AncPage() {
                         <Heart className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Medical History</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Medical History</h3>
 
                       </div>
                     </div>
@@ -6919,7 +6926,7 @@ export default function AncPage() {
                         <ClipboardCheck className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Standard ANC Assessment</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Standard ANC Assessment</h3>
                         <p className="text-sm text-gray-500">Comprehensive antenatal care assessment following WHO guidelines</p>
                       </div>
                     </div>
@@ -6975,7 +6982,7 @@ export default function AncPage() {
                         <Thermometer className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Vital Signs & Measurements</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Vital Signs & Measurements</h3>
                         <p className="text-sm text-gray-500">Blood pressure, weight, temperature, and vital measurements</p>
                       </div>
                     </div>
@@ -7007,7 +7014,7 @@ export default function AncPage() {
                         <Stethoscope className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Maternal Assessment</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Maternal Assessment</h3>
                         <p className="text-sm text-gray-500">Physical examination and clinical findings</p>
                       </div>
                     </div>
@@ -7039,7 +7046,7 @@ export default function AncPage() {
                         <Baby className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Fetal Assessment</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Fetal Assessment</h3>
                         <p className="text-sm text-gray-500">Fetal heart rate, movements, and growth monitoring</p>
                       </div>
                     </div>
@@ -7094,7 +7101,7 @@ export default function AncPage() {
                         <TestTube className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Laboratory Tests & Results</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Laboratory Tests & Results</h3>
                         <p className="text-sm text-gray-500">Blood tests, urine analysis, and diagnostic testing</p>
                       </div>
                     </div>
@@ -7126,7 +7133,7 @@ export default function AncPage() {
                         <Microscope className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Specialized Diagnostic Tests</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Specialized Diagnostic Tests</h3>
                         <p className="text-sm text-gray-500">Advanced diagnostic procedures and imaging studies</p>
                       </div>
                     </div>
@@ -7194,7 +7201,7 @@ export default function AncPage() {
                         <FileText className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Health Education & Lifestyle Counseling</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Health Education & Lifestyle Counseling</h3>
                         <p className="text-sm text-gray-500">Nutritional guidance, birth preparation, and lifestyle education</p>
                       </div>
                     </div>
@@ -7322,7 +7329,7 @@ export default function AncPage() {
                         <Heart className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Behavioral Counselling</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Behavioral Counselling</h3>
                         <p className="text-sm text-gray-500">Lifestyle habits and behavioral health guidance</p>
                       </div>
                     </div>
@@ -7356,7 +7363,7 @@ export default function AncPage() {
                         <Pill className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-gray-900">Preventive and Promotive Intervention</h3>
+                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Preventive and Promotive Intervention</h3>
                         <p className="text-sm text-gray-500">Nutrition supplementation, preventive therapy, and immunization</p>
                       </div>
                     </div>

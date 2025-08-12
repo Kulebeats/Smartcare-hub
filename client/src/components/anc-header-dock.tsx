@@ -1,0 +1,83 @@
+import React from 'react';
+import { Dock, DockItemData } from '@/components/ui/dock';
+import { 
+  User, 
+  Heart, 
+  Stethoscope, 
+  TestTube, 
+  MessageSquare, 
+  Pill, 
+  FileText, 
+  Calendar 
+} from 'lucide-react';
+
+interface ANCHeaderDockProps {
+  currentTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
+export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({ 
+  currentTab = 'rapidAssessment',
+  onTabChange = () => {}
+}) => {
+  const dockItems: DockItemData[] = [
+    {
+      icon: <User size={18} className="text-blue-600" />,
+      label: 'Rapid Assessment',
+      onClick: () => onTabChange('rapidAssessment'),
+    },
+    {
+      icon: <Heart size={18} className="text-blue-600" />,
+      label: 'Client Profile',
+      onClick: () => onTabChange('clientProfile'),
+    },
+    {
+      icon: <Stethoscope size={18} className="text-blue-600" />,
+      label: 'Examination',
+      onClick: () => onTabChange('examination'),
+    },
+    {
+      icon: <TestTube size={18} className="text-blue-600" />,
+      label: 'Laboratory Tests',
+      onClick: () => onTabChange('labs'),
+    },
+    {
+      icon: <MessageSquare size={18} className="text-blue-600" />,
+      label: 'Counseling',
+      onClick: () => onTabChange('counseling'),
+    },
+    {
+      icon: <Pill size={18} className="text-blue-600" />,
+      label: 'Treatment',
+      onClick: () => onTabChange('treatment'),
+    },
+    {
+      icon: <FileText size={18} className="text-blue-600" />,
+      label: 'Care Plan',
+      onClick: () => onTabChange('carePlan'),
+    },
+    {
+      icon: <Calendar size={18} className="text-blue-600" />,
+      label: 'Follow-up',
+      onClick: () => onTabChange('followUp'),
+    },
+  ];
+
+  return (
+    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 pb-4 mb-6">
+      <div className="flex flex-col items-center space-y-3">
+        <h2 className="text-xl font-semibold text-blue-800 text-center">
+          ANC Care Modules
+        </h2>
+        <Dock 
+          items={dockItems}
+          className="border-blue-200 bg-blue-50/80 backdrop-blur-md"
+          panelHeight={60}
+          baseItemSize={45}
+          magnification={65}
+          distance={150}
+        />
+      </div>
+    </div>
+  );
+};
