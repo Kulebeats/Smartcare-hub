@@ -19,6 +19,7 @@ import React, {
   FC, 
   ReactNode, 
 } from "react";
+import { MotionHighlight, MotionHighlightItem } from "./motion-highlight";
 
 export type DockItemData = {
   icon: ReactNode; 
@@ -193,33 +194,46 @@ export const Dock: FC<DockProps> = ({
         role="toolbar"
         aria-label="ANC Section Navigation"
       >
-        {items.map((item, index) => (
-          <div key={item.label?.toString() + index || index} className="flex flex-col items-center">
-            <DockItem
-              onClick={item.onClick}
-              className={`${item.className || ''} ${
-                item.isActive 
-                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
-                  : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
-              }`} 
-              mouseX={mouseX}
-              spring={spring}
-              distance={distance}
-              magnification={magnification}
-              baseItemSize={baseItemSize}
+        <MotionHighlight
+          mode="parent"
+          value={items.find(item => item.isActive)?.label?.toString() || null}
+          className="bg-blue-200/80 rounded-lg"
+          transition={{ type: 'spring', stiffness: 350, damping: 35 }}
+          controlledItems={true}
+        >
+          {items.map((item, index) => (
+            <MotionHighlightItem
+              key={item.label?.toString() + index || index}
+              value={item.label?.toString() || ''}
             >
-              <DockIcon>{item.icon}</DockIcon>
-              <DockLabel>{item.label}</DockLabel>
-            </DockItem>
-            <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap ${
-              item.isActive 
-                ? 'text-blue-600 font-semibold' 
-                : 'text-gray-700'
-            }`}>
-              {item.label}
-            </span>
-          </div>
-        ))}
+              <div className="flex flex-col items-center relative z-10">
+                <DockItem
+                  onClick={item.onClick}
+                  className={`${item.className || ''} ${
+                    item.isActive 
+                      ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
+                      : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+                  }`} 
+                  mouseX={mouseX}
+                  spring={spring}
+                  distance={distance}
+                  magnification={magnification}
+                  baseItemSize={baseItemSize}
+                >
+                  <DockIcon>{item.icon}</DockIcon>
+                  <DockLabel>{item.label}</DockLabel>
+                </DockItem>
+                <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap ${
+                  item.isActive 
+                    ? 'text-blue-600 font-semibold' 
+                    : 'text-gray-700'
+                }`}>
+                  {item.label}
+                </span>
+              </div>
+            </MotionHighlightItem>
+          ))}
+        </MotionHighlight>
       </motion.div>
     </motion.div>
   );
