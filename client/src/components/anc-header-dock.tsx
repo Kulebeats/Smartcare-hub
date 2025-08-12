@@ -6,9 +6,9 @@ import {
   Stethoscope, 
   TestTube, 
   MessageSquare, 
-  Pill, 
-  FileText, 
-  Calendar 
+  ArrowRight, 
+  Shield, 
+  Users 
 } from 'lucide-react';
 
 interface ANCHeaderDockProps {
@@ -47,19 +47,19 @@ export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({
       onClick: () => onTabChange('counseling'),
     },
     {
-      icon: <Pill size={18} className="text-blue-600" />,
-      label: 'Treatment',
-      onClick: () => onTabChange('treatment'),
+      icon: <ArrowRight size={18} className="text-blue-600" />,
+      label: 'Referral',
+      onClick: () => onTabChange('referral'),
     },
     {
-      icon: <FileText size={18} className="text-blue-600" />,
-      label: 'Care Plan',
-      onClick: () => onTabChange('carePlan'),
+      icon: <Shield size={18} className="text-blue-600" />,
+      label: 'PrEP',
+      onClick: () => onTabChange('prep'),
     },
     {
-      icon: <Calendar size={18} className="text-blue-600" />,
-      label: 'Follow-up',
-      onClick: () => onTabChange('followUp'),
+      icon: <Users size={18} className="text-blue-600" />,
+      label: 'PMTCT',
+      onClick: () => onTabChange('pmtct'),
     },
   ];
 
