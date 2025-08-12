@@ -72,11 +72,11 @@ export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({
   ];
 
   return (
-    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 pb-4 mb-6">
+    <div className="sticky top-0 z-50 pb-4 mb-6">
       <div className="w-full px-4">
         <Dock 
           items={dockItems}
-          className="border-blue-200 bg-blue-50/80 backdrop-blur-md w-full"
+          className="border-gray-300 bg-white backdrop-blur-md w-full"
           panelHeight={80}
           baseItemSize={45}
           magnification={65}
