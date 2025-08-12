@@ -197,10 +197,10 @@ export const Dock: FC<DockProps> = ({
           <div key={item.label?.toString() + index || index} className="flex flex-col items-center">
             <DockItem
               onClick={item.onClick}
-              className={`${item.className || ''} ${
+              className={`${item.className || ''} transition-all duration-300 ease-out ${
                 item.isActive 
-                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-1' 
-                  : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg transform -translate-y-2 scale-105' 
+                  : 'bg-gray-50 hover:bg-blue-50 hover:border-blue-200 hover:scale-102 hover:-translate-y-0.5 border-gray-200'
               }`} 
               mouseX={mouseX}
               spring={spring}
@@ -211,10 +211,10 @@ export const Dock: FC<DockProps> = ({
               <DockIcon>{item.icon}</DockIcon>
               <DockLabel>{item.label}</DockLabel>
             </DockItem>
-            <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap ${
+            <span className={`text-xs font-medium mt-1 text-center leading-tight whitespace-nowrap transition-all duration-300 ease-out ${
               item.isActive 
-                ? 'text-blue-600 font-semibold' 
-                : 'text-gray-700'
+                ? 'text-blue-600 font-semibold transform scale-105' 
+                : 'text-gray-700 group-hover:text-blue-500'
             }`}>
               {item.label}
             </span>

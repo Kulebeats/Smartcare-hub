@@ -8,6 +8,7 @@ import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, He
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 import { AncInitialDialog } from "@/components/medical-record/anc-initial-dialog";
 import { AncDecisionSupportAlert, DecisionRuleTable } from "@/components/medical-record/anc-decision-support";
 import { SmartCareHeader } from "@/components/layout/smartcare-header";
@@ -3481,8 +3482,16 @@ export default function AncPage() {
             <div className="flex-1 min-w-0 order-1 lg:order-2">
 
             <TabsContent value="rapidAssessment">
-              <ANCCardWrapper>
-                <div className="space-y-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="rapidAssessment"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-4">
                 {/* Contact Date Section */}
               <div className="mb-4">
                 <div className="flex justify-between items-center bg-gray-100 p-3 rounded">
@@ -6728,12 +6737,22 @@ export default function AncPage() {
                   Next
                 </Button>
               </div>
-              </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
 
             <TabsContent value="clientProfile">
-              <ANCCardWrapper>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="clientProfile"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
                 <div className="space-y-6">
 
 
@@ -6879,14 +6898,24 @@ export default function AncPage() {
                   </Button>
                 </div>
               </div>
-              </ANCCardWrapper>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
 
 
 
             <TabsContent value="examination">
-              <ANCCardWrapper>
-                <div className="space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="examination"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-6">
                 {/* Vital Signs & Measurements Card - Client Profile Style */}
                 <Card className="mb-6">
                   <CardContent className="flex items-center justify-between p-6">
@@ -6999,13 +7028,23 @@ export default function AncPage() {
                     Next
                   </Button>
                 </div>
-              </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
 
             <TabsContent value="labs">
-              <ANCCardWrapper>
-                <div className="space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="labs"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-6">
                 {/* Laboratory Tests Card - Client Profile Style */}
                 <Card className="mb-6">
                   <CardContent className="flex items-center justify-between p-6">
@@ -7099,13 +7138,23 @@ export default function AncPage() {
                     Next
                   </Button>
                 </div>
-              </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
 
             <TabsContent value="counseling">
-              <ANCCardWrapper>
-                <div className="space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="counseling"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-6">
                 {/* Health Education Card - Client Profile Style */}
                 <Card className="mb-6">
                   <CardContent className="flex items-center justify-between p-6">
@@ -7320,12 +7369,22 @@ export default function AncPage() {
                     Next: Referral
                   </Button>
                 </div>
-              </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
 
             <TabsContent value="referral">
-              <ANCCardWrapper>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="referral"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
                 <div className="space-y-4">
                 
                 {/* Card 1: Referral Reasons */}
@@ -7446,13 +7505,23 @@ export default function AncPage() {
                     Next: PMTCT
                   </Button>
                 </div>
-              </div>
-              </ANCCardWrapper>
+                </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
             
             <TabsContent value="pmtct">
-              <ANCCardWrapper>
-                <div className="space-y-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="pmtct"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-4">
                   {/* PMTCT Section Header */}
 
 
@@ -7464,13 +7533,23 @@ export default function AncPage() {
                   />
 
                   {/* TPT Section moved to card-based structure */}
-                </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
             
             <TabsContent value="prep">
-              <ANCCardWrapper>
-                <div className="space-y-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="prep"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <ANCCardWrapper>
+                    <div className="space-y-4">
                   {/* PrEP Assessment Header */}
 
 
@@ -7480,8 +7559,10 @@ export default function AncPage() {
                     onUpdate={handleSaveANCPrep}
                     isVisible={true}
                   />
-                </div>
-              </ANCCardWrapper>
+                    </div>
+                  </ANCCardWrapper>
+                </motion.div>
+              </AnimatePresence>
             </TabsContent>
           </div>
 
