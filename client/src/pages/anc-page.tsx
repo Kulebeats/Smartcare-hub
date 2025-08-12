@@ -3302,11 +3302,7 @@ export default function AncPage() {
       <header className="bg-white border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="flex items-center text-gray-600 hover:text-gray-800">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Go Back
-              </Button>
+            <div className="flex items-center space-x-2">
               <img src={Coat_of_arms_of_Zambia_svg} alt="Logo" className="h-9" />
               <h1>
                 <span className="text-[#00A651]">Smart</span>
@@ -3356,8 +3352,14 @@ export default function AncPage() {
         </div>
       </header>
       <div className="w-full px-4 py-2 pt-4">
-        {/* Page Title */}
-        <h1 className="text-xl font-bold text-blue-800 text-center mb-2">ANC Service Initial Visit</h1>
+        {/* Page Title with Go Back */}
+        <div className="flex items-center justify-center mb-2 relative">
+          <Button variant="ghost" className="flex items-center text-gray-600 hover:text-gray-800 absolute left-0">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Go Back
+          </Button>
+          <h1 className="text-xl font-bold text-blue-800">ANC Service Initial Visit</h1>
+        </div>
         {/* Patient Info Bar */}
         <div className="rounded-md p-3 mb-4 bg-[#e8f7ff]">
         <div className="grid grid-cols-7 gap-4">
