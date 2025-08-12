@@ -392,7 +392,7 @@ const MotionHighlightItem = React.forwardRef<HTMLDivElement, MotionHighlightItem
     };
   }, [isActive, mode, setBounds]);
 
-  const handleClick = React.useCallback((event: React.MouseEvent) => {
+  const handleClick = React.useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (isDisabled || !enabled) return;
     setActiveValue(childValue);
     element.props?.onClick?.(event);
@@ -402,7 +402,7 @@ const MotionHighlightItem = React.forwardRef<HTMLDivElement, MotionHighlightItem
     ...element.props,
     ref: localRef,
     'data-value': childValue,
-    'data-active': isActive,
+    'data-active': isActive ? 'true' : 'false',
     'data-highlight': 'true',
     'data-disabled': isDisabled,
     onClick: handleClick,
