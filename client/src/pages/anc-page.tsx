@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRoute } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users, ClipboardCheck } from "lucide-react";
+import { ChevronRight, ChevronDown, ArrowLeft, AlertTriangle, Plus, Edit, TestTube, Clock, Heart, Baby, Thermometer, Stethoscope, Pill, User, ArrowRight, FileText, Calendar, Microscope, Activity, Users, ClipboardCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -190,6 +190,10 @@ export default function AncPage() {
     setCdssModalOpen(false);
     setCurrentCdssCondition(null);
   };
+
+  // Actions dropdown state
+  const [isActionsDropdownOpen, setIsActionsDropdownOpen] = useState(false);
+  const actionsDropdownRef = useRef<HTMLDivElement>(null);
   
   // Pregnancy Dating Functions
   const updateCurrentPregnancyDatingOptions = useCallback(() => {
@@ -238,6 +242,21 @@ export default function AncPage() {
       };
     }
   }, []);
+
+  // Handle click outside to close actions dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (actionsDropdownRef.current && !actionsDropdownRef.current.contains(event.target as Node)) {
+        setIsActionsDropdownOpen(false);
+      }
+    };
+
+    if (isActionsDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isActionsDropdownOpen]);
 
   const calculateCurrentPregnancyEDDFromUS = useCallback(() => {
     const usDate = document.getElementById('current-pregnancy-ultrasound-date')?.value;
@@ -3435,9 +3454,64 @@ export default function AncPage() {
                 </svg>
                 <p className="text-sm">{patient.mothersName}</p>
               </div>
-              <Button className="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2 text-sm flex items-center gap-1">
-                Actions <ChevronRight size={16} />
-              </Button>
+              <div className="relative" ref={actionsDropdownRef}>
+                <Button 
+                  onClick={() => setIsActionsDropdownOpen(!isActionsDropdownOpen)}
+                  className="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2 text-sm flex items-center gap-1"
+                >
+                  Actions <ChevronDown size={16} className={`transition-transform ${isActionsDropdownOpen ? 'rotate-180' : ''}`} />
+                </Button>
+                
+                {isActionsDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <div className="bg-green-500 text-white px-4 py-2 rounded-t-lg">
+                      <h3 className="font-semibold text-sm">Patients Actions</h3>
+                    </div>
+                    <div className="py-2">
+                      <button 
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                        onClick={() => {
+                          setIsActionsDropdownOpen(false);
+                          // TODO: Navigate to POC tests
+                          toast({ title: "Have POC", description: "Point of Care tests functionality" });
+                        }}
+                      >
+                        Have POC
+                      </button>
+                      <button 
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                        onClick={() => {
+                          setIsActionsDropdownOpen(false);
+                          // TODO: Navigate to prescription dispensation
+                          toast({ title: "Prescription Dispensation", description: "Prescription dispensation functionality" });
+                        }}
+                      >
+                        Prescription Dispensation
+                      </button>
+                      <button 
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                        onClick={() => {
+                          setIsActionsDropdownOpen(false);
+                          // TODO: Navigate to add encounter
+                          toast({ title: "Add Encounter (OPD)", description: "Add OPD encounter functionality" });
+                        }}
+                      >
+                        Add Encounter (OPD)
+                      </button>
+                      <button 
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                        onClick={() => {
+                          setIsActionsDropdownOpen(false);
+                          // TODO: Navigate to order tests
+                          toast({ title: "Order Tests", description: "Order tests functionality" });
+                        }}
+                      >
+                        Order Tests
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
