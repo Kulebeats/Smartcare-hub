@@ -24,7 +24,8 @@ export type DockItemData = {
   icon: ReactNode; 
   label: ReactNode;
   onClick: () => void;
-  className?: string; 
+  className?: string;
+  isActive?: boolean;
 };
 
 export type DockProps = {
@@ -85,8 +86,6 @@ const DockItem: FC<DockItemProps> = ({
       onBlur={() => isHovered.set(0)}  
       onClick={onClick}
       className={`relative inline-flex items-center justify-center rounded-full 
-                  bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30
-                  border-blue-200 dark:border-blue-700 
                   border-2 shadow-lg transition-colors duration-300
                   ${className}`} 
       tabIndex={0}
@@ -198,7 +197,11 @@ export const Dock: FC<DockProps> = ({
           <DockItem
             key={item.label?.toString() + index || index} 
             onClick={item.onClick}
-            className={item.className} 
+            className={`${item.className || ''} ${
+              item.isActive 
+                ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg' 
+                : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 border-blue-200 dark:border-blue-700'
+            }`} 
             mouseX={mouseX}
             spring={spring}
             distance={distance}

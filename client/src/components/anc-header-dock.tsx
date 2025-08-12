@@ -22,44 +22,52 @@ export const ANCHeaderDock: React.FC<ANCHeaderDockProps> = ({
 }) => {
   const dockItems: DockItemData[] = [
     {
-      icon: <User size={18} className="text-blue-600" />,
+      icon: <User size={18} className={currentTab === 'rapidAssessment' ? 'text-white' : 'text-blue-600'} />,
       label: 'Rapid Assessment',
       onClick: () => onTabChange('rapidAssessment'),
+      isActive: currentTab === 'rapidAssessment',
     },
     {
-      icon: <Heart size={18} className="text-blue-600" />,
+      icon: <Heart size={18} className={currentTab === 'clientProfile' ? 'text-white' : 'text-blue-600'} />,
       label: 'Client Profile',
       onClick: () => onTabChange('clientProfile'),
+      isActive: currentTab === 'clientProfile',
     },
     {
-      icon: <Stethoscope size={18} className="text-blue-600" />,
+      icon: <Stethoscope size={18} className={currentTab === 'examination' ? 'text-white' : 'text-blue-600'} />,
       label: 'Examination',
       onClick: () => onTabChange('examination'),
+      isActive: currentTab === 'examination',
     },
     {
-      icon: <TestTube size={18} className="text-blue-600" />,
+      icon: <TestTube size={18} className={currentTab === 'labs' ? 'text-white' : 'text-blue-600'} />,
       label: 'Laboratory Tests',
       onClick: () => onTabChange('labs'),
+      isActive: currentTab === 'labs',
     },
     {
-      icon: <MessageSquare size={18} className="text-blue-600" />,
+      icon: <MessageSquare size={18} className={currentTab === 'counseling' ? 'text-white' : 'text-blue-600'} />,
       label: 'Counseling',
       onClick: () => onTabChange('counseling'),
+      isActive: currentTab === 'counseling',
     },
     {
-      icon: <ArrowRight size={18} className="text-blue-600" />,
+      icon: <ArrowRight size={18} className={currentTab === 'referral' ? 'text-white' : 'text-blue-600'} />,
       label: 'Referral',
       onClick: () => onTabChange('referral'),
+      isActive: currentTab === 'referral',
     },
     {
-      icon: <Shield size={18} className="text-blue-600" />,
+      icon: <Shield size={18} className={currentTab === 'prep' ? 'text-white' : 'text-blue-600'} />,
       label: 'PrEP',
       onClick: () => onTabChange('prep'),
+      isActive: currentTab === 'prep',
     },
     {
-      icon: <Users size={18} className="text-blue-600" />,
+      icon: <Users size={18} className={currentTab === 'pmtct' ? 'text-white' : 'text-blue-600'} />,
       label: 'PMTCT',
       onClick: () => onTabChange('pmtct'),
+      isActive: currentTab === 'pmtct',
     },
   ];
 
