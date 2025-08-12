@@ -188,7 +188,7 @@ export const Dock: FC<DockProps> = ({
                     border-gray-300 border-2 
                     pb-2 sm:pb-3 px-3 sm:px-4
                     bg-white backdrop-blur-md 
-                    shadow-lg transition-colors duration-300`}
+                    shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
         style={{ height: panelHeight }} 
         role="toolbar"
         aria-label="ANC Section Navigation"
