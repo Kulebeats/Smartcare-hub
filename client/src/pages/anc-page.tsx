@@ -3427,14 +3427,18 @@ export default function AncPage() {
 
           <div className="col-span-1">
             <p className="text-xs text-gray-500">Mother's Name</p>
-            <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              <p className="text-sm">{patient.mothersName}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <p className="text-sm">{patient.mothersName}</p>
+              </div>
+              <Button className="bg-green-500 hover:bg-green-600 text-white rounded-md py-1 px-3 text-xs flex items-center gap-1">
+                Actions <ChevronRight size={14} />
+              </Button>
             </div>
-
           </div>
         </div>
       </div>
@@ -3517,9 +3521,7 @@ export default function AncPage() {
                       </svg>
                       Add Record
                     </Button>
-                    <Button className="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2 text-sm flex items-center gap-1">
-                      Actions <ChevronRight size={16} />
-                    </Button>
+
                   </div>
                 </div>
 
