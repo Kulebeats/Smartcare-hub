@@ -183,7 +183,7 @@ export const Dock: FC<DockProps> = ({
         onMouseMove={({ pageX }) => mouseX.set(pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={`${className} 
-                    flex items-end w-fit gap-3 sm:gap-4 
+                    flex items-end justify-between w-full
                     rounded-xl sm:rounded-2xl 
                     border-blue-200 dark:border-blue-600 border-2 
                     pb-2 sm:pb-3 px-3 sm:px-4
@@ -194,23 +194,31 @@ export const Dock: FC<DockProps> = ({
         aria-label="ANC Section Navigation"
       >
         {items.map((item, index) => (
-          <DockItem
-            key={item.label?.toString() + index || index} 
-            onClick={item.onClick}
-            className={`${item.className || ''} ${
+          <div key={item.label?.toString() + index || index} className="flex flex-col items-center">
+            <DockItem
+              onClick={item.onClick}
+              className={`${item.className || ''} ${
+                item.isActive 
+                  ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg' 
+                  : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 border-blue-200 dark:border-blue-700'
+              }`} 
+              mouseX={mouseX}
+              spring={spring}
+              distance={distance}
+              magnification={magnification}
+              baseItemSize={baseItemSize}
+            >
+              <DockIcon>{item.icon}</DockIcon>
+              <DockLabel>{item.label}</DockLabel>
+            </DockItem>
+            <span className={`text-xs font-medium mt-1 text-center leading-tight max-w-[70px] ${
               item.isActive 
-                ? 'bg-blue-500 border-blue-600 shadow-blue-200/50 shadow-lg' 
-                : 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 border-blue-200 dark:border-blue-700'
-            }`} 
-            mouseX={mouseX}
-            spring={spring}
-            distance={distance}
-            magnification={magnification}
-            baseItemSize={baseItemSize}
-          >
-            <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
-          </DockItem>
+                ? 'text-blue-600 font-semibold' 
+                : 'text-blue-700 dark:text-blue-300'
+            }`}>
+              {item.label}
+            </span>
+          </div>
         ))}
       </motion.div>
     </motion.div>
