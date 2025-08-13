@@ -10989,9 +10989,10 @@ export default function AncPage() {
             }} />
 
             {/* Social Habits Section */}
-            <div id="social-habits-section" className="border border-green-300 rounded-lg bg-green-50" style={{ display: 'none' }}>
-              <div className="p-4">
-                <h5 className="text-sm font-medium mb-3 text-[#000000]">Previous Pregnancy Social Habits Assessment</h5>
+            <div id="social-habits-section" className="border border-blue-300 rounded-lg p-4 bg-[#24302400]" style={{ display: 'none' }}>
+              <h5 className="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Social Habits Assessment</h5>
+              
+              <div className="space-y-4">
                 
                 <div className="flex items-center space-x-6">
                   <label className="flex items-center space-x-2 text-sm">
@@ -11049,10 +11050,10 @@ export default function AncPage() {
                 </div>
               </div>
               
-              <div id="social-habits-content" className="px-4 pb-4 space-y-3" style={{ display: 'none' }}>
+              <div id="social-habits-content" className="space-y-3" style={{ display: 'none' }}>
                 
-                <div id="detailed-social-habits" className="ml-6 space-y-2" style={{ display: 'block' }}>
-                  <p className="text-xs text-gray-600 mb-2">Select all that apply:</p>
+                <div id="detailed-social-habits" className="space-y-2" style={{ display: 'block' }}>
+                  <p className="text-sm text-gray-600 mb-2">Select all that apply:</p>
                   <div className="grid grid-cols-2 gap-2">
                     <label className="flex items-center space-x-2 text-sm">
                       <input type="checkbox" className="rounded border-gray-300 social-habit" />
@@ -11093,8 +11094,10 @@ export default function AncPage() {
             </div>
 
             {/* Complications Section */}
-            <div id="complications-section" className="border border-red-300 rounded-lg bg-red-50" style={{ display: 'none' }}>
-              <div className="p-4">
+            <div id="complications-section" className="border border-blue-300 rounded-lg p-4 bg-[#24302400]" style={{ display: 'none' }}>
+              <h5 className="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Previous Pregnancy Complications</h5>
+              
+              <div className="space-y-4">
                 <div className="flex items-center space-x-6">
                   <label className="flex items-center space-x-2 text-sm">
                     <input 
@@ -11151,11 +11154,10 @@ export default function AncPage() {
                 </div>
               </div>
               
-              <div id="complications-content" className="px-4 pb-4 space-y-3" style={{ display: 'none' }}>
+              <div id="complications-content" className="space-y-3" style={{ display: 'none' }}>
                 
-                <div id="detailed-complications" className="ml-6 space-y-3" style={{ display: 'block' }}>
-                  <h6 className="text-sm font-medium text-gray-700 mb-3">Previous Pregnancy Complications</h6>
-                  <p className="text-xs text-gray-600 mb-3">Complications in previous pregnancies/childbirth</p>
+                <div id="detailed-complications" className="space-y-3" style={{ display: 'block' }}>
+                  <p className="text-sm text-gray-600 mb-3">Complications in previous pregnancies/childbirth</p>
                   
                   <div className="grid grid-cols-2 gap-2">
                     <label className="flex items-center space-x-2 text-sm">
