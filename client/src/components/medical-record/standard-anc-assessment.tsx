@@ -208,7 +208,7 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
       </Card>
 
       <Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
-        <DialogContent className="sm:max-w-[680px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Standard ANC Assessment</DialogTitle>
           </DialogHeader>

@@ -121,7 +121,7 @@ export function ReviewOfSystemsDialog({ open, onClose, onSave }: ReviewOfSystems
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[680px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Review of Systems</DialogTitle>
         </DialogHeader>

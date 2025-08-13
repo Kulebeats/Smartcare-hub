@@ -238,7 +238,7 @@ export function HivRiskScreeningDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[680px] max-h-[80vh] overflow-y-auto" aria-describedby="hiv-risk-description">
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto" aria-describedby="hiv-risk-description">
         <DialogHeader>
           <DialogTitle>HIV Risk Screening</DialogTitle>
           <DialogDescription id="hiv-risk-description">
