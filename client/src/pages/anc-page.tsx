@@ -6867,14 +6867,14 @@ export default function AncPage() {
 
 
                 {/* Current Pregnancy Card */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Baby className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Current Pregnancy</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Current Pregnancy</h4>
 
                       </div>
                     </div>
@@ -6894,18 +6894,18 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Obstetric History Card */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <FileText className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Obstetric History</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Obstetric History</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -6924,18 +6924,18 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Medical History Card */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Heart className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Medical History</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Medical History</h4>
 
                       </div>
                     </div>
@@ -6955,8 +6955,8 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Standard ANC Assessment Card */}
                 <Card className="mb-6">
