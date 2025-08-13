@@ -186,7 +186,7 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
             className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
             onClick={handleSave}
           >
-            Save
+            Save Assessment
           </Button>
         </div>
       </div>
@@ -215,8 +215,13 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Standard ANC Assessment"
+        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-3xl max-h-[85vh] overflow-y-auto"
+        style={{ 
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
+        }}
       >
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Medications Section */}
           <MedicationsSection 
             data={assessmentData.medications}
@@ -240,8 +245,8 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
 
           {/* Combined Persisted Symptoms Section - Only show in subsequent visits */}
           {(visitNumber > 1 || isFollowupVisit) && (
-            <div className="border rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Symptom Persistence Assessment</h3>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Symptom Persistence Assessment</h3>
               <CombinedSymptomsSection 
                 data={assessmentData.previousBehaviors}
                 onChange={(data) => updateAssessmentData('previousBehaviors', data)}
@@ -315,8 +320,8 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
   };
 
   return (
-    <div className="border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">Medications & Supplements</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Medications & Supplements</h3>
       
       <div className="space-y-4">
         {/* Current Medications - Multi-select dropdown */}
@@ -382,12 +387,12 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
           {/* Conditional text box for "Other" */}
           {selectedMedications.includes("Other") && (
             <div className="mt-3">
-              <input 
-                type="text"
+              <textarea
                 placeholder="Please specify other medications..."
                 value={otherMedication}
                 onChange={(e) => setOtherMedication(e.target.value)}
                 className="w-full border rounded p-2 text-sm"
+                rows={2}
               />
             </div>
           )}
@@ -865,8 +870,8 @@ const PreviousBehaviorsSection: React.FC<SectionProps> = ({ data, onChange }) =>
   const availableBehaviors = getAvailableBehaviors();
 
   return (
-    <div className="border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">Previous Behavior Assessment</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Previous Behavior Assessment</h3>
       
       <div className="space-y-4">
         {/* Persisted Behaviors */}
@@ -978,8 +983,8 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
   };
 
   return (
-    <div className="border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">Current Symptoms Assessment</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Current Symptoms Assessment</h3>
       
       <div className="space-y-4">
         {/* Combined Symptoms - Multi-select dropdown */}
@@ -1044,12 +1049,12 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
           {/* Conditional text box for "Other" */}
           {selectedSymptoms.includes("Other") && (
             <div className="mt-3">
-              <input 
-                type="text"
+              <textarea
                 placeholder="Please specify other symptoms..."
                 value={otherSymptom}
                 onChange={(e) => setOtherSymptom(e.target.value)}
                 className="w-full border rounded p-2 text-sm"
+                rows={2}
               />
             </div>
           )}
@@ -1150,8 +1155,8 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
   const needsUrgentAction = selectedSigns.length > 0 ? requiresImmediateIntervention(selectedSigns) : false;
 
   return (
-    <div className="border rounded-lg p-6 bg-red-50">
-      <h3 className="text-lg font-semibold mb-4 text-red-800">IPV Screening Assessment</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">IPV Screening Assessment</h3>
       <p className="text-sm text-red-600 mb-4">This section requires sensitive handling and confidentiality.</p>
       
       <div className="space-y-4">
@@ -1221,8 +1226,7 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
           {/* Conditional text box for "Other" and "Injury other" */}
           {(selectedSigns.includes("Other") || selectedSigns.includes("Injury other (specify)")) && (
             <div className="mt-3">
-              <input 
-                type="text"
+              <textarea
                 placeholder={selectedSigns.includes("Injury other (specify)") ? 
                   "Please specify the type of injury..." : 
                   "Please specify other signs/symptoms..."
@@ -1230,6 +1234,7 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
                 value={otherSign}
                 onChange={(e) => setOtherSign(e.target.value)}
                 className="w-full border rounded p-2 text-sm"
+                rows={2}
               />
             </div>
           )}
@@ -1657,8 +1662,8 @@ const FetalMovementSection: React.FC<SectionProps> = ({ data, onChange }) => {
   const movementDecision = getMovementDecision();
 
   return (
-    <div className="border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">Fetal Movement Assessment</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Fetal Movement Assessment</h3>
       
       {/* Gestational Age Confirmation */}
       <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
