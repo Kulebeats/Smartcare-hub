@@ -10643,33 +10643,53 @@ export default function AncPage() {
                     }
                   };
                   
-                  // Setup event delegation for the entire pregnancy history container
-                  document.addEventListener('DOMContentLoaded', function() {
+                  // Setup immediate event delegation (React SPA - DOM already loaded)
+                  function setupEventDelegation() {
                     const container = document.getElementById('pregnancy-history-container');
                     if (container) {
-                      container.addEventListener('change', function(e) {
-                        const target = e.target;
-                        const id = target.id;
-                        
-                        if (id && id.includes('gestational-months-')) {
-                          const index = id.split('-')[2];
-                          window.ObstetricWorkflow.handleGestationalAge(parseInt(index));
-                        } else if (id && id.includes('outcome-')) {
-                          const index = id.split('-')[1];
-                          window.ObstetricWorkflow.handleOutcome(parseInt(index), target.value);
-                        } else if (target.closest('[id*="delivery-mode-section"]')) {
-                          const section = target.closest('[id*="delivery-mode-section"]');
-                          const index = section.id.split('-')[3];
-                          window.ObstetricWorkflow.handleDeliveryMode(parseInt(index));
-                        } else if (target.closest('[id*="infant-sex-section"]')) {
-                          const section = target.closest('[id*="infant-sex-section"]');
-                          const index = section.id.split('-')[3];
-                          window.ObstetricWorkflow.handleSexSelection(parseInt(index));
-                        }
-                      });
-                      console.log('✅ Event delegation setup complete');
+                      // Remove any existing listeners to prevent duplicates
+                      container.removeEventListener('change', handleWorkflowChange);
+                      container.addEventListener('change', handleWorkflowChange);
+                      console.log('✅ Event delegation setup complete for pregnancy container');
+                    } else {
+                      console.log('⚠️ Pregnancy container not found, retrying...');
+                      setTimeout(setupEventDelegation, 100);
                     }
-                  });
+                  }
+                  
+                  function handleWorkflowChange(e) {
+                    const target = e.target;
+                    const id = target.id;
+                    console.log('🔄 Workflow change detected:', id, 'value:', target.value);
+                    
+                    if (id && id.includes('gestational-months-')) {
+                      const index = id.split('-')[2];
+                      console.log('🔄 Triggering gestational age handler for index:', index);
+                      window.ObstetricWorkflow.handleGestationalAge(parseInt(index));
+                    } else if (id && id.includes('outcome-')) {
+                      const index = id.split('-')[1];
+                      console.log('🔄 Triggering outcome handler for index:', index);
+                      window.ObstetricWorkflow.handleOutcome(parseInt(index), target.value);
+                    } else if (target.closest('[id*="delivery-mode-section"]')) {
+                      const section = target.closest('[id*="delivery-mode-section"]');
+                      const index = section.id.split('-')[3];
+                      console.log('🔄 Triggering delivery mode handler for index:', index);
+                      window.ObstetricWorkflow.handleDeliveryMode(parseInt(index));
+                    } else if (target.closest('[id*="infant-sex-section"]')) {
+                      const section = target.closest('[id*="infant-sex-section"]');
+                      const index = section.id.split('-')[3];
+                      console.log('🔄 Triggering sex selection handler for index:', index);
+                      window.ObstetricWorkflow.handleSexSelection(parseInt(index));
+                    }
+                  }
+                  
+                  // Setup immediately and also retry if needed
+                  setupEventDelegation();
+                  
+                  // Also setup on DOMContentLoaded as fallback
+                  if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', setupEventDelegation);
+                  }
                   
                   // Legacy function support for existing forms
                   window.updateObstetricConditionalFields = function(index) {
