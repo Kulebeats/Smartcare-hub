@@ -10474,7 +10474,9 @@ export default function AncPage() {
                     if (!(window as any).updateObstetricConditionalFields) {
                       // Step 1: Enter Gestational Age (The Key Trigger) 🤰
                       (window as any).updateObstetricConditionalFields = function(index: number) {
+                        console.log('🔄 Gestational Age Function Called for index:', index);
                         const gestationalAge = parseInt((document.getElementById(`gestational-months-${index}`) as HTMLInputElement)?.value || '0');
+                        console.log('📊 Gestational Age Entered:', gestationalAge, 'months');
                         const outcomeSection = document.getElementById(`outcome-section-${index}`);
                         const weeksSection = document.getElementById(`weeks-section-${index}`);
                         const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
