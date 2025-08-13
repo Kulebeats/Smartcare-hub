@@ -246,7 +246,22 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
               onChange={(data) => updateAssessmentData('ipvScreening', data)}
             />
 
-
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3 pt-4 border-t">
+              <Button 
+                variant="outline" 
+                className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Close
+              </Button>
+              <Button 
+                className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
