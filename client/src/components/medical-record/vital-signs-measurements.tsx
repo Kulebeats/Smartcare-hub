@@ -696,6 +696,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                 type="date"
                 value={formData.date}
                 onChange={(e) => handleInputChange("date", e.target.value)}
+                className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 required
               />
             </div>
@@ -710,7 +711,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                   // Delay validation to allow for follow-up BP entry
                   setTimeout(() => validateTime(e.target.value), 100)
                 }}
-                className={timeError ? "border-red-500" : ""}
+                className={`border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none ${timeError ? "border-red-500" : ""}`}
                 required
               />
               {timeError && <p className="text-red-500 text-sm mt-1">{timeError}</p>}
@@ -731,6 +732,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                   placeholder="Enter Weight (kg)"
                   value={formData.weight}
                   onChange={(e) => handleInputChange("weight", e.target.value)}
+                  className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                   required
                 />
               </div>
@@ -743,6 +745,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                   placeholder="Enter Height (cm)"
                   value={formData.height}
                   onChange={(e) => handleInputChange("height", e.target.value)}
+                  className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                   required
                 />
               </div>
@@ -753,13 +756,13 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                     value={bmi}
                     readOnly
                     placeholder="Auto-calculated"
-                    className={
+                    className={`border-2 rounded p-2 text-black focus:outline-none ${
                       bmi && getBMICategory(Number.parseFloat(bmi)).severity === "critical"
                         ? "border-red-500 bg-red-50"
                         : bmi && getBMICategory(Number.parseFloat(bmi)).severity === "high"
                           ? "border-orange-500 bg-orange-50"
-                          : ""
-                    }
+                          : "border-gray-300"
+                    }`}
                   />
                   <Calculator className="h-4 w-4 text-gray-400" />
                 </div>
@@ -944,6 +947,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                       placeholder="Enter Systolic (mmHg)"
                       value={formData.systolic_blood_pressure}
                       onChange={(e) => handleInputChange("systolic_blood_pressure", e.target.value)}
+                      className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                       required
                     />
                   </div>
@@ -955,6 +959,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                       placeholder="Enter Diastolic (mmHg)"
                       value={formData.diastolic_blood_pressure}
                       onChange={(e) => handleInputChange("diastolic_blood_pressure", e.target.value)}
+                      className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                       required
                     />
                   </div>
@@ -1048,6 +1053,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                               }
                             }
                           }}
+                          className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                         />
                       </div>
                       <div className="space-y-2">
@@ -1071,6 +1077,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                               }
                             }
                           }}
+                          className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -1150,7 +1157,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                         value={formData.urine_dipstick}
                         onValueChange={(value) => handleInputChange("urine_dipstick", value)}
                       >
-                        <SelectTrigger className="border-red-300">
+                        <SelectTrigger className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                           <SelectValue placeholder="Select protein level" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1216,6 +1223,7 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
                   placeholder="Enter Temperature (°C)"
                   value={formData.temperature}
                   onChange={(e) => handleInputChange("temperature", e.target.value)}
+                  className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                   required
                 />
               </div>

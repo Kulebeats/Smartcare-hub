@@ -259,7 +259,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.pallor_present} 
                     onValueChange={(value) => updateFormData('pallor_present', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -276,7 +276,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.respiratory_exam} 
                     onValueChange={(value) => updateFormData('respiratory_exam', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -294,7 +294,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.cardiac_exam} 
                     onValueChange={(value) => updateFormData('cardiac_exam', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -363,7 +363,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.breast_exam} 
                     onValueChange={(value) => updateFormData('breast_exam', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -381,7 +381,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.pelvic_exam} 
                     onValueChange={(value) => updateFormData('pelvic_exam', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -399,7 +399,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.speculum_exam} 
                     onValueChange={(value) => updateFormData('speculum_exam', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -510,7 +510,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.oedema_present} 
                     onValueChange={(value) => updateFormData('oedema_present', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -527,7 +527,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     value={formData.varicose_veins} 
                     onValueChange={(value) => updateFormData('varicose_veins', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -662,7 +662,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                     }
                   }}
                 >
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -706,7 +706,7 @@ export const MaternalAssessmentModal: React.FC<MaternalAssessmentModalProps> = (
                         placeholder="Describe other signs or symptoms..."
                         value={formData.other_signs}
                         onChange={(e) => updateFormData('other_signs', e.target.value)}
-                        className="mt-1"
+                        className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                       />
                     </div>
                   )}

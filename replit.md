@@ -34,7 +34,7 @@ Preferred communication style: Simple, everyday language.
 ### Key Components
 - **Patient Management**: Comprehensive registration (including Zambian-specific fields), advanced search, and CSV import/export.
 - **Clinical Modules**:
-    - **ANC**: Comprehensive Antenatal Care module with consistent form styling, and dynamic pregnancy section generation.
+    - **ANC**: Comprehensive Antenatal Care module with standardized visual consistency across all data input elements, featuring consistent border styling (border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200) applied to all Input, Select, and Textarea elements while preserving CDSS element colors. Includes dynamic pregnancy section generation and IPV Enhanced Assessment Modal with WHO protocol compliance.
     - **PrEP**: Comprehensive 20-point risk scoring system with evidence-based clinical recommendations (WHO/CDC compliant), including client and partner risk factors, and pregnancy modifiers.
     - **ART**: Antiretroviral Therapy module.
     - **PMTCT**: Prevention of Mother-to-Child Transmission module.
@@ -69,7 +69,41 @@ Preferred communication style: Simple, everyday language.
 - **Bull Board**: Queue monitoring and management.
 
 ### Healthcare Integrations
-- **WHO Guidelines**: Compliance engine.
+- **WHO Guidelines**: Compliance engine with integrated IPV screening protocols.
 - **Zambian MoH**: Facility registry integration.
 - **Zambian ANC Guidelines 2022**: Official danger signs descriptions and management protocols integrated into CDSS.
 - **Clinical Decision Rules**: Based on evidence-based medicine.
+
+## Recent Major Updates (August 2025)
+
+### Visual Consistency Implementation
+**Date**: August 13, 2025
+**Objective**: Achieve comprehensive visual consistency across all ANC module data input elements while preserving Clinical Decision Support System (CDSS) element colors and functionality.
+
+**Changes Made**:
+1. **Standardized Data Input Styling**: Applied consistent styling (border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none) to all Input, Select, and Textarea elements across:
+   - vital-signs-measurements.tsx: All measurement inputs and selects
+   - maternal-assessment-modal.tsx: All physical examination inputs, selects, and textarea elements
+   - fetal-assessment-modal.tsx: All fetal assessment inputs and selects
+   - IPV screening section: Textarea for additional signs specification
+
+2. **Component-Specific Updates**:
+   - **Vital Signs**: Updated 8 Input elements for measurements (blood pressure, temperature, pulse, etc.)
+   - **Maternal Assessment**: Updated 10 SelectTrigger elements across physical examination sections (pallor, respiratory, cardiac, breast, pelvic, speculum, oedema, varicose veins, IPV screening)
+   - **Fetal Assessment**: Updated 5 Input elements (symphysial-fundal height, fetal heart rates) and 4 SelectTrigger elements (fetal lie, presentation, descent, movement assessment)
+   - **IPV Screening**: Applied styling to textarea element for "other signs" specification
+
+3. **Preservation of CDSS Elements**: Maintained original colors and styling for all Clinical Decision Support alerts, modals, and recommendation panels to ensure medical workflow integrity.
+
+### IPV Enhanced Assessment Integration
+**Date**: August 13, 2025
+**Updates**:
+- Successfully integrated WHO minimum requirements for IPV screening
+- Implemented LIVES framework guidance with enhanced privacy verification protocols
+- Consolidated IPV signs selection from 6 to 4 main groups with improved 2-column layout
+- Fixed tooltip overflow issues in IPV assessment modals
+- Enhanced privacy and safety protocols in accordance with WHO guidelines
+
+### Ongoing Work
+- Final ANC PrEP Assessment modal styling updates in progress
+- Comprehensive testing of visual consistency across all ANC workflow components

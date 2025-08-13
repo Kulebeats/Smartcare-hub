@@ -2453,6 +2453,7 @@ export function ANCPrepModal({ isOpen, onClose, onSave, initialData }: ANCPrepMo
                                 ...prev, 
                                 counselling_not_provided_other: e.target.value 
                               }))}
+                              className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                             />
                           </div>
                         )}
@@ -3443,7 +3444,7 @@ export function ANCPrepModal({ isOpen, onClose, onSave, initialData }: ANCPrepMo
                                 placeholder="Please specify..."
                                 value={assessmentData.condom_other_reason || ''}
                                 onChange={(e) => setAssessmentData(prev => ({ ...prev, condom_other_reason: e.target.value }))}
-                                className="w-full"
+                                className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                               />
                             </div>
                           )}
@@ -4187,6 +4188,7 @@ export function ANCPrepModal({ isOpen, onClose, onSave, initialData }: ANCPrepMo
                       value={assessmentData.notes}
                       onChange={(e) => setAssessmentData((prev) => ({ ...prev, notes: e.target.value }))}
                       rows={4}
+                      className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                     />
                   </div>
 
@@ -4198,6 +4200,7 @@ export function ANCPrepModal({ isOpen, onClose, onSave, initialData }: ANCPrepMo
                         placeholder="Healthcare provider name"
                         value={assessmentData.assessed_by}
                         onChange={(e) => setAssessmentData((prev) => ({ ...prev, assessed_by: e.target.value }))}
+                        className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                       />
                     </div>
 
@@ -4208,6 +4211,7 @@ export function ANCPrepModal({ isOpen, onClose, onSave, initialData }: ANCPrepMo
                         type="date"
                         value={assessmentData.assessment_date}
                         onChange={(e) => setAssessmentData((prev) => ({ ...prev, assessment_date: e.target.value }))}
+                        className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                       />
                     </div>
                   </div>

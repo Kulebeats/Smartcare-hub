@@ -260,7 +260,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                     placeholder="24"
                     value={formData.symphysial_fundal_height}
                     onChange={(e) => handleSfhChange(e.target.value)}
-                    className="mt-1"
+                    className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                   />
                 </div>
                 
@@ -283,7 +283,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                   placeholder="140"
                   value={formData.fetal_heart_rate}
                   onChange={(e) => handleFhrChange(e.target.value)}
-                  className="mt-1"
+                  className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 />
               </div>
 
@@ -304,7 +304,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                           placeholder="140"
                           value={formData.second_fetal_heart_rate}
                           onChange={(e) => handleFhrChange(e.target.value, true)}
-                          className="mt-1 w-full"
+                          className="mt-1 w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                         />
                         <p className="text-xs text-orange-600 mt-1">Required after abnormal first reading</p>
                       </div>
@@ -340,7 +340,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                     value={formData.fetal_lie}
                     onValueChange={(value) => updateFormData('fetal_lie', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select fetal lie" />
                     </SelectTrigger>
                     <SelectContent>
@@ -358,7 +358,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                     value={formData.fetal_presentation}
                     onValueChange={(value) => updateFormData('fetal_presentation', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select presentation" />
                     </SelectTrigger>
                     <SelectContent>
@@ -376,7 +376,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                   value={formData.descent}
                   onValueChange={(value) => updateFormData('descent', value)}
                 >
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                     <SelectValue placeholder="Select descent" />
                   </SelectTrigger>
                   <SelectContent>
@@ -416,7 +416,7 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                     value={formData.fetal_movement_felt}
                     onValueChange={(value) => handleFetalMovementChange(value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <SelectValue placeholder="Select fetal movement status" />
                     </SelectTrigger>
                     <SelectContent>
