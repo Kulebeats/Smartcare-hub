@@ -182,9 +182,9 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
 
   return (
     <>
-      <Card className="mt-4">
+      <Card className="mt-4 enhanced-card">
         <CardHeader 
-          className="cursor-pointer hover:bg-gray-50" 
+          className="cursor-pointer enhanced-card-header enhanced-interactive" 
           onClick={() => setIsModalOpen(true)}
         >
           <CardTitle className="flex items-center justify-between">

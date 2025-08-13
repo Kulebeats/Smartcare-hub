@@ -673,8 +673,8 @@ export const VitalSignsMeasurements: React.FC<VitalSignsMeasurementsProps> = ({ 
       )}
 
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto enhanced-card">
+          <CardHeader className="enhanced-card-header flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-xl font-semibold">Vital Signs & Measurements</CardTitle>
             <Button 
               variant="ghost" 
