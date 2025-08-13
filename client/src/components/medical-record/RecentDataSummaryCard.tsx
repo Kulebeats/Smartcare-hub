@@ -27,8 +27,8 @@ export function RecentDataSummaryCard({ summaryData }: RecentDataSummaryProps) {
   return (
     <div className="space-y-4">
       {/* Vitals Card */}
-      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="pb-2 pt-3 px-4">
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 enhanced-card">
+        <CardHeader className="pb-2 pt-3 px-4 enhanced-card-header">
           <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
             <Heart className="w-4 h-4 text-red-500" />
             Vitals
@@ -57,8 +57,8 @@ export function RecentDataSummaryCard({ summaryData }: RecentDataSummaryProps) {
       </Card>
 
       {/* HTS Status Card */}
-      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="pb-2 pt-3 px-4">
+      <Card className="bg-blue-50 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 enhanced-card">
+        <CardHeader className="pb-2 pt-3 px-4 enhanced-card-header">
           <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
             <TestTube className="w-4 h-4 text-green-500" />
             HTS Status
