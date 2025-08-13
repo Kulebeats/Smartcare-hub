@@ -275,7 +275,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
             Close
           </Button>
           <Button 
-            className="rounded-full bg-purple-500 hover:bg-purple-600 text-white border-none px-6"
+            className="rounded-full bg-[#0279ed] hover:bg-purple-600 text-white border-none px-6"
             onClick={onClose}
             disabled={selectedSigns.length === 0}
           >
