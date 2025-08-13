@@ -10454,12 +10454,12 @@ export default function AncPage() {
                     
                     // Enhanced JavaScript functions for conditional fields with sequential ordering
                     if (!(window as any).updateObstetricConditionalFields) {
+                      // Step 1: Enter Gestational Age (The Key Trigger) 🤰
                       (window as any).updateObstetricConditionalFields = function(index: number) {
                         const gestationalAge = parseInt((document.getElementById(`gestational-months-${index}`) as HTMLInputElement)?.value || '0');
                         const outcomeSection = document.getElementById(`outcome-section-${index}`);
                         const weeksSection = document.getElementById(`weeks-section-${index}`);
                         const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
-                        const ancVisitsSection = document.getElementById(`anc-visits-section-${index}`);
                         const borderlineCdss = document.getElementById(`borderline-cdss-${index}`);
                         const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
                         const weeksInput = document.getElementById(`gestational-weeks-${index}`) as HTMLInputElement;
@@ -10471,11 +10471,12 @@ export default function AncPage() {
                         (window as any).hideAllConditionalFields(index);
                         
                         if (gestationalAge > 0) {
-                          // Always show ANC visits after gestational age - appears sequentially
-                          if (ancVisitsSection) ancVisitsSection.style.display = 'block';
+                          // The Number of ANC visits field should be available at any point after gestational age is established
+                          // (This field is already visible in the form layout - no action needed)
                           
                           if (gestationalAge < 6) {
-                            // Early pregnancy - show outcome with abortion/miscarriage (no gaps)
+                            // IF Gestational Age is less than 6 months: Only "Abortion/Miscarriage" option
+                            // The workflow for this pregnancy record is complete. Other fields are not relevant.
                             if (outcomeSection) outcomeSection.style.display = 'block';
                             
                             if (outcomeSelect) {
@@ -10483,14 +10484,16 @@ export default function AncPage() {
                               outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
                               outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
                             }
+                            // Workflow ends here - no delivery fields needed
                           } else if (gestationalAge === 6) {
-                            // Borderline viability - show weeks field sequentially, then show CDSS guidance
+                            // IF Gestational Age is exactly 6 months: Borderline Viability
+                            // The workflow pauses. A CDSS Alert appears, prompting for the age in weeks.
                             if (weeksSection) weeksSection.style.display = 'block';
                             if (borderlineCdss) borderlineCdss.style.display = 'block';
+                            // Subsequent flow depends on weeks entered (handled in handleWeeksInput)
                           } else if (gestationalAge >= 7) {
-                            // Viable pregnancy - show outcome and delivery mode sequentially
+                            // IF Gestational Age is 7 months or more: Viable pregnancy, continue to Step 2
                             if (outcomeSection) outcomeSection.style.display = 'block';
-                            if (deliverySection) deliverySection.style.display = 'block';
                             
                             if (outcomeSelect) {
                               outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
@@ -10500,9 +10503,6 @@ export default function AncPage() {
                             }
                           }
                         }
-                        
-                        // Apply sequential field positioning
-                        (window as any).applySequentialPositioning(index);
                       };
                       
                       // Helper function to hide all conditional fields
@@ -10571,7 +10571,7 @@ export default function AncPage() {
                         }
                       };
 
-                      // Function to handle obstetric outcome changes with sequential logic
+                      // Step 2: Select Pregnancy Outcome ❓
                       (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
                         const deliverySection = document.getElementById(`delivery-mode-section-${pregnancyIndex}`);
                         const labourSection = document.getElementById(`labour-type-section-${pregnancyIndex}`);
@@ -10585,15 +10585,23 @@ export default function AncPage() {
                           if (section) section.style.display = 'none';
                         });
                         
-                        if (outcome === 'live_birth' || outcome === 'still_birth') {
-                          // For viable outcomes, show delivery mode
+                        if (outcome === 'still_birth') {
+                          // IF the outcome is "Still birth": Maternal fields required, infant fields hidden
+                          // Mode of delivery, Type of labour, and Place of Delivery are still required
+                          // Infant-specific fields (Sex, Birth Weight, Baby's Current Status) remain hidden
                           if (deliverySection) deliverySection.style.display = 'block';
-                        } else {
-                          // For non-viable outcomes, hide delivery fields
+                          // Workflow ends here for stillbirths - no infant fields needed
+                        } else if (outcome === 'live_birth') {
+                          // IF the outcome is "Live birth": All subsequent maternal and infant fields become relevant
+                          // Continue to Step 3 - show delivery mode to start delivery documentation
+                          if (deliverySection) deliverySection.style.display = 'block';
+                        } else if (outcome === 'abortion') {
+                          // For abortion/miscarriage, no delivery fields needed
                           if (deliverySection) deliverySection.style.display = 'none';
                         }
                       };
                       
+                      // Step 3: Document the Delivery Details 🏥 
                       (window as any).updateDeliveryFields = function(index: number) {
                         const select = document.querySelector(`#delivery-mode-section-${index} select`) as HTMLSelectElement;
                         const labourSection = document.getElementById(`labour-type-section-${index}`);
@@ -10611,23 +10619,26 @@ export default function AncPage() {
                         
                         const value = select?.value;
                         if (value) {
-                          // Show place of delivery after mode of delivery is selected
+                          // Place of Delivery: Appears after the mode of delivery is selected
                           if (placeDeliverySection) placeDeliverySection.style.display = 'block';
                           
+                          // Mode of delivery triggers its own sub-menu:
                           if (value === 'normal_vertex' || value === 'assisted_breech') {
+                            // If "Normal" or "Breech" → Type of labour (Induced/Spontaneous) appears
                             if (labourSection) labourSection.style.display = 'block';
                           } else if (value === 'assisted_vaginal') {
+                            // If "Assisted Vaginal" → Sub-menu for Forceps/Vacuum appears
                             if (assistedSection) assistedSection.style.display = 'block';
-                            // Skip labor section for assisted vaginal delivery
                           } else if (value === 'c_section') {
+                            // If "C-section" → Sub-menu for Planned/Emergency appears
                             if (csectionSection) csectionSection.style.display = 'block';
-                            // Skip labor section for c-section
                           }
                         } else {
                           if (placeDeliverySection) placeDeliverySection.style.display = 'none';
                         }
                       };
                       
+                      // Continue Step 3: After delivery details, show infant details for live births only
                       (window as any).updateInfantSex = function(index: number) {
                         const select = document.querySelector(`#labour-type-section-${index} select`) as HTMLSelectElement;
                         const infantSection = document.getElementById(`infant-sex-section-${index}`);
@@ -10641,22 +10652,28 @@ export default function AncPage() {
                         
                         const value = select?.value;
                         if (value === 'induced' || value === 'spontaneous') {
-                          if (infantSection) infantSection.style.display = 'block';
+                          // Check if this is a live birth before showing infant details
+                          const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
+                          if (outcomeSelect?.value === 'live_birth') {
+                            // Step 4: Document Infant Details 👶 (only for live births)
+                            if (infantSection) infantSection.style.display = 'block';
+                          }
                         } else {
                           if (infantSection) infantSection.style.display = 'none';
                         }
                       };
 
-                      // Function to handle sex selection and show birth weight sequentially
+                      // Step 4: Document Infant Details - Sequential revelation
                       (window as any).handleSexSelection = function(index: number) {
                         const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
                         const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
                         const select = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
                         
                         if (select?.value) {
+                          // After sex selection, show birth weight
                           if (birthWeightSection) birthWeightSection.style.display = 'block';
                           
-                          // Check if this is a live birth to show baby status
+                          // For live births, also show baby's current status
                           const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
                           if (outcomeSelect?.value === 'live_birth') {
                             if (babyStatusSection) babyStatusSection.style.display = 'block';
