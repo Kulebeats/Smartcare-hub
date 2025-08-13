@@ -275,7 +275,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
             Close
           </Button>
           <Button 
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 py-2 rounded-full hover:bg-purple-600 text-white border-none px-6 bg-[#0279ed]"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 py-2 rounded-full hover:bg-purple-600 text-white border-none px-6 bg-[#338eea]"
             onClick={onClose}
             disabled={selectedSigns.length === 0}
           >
