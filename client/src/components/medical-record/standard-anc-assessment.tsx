@@ -145,13 +145,11 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
           onChange={(data) => updateAssessmentData('medications', data)}
           previousRecommendations={previousRecommendations}
         />
-
         {/* Current Symptoms Section */}
         <CurrentSymptomsSection
           data={assessmentData.currentSymptoms}
           onChange={(data) => updateAssessmentData('currentSymptoms', data)}
         />
-
         {/* Previous Behaviors Section - Only show in subsequent visits */}
         {(visitNumber > 1 || isFollowupVisit) && (
           <PreviousBehaviorsSection
@@ -159,17 +157,11 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
             onChange={(data) => updateAssessmentData('previousBehaviors', data)}
           />
         )}
-
-
-
         {/* IPV Screening Section */}
         <IPVScreeningSection
           data={assessmentData.ipvScreening}
           onChange={(data) => updateAssessmentData('ipvScreening', data)}
         />
-
-
-
         {/* Action Buttons */}
         <div className="flex justify-end space-x-3 pt-4 border-t">
           <Button 
@@ -182,9 +174,7 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
           <Button 
             className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
             onClick={handleSave}
-          >
-            Save Assessment
-          </Button>
+          >Save </Button>
         </div>
       </div>
     );
