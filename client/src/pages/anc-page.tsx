@@ -12388,9 +12388,7 @@ export default function AncPage() {
               </svg>
               Standard ANC Assessment
             </DialogTitle>
-            <DialogDescription>
-              Comprehensive antenatal care assessment following WHO guidelines
-            </DialogDescription>
+
           </DialogHeader>
           
           <div className="space-y-4">
