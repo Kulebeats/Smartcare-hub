@@ -9646,31 +9646,103 @@ export default function AncPage() {
                           // Add global functions for obstetric history if not already added
                           if (!(window as any).updateObstetricConditionalFields) {
                             (window as any).updateObstetricConditionalFields = function(index: number) {
-                              const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${index + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
+                              const gestationalAge = parseInt((document.getElementById(`gestational-months-${index}`) as HTMLInputElement)?.value || '0');
                               const outcomeSection = document.getElementById(`outcome-section-${index}`);
+                              const weeksSection = document.getElementById(`weeks-section-${index}`);
                               const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
                               const ancVisitsSection = document.getElementById(`anc-visits-section-${index}`);
+                              const borderlineCdss = document.getElementById(`borderline-cdss-${index}`);
                               const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
+                              const weeksInput = document.getElementById(`gestational-weeks-${index}`) as HTMLInputElement;
+                              
+                              // Reset weeks input when months change
+                              if (weeksInput) weeksInput.value = '';
                               
                               if (gestationalAge > 0) {
+                                // Always show ANC visits after gestational age
                                 if (ancVisitsSection) ancVisitsSection.style.display = 'block';
+                                
+                                if (gestationalAge < 6) {
+                                  // Early pregnancy - hide weeks, show outcome with abortion/miscarriage
+                                  if (weeksSection) weeksSection.style.display = 'none';
+                                  if (borderlineCdss) borderlineCdss.style.display = 'none';
+                                  if (outcomeSection) outcomeSection.style.display = 'block';
+                                  if (deliverySection) deliverySection.style.display = 'none';
+                                  
+                                  if (outcomeSelect) {
+                                    outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                                    outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                                    outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
+                                  }
+                                } else if (gestationalAge === 6) {
+                                  // Borderline viability - show weeks field, hide outcome, show CDSS guidance
+                                  if (weeksSection) weeksSection.style.display = 'block';
+                                  if (borderlineCdss) borderlineCdss.style.display = 'block';
+                                  if (outcomeSection) outcomeSection.style.display = 'none';
+                                  if (deliverySection) deliverySection.style.display = 'none';
+                                } else if (gestationalAge >= 7) {
+                                  // Viable pregnancy - hide weeks, show outcome with live/still birth
+                                  if (weeksSection) weeksSection.style.display = 'none';
+                                  if (borderlineCdss) borderlineCdss.style.display = 'none';
+                                  if (outcomeSection) outcomeSection.style.display = 'block';
+                                  if (deliverySection) deliverySection.style.display = 'block';
+                                  
+                                  if (outcomeSelect) {
+                                    outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                                    outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
+                                    outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                                    outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
+                                  }
+                                }
+                              } else {
+                                // No gestational age entered - hide everything
+                                if (ancVisitsSection) ancVisitsSection.style.display = 'none';
+                                if (weeksSection) weeksSection.style.display = 'none';
+                                if (borderlineCdss) borderlineCdss.style.display = 'none';
+                                if (outcomeSection) outcomeSection.style.display = 'none';
+                                if (deliverySection) deliverySection.style.display = 'none';
+                              }
+                            };
+
+                            // New function to handle weeks input for borderline viability (6 months)
+                            (window as any).handleWeeksInput = function(index: number) {
+                              const weeksInput = document.getElementById(`gestational-weeks-${index}`) as HTMLInputElement;
+                              const outcomeSection = document.getElementById(`outcome-section-${index}`);
+                              const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
+                              const borderlineCdss = document.getElementById(`borderline-cdss-${index}`);
+                              const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
+                              
+                              const weeks = parseInt(weeksInput?.value || '0');
+                              
+                              if (weeks > 0) {
+                                // Hide CDSS guidance once weeks are entered
+                                if (borderlineCdss) borderlineCdss.style.display = 'none';
+                                
+                                // Show outcome section
                                 if (outcomeSection) outcomeSection.style.display = 'block';
                                 
                                 if (outcomeSelect) {
                                   outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
                                   outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
                                   
-                                  if (gestationalAge < 6) {
-                                    outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
-                                    if (deliverySection) deliverySection.style.display = 'none';
-                                  } else if (gestationalAge >= 7) {
+                                  if (weeks >= 24) {
+                                    // Viable - show live birth and still birth options
                                     outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
                                     outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                                    
+                                    // Show delivery section for viable pregnancies
                                     if (deliverySection) deliverySection.style.display = 'block';
+                                  } else {
+                                    // Non-viable - show abortion/miscarriage options
+                                    outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                                    
+                                    // Hide delivery section for non-viable pregnancies
+                                    if (deliverySection) deliverySection.style.display = 'none';
                                   }
                                 }
                               } else {
-                                if (ancVisitsSection) ancVisitsSection.style.display = 'none';
+                                // No weeks entered - show CDSS guidance, hide outcome
+                                if (borderlineCdss) borderlineCdss.style.display = 'block';
                                 if (outcomeSection) outcomeSection.style.display = 'none';
                                 if (deliverySection) deliverySection.style.display = 'none';
                               }
@@ -9759,7 +9831,7 @@ export default function AncPage() {
                                 </div>
                               </div>
                               
-                              <div class="grid grid-cols-2 gap-4">
+                              <div class="grid grid-cols-3 gap-4">
                                 <div>
                                   <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                                   <input 
@@ -9769,18 +9841,33 @@ export default function AncPage() {
                                     class="w-full border rounded p-2 text-sm" 
                                     placeholder="e.g., 8"
                                     onchange="updateObstetricConditionalFields(${i})"
+                                    id="gestational-months-${i}"
+                                  />
+                                </div>
+                                <div id="weeks-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Gestational age (weeks) <span class="text-red-500">*</span></label>
+                                  <input 
+                                    type="number" 
+                                    min="20" 
+                                    max="28" 
+                                    class="w-full border rounded p-2 text-sm" 
+                                    placeholder="e.g., 25"
+                                    onchange="handleWeeksInput(${i})"
+                                    id="gestational-weeks-${i}"
                                   />
                                 </div>
                                 <div id="outcome-section-${i}" style="display: none;">
                                   <label class="block text-sm font-medium mb-1">Pregnancy Outcome</label>
                                   <select class="w-full border rounded p-2 text-sm" id="outcome-${i}">
                                     <option value="">Select outcome...</option>
-                                    <option value="live_birth">Live birth</option>
-                                    <option value="stillbirth">Stillbirth</option>
-                                    <option value="abortion">Abortion</option>
-                                    <option value="miscarriage">Miscarriage</option>
                                   </select>
                                 </div>
+                              </div>
+                              
+                              <!-- CDSS Guidance for Borderline Viability -->
+                              <div id="borderline-cdss-${i}" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded" style="display: none;">
+                                <div class="text-sm font-medium text-blue-700">🔍 CDSS Guidance: Borderline Viability</div>
+                                <div class="text-xs text-blue-600 mt-1">A 6-month gestation requires precise data. Please enter the exact gestational age in weeks to continue.</div>
                               </div>
                               
                               <div id="delivery-mode-section-${i}" style="display: none;">
@@ -10228,7 +10315,7 @@ export default function AncPage() {
                           </div>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-3 gap-4">
                           <div>
                             <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                             <input 
@@ -10238,6 +10325,19 @@ export default function AncPage() {
                               class="w-full border rounded p-2 text-sm" 
                               placeholder="e.g., 8"
                               onchange="updateObstetricConditionalFields(${i})"
+                              id="gestational-months-${i}"
+                            />
+                          </div>
+                          <div id="weeks-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Gestational age (weeks) <span class="text-red-500">*</span></label>
+                            <input 
+                              type="number" 
+                              min="20" 
+                              max="28" 
+                              class="w-full border rounded p-2 text-sm" 
+                              placeholder="e.g., 25"
+                              onchange="handleWeeksInput(${i})"
+                              id="gestational-weeks-${i}"
                             />
                           </div>
                           <div id="outcome-section-${i}" style="display: none;">
@@ -10246,6 +10346,12 @@ export default function AncPage() {
                               <option value="">Select outcome...</option>
                             </select>
                           </div>
+                        </div>
+                        
+                        <!-- CDSS Guidance for Borderline Viability -->
+                        <div id="borderline-cdss-${i}" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded" style="display: none;">
+                          <div class="text-sm font-medium text-blue-700">🔍 CDSS Guidance: Borderline Viability</div>
+                          <div class="text-xs text-blue-600 mt-1">A 6-month gestation requires precise data. Please enter the exact gestational age in weeks to continue.</div>
                         </div>
                         
                         <div id="delivery-mode-section-${i}" style="display: none;">
@@ -10339,32 +10445,103 @@ export default function AncPage() {
                     // Enhanced JavaScript functions for conditional fields with proper field ordering
                     if (!(window as any).updateObstetricConditionalFields) {
                       (window as any).updateObstetricConditionalFields = function(index: number) {
-                        const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${index + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
+                        const gestationalAge = parseInt((document.getElementById(`gestational-months-${index}`) as HTMLInputElement)?.value || '0');
                         const outcomeSection = document.getElementById(`outcome-section-${index}`);
+                        const weeksSection = document.getElementById(`weeks-section-${index}`);
                         const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
                         const ancVisitsSection = document.getElementById(`anc-visits-section-${index}`);
+                        const borderlineCdss = document.getElementById(`borderline-cdss-${index}`);
                         const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
+                        const weeksInput = document.getElementById(`gestational-weeks-${index}`) as HTMLInputElement;
+                        
+                        // Reset weeks input when months change
+                        if (weeksInput) weeksInput.value = '';
                         
                         if (gestationalAge > 0) {
                           // Always show ANC visits after gestational age
                           if (ancVisitsSection) ancVisitsSection.style.display = 'block';
+                          
+                          if (gestationalAge < 6) {
+                            // Early pregnancy - hide weeks, show outcome with abortion/miscarriage
+                            if (weeksSection) weeksSection.style.display = 'none';
+                            if (borderlineCdss) borderlineCdss.style.display = 'none';
+                            if (outcomeSection) outcomeSection.style.display = 'block';
+                            if (deliverySection) deliverySection.style.display = 'none';
+                            
+                            if (outcomeSelect) {
+                              outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                              outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                              outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
+                            }
+                          } else if (gestationalAge === 6) {
+                            // Borderline viability - show weeks field, hide outcome, show CDSS guidance
+                            if (weeksSection) weeksSection.style.display = 'block';
+                            if (borderlineCdss) borderlineCdss.style.display = 'block';
+                            if (outcomeSection) outcomeSection.style.display = 'none';
+                            if (deliverySection) deliverySection.style.display = 'none';
+                          } else if (gestationalAge >= 7) {
+                            // Viable pregnancy - hide weeks, show outcome with live/still birth
+                            if (weeksSection) weeksSection.style.display = 'none';
+                            if (borderlineCdss) borderlineCdss.style.display = 'none';
+                            if (outcomeSection) outcomeSection.style.display = 'block';
+                            if (deliverySection) deliverySection.style.display = 'block';
+                            
+                            if (outcomeSelect) {
+                              outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                              outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
+                              outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                              outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
+                            }
+                          }
+                        } else {
+                          // No gestational age entered - hide everything
+                          if (ancVisitsSection) ancVisitsSection.style.display = 'none';
+                          if (weeksSection) weeksSection.style.display = 'none';
+                          if (borderlineCdss) borderlineCdss.style.display = 'none';
+                          if (outcomeSection) outcomeSection.style.display = 'none';
+                          if (deliverySection) deliverySection.style.display = 'none';
+                        }
+                      };
+
+                      // New function to handle weeks input for borderline viability (6 months)
+                      (window as any).handleWeeksInput = function(index: number) {
+                        const weeksInput = document.getElementById(`gestational-weeks-${index}`) as HTMLInputElement;
+                        const outcomeSection = document.getElementById(`outcome-section-${index}`);
+                        const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
+                        const borderlineCdss = document.getElementById(`borderline-cdss-${index}`);
+                        const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
+                        
+                        const weeks = parseInt(weeksInput?.value || '0');
+                        
+                        if (weeks > 0) {
+                          // Hide CDSS guidance once weeks are entered
+                          if (borderlineCdss) borderlineCdss.style.display = 'none';
+                          
+                          // Show outcome section
                           if (outcomeSection) outcomeSection.style.display = 'block';
                           
                           if (outcomeSelect) {
                             outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
                             outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
                             
-                            if (gestationalAge < 6) {
-                              outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
-                              if (deliverySection) deliverySection.style.display = 'none';
-                            } else if (gestationalAge >= 7) {
+                            if (weeks >= 24) {
+                              // Viable - show live birth and still birth options
                               outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
                               outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                              
+                              // Show delivery section for viable pregnancies
                               if (deliverySection) deliverySection.style.display = 'block';
+                            } else {
+                              // Non-viable - show abortion/miscarriage options
+                              outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                              
+                              // Hide delivery section for non-viable pregnancies
+                              if (deliverySection) deliverySection.style.display = 'none';
                             }
                           }
                         } else {
-                          if (ancVisitsSection) ancVisitsSection.style.display = 'none';
+                          // No weeks entered - show CDSS guidance, hide outcome
+                          if (borderlineCdss) borderlineCdss.style.display = 'block';
                           if (outcomeSection) outcomeSection.style.display = 'none';
                           if (deliverySection) deliverySection.style.display = 'none';
                         }
