@@ -9643,6 +9643,104 @@ export default function AncPage() {
                             }
                           }
                           
+                          // Add global functions for obstetric history if not already added
+                          if (!(window as any).updateObstetricConditionalFields) {
+                            (window as any).updateObstetricConditionalFields = function(index: number) {
+                              const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${index + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
+                              const outcomeSection = document.getElementById(`outcome-section-${index}`);
+                              const deliverySection = document.getElementById(`delivery-mode-section-${index}`);
+                              const ancVisitsSection = document.getElementById(`anc-visits-section-${index}`);
+                              const outcomeSelect = document.getElementById(`outcome-${index}`) as HTMLSelectElement;
+                              
+                              if (gestationalAge > 0) {
+                                if (ancVisitsSection) ancVisitsSection.style.display = 'block';
+                                if (outcomeSection) outcomeSection.style.display = 'block';
+                                
+                                if (outcomeSelect) {
+                                  outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                                  outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
+                                  
+                                  if (gestationalAge < 6) {
+                                    outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                                    if (deliverySection) deliverySection.style.display = 'none';
+                                  } else if (gestationalAge >= 7) {
+                                    outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
+                                    outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                                    if (deliverySection) deliverySection.style.display = 'block';
+                                  }
+                                }
+                              } else {
+                                if (ancVisitsSection) ancVisitsSection.style.display = 'none';
+                                if (outcomeSection) outcomeSection.style.display = 'none';
+                                if (deliverySection) deliverySection.style.display = 'none';
+                              }
+                            };
+
+                            (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                              const babyStatusSection = document.getElementById(`baby-status-section-${pregnancyIndex}`);
+                              const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${pregnancyIndex + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
+                              
+                              if (gestationalAge >= 7) {
+                                if (outcome === 'live_birth') {
+                                  if (babyStatusSection) babyStatusSection.style.display = 'block';
+                                } else {
+                                  if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                }
+                              }
+                            };
+                            
+                            (window as any).updateDeliveryFields = function(index: number) {
+                              const select = document.querySelector(`#delivery-mode-section-${index} select`) as HTMLSelectElement;
+                              const labourSection = document.getElementById(`labour-type-section-${index}`);
+                              const assistedSection = document.getElementById(`assisted-vaginal-section-${index}`);
+                              const csectionSection = document.getElementById(`csection-section-${index}`);
+                              const placeDeliverySection = document.getElementById(`place-delivery-section-${index}`);
+                              
+                              [labourSection, assistedSection, csectionSection].forEach(section => {
+                                if (section) section.style.display = 'none';
+                              });
+                              
+                              const value = select?.value;
+                              if (value) {
+                                if (placeDeliverySection) placeDeliverySection.style.display = 'block';
+                                
+                                if (value === 'normal_vertex' || value === 'assisted_breech') {
+                                  if (labourSection) labourSection.style.display = 'block';
+                                } else if (value === 'assisted_vaginal') {
+                                  if (assistedSection) assistedSection.style.display = 'block';
+                                } else if (value === 'c_section') {
+                                  if (csectionSection) csectionSection.style.display = 'block';
+                                }
+                              } else {
+                                if (placeDeliverySection) placeDeliverySection.style.display = 'none';
+                              }
+                            };
+                            
+                            (window as any).updateInfantSex = function(index: number) {
+                              const select = document.querySelector(`#labour-type-section-${index} select`) as HTMLSelectElement;
+                              const infantSection = document.getElementById(`infant-sex-section-${index}`);
+                              const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
+                              
+                              const value = select?.value;
+                              if (value === 'induced' || value === 'spontaneous') {
+                                if (infantSection) infantSection.style.display = 'block';
+                                
+                                const sexSelect = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
+                                if (sexSelect?.value) {
+                                  if (birthWeightSection) birthWeightSection.style.display = 'block';
+                                }
+                              } else {
+                                if (infantSection) infantSection.style.display = 'none';
+                                if (birthWeightSection) birthWeightSection.style.display = 'none';
+                              }
+                            };
+
+                            (window as any).handleSexSelection = function(index: number) {
+                              const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
+                              if (birthWeightSection) birthWeightSection.style.display = 'block';
+                            };
+                          }
+                          
                           // Generate pregnancy history forms
                           for (let i = 0; i < previousPregnanciesCount; i++) {
                             const pregnancyDiv = document.createElement('div');
