@@ -18,27 +18,58 @@ interface IPVSignWithTooltipProps {
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
-  category: string;
+  description: string;
+  onInfoClick: (label: string, description: string) => void;
 }
 
 const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
-  id, name, value, checked, onChange, label
-}) => (
-  <div className="flex items-start space-x-2 p-1 hover:bg-white/50 rounded text-xs">
-    <input
-      type="checkbox"
-      id={id}
-      name={name}
-      value={value}
-      checked={checked}
-      onChange={onChange}
-      className="rounded border-gray-300 text-purple-600 mt-0.5 flex-shrink-0"
-    />
-    <label htmlFor={id} className="text-black cursor-pointer text-xs leading-tight flex-1">
-      {label}
-    </label>
-  </div>
-);
+  id, name, value, checked, onChange, label, description, onInfoClick
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Smart contextual display: show icon when selected OR hovered
+  const showInfoIcon = checked || isHovered;
+  
+  return (
+    <div 
+      className="flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-gray-100/70" 
+      style={{ boxShadow: '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }} 
+      onMouseEnter={(e) => { 
+        e.currentTarget.style.boxShadow = '0 3px 6px hsla(223.58deg, 50.96%, 59.22%, 0.35)';
+        setIsHovered(true);
+      }} 
+      onMouseLeave={(e) => { 
+        e.currentTarget.style.boxShadow = '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)';
+        setIsHovered(false);
+      }}
+    >
+      <input 
+        type="checkbox" 
+        id={id}
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        className="rounded border-gray-300 text-purple-600 w-3.5 h-3.5"
+      />
+      <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
+        <span className="text-black">{label}</span>
+        {showInfoIcon && (
+          <button 
+            type="button" 
+            onClick={() => onInfoClick(label, description)}
+            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1"
+            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 8px hsla(223.58deg, 50.96%, 59.22%, 0.5)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+          >
+            i
+          </button>
+        )}
+      </label>
+    </div>
+  );
+};
 
 const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
   isOpen,
@@ -48,47 +79,97 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
 }) => {
   const [selectedSigns, setSelectedSigns] = useState<string[]>(initialSelectedSigns);
   const [ipvSignsConfirmed, setIpvSignsConfirmed] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [infoContent, setInfoContent] = useState({ title: '', description: '' });
 
-  // IPV Signs organized by category - streamlined for better UI
+  // IPV Signs organized by category with descriptions for info tooltips
   const ipvSignCategories = {
     mentalHealth: {
       title: "Mental Health & Trauma",
       icon: <Brain className="w-4 h-4 text-blue-600" />,
       signs: [
-        'Ongoing stress/anxiety/depression',
-        'Thoughts or plans of self-harm',
-        'Substance misuse (alcohol/drugs)',
-        'Signs of trauma or PTSD'
+        { 
+          label: 'Ongoing stress/anxiety/depression', 
+          description: 'Persistent emotional distress that may indicate exposure to violence or trauma' 
+        },
+        { 
+          label: 'Thoughts or plans of self-harm', 
+          description: 'Suicidal ideation or self-destructive behaviors often linked to intimate partner violence' 
+        },
+        { 
+          label: 'Substance misuse (alcohol/drugs)', 
+          description: 'Using substances to cope with violence or as a result of partner coercion' 
+        },
+        { 
+          label: 'Signs of trauma or PTSD', 
+          description: 'Post-traumatic stress symptoms including flashbacks, nightmares, or hypervigilance' 
+        }
       ]
     },
     reproductive: {
       title: "Reproductive Health",
       icon: <Heart className="w-4 h-4 text-pink-600" />,
       signs: [
-        'Repeated STIs or unwanted pregnancies',
-        'Unexplained reproductive symptoms',
-        'Repeated vaginal bleeding'
+        { 
+          label: 'Repeated STIs or unwanted pregnancies', 
+          description: 'Pattern of reproductive coercion or sexual violence by intimate partner' 
+        },
+        { 
+          label: 'Unexplained reproductive symptoms', 
+          description: 'Genital injuries or symptoms that may result from sexual violence' 
+        },
+        { 
+          label: 'Repeated vaginal bleeding', 
+          description: 'Abnormal bleeding that may indicate sexual trauma or reproductive coercion' 
+        }
       ]
     },
     physical: {
       title: "Physical Symptoms & Violence",
       icon: <Shield className="w-4 h-4 text-green-600" />,
       signs: [
-        'Unexplained chronic pain',
-        'Injury to abdomen or other areas',
-        'Chronic gastrointestinal/genitourinary symptoms',
-        'Evidence of physical violence/trauma'
+        { 
+          label: 'Unexplained chronic pain', 
+          description: 'Persistent pain without clear medical cause, often from repeated physical violence' 
+        },
+        { 
+          label: 'Injury to abdomen or other areas', 
+          description: 'Physical injuries that may indicate domestic violence, especially during pregnancy' 
+        },
+        { 
+          label: 'Chronic gastrointestinal/genitourinary symptoms', 
+          description: 'Ongoing digestive or urinary problems that may result from stress or physical trauma' 
+        },
+        { 
+          label: 'Evidence of physical violence/trauma', 
+          description: 'Visible signs of physical abuse including bruises, cuts, or defensive injuries' 
+        }
       ]
     },
     behavioral: {
       title: "Healthcare & Behavioral Patterns",
       icon: <Users className="w-4 h-4 text-indigo-600" />,
       signs: [
-        'Partner intrusive during consultations',
-        'Often misses appointments',
-        'Children have behavioral problems',
-        'Repeated consultations, no clear diagnosis',
-        'Fear or anxiety around partner/family'
+        { 
+          label: 'Partner intrusive during consultations', 
+          description: 'Partner refuses to leave during appointments or answers questions for the woman' 
+        },
+        { 
+          label: 'Often misses appointments', 
+          description: 'Pattern of missed healthcare visits that may indicate partner control or fear' 
+        },
+        { 
+          label: 'Children have behavioral problems', 
+          description: 'Children showing signs of distress from witnessing intimate partner violence' 
+        },
+        { 
+          label: 'Repeated consultations, no clear diagnosis', 
+          description: 'Frequent healthcare visits with vague complaints that may indicate underlying violence' 
+        },
+        { 
+          label: 'Fear or anxiety around partner/family', 
+          description: 'Visible signs of fear when partner or family members are present or mentioned' 
+        }
       ]
     }
   };
@@ -105,6 +186,11 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
   const handleIPVSignConfirmation = () => {
     setIpvSignsConfirmed(true);
     onConfirmSelection(selectedSigns);
+  };
+
+  const handleInfoClick = (label: string, description: string) => {
+    setInfoContent({ title: label, description });
+    setShowInfoModal(true);
   };
 
   return (
@@ -137,14 +223,15 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
                     <div className="space-y-1.5">
                       {category.signs.map((sign) => (
                         <IPVSignWithTooltip
-                          key={sign}
-                          id={`ipv_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
-                          name={`ipv_sign_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
-                          value={sign}
-                          checked={selectedSigns.includes(sign)}
+                          key={sign.label}
+                          id={`ipv_${sign.label.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
+                          name={`ipv_sign_${sign.label.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
+                          value={sign.label}
+                          checked={selectedSigns.includes(sign.label)}
                           onChange={handleIPVSignsChange}
-                          label={sign}
-                          category={key}
+                          label={sign.label}
+                          description={sign.description}
+                          onInfoClick={handleInfoClick}
                         />
                       ))}
                     </div>
@@ -198,6 +285,27 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
           </Button>
         </div>
       </DialogContent>
+      
+      {/* Info Modal - matching danger signs pattern */}
+      {showInfoModal && (
+        <Dialog open={showInfoModal} onOpenChange={setShowInfoModal}>
+          <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-md">
+            <DialogTitle className="text-lg font-semibold text-black mb-3">{infoContent.title}</DialogTitle>
+            <div className="space-y-3">
+              <p className="text-sm text-black leading-relaxed">{infoContent.description}</p>
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline" 
+                  className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
+                  onClick={() => setShowInfoModal(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 };
