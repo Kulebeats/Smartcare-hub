@@ -262,8 +262,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 1 && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Privacy Assessment</h3>
-                <p className="text-gray-600 mb-4">Ensure patient safety before proceeding with IPV assessment</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Privacy Assessment</h3>
+                <p className="text-black mb-4">Ensure patient safety before proceeding with IPV assessment</p>
               </div>
               
               {/* WHO Protocol Reminder */}
@@ -298,7 +298,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
               {/* Privacy Verification Checklist */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-gray-800 mb-3">Privacy Verification Checklist:</h4>
+                <h4 className="text-sm font-semibold text-black mb-3">Privacy Verification Checklist:</h4>
                 <div className="space-y-2 text-sm">
                   {[
                     'Door is closed and room is private',
@@ -308,7 +308,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   ].map((item, index) => (
                     <label key={index} className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded">
                       <input type="checkbox" className="mr-2 text-blue-600" />
-                      <span className="text-gray-700">{item}</span>
+                      <span className="text-black">{item}</span>
                     </label>
                   ))}
                 </div>
@@ -346,8 +346,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       style={{ pointerEvents: 'auto' }}
                     />
                     <div>
-                      <span className="font-medium text-green-700">✓ Yes, patient is alone</span>
-                      <p className="text-sm text-gray-600">Safe to proceed with IPV assessment</p>
+                      <span className="font-medium text-black">✓ Yes, patient is alone</span>
+                      <p className="text-sm text-black">Safe to proceed with IPV assessment</p>
                     </div>
                   </label>
                   
@@ -380,8 +380,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       style={{ pointerEvents: 'auto' }}
                     />
                     <div>
-                      <span className="font-medium text-red-700">✗ No, others are present</span>
-                      <p className="text-sm text-gray-600">Cannot safely conduct IPV assessment at this time</p>
+                      <span className="font-medium text-black">✗ No, others are present</span>
+                      <p className="text-sm text-black">Cannot safely conduct IPV assessment at this time</p>
                     </div>
                   </label>
                 </div>
@@ -405,8 +405,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 2 && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Risk Factor Screening</h3>
-                <p className="text-gray-600">Select any factors that apply to this patient</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Risk Factor Screening</h3>
+                <p className="text-black">Select any factors that apply to this patient</p>
               </div>
 
               {/* Training Prompt */}
@@ -430,7 +430,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   }, {} as Record<string, typeof riskFactors>)
                 ).map(([category, factors]) => (
                   <div key={category} className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <h4 className="font-semibold text-black mb-3 flex items-center gap-2">
                       {category === 'Emotional' && <Heart className="w-4 h-4 text-blue-600" />}
                       {category === 'Behavioral' && <Users className="w-4 h-4 text-purple-600" />}
                       {category === 'Self-harm' && <AlertTriangle className="w-4 h-4 text-red-600" />}
@@ -447,7 +447,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                             onChange={() => handleRiskFactorToggle(factor.id)}
                             className="mr-2 text-blue-600"
                           />
-                          <span className="text-sm flex-1">{factor.label}</span>
+                          <span className="text-sm flex-1 text-black">{factor.label}</span>
                           {/* Contextual Help */}
                           <span className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" title="Ask sensitively about this factor">
                             ?
@@ -479,8 +479,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 3 && !hasRiskFactors && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Documentation</h3>
-                <p className="text-gray-600">Complete assessment documentation</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Documentation</h3>
+                <p className="text-black">Complete assessment documentation</p>
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -491,7 +491,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Clinical Notes
                 </label>
                 <textarea
@@ -525,8 +525,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 3 && hasRiskFactors && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Immediate Needs Assessment</h3>
-                <p className="text-gray-600">Assess the 4 types of immediate needs</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Immediate Needs Assessment</h3>
+                <p className="text-black">Assess the 4 types of immediate needs</p>
               </div>
 
               {/* WHO Training Prompt */}
@@ -561,9 +561,9 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                     />
                     <div className="flex items-center gap-2 mb-2">
                       <Icon className={`w-5 h-5 text-${color}-600`} />
-                      <span className="font-medium text-gray-900">{label}</span>
+                      <span className="font-medium text-black">{label}</span>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-black">
                       {key === 'emotional' && 'Immediate psychological support needed'}
                       {key === 'physical' && 'Medical attention or treatment required'}
                       {key === 'safety' && 'Ongoing safety concerns to address'}
@@ -579,8 +579,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 4 && hasRiskFactors && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">First-Line Support Tasks</h3>
-                <p className="text-gray-600">Complete the 5 essential support actions</p>
+                <h3 className="text-2xl font-bold text-black mb-2">First-Line Support Tasks</h3>
+                <p className="text-black">Complete the 5 essential support actions</p>
               </div>
 
               {/* WHO LIVES Protocol Reminder */}
@@ -616,8 +616,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                         className="mt-1 text-green-600"
                       />
                       <div>
-                        <div className="font-semibold text-gray-900">{label}</div>
-                        <div className="text-sm text-gray-600 mt-1">{desc}</div>
+                        <div className="font-semibold text-black">{label}</div>
+                        <div className="text-sm text-black mt-1">{desc}</div>
                       </div>
                     </div>
                   </label>
@@ -643,10 +643,10 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === (hasRiskFactors ? 5 : 3) && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-black mb-2">
                   {hasRiskFactors ? 'Referrals & Documentation' : 'Documentation'}
                 </h3>
-                <p className="text-gray-600">Complete assessment documentation</p>
+                <p className="text-black">Complete assessment documentation</p>
               </div>
 
               {/* WHO Referral Protocol */}
@@ -669,7 +669,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
               {hasRiskFactors && (
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <h4 className="font-semibold text-black mb-3 flex items-center gap-2">
                     <Phone className="w-4 h-4" />
                     Referrals Made
                   </h4>
@@ -691,7 +691,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                           onChange={() => handleReferralToggle(referral)}
                           className="mr-2 text-blue-600"
                         />
-                        <span className="text-sm">{referral}</span>
+                        <span className="text-sm text-black">{referral}</span>
                       </label>
                     ))}
                   </div>
@@ -699,7 +699,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Clinical Notes <span className="text-red-600">*</span>
                 </label>
                 <textarea

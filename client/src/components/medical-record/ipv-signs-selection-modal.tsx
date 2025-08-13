@@ -34,7 +34,7 @@ const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
       onChange={onChange}
       className="rounded border-gray-300 text-purple-600"
     />
-    <label htmlFor={id} className="text-gray-700 cursor-pointer text-xs leading-tight">
+    <label htmlFor={id} className="text-black cursor-pointer text-xs leading-tight">
       {label}
     </label>
   </div>
@@ -138,7 +138,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
             
             <div className="mt-2 p-3 border-l-4 border-purple-400 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
               <div className="flex justify-between items-center mb-2">
-                <h4 className="font-semibold text-gray-800 text-base">Select specific IPV signs and symptoms:</h4>
+                <h4 className="font-semibold text-black text-base">Select specific IPV signs and symptoms:</h4>
                 {selectedSigns.length > 0 && (
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded">
                     {selectedSigns.length} sign{selectedSigns.length > 1 ? 's' : ''} selected
@@ -149,7 +149,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
               {/* Render IPV signs by category */}
               {Object.entries(ipvSignCategories).map(([key, category]) => (
                 <div key={key} className="mb-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm transition-all duration-200 hover:bg-white/40" style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }}>
-                  <h5 className="text-xs font-semibold text-gray-800 mb-1.5 pb-0.5 border-b border-gray-200/50 flex items-center gap-2">
+                  <h5 className="text-xs font-semibold text-black mb-1.5 pb-0.5 border-b border-gray-200/50 flex items-center gap-2">
                     {category.icon}
                     {category.title}
                   </h5>
