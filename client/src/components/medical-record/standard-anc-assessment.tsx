@@ -1192,13 +1192,12 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
     <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
       <h3 className="text-base font-medium mb-3 text-gray-800">IPV Screening Assessment</h3>
       <p className="text-xs text-red-600 mb-3">This section requires sensitive handling and confidentiality.</p>
-      
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-3">IPV Assessment</label>
           
           {/* Primary IPV Selection - Mirror danger signs pattern exactly */}
-          <div className="space-y-3 mb-4">
+          <div className="space-y-3 mb-4 text-[#0d0101]">
             <div className="flex items-center space-x-2">
               <input 
                 type="radio" 
