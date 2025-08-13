@@ -9717,7 +9717,7 @@ export default function AncPage() {
           <div className="space-y-6">
             {/* Basic Obstetric Assessment */}
             <div className="border border-blue-300 rounded-lg p-4 bg-[#24302400]">
-              <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-2 mb-4">Obstetric Assessment</h5>
+              <h5 className="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Obstetric Assessment</h5>
               
               <div className="grid grid-cols-4 gap-4">
                 <div>
