@@ -226,6 +226,7 @@ export default function ANCFollowupPage(): JSX.Element {
                   }}
                   isFollowupVisit={true}
                   visitNumber={visitNumber}
+                  visitType="scheduled_anc"
                 />
               </CardContent>
             </Card>

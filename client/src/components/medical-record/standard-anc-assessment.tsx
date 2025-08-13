@@ -53,6 +53,7 @@ interface StandardANCAssessmentProps {
   isFollowupVisit?: boolean;
   visitNumber?: number;
   hideCard?: boolean;
+  visitType?: 'first_anc' | 'scheduled_anc' | 'specific_complaint' | 'additional_contact' | 'other';
 }
 
 export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({ 
@@ -60,7 +61,8 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
   onSave,
   isFollowupVisit = false, 
   visitNumber: propVisitNumber,
-  hideCard = false
+  hideCard = false,
+  visitType
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [assessmentData, setAssessmentData] = useState<AssessmentData>({
@@ -90,6 +92,13 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
 
   // Calculate visit number based on existing ANC records or use prop
   const visitNumber = propVisitNumber || (ancRecords?.records ? ancRecords.records.length + 1 : 1);
+  
+  // Determine if this is truly an initial visit based on visitType prop
+  const isInitialVisit = visitType === 'first_anc';
+  const isFollowupBasedOnType = visitType === 'scheduled_anc';
+  
+  // Show persistence sections only for follow-up visits (not initial visits)
+  const shouldShowPersistenceSections = isFollowupBasedOnType || (visitNumber > 1 && !isInitialVisit);
 
   useEffect(() => {
     // Initialize static previous recommendations once
@@ -235,22 +244,35 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
             onChange={(data) => updateAssessmentData('currentSymptoms', data)}
           />
 
-          {/* Previous Behaviors Section - Only show in subsequent visits */}
-          {(visitNumber > 1 || isFollowupVisit) && (
+          {/* Previous Behaviors Section - Only show in follow-up visits */}
+          {shouldShowPersistenceSections && (
             <PreviousBehaviorsSection
               data={assessmentData.previousBehaviors}
               onChange={(data) => updateAssessmentData('previousBehaviors', data)}
             />
           )}
 
-          {/* Combined Persisted Symptoms Section - Only show in subsequent visits */}
-          {(visitNumber > 1 || isFollowupVisit) && (
+          {/* Combined Persisted Symptoms Section - Only show in follow-up visits */}
+          {shouldShowPersistenceSections && (
             <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
               <h3 className="text-lg font-semibold mb-4 text-gray-800">Symptom Persistence Assessment</h3>
               <CombinedSymptomsSection 
                 data={assessmentData.previousBehaviors}
                 onChange={(data) => updateAssessmentData('previousBehaviors', data)}
               />
+            </div>
+          )}
+
+          {/* Visit Type Indicator - Show when sections are hidden */}
+          {isInitialVisit && (
+            <div className="border-l-4 border-blue-300 bg-blue-50/60 backdrop-blur-md rounded-r-xl mb-6 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.25)' }}>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                <h3 className="text-lg font-semibold text-blue-800">Initial ANC Visit</h3>
+              </div>
+              <p className="text-blue-700 text-sm mt-2">
+                This is a first antenatal care contact. Behavioral and symptom persistence assessments are not applicable for initial visits as there is no previous visit data to compare against.
+              </p>
             </div>
           )}
 

@@ -12392,7 +12392,7 @@ export default function AncPage() {
           </DialogHeader>
           
           <div className="space-y-4">
-            <StandardANCAssessment patientId="demo-patient-123" hideCard={true} />
+            <StandardANCAssessment patientId="demo-patient-123" hideCard={true} visitType="first_anc" />
           </div>
         </DialogContent>
       </Dialog>
