@@ -9820,25 +9820,25 @@ export default function AncPage() {
                             pregnancyDiv.innerHTML = `
                               <h6 class="font-medium text-gray-700 border-b border-gray-300 pb-2">Pregnancy ${i + 1}</h6>
                               
-                              <div class="grid grid-cols-2 gap-4">
+                              <div class="grid grid-cols-2 gap-3">
                                 <div>
                                   <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
-                                  <input type="date" class="w-full border rounded p-2 text-sm" />
+                                  <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                                 </div>
-                                <div>
-                                  <label class="block text-sm font-medium mb-1">Estimated delivery date</label>
-                                  <input type="date" class="w-full border rounded p-2 text-sm" />
+                                <div id="anc-visits-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
+                                  <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                                 </div>
                               </div>
                               
-                              <div class="grid grid-cols-3 gap-4">
+                              <div class="grid grid-cols-2 gap-3">
                                 <div>
                                   <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                                   <input 
                                     type="number" 
                                     min="1" 
                                     max="10" 
-                                    class="w-full border rounded p-2 text-sm" 
+                                    class="w-full border rounded p-2 text-sm h-10" 
                                     placeholder="e.g., 8"
                                     onchange="updateObstetricConditionalFields(${i})"
                                     id="gestational-months-${i}"
@@ -9850,16 +9850,29 @@ export default function AncPage() {
                                     type="number" 
                                     min="20" 
                                     max="28" 
-                                    class="w-full border rounded p-2 text-sm" 
+                                    class="w-full border rounded p-2 text-sm h-10" 
                                     placeholder="e.g., 25"
                                     onchange="handleWeeksInput(${i})"
                                     id="gestational-weeks-${i}"
                                   />
                                 </div>
+                              </div>
+                              
+                              <div class="grid grid-cols-2 gap-3">
                                 <div id="outcome-section-${i}" style="display: none;">
                                   <label class="block text-sm font-medium mb-1">Pregnancy Outcome</label>
-                                  <select class="w-full border rounded p-2 text-sm" id="outcome-${i}">
+                                  <select class="w-full border rounded p-2 text-sm h-10" id="outcome-${i}">
                                     <option value="">Select outcome...</option>
+                                  </select>
+                                </div>
+                                <div id="delivery-mode-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Mode of delivery</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10" onchange="updateDeliveryFields(${i})">
+                                    <option value="">Select mode...</option>
+                                    <option value="normal_vertex">Normal Vertex Delivery</option>
+                                    <option value="assisted_vaginal">Assisted Vaginal Delivery</option>
+                                    <option value="assisted_breech">Assisted Breech Delivery</option>
+                                    <option value="c_section">C-section</option>
                                   </select>
                                 </div>
                               </div>
@@ -9874,83 +9887,72 @@ export default function AncPage() {
                                 </div>
                               </div>
                               
-                              <div id="delivery-mode-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Mode of delivery</label>
-                                <select class="w-full border rounded p-2 text-sm" onchange="updateDeliveryFields(${i})">
-                                  <option value="">Select mode...</option>
-                                  <option value="normal_vertex">Normal Vertex Delivery</option>
-                                  <option value="assisted_vaginal">Assisted Vaginal Delivery</option>
-                                  <option value="assisted_breech">Assisted Breech Delivery</option>
-                                  <option value="c_section">C-section</option>
-                                </select>
+                              <div class="grid grid-cols-2 gap-3">
+                                <div id="labour-type-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Type of labour</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10" onchange="updateInfantSex(${i})">
+                                    <option value="">Select type...</option>
+                                    <option value="induced">Induced</option>
+                                    <option value="spontaneous">Spontaneous</option>
+                                  </select>
+                                </div>
+                                <div id="place-delivery-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Place of Delivery</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10">
+                                    <option value="">Select place...</option>
+                                    <option value="hospital">Hospital</option>
+                                    <option value="health_clinic">Health clinic</option>
+                                    <option value="home">Home</option>
+                                    <option value="on_way">On the way to facility</option>
+                                    <option value="other">Other</option>
+                                  </select>
+                                </div>
                               </div>
                               
-                              <div id="labour-type-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Type of labour</label>
-                                <select class="w-full border rounded p-2 text-sm" onchange="updateInfantSex(${i})">
-                                  <option value="">Select type...</option>
-                                  <option value="induced">Induced</option>
-                                  <option value="spontaneous">Spontaneous</option>
-                                </select>
+                              <div class="grid grid-cols-2 gap-3">
+                                <div id="assisted-vaginal-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Type of assisted vaginal delivery</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10">
+                                    <option value="">Select type...</option>
+                                    <option value="forceps">Forceps</option>
+                                    <option value="vacuum">Vacuum</option>
+                                  </select>
+                                </div>
+                                <div id="csection-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Type of C-section</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10">
+                                    <option value="">Select type...</option>
+                                    <option value="planned">Planned/Elective</option>
+                                    <option value="emergency">Emergency</option>
+                                  </select>
+                                </div>
                               </div>
                               
-                              <div id="assisted-vaginal-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Type of assisted vaginal delivery</label>
-                                <select class="w-full border rounded p-2 text-sm">
-                                  <option value="">Select type...</option>
-                                  <option value="forceps">Forceps</option>
-                                  <option value="vacuum">Vacuum</option>
-                                </select>
+                              <div class="grid grid-cols-2 gap-3">
+                                <div id="infant-sex-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Sex of infant</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10" onchange="handleSexSelection(${i})">
+                                    <option value="">Select...</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="unknown">Unknown</option>
+                                  </select>
+                                </div>
+                                <div id="birth-weight-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Birth Weight (kg)</label>
+                                  <input type="number" step="0.1" placeholder="3.2" class="w-full border rounded p-2 text-sm h-10" min="0.5" max="6" />
+                                </div>
                               </div>
                               
-                              <div id="csection-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Type of C-section</label>
-                                <select class="w-full border rounded p-2 text-sm">
-                                  <option value="">Select type...</option>
-                                  <option value="planned">Planned/Elective</option>
-                                  <option value="emergency">Emergency</option>
-                                </select>
-                              </div>
-                              
-                              <div id="infant-sex-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Sex of infant</label>
-                                <select class="w-full border rounded p-2 text-sm" onchange="handleSexSelection(${i})">
-                                  <option value="">Select...</option>
-                                  <option value="male">Male</option>
-                                  <option value="female">Female</option>
-                                  <option value="unknown">Unknown</option>
-                                </select>
-                              </div>
-                              
-                              <div id="anc-visits-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
-                                <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm" min="0" max="20" />
-                              </div>
-                              
-                              <div id="place-delivery-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Place of Delivery</label>
-                                <select class="w-full border rounded p-2 text-sm">
-                                  <option value="">Select place...</option>
-                                  <option value="hospital">Hospital</option>
-                                  <option value="health_clinic">Health clinic</option>
-                                  <option value="home">Home</option>
-                                  <option value="on_way">On the way to facility</option>
-                                  <option value="other">Other</option>
-                                </select>
-                              </div>
-                              
-                              <div id="birth-weight-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Birth Weight (kg)</label>
-                                <input type="number" step="0.1" placeholder="3.2" class="w-full border rounded p-2 text-sm" min="0.5" max="6" />
-                              </div>
-                              
-                              <div id="baby-status-section-${i}" style="display: none;">
-                                <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
-                                <select class="w-full border rounded p-2 text-sm">
-                                  <option value="">Select status...</option>
-                                  <option value="alive">Alive</option>
-                                  <option value="deceased">Deceased</option>
-                                </select>
+                              <div class="grid grid-cols-1 gap-3">
+                                <div id="baby-status-section-${i}" style="display: none;">
+                                  <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
+                                  <select class="w-full border rounded p-2 text-sm h-10">
+                                    <option value="">Select status...</option>
+                                    <option value="alive">Alive</option>
+                                    <option value="deceased">Deceased</option>
+                                  </select>
+                                </div>
                               </div>
                             `;
                             container.appendChild(pregnancyDiv);
@@ -10308,25 +10310,25 @@ export default function AncPage() {
                       pregnancyDiv.innerHTML = `
                         <h6 class="font-medium text-gray-700 border-b border-gray-300 pb-2">Pregnancy ${i + 1}</h6>
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                           <div>
                             <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
-                            <input type="date" class="w-full border rounded p-2 text-sm" />
+                            <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                           </div>
-                          <div>
-                            <label class="block text-sm font-medium mb-1">Estimated delivery date</label>
-                            <input type="date" class="w-full border rounded p-2 text-sm" />
+                          <div id="anc-visits-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
+                            <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                           </div>
                         </div>
                         
-                        <div class="grid grid-cols-3 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                           <div>
                             <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                             <input 
                               type="number" 
                               min="1" 
                               max="10" 
-                              class="w-full border rounded p-2 text-sm" 
+                              class="w-full border rounded p-2 text-sm h-10" 
                               placeholder="e.g., 8"
                               onchange="updateObstetricConditionalFields(${i})"
                               id="gestational-months-${i}"
@@ -10338,16 +10340,29 @@ export default function AncPage() {
                               type="number" 
                               min="20" 
                               max="28" 
-                              class="w-full border rounded p-2 text-sm" 
+                              class="w-full border rounded p-2 text-sm h-10" 
                               placeholder="e.g., 25"
                               onchange="handleWeeksInput(${i})"
                               id="gestational-weeks-${i}"
                             />
                           </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
                           <div id="outcome-section-${i}" style="display: none;">
                             <label class="block text-sm font-medium mb-1">Pregnancy Outcome</label>
-                            <select class="w-full border rounded p-2 text-sm" id="outcome-${i}">
+                            <select class="w-full border rounded p-2 text-sm h-10" id="outcome-${i}">
                               <option value="">Select outcome...</option>
+                            </select>
+                          </div>
+                          <div id="delivery-mode-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Mode of delivery</label>
+                            <select class="w-full border rounded p-2 text-sm h-10" onchange="updateDeliveryFields(${i})">
+                              <option value="">Select mode...</option>
+                              <option value="normal_vertex">Normal Vertex Delivery</option>
+                              <option value="assisted_vaginal">Assisted Vaginal Delivery</option>
+                              <option value="assisted_breech">Assisted Breech Delivery</option>
+                              <option value="c_section">C-section</option>
                             </select>
                           </div>
                         </div>
@@ -10362,89 +10377,74 @@ export default function AncPage() {
                           </div>
                         </div>
                         
-                        <div id="delivery-mode-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Mode of delivery</label>
-                          <select class="w-full border rounded p-2 text-sm" onchange="updateDeliveryFields(${i})">
-                            <option value="">Select mode...</option>
-                            <option value="normal_vertex">Normal Vertex Delivery</option>
-                            <option value="assisted_vaginal">Assisted Vaginal Delivery</option>
-                            <option value="assisted_breech">Assisted Breech Delivery</option>
-                            <option value="c_section">C-section</option>
-                          </select>
+                        <div class="grid grid-cols-2 gap-3">
+                          <div id="labour-type-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Type of labour</label>
+                            <select class="w-full border rounded p-2 text-sm h-10" onchange="updateInfantSex(${i})">
+                              <option value="">Select type...</option>
+                              <option value="induced">Induced</option>
+                              <option value="spontaneous">Spontaneous</option>
+                            </select>
+                          </div>
+                          <div id="place-delivery-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Place of Delivery</label>
+                            <select class="w-full border rounded p-2 text-sm h-10">
+                              <option value="">Select place...</option>
+                              <option value="hospital">Hospital</option>
+                              <option value="health_clinic">Health clinic</option>
+                              <option value="home">Home</option>
+                              <option value="on_way">On the way to facility</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
                         </div>
                         
-                        <div id="labour-type-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Type of labour</label>
-                          <select class="w-full border rounded p-2 text-sm" onchange="updateInfantSex(${i})">
-                            <option value="">Select type...</option>
-                            <option value="induced">Induced</option>
-                            <option value="spontaneous">Spontaneous</option>
-                          </select>
+                        <div class="grid grid-cols-2 gap-3">
+                          <div id="assisted-vaginal-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Type of assisted vaginal delivery</label>
+                            <select class="w-full border rounded p-2 text-sm h-10">
+                              <option value="">Select type...</option>
+                              <option value="forceps">Forceps</option>
+                              <option value="vacuum">Vacuum</option>
+                            </select>
+                          </div>
+                          <div id="csection-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Type of C-section</label>
+                            <select class="w-full border rounded p-2 text-sm h-10">
+                              <option value="">Select type...</option>
+                              <option value="planned">Planned/Elective</option>
+                              <option value="emergency">Emergency</option>
+                            </select>
+                          </div>
                         </div>
                         
-                        <div id="assisted-vaginal-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Type of assisted vaginal delivery</label>
-                          <select class="w-full border rounded p-2 text-sm">
-                            <option value="">Select type...</option>
-                            <option value="forceps">Forceps</option>
-                            <option value="vacuum">Vacuum</option>
-                          </select>
+                        <div class="grid grid-cols-2 gap-3">
+                          <div id="infant-sex-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Sex of infant</label>
+                            <select class="w-full border rounded p-2 text-sm h-10" onchange="handleSexSelection(${i})">
+                              <option value="">Select...</option>
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                              <option value="unknown">Unknown</option>
+                            </select>
+                          </div>
+                          <div id="birth-weight-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Birth Weight (kg)</label>
+                            <input type="number" step="0.1" placeholder="3.2" class="w-full border rounded p-2 text-sm h-10" min="0.5" max="6" />
+                          </div>
                         </div>
                         
-                        <div id="csection-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Type of C-section</label>
-                          <select class="w-full border rounded p-2 text-sm">
-                            <option value="">Select type...</option>
-                            <option value="planned">Planned/Elective</option>
-                            <option value="emergency">Emergency</option>
-                          </select>
-                        </div>
-                        
-                        <div id="infant-sex-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Sex of infant</label>
-                          <select class="w-full border rounded p-2 text-sm" onchange="handleSexSelection(${i})">
-                            <option value="">Select...</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="unknown">Unknown</option>
-                          </select>
-                        </div>
-                        
-                        <!-- Number of ANC Visits - Appears after gestational age -->
-                        <div id="anc-visits-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
-                          <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm" min="0" max="20" />
-                        </div>
-
-                        <!-- Place of Delivery - Only after mode of delivery -->
-                        <div id="place-delivery-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Place of Delivery</label>
-                          <select class="w-full border rounded p-2 text-sm">
-                            <option value="">Select place...</option>
-                            <option value="hospital">Hospital</option>
-                            <option value="health_clinic">Health clinic</option>
-                            <option value="home">Home</option>
-                            <option value="on_way">On the way to facility</option>
-                            <option value="other">Other</option>
-                          </select>
-                        </div>
-
-                        <!-- Birth Weight - Only after sex of infant -->
-                        <div id="birth-weight-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Birth Weight (kg)</label>
-                          <input type="number" step="0.1" placeholder="3.2" class="w-full border rounded p-2 text-sm" min="0.5" max="6" />
-                        </div>
-
-                        <!-- Baby's Current Status - Only for live births -->
-                        <div id="baby-status-section-${i}" style="display: none;">
-                          <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
-                          <select class="w-full border rounded p-2 text-sm">
-                            <option value="">Select status...</option>
-                            <option value="alive_well">Alive and well</option>
-                            <option value="alive_issues">Alive with health issues</option>
-                            <option value="died_neonatal">Died in neonatal period</option>
-                            <option value="died_later">Died later</option>
-                          </select>
+                        <div class="grid grid-cols-1 gap-3">
+                          <div id="baby-status-section-${i}" style="display: none;">
+                            <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
+                            <select class="w-full border rounded p-2 text-sm h-10">
+                              <option value="">Select status...</option>
+                              <option value="alive_well">Alive and well</option>
+                              <option value="alive_issues">Alive with health issues</option>
+                              <option value="died_neonatal">Died in neonatal period</option>
+                              <option value="died_later">Died later</option>
+                            </select>
+                          </div>
                         </div>
                       `;
                       container.appendChild(pregnancyDiv);
