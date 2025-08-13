@@ -6,6 +6,13 @@ SmartCare PRO is a comprehensive Electronic Health Record (EHR) system tailored 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+- **August 13, 2025**: Implemented comprehensive visual consistency across entire ANC module
+  - Applied consistent data element styling (black text, gray borders with blue focus states)
+  - Updated all form inputs, selects, textareas throughout ANC workflow
+  - Covered main ANC page, standard assessment, IPV forms, referral sections, and dynamic pregnancy forms
+  - Maintained all existing functionality while achieving visual uniformity
+
 ## System Architecture
 
 ### Frontend
@@ -32,7 +39,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Components
 - **Patient Management**: Comprehensive registration, advanced search, secure data, and CSV import/export.
-- **Clinical Modules**: ANC, PrEP (20-point risk scoring), ART, PMTCT, Pharmacovigilance, and Pharmacy management.
+- **Clinical Modules**: ANC (with consistent form styling), PrEP (20-point risk scoring), ART, PMTCT, Pharmacovigilance, and Pharmacy management.
 - **Emergency & Referral**: 3-Card Referral system, real-time Clinical Decision Support with dynamic alerts, and Danger Signs Assessment with Zambian ANC Guidelines (2022) integration.
 - **Administrative**: Multi-facility management, user access control (RBAC), performance monitoring, and audit trails.
 
