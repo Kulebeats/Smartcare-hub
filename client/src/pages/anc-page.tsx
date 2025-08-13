@@ -9599,9 +9599,70 @@ export default function AncPage() {
                       const previousPregnanciesInput = document.getElementById('obstetric_previous_pregnancies_count') as HTMLInputElement;
                       
                       if (previousPregnanciesInput) {
+                        // Set the value
                         previousPregnanciesInput.value = previousPregnanciesCount.toString();
-                        // Trigger change event to activate existing form generation logic
-                        previousPregnanciesInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        // Manually trigger the same logic as the onChange handler
+                        const container = document.getElementById('pregnancy-history-container');
+                        const socialSection = document.getElementById('social-habits-section');
+                        const complicationsSection = document.getElementById('complications-section');
+                        
+                        if (container) {
+                          container.innerHTML = '';
+                          
+                          // Show/hide social habits and complications sections
+                          if (socialSection) {
+                            socialSection.style.display = previousPregnanciesCount > 0 ? 'block' : 'none';
+                            if (previousPregnanciesCount === 0) {
+                              const noneCheckbox = document.getElementById('social-habits-none') as HTMLInputElement;
+                              const detailedHabits = document.getElementById('detailed-social-habits');
+                              const habitCheckboxes = document.querySelectorAll('.social-habit');
+                              
+                              if (noneCheckbox) noneCheckbox.checked = false;
+                              if (detailedHabits) detailedHabits.style.display = 'block';
+                              habitCheckboxes.forEach((checkbox: HTMLInputElement) => {
+                                checkbox.checked = false;
+                                checkbox.disabled = false;
+                              });
+                            }
+                          }
+                          
+                          if (complicationsSection) {
+                            complicationsSection.style.display = previousPregnanciesCount > 0 ? 'block' : 'none';
+                            if (previousPregnanciesCount === 0) {
+                              const noneCheckbox = document.getElementById('complications-none') as HTMLInputElement;
+                              const detailedComplications = document.getElementById('detailed-complications');
+                              const complicationCheckboxes = document.querySelectorAll('.complication-item');
+                              
+                              if (noneCheckbox) noneCheckbox.checked = false;
+                              if (detailedComplications) detailedComplications.style.display = 'block';
+                              complicationCheckboxes.forEach((checkbox: HTMLInputElement) => {
+                                checkbox.checked = false;
+                                checkbox.disabled = false;
+                              });
+                            }
+                          }
+                          
+                          // Generate pregnancy history forms
+                          for (let i = 0; i < previousPregnanciesCount; i++) {
+                            const pregnancyDiv = document.createElement('div');
+                            pregnancyDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4';
+                            pregnancyDiv.innerHTML = `
+                              <h6 class="font-medium text-gray-700 border-b border-gray-300 pb-2">Pregnancy ${i + 1}</h6>
+                              <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
+                                  <input type="date" class="w-full border rounded p-2 text-sm" />
+                                </div>
+                                <div>
+                                  <label class="block text-sm font-medium mb-1">Estimated delivery date</label>
+                                  <input type="date" class="w-full border rounded p-2 text-sm" />
+                                </div>
+                              </div>
+                            `;
+                            container.appendChild(pregnancyDiv);
+                          }
+                        }
                       }
                     }}
                   />
