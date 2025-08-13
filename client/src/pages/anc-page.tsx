@@ -5105,8 +5105,8 @@ export default function AncPage() {
                         </div>
                         
                         {/* Business Rule: Current Pregnancy Information */}
-                        <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                          <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Current Pregnancy Information</h5>
+                        <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                          <h4 className="font-semibold text-gray-800 text-base">Current Pregnancy Information</h4>
                           
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -5161,8 +5161,8 @@ export default function AncPage() {
                         </div>
 
                         {/* Enhanced Obstetric History Assessment with Conditional Logic */}
-                        <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                          <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Enhanced Obstetric History Assessment</h5>
+                        <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                          <h4 className="font-semibold text-gray-800 text-base">Enhanced Obstetric History Assessment</h4>
                           
                           <div className="grid grid-cols-4 gap-3">
                             <div className="space-y-1">
@@ -8040,8 +8040,8 @@ export default function AncPage() {
                 </div>
                 
                 {/* Current Pregnancy Information */}
-                <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                  <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Current Pregnancy Information</h5>
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <h4 className="font-semibold text-gray-800 text-base">Current Pregnancy Information</h4>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -8068,8 +8068,8 @@ export default function AncPage() {
                 </div>
                 
                 {/* Obstetric History Assessment */}
-                <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                  <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Obstetric History Assessment</h5>
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <h4 className="font-semibold text-gray-800 text-base">Obstetric History Assessment</h4>
                   
                   <div className="grid grid-cols-4 gap-3">
                     <div className="space-y-2">
@@ -11464,7 +11464,7 @@ export default function AncPage() {
             boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
           }}>
           <DialogHeader>
-            <DialogTitle className="flex items-center text-lg font-semibold text-green-600">
+            <DialogTitle className="flex items-center text-lg font-semibold text-gray-800">
               <Heart className="w-5 h-5 mr-2" />
               Medical History Assessment
             </DialogTitle>
