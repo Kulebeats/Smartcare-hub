@@ -94,10 +94,13 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
   const visitNumber = propVisitNumber || (ancRecords?.records ? ancRecords.records.length + 1 : 1);
   
   // Determine if this is truly an initial visit based on visitType prop
-  const isInitialVisit = visitType === 'first_anc';
-  const isFollowupBasedOnType = visitType === 'scheduled_anc';
+  // Default to 'first_anc' (initial visit) when no visitType is provided
+  const effectiveVisitType = visitType || 'first_anc';
+  const isInitialVisit = effectiveVisitType === 'first_anc';
+  const isFollowupBasedOnType = effectiveVisitType === 'scheduled_anc';
   
   // Show persistence sections only for follow-up visits (not initial visits)
+  // When no visitType is provided, default to initial visit behavior (hide persistence sections)
   const shouldShowPersistenceSections = isFollowupBasedOnType || (visitNumber > 1 && !isInitialVisit);
 
   useEffect(() => {
@@ -268,10 +271,15 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
             <div className="border-l-4 border-blue-300 bg-blue-50/60 backdrop-blur-md rounded-r-xl mb-6 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.25)' }}>
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <h3 className="text-lg font-semibold text-blue-800">Initial ANC Visit</h3>
+                <h3 className="text-lg font-semibold text-blue-800">
+                  {visitType ? 'Initial ANC Visit' : 'Initial ANC Visit (Default)'}
+                </h3>
               </div>
               <p className="text-blue-700 text-sm mt-2">
-                This is a first antenatal care contact. Behavioral and symptom persistence assessments are not applicable for initial visits as there is no previous visit data to compare against.
+                {visitType 
+                  ? 'This is a first antenatal care contact.' 
+                  : 'No visit type specified - defaulting to first antenatal care contact.'
+                } Behavioral and symptom persistence assessments are not applicable for initial visits as there is no previous visit data to compare against.
               </p>
             </div>
           )}
