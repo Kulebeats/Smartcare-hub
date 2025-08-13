@@ -7685,1095 +7685,1094 @@ export default function AncPage() {
       </Tabs>
       </div>
     </div>
-    
-    {/* Referral Reasons Dialog */}
-    <Dialog open={showReferralReasonsDialog} onOpenChange={setShowReferralReasonsDialog}>
-        <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-          }}>
-          <div className="flex items-center justify-between mb-4">
-            <DialogTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              Referral Reasons - Contact {currentContactNumber}
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowReferralReasonsDialog(false)}
-              className="h-8 w-8 p-0 rounded-full hover:bg-gray-100/50 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </Button>
-          </div>
-          <DialogDescription className="text-gray-600 text-sm mb-4">
-            Select the appropriate reasons for referral (may select multiple categories)
-          </DialogDescription>
-          
-          <div className="space-y-6 mt-4">
-            {/* Multi-select dropdown */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Referral Categories</label>
-              <div className="relative">
-                <select 
-                  className="w-full border rounded p-2 appearance-none bg-white"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value && !selectedReferralReasons.includes(value)) {
-                      setSelectedReferralReasons([...selectedReferralReasons, value]);
-                    }
-                    e.target.value = ""; // Reset dropdown
-                  }}
-                >
-                  <option value="">Select referral categories...</option>
-                  {[
-                    { value: "standard_clinical", label: "1. Standard Clinical" },
-                    { value: "screening_diagnostic", label: "2. For Screening and Diagnostic" },
-                    { value: "scheduled_referral", label: "3. Scheduled Referral" },
-                    { value: "other_general_services", label: "4. Other General Services" }
-                  ]
-                    .filter(option => !selectedReferralReasons.includes(option.value))
-                    .map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))
-                  }
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg className="w-4 h-4 fill-current text-gray-400" viewBox="0 0 20 20">
-                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
+      {/* Referral Reasons Dialog */}
+      <Dialog open={showReferralReasonsDialog} onOpenChange={setShowReferralReasonsDialog}>
+          <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
+            }}>
+            <div className="flex items-center justify-between mb-4">
+              <DialogTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
+                Referral Reasons - Contact {currentContactNumber}
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReferralReasonsDialog(false)}
+                className="h-8 w-8 p-0 rounded-full hover:bg-gray-100/50 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </Button>
+            </div>
+            <DialogDescription className="text-gray-600 text-sm mb-4">
+              Select the appropriate reasons for referral (may select multiple categories)
+            </DialogDescription>
+            
+            <div className="space-y-6 mt-4">
+              {/* Multi-select dropdown */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium">Referral Categories</label>
+                <div className="relative">
+                  <select 
+                    className="w-full border rounded p-2 appearance-none bg-white"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value && !selectedReferralReasons.includes(value)) {
+                        setSelectedReferralReasons([...selectedReferralReasons, value]);
+                      }
+                      e.target.value = ""; // Reset dropdown
+                    }}
+                  >
+                    <option value="">Select referral categories...</option>
+                    {[
+                      { value: "standard_clinical", label: "1. Standard Clinical" },
+                      { value: "screening_diagnostic", label: "2. For Screening and Diagnostic" },
+                      { value: "scheduled_referral", label: "3. Scheduled Referral" },
+                      { value: "other_general_services", label: "4. Other General Services" }
+                    ]
+                      .filter(option => !selectedReferralReasons.includes(option.value))
+                      .map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    }
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg className="w-4 h-4 fill-current text-gray-400" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Selected categories displayed as tags */}
+                {selectedReferralReasons.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {selectedReferralReasons.map((reason, index) => {
+                      const reasonLabels = {
+                        "standard_clinical": "Standard Clinical",
+                        "screening_diagnostic": "Screening & Diagnostic",
+                        "scheduled_referral": "Scheduled Referral",
+                        "other_general_services": "Other General Services"
+                      };
+                      
+                      return (
+                        <div key={index} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                          <span>{reasonLabels[reason as keyof typeof reasonLabels]}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedReferralReasons(selectedReferralReasons.filter(r => r !== reason));
+                            }}
+                            className="ml-2 text-red-600 hover:text-red-800"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {/* Selected categories displayed as tags */}
-              {selectedReferralReasons.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {selectedReferralReasons.map((reason, index) => {
-                    const reasonLabels = {
-                      "standard_clinical": "Standard Clinical",
-                      "screening_diagnostic": "Screening & Diagnostic",
-                      "scheduled_referral": "Scheduled Referral",
-                      "other_general_services": "Other General Services"
-                    };
-                    
-                    return (
-                      <div key={index} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                        <span>{reasonLabels[reason as keyof typeof reasonLabels]}</span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedReferralReasons(selectedReferralReasons.filter(r => r !== reason));
-                          }}
-                          className="ml-2 text-red-600 hover:text-red-800"
-                        >
-                          ×
-                        </button>
+              {/* Conditional sub-menus based on selections */}
+              
+              {/* 1. Standard Clinical Sub-menu */}
+              {selectedReferralReasons.includes("standard_clinical") && (
+                <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-green-50">
+                  <h5 className="text-sm font-medium text-green-600">Standard Clinical Reasons</h5>
+                  <div className="space-y-2">
+                    <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
+                      <input 
+                        type="checkbox" 
+                        className="mt-1 border-gray-300 text-green-600" 
+                        id="pre-existing-conditions-main"
+                        onChange={(e) => {
+                          const subOptionsDiv = document.getElementById('pre-existing-conditions-sub-options');
+                          if (subOptionsDiv) {
+                            subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
+                            // Clear all sub-options when parent is unchecked
+                            if (!e.target.checked) {
+                              const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
+                              subCheckboxes.forEach((cb: any) => cb.checked = false);
+                            }
+                          }
+                        }}
+                      />
+                      <div>
+                        <span className="text-sm font-medium">Pregnant woman with pre-existing medical condition</span>
+                        <div id="pre-existing-conditions-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="asthma" />
+                            <span>Asthma</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="cardiac_condition" />
+                            <span>Cardiac condition</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="diabetes_mellitus" />
+                            <span>Diabetes mellitus</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="renal_failure" />
+                            <span>Renal failure</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="epilepsy" />
+                            <span>Epilepsy</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="hypertension" />
+                            <span>Hypertension</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="hyperthyroidism" />
+                            <span>Hyperthyroidism</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="moderate_severe_anaemia" />
+                            <span>Moderate to severe anaemia (&lt;8g/dl)</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="coagulopathy" />
+                            <span>Previous or current coagulopathy (eg DVT)</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="renal_disease" />
+                            <span>Renal disease</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="sickle_cell" />
+                            <span>Sickle cell disease</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="rh_negative" />
+                            <span>RH negative</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="other_medical" />
+                            <span>Other</span>
+                          </label>
+                        </div>
                       </div>
-                    );
-                  })}
+                    </label>
+                    
+                    <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
+                      <input 
+                        type="checkbox" 
+                        className="mt-1 border-gray-300 text-green-600" 
+                        id="preeclampsia-complications-main"
+                        onChange={(e) => {
+                          const subOptionsDiv = document.getElementById('preeclampsia-complications-sub-options');
+                          if (subOptionsDiv) {
+                            subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
+                            // Clear all sub-options when parent is unchecked
+                            if (!e.target.checked) {
+                              const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
+                              subCheckboxes.forEach((cb: any) => cb.checked = false);
+                            }
+                          }
+                        }}
+                      />
+                      <div>
+                        <span className="text-sm font-medium">Preeclampsia or Eclampsia with other complications</span>
+                        <div id="preeclampsia-complications-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="severe_preeclampsia" />
+                            <span>Severe preeclampsia</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="eclampsia" />
+                            <span>Eclampsia</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="hellp_syndrome" />
+                            <span>HELLP syndrome</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="other_complications" />
+                            <span>Other complications</span>
+                          </label>
+                        </div>
+                      </div>
+                    </label>
+                    
+                    <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
+                      <input 
+                        type="checkbox" 
+                        className="mt-1 border-gray-300 text-green-600" 
+                        id="emergency-conditions-main"
+                        onChange={(e) => {
+                          const subOptionsDiv = document.getElementById('emergency-conditions-sub-options');
+                          if (subOptionsDiv) {
+                            subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
+                            // Clear all sub-options when parent is unchecked
+                            if (!e.target.checked) {
+                              const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
+                              subCheckboxes.forEach((cb: any) => cb.checked = false);
+                            }
+                          }
+                        }}
+                      />
+                      <div>
+                        <span className="text-sm font-medium">Other Conditions</span>
+                        <div id="emergency-conditions-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="none_emergency" />
+                            <span>None</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="abruptio_placenta" />
+                            <span>Abruptio placenta</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="coagulopathy_emergency" />
+                            <span>Coagulopathy</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="hellp_syndrome_emergency" />
+                            <span>HELLP syndrome</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="renal_failure_emergency" />
+                            <span>Renal failure</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="thrombocytopenia" />
+                            <span>Thrombocytopenia</span>
+                          </label>
+                          <label className="flex items-center space-x-1">
+                            <input type="checkbox" className="text-green-600" value="unconscious_patient" />
+                            <span>Unconscious patient</span>
+                          </label>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
                 </div>
               )}
-            </div>
 
-            {/* Conditional sub-menus based on selections */}
-            
-            {/* 1. Standard Clinical Sub-menu */}
-            {selectedReferralReasons.includes("standard_clinical") && (
-              <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-green-50">
-                <h5 className="text-sm font-medium text-green-600">Standard Clinical Reasons</h5>
-                <div className="space-y-2">
-                  <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
-                    <input 
-                      type="checkbox" 
-                      className="mt-1 border-gray-300 text-green-600" 
-                      id="pre-existing-conditions-main"
-                      onChange={(e) => {
-                        const subOptionsDiv = document.getElementById('pre-existing-conditions-sub-options');
-                        if (subOptionsDiv) {
-                          subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
-                          // Clear all sub-options when parent is unchecked
-                          if (!e.target.checked) {
-                            const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
-                            subCheckboxes.forEach((cb: any) => cb.checked = false);
-                          }
-                        }
-                      }}
-                    />
-                    <div>
-                      <span className="text-sm font-medium">Pregnant woman with pre-existing medical condition</span>
-                      <div id="pre-existing-conditions-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="asthma" />
-                          <span>Asthma</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="cardiac_condition" />
-                          <span>Cardiac condition</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="diabetes_mellitus" />
-                          <span>Diabetes mellitus</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="renal_failure" />
-                          <span>Renal failure</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="epilepsy" />
-                          <span>Epilepsy</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="hypertension" />
-                          <span>Hypertension</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="hyperthyroidism" />
-                          <span>Hyperthyroidism</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="moderate_severe_anaemia" />
-                          <span>Moderate to severe anaemia (&lt;8g/dl)</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="coagulopathy" />
-                          <span>Previous or current coagulopathy (eg DVT)</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="renal_disease" />
-                          <span>Renal disease</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="sickle_cell" />
-                          <span>Sickle cell disease</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="rh_negative" />
-                          <span>RH negative</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="other_medical" />
-                          <span>Other</span>
-                        </label>
-                      </div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
-                    <input 
-                      type="checkbox" 
-                      className="mt-1 border-gray-300 text-green-600" 
-                      id="preeclampsia-complications-main"
-                      onChange={(e) => {
-                        const subOptionsDiv = document.getElementById('preeclampsia-complications-sub-options');
-                        if (subOptionsDiv) {
-                          subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
-                          // Clear all sub-options when parent is unchecked
-                          if (!e.target.checked) {
-                            const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
-                            subCheckboxes.forEach((cb: any) => cb.checked = false);
-                          }
-                        }
-                      }}
-                    />
-                    <div>
-                      <span className="text-sm font-medium">Preeclampsia or Eclampsia with other complications</span>
-                      <div id="preeclampsia-complications-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="severe_preeclampsia" />
-                          <span>Severe preeclampsia</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="eclampsia" />
-                          <span>Eclampsia</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="hellp_syndrome" />
-                          <span>HELLP syndrome</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="other_complications" />
-                          <span>Other complications</span>
-                        </label>
-                      </div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-start space-x-2 cursor-pointer hover:bg-green-100 p-2 rounded">
-                    <input 
-                      type="checkbox" 
-                      className="mt-1 border-gray-300 text-green-600" 
-                      id="emergency-conditions-main"
-                      onChange={(e) => {
-                        const subOptionsDiv = document.getElementById('emergency-conditions-sub-options');
-                        if (subOptionsDiv) {
-                          subOptionsDiv.style.display = e.target.checked ? 'block' : 'none';
-                          // Clear all sub-options when parent is unchecked
-                          if (!e.target.checked) {
-                            const subCheckboxes = subOptionsDiv.querySelectorAll('input[type="checkbox"]');
-                            subCheckboxes.forEach((cb: any) => cb.checked = false);
-                          }
-                        }
-                      }}
-                    />
-                    <div>
-                      <span className="text-sm font-medium">Other Conditions</span>
-                      <div id="emergency-conditions-sub-options" className="ml-6 mt-2 space-y-1 text-xs text-gray-600" style={{ display: 'none' }}>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="none_emergency" />
-                          <span>None</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="abruptio_placenta" />
-                          <span>Abruptio placenta</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="coagulopathy_emergency" />
-                          <span>Coagulopathy</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="hellp_syndrome_emergency" />
-                          <span>HELLP syndrome</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="renal_failure_emergency" />
-                          <span>Renal failure</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="thrombocytopenia" />
-                          <span>Thrombocytopenia</span>
-                        </label>
-                        <label className="flex items-center space-x-1">
-                          <input type="checkbox" className="text-green-600" value="unconscious_patient" />
-                          <span>Unconscious patient</span>
-                        </label>
-                      </div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* 2. Screening and Diagnostic Sub-menu */}
-            {selectedReferralReasons.includes("screening_diagnostic") && (
-              <div className="space-y-3 border border-blue-200 rounded-lg p-4 bg-blue-50">
-                <h5 className="text-sm font-medium text-blue-600">For Screening and Diagnostic</h5>
-                <p className="text-xs text-gray-500">Services unavailable at current facility</p>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
-                    <span className="text-sm">Laboratory tests not available at this facility</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
-                    <span className="text-sm">Diagnostic imaging services needed</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
-                    <span className="text-sm">Specialized screening procedures</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
-                    <span className="text-sm">Ultrasound examination</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* 3. Scheduled Referral Sub-menu */}  
-            {selectedReferralReasons.includes("scheduled_referral") && (
-              <div className="space-y-3 border border-orange-200 rounded-lg p-4 bg-orange-50">
-                <h5 className="text-sm font-medium text-orange-600">Scheduled Referral</h5>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
-                    <span className="text-sm">Hospital delivery indicated</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
-                    <span className="text-sm">High-risk pregnancy requiring specialist care</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
-                    <span className="text-sm">Planned cesarean section</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
-                    <span className="text-sm">Follow-up specialist consultation</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* 4. Other General Services Sub-menu */}
-            {selectedReferralReasons.includes("other_general_services") && (
-              <div className="space-y-3 border border-purple-200 rounded-lg p-4 bg-purple-50">
-                <h5 className="text-sm font-medium text-purple-600">Other General Services</h5>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
-                    <span className="text-sm">Social services support</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
-                    <span className="text-sm">Nutritional counseling</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
-                    <span className="text-sm">Mental health services</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
-                    <span className="text-sm">Family planning services</span>
-                  </label>
-                  <div className="flex items-center space-x-2 p-2">
-                    <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
-                    <span className="text-sm">Other (specify):</span>
-                    <input type="text" placeholder="Please specify..." className="flex-1 text-sm border rounded px-2 py-1" />
+              {/* 2. Screening and Diagnostic Sub-menu */}
+              {selectedReferralReasons.includes("screening_diagnostic") && (
+                <div className="space-y-3 border border-blue-200 rounded-lg p-4 bg-blue-50">
+                  <h5 className="text-sm font-medium text-blue-600">For Screening and Diagnostic</h5>
+                  <p className="text-xs text-gray-500">Services unavailable at current facility</p>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
+                      <span className="text-sm">Laboratory tests not available at this facility</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
+                      <span className="text-sm">Diagnostic imaging services needed</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
+                      <span className="text-sm">Specialized screening procedures</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-blue-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-blue-600" />
+                      <span className="text-sm">Ultrasound examination</span>
+                    </label>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Client Health History Information - Required for all referrals */}
-            <div className="space-y-4 border border-blue-200 rounded-lg p-4 bg-blue-50">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
-              </div>
-              
-              {/* Current Pregnancy Information */}
-              <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Current Pregnancy Information</h5>
+              {/* 3. Scheduled Referral Sub-menu */}  
+              {selectedReferralReasons.includes("scheduled_referral") && (
+                <div className="space-y-3 border border-orange-200 rounded-lg p-4 bg-orange-50">
+                  <h5 className="text-sm font-medium text-orange-600">Scheduled Referral</h5>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
+                      <span className="text-sm">Hospital delivery indicated</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
+                      <span className="text-sm">High-risk pregnancy requiring specialist care</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
+                      <span className="text-sm">Planned cesarean section</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-orange-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-orange-600" />
+                      <span className="text-sm">Follow-up specialist consultation</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Other General Services Sub-menu */}
+              {selectedReferralReasons.includes("other_general_services") && (
+                <div className="space-y-3 border border-purple-200 rounded-lg p-4 bg-purple-50">
+                  <h5 className="text-sm font-medium text-purple-600">Other General Services</h5>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
+                      <span className="text-sm">Social services support</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
+                      <span className="text-sm">Nutritional counseling</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
+                      <span className="text-sm">Mental health services</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer hover:bg-purple-100 p-2 rounded">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
+                      <span className="text-sm">Family planning services</span>
+                    </label>
+                    <div className="flex items-center space-x-2 p-2">
+                      <input type="checkbox" className="mt-1 border-gray-300 text-purple-600" />
+                      <span className="text-sm">Other (specify):</span>
+                      <input type="text" placeholder="Please specify..." className="flex-1 text-sm border rounded px-2 py-1" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Client Health History Information - Required for all referrals */}
+              <div className="space-y-4 border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold text-blue-700">Client Health History Information</h4>
+                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Required for all referrals</span>
+                </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Gestational age (weeks) <span className="text-red-500">*</span></label>
-                    <input 
-                      type="number" 
-                      id="referral_current_ga_weeks"
-                      min="4" 
-                      max="42" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 28"
-                    />
-                  </div>
+                {/* Current Pregnancy Information */}
+                <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
+                  <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Current Pregnancy Information</h5>
                   
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Expected delivery date <span className="text-red-500">*</span></label>
-                    <input 
-                      type="date" 
-                      id="referral_edd"
-                      className="w-full border rounded p-2 text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Obstetric History Assessment */}
-              <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Obstetric History Assessment</h5>
-                
-                <div className="grid grid-cols-4 gap-3">
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Gravida (Total pregnancies) <span className="text-red-500">*</span></label>
-                    <input 
-                      type="number" 
-                      id="referral_gravida"
-                      min="1" 
-                      max="15" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 3"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Para (Live births)</label>
-                    <input 
-                      type="number" 
-                      id="referral_para"
-                      min="0" 
-                      max="15" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 2"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Abortions/Miscarriages</label>
-                    <input 
-                      type="number" 
-                      id="referral_abortions"
-                      min="0" 
-                      max="10" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 0"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-xs font-medium">Living children</label>
-                    <input 
-                      type="number" 
-                      id="referral_living_children"
-                      min="0" 
-                      max="15" 
-                      className="w-full border rounded p-2 text-sm"
-                      placeholder="e.g., 2"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Gestational age (weeks) <span className="text-red-500">*</span></label>
+                      <input 
+                        type="number" 
+                        id="referral_current_ga_weeks"
+                        min="4" 
+                        max="42" 
+                        className="w-full border rounded p-2 text-sm"
+                        placeholder="e.g., 28"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Expected delivery date <span className="text-red-500">*</span></label>
+                      <input 
+                        type="date" 
+                        id="referral_edd"
+                        className="w-full border rounded p-2 text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
                 
-                {/* Previous Pregnancies Detailed History */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-medium">No. of previous pregnancies (excluding current) <span className="text-red-500">*</span></label>
-                  <input 
-                    type="number" 
-                    id="referral_previous_pregnancies"
-                    min="0" 
-                    max="14" 
-                    className="w-20 border rounded p-2 text-sm"
-                    placeholder="0"
-                    onChange={(e) => {
-                      const count = parseInt(e.target.value) || 0;
-                      console.log('🤱 Pregnancy form generation triggered with count:', count);
-                      const historyContainer = document.getElementById('pregnancy-history-container');
-                      const socialHabitsSection = document.getElementById('social-habits-section');
-                      const complicationsSection = document.getElementById('complications-section');
-                      
-                      console.log('🔍 Container elements found:', {
-                        historyContainer: !!historyContainer,
-                        socialHabitsSection: !!socialHabitsSection,
-                        complicationsSection: !!complicationsSection
-                      });
-                      
-                      if (historyContainer) {
-                        historyContainer.innerHTML = '';
+                {/* Obstetric History Assessment */}
+                <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
+                  <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Obstetric History Assessment</h5>
+                  
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Gravida (Total pregnancies) <span className="text-red-500">*</span></label>
+                      <input 
+                        type="number" 
+                        id="referral_gravida"
+                        min="1" 
+                        max="15" 
+                        className="w-full border rounded p-2 text-sm"
+                        placeholder="e.g., 3"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Para (Live births)</label>
+                      <input 
+                        type="number" 
+                        id="referral_para"
+                        min="0" 
+                        max="15" 
+                        className="w-full border rounded p-2 text-sm"
+                        placeholder="e.g., 2"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Abortions/Miscarriages</label>
+                      <input 
+                        type="number" 
+                        id="referral_abortions"
+                        min="0" 
+                        max="10" 
+                        className="w-full border rounded p-2 text-sm"
+                        placeholder="e.g., 0"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium">Living children</label>
+                      <input 
+                        type="number" 
+                        id="referral_living_children"
+                        min="0" 
+                        max="15" 
+                        className="w-full border rounded p-2 text-sm"
+                        placeholder="e.g., 2"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Previous Pregnancies Detailed History */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-medium">No. of previous pregnancies (excluding current) <span className="text-red-500">*</span></label>
+                    <input 
+                      type="number" 
+                      id="referral_previous_pregnancies"
+                      min="0" 
+                      max="14" 
+                      className="w-20 border rounded p-2 text-sm"
+                      placeholder="0"
+                      onChange={(e) => {
+                        const count = parseInt(e.target.value) || 0;
+                        console.log('🤱 Pregnancy form generation triggered with count:', count);
+                        const historyContainer = document.getElementById('pregnancy-history-container');
+                        const socialHabitsSection = document.getElementById('social-habits-section');
+                        const complicationsSection = document.getElementById('complications-section');
                         
-                        // Business Rule: Apply conditional logic for referral assessment sections
-                        if (socialHabitsSection) {
-                          socialHabitsSection.style.display = count > 0 ? 'block' : 'none';
-                          // Reset social habits state when count changes to 0
-                          if (count === 0) {
-                            const noneCheckbox = document.getElementById('social-habits-none') as HTMLInputElement;
-                            const detailedHabits = document.getElementById('detailed-social-habits');
-                            if (noneCheckbox) noneCheckbox.checked = false;
-                            if (detailedHabits) detailedHabits.style.display = 'block';
-                          }
-                        }
-                        if (complicationsSection) {
-                          complicationsSection.style.display = count > 0 ? 'block' : 'none';
-                          // Reset complications state when count changes to 0
-                          if (count === 0) {
-                            const noneCheckbox = document.getElementById('complications-none') as HTMLInputElement;
-                            const detailedComplications = document.getElementById('detailed-complications');
-                            if (noneCheckbox) noneCheckbox.checked = false;
-                            if (detailedComplications) detailedComplications.style.display = 'block';
-                          }
-                        }
+                        console.log('🔍 Container elements found:', {
+                          historyContainer: !!historyContainer,
+                          socialHabitsSection: !!socialHabitsSection,
+                          complicationsSection: !!complicationsSection
+                        });
                         
-                        // Add enhanced global functions to window if not already added
-                        if (!(window as any).updateConditionalFields) {
-                          (window as any).updateConditionalFields = function(pregnancyIndex: number) {
-                            const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
-                            const outcomeSection = document.getElementById('outcome_section_' + pregnancyIndex);
-                            const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
-                            const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex) as HTMLSelectElement;
-                            const birthWeightSection = document.getElementById('birth-weight-section-' + pregnancyIndex);
-                            const placeDeliverySection = document.getElementById('place-delivery-section-' + pregnancyIndex);
-                            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
-                            
-                            if (gestationalAge > 0) {
-                              if (outcomeSection) outcomeSection.style.display = 'block';
+                        if (historyContainer) {
+                          historyContainer.innerHTML = '';
+                          
+                          // Business Rule: Apply conditional logic for referral assessment sections
+                          if (socialHabitsSection) {
+                            socialHabitsSection.style.display = count > 0 ? 'block' : 'none';
+                            // Reset social habits state when count changes to 0
+                            if (count === 0) {
+                              const noneCheckbox = document.getElementById('social-habits-none') as HTMLInputElement;
+                              const detailedHabits = document.getElementById('detailed-social-habits');
+                              if (noneCheckbox) noneCheckbox.checked = false;
+                              if (detailedHabits) detailedHabits.style.display = 'block';
+                            }
+                          }
+                          if (complicationsSection) {
+                            complicationsSection.style.display = count > 0 ? 'block' : 'none';
+                            // Reset complications state when count changes to 0
+                            if (count === 0) {
+                              const noneCheckbox = document.getElementById('complications-none') as HTMLInputElement;
+                              const detailedComplications = document.getElementById('detailed-complications');
+                              if (noneCheckbox) noneCheckbox.checked = false;
+                              if (detailedComplications) detailedComplications.style.display = 'block';
+                            }
+                          }
+                          
+                          // Add enhanced global functions to window if not already added
+                          if (!(window as any).updateConditionalFields) {
+                            (window as any).updateConditionalFields = function(pregnancyIndex: number) {
+                              const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
+                              const outcomeSection = document.getElementById('outcome_section_' + pregnancyIndex);
+                              const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
+                              const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex) as HTMLSelectElement;
+                              const birthWeightSection = document.getElementById('birth-weight-section-' + pregnancyIndex);
+                              const placeDeliverySection = document.getElementById('place-delivery-section-' + pregnancyIndex);
+                              const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
                               
-                              if (outcomeSelect) {
-                                outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
-                                outcomeSelect.onchange = () => (window as any).handleReferralStandardOutcomeChange(pregnancyIndex, outcomeSelect.value);
+                              if (gestationalAge > 0) {
+                                if (outcomeSection) outcomeSection.style.display = 'block';
                                 
-                                if (gestationalAge < 6) {
-                                  outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
-                                  if (deliveryModeSection) deliveryModeSection.style.display = 'none';
-                                  // Hide birth-related fields for early pregnancy loss
-                                  if (birthWeightSection) birthWeightSection.style.display = 'none';
-                                  if (placeDeliverySection) placeDeliverySection.style.display = 'none';
-                                  if (babyStatusSection) babyStatusSection.style.display = 'none';
-                                } else if (gestationalAge >= 7) {
-                                  outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
-                                  outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
-                                  if (deliveryModeSection) deliveryModeSection.style.display = 'block';
-                                  // Hide birth-related fields initially until outcome is selected
-                                  if (birthWeightSection) birthWeightSection.style.display = 'none';
-                                  if (placeDeliverySection) placeDeliverySection.style.display = 'none';
-                                  if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                if (outcomeSelect) {
+                                  outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+                                  outcomeSelect.onchange = () => (window as any).handleReferralStandardOutcomeChange(pregnancyIndex, outcomeSelect.value);
+                                  
+                                  if (gestationalAge < 6) {
+                                    outcomeSelect.innerHTML += '<option value="abortion">Abortion/Miscarriage</option>';
+                                    if (deliveryModeSection) deliveryModeSection.style.display = 'none';
+                                    // Hide birth-related fields for early pregnancy loss
+                                    if (birthWeightSection) birthWeightSection.style.display = 'none';
+                                    if (placeDeliverySection) placeDeliverySection.style.display = 'none';
+                                    if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                  } else if (gestationalAge >= 7) {
+                                    outcomeSelect.innerHTML += '<option value="live_birth">Live birth</option>';
+                                    outcomeSelect.innerHTML += '<option value="still_birth">Still birth</option>';
+                                    if (deliveryModeSection) deliveryModeSection.style.display = 'block';
+                                    // Hide birth-related fields initially until outcome is selected
+                                    if (birthWeightSection) birthWeightSection.style.display = 'none';
+                                    if (placeDeliverySection) placeDeliverySection.style.display = 'none';
+                                    if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                  }
                                 }
-                              }
-                            } else {
-                              if (outcomeSection) outcomeSection.style.display = 'none';
-                              if (deliveryModeSection) deliveryModeSection.style.display = 'none';
-                              if (birthWeightSection) birthWeightSection.style.display = 'none';
-                              if (placeDeliverySection) placeDeliverySection.style.display = 'none';
-                              if (babyStatusSection) babyStatusSection.style.display = 'none';
-                            }
-                          };
-                          
-                          (window as any).updateDeliveryFields = function(pregnancyIndex: number) {
-                            const deliveryMode = (document.getElementById('mode_of_delivery_' + pregnancyIndex) as HTMLSelectElement)?.value;
-                            const labourTypeSection = document.getElementById('labour_type_section_' + pregnancyIndex);
-                            const assistedVaginalSection = document.getElementById('assisted_vaginal_type_section_' + pregnancyIndex);
-                            const csectionSection = document.getElementById('csection_type_section_' + pregnancyIndex);
-                            
-                            if (labourTypeSection) labourTypeSection.style.display = 'none';
-                            if (assistedVaginalSection) assistedVaginalSection.style.display = 'none';
-                            if (csectionSection) csectionSection.style.display = 'none';
-                            
-                            if (deliveryMode === 'normal_vertex' || deliveryMode === 'assisted_breech') {
-                              if (labourTypeSection) labourTypeSection.style.display = 'block';
-                            } else if (deliveryMode === 'assisted_vaginal') {
-                              if (assistedVaginalSection) assistedVaginalSection.style.display = 'block';
-                            } else if (deliveryMode === 'c_section') {
-                              if (csectionSection) csectionSection.style.display = 'block';
-                            }
-                          };
-                          
-                          (window as any).updateInfantSex = function(pregnancyIndex: number) {
-                            const labourType = (document.getElementById('labour_type_' + pregnancyIndex) as HTMLSelectElement)?.value;
-                            const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
-                            
-                            if (labourType === 'induced' || labourType === 'spontaneous') {
-                              if (infantSexSection) infantSexSection.style.display = 'block';
-                            } else {
-                              if (infantSexSection) infantSexSection.style.display = 'none';
-                            }
-                          };
-
-                          // Function to handle outcome changes for referral standard forms
-                          (window as any).handleReferralStandardOutcomeChange = function(pregnancyIndex: number, outcome: string) {
-                            const birthWeightSection = document.getElementById('birth-weight-section-' + pregnancyIndex);
-                            const placeDeliverySection = document.getElementById('place-delivery-section-' + pregnancyIndex);
-                            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
-                            const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
-                            
-                            if (gestationalAge >= 7) {
-                              if (outcome === 'live_birth') {
-                                // Show birth-related fields only for live births
-                                if (birthWeightSection) birthWeightSection.style.display = 'block';
-                                if (placeDeliverySection) placeDeliverySection.style.display = 'block';
-                                if (babyStatusSection) babyStatusSection.style.display = 'block';
                               } else {
-                                // Hide birth-related fields for stillbirths or no selection
+                                if (outcomeSection) outcomeSection.style.display = 'none';
+                                if (deliveryModeSection) deliveryModeSection.style.display = 'none';
                                 if (birthWeightSection) birthWeightSection.style.display = 'none';
                                 if (placeDeliverySection) placeDeliverySection.style.display = 'none';
                                 if (babyStatusSection) babyStatusSection.style.display = 'none';
                               }
-                            }
-                          };
-                          
-                          // Define the main obstetric conditional fields function with comprehensive debugging
-                          (window as any).updateObstetricConditionalFields = function(pregnancyIndex: number) {
-                            console.log('🤱 updateObstetricConditionalFields called for pregnancy:', pregnancyIndex);
+                            };
                             
-                            // Element IDs to check
-                            const elementIds = [
-                              'gestational_age_' + pregnancyIndex,
-                              'outcome_section_' + pregnancyIndex, 
-                              'outcome_' + pregnancyIndex,
-                              'baby-status-section-' + pregnancyIndex
-                            ];
-                            
-                            // Check all required elements exist
-                            console.log('🔍 Checking element availability:');
-                            elementIds.forEach(id => {
-                              const element = document.getElementById(id);
-                              console.log(`  ${id}: ${element ? '✓ Found' : '❌ Missing'}`);
-                            });
-                            
-                            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
-                            const outcomeSection = document.getElementById('outcome_section_' + pregnancyIndex);
-                            const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex) as HTMLSelectElement;
-                            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
-                            
-                            if (!gestationalAgeInput) {
-                              console.error('❌ Gestational age input not found, aborting');
-                              return;
-                            }
-                            
-                            const ageMonths = parseInt(gestationalAgeInput.value) || 0;
-                            console.log('📊 Gestational age entered:', ageMonths, 'months');
-                            
-                            if (ageMonths >= 6) {
-                              // Show outcome section
-                              if (outcomeSection) {
-                                outcomeSection.style.display = 'block';
-                                outcomeSection.classList.remove('hidden');
-                                console.log('✅ Outcome section displayed');
-                              }
+                            (window as any).updateDeliveryFields = function(pregnancyIndex: number) {
+                              const deliveryMode = (document.getElementById('mode_of_delivery_' + pregnancyIndex) as HTMLSelectElement)?.value;
+                              const labourTypeSection = document.getElementById('labour_type_section_' + pregnancyIndex);
+                              const assistedVaginalSection = document.getElementById('assisted_vaginal_type_section_' + pregnancyIndex);
+                              const csectionSection = document.getElementById('csection_type_section_' + pregnancyIndex);
                               
-                              // Populate outcome options based on gestational age
-                              if (outcomeSelect) {
-                                // Remove any existing event listeners to avoid conflicts
-                                outcomeSelect.removeEventListener('change', (window as any)['outcomeHandler_' + pregnancyIndex]);
-                                
-                                if (ageMonths < 7) {
-                                  // 6 months: borderline viability
-                                  outcomeSelect.innerHTML = 
-                                    '<option value="">Select outcome...</option>' +
-                                    '<option value="abortion">Abortion (Termination)</option>' +
-                                    '<option value="still_birth">Still birth</option>' +
-                                    '<option value="live_birth">Live birth</option>';
-                                  console.log('⚠️ Borderline viability (6 months) - all options available');
-                                } else {
-                                  // 7+ months: viable pregnancy
-                                  outcomeSelect.innerHTML = 
-                                    '<option value="">Select outcome...</option>' +
-                                    '<option value="still_birth">Still birth</option>' +
-                                    '<option value="live_birth">Live birth</option>';
-                                  console.log('✅ Viable pregnancy (7+ months) - live birth/stillbirth only');
-                                }
-                                
-                                // Add event listener with proper cleanup
-                                const outcomeHandler = function(event) {
-                                  console.log('🎯 Outcome change event fired:', event.target.value);
-                                  (window as any).handleObstetricOutcomeChange(pregnancyIndex, event.target.value);
-                                };
-                                
-                                (window as any)['outcomeHandler_' + pregnancyIndex] = outcomeHandler;
-                                outcomeSelect.addEventListener('change', outcomeHandler);
-                                console.log('✅ Event listener attached to outcome select');
-                              }
-                            } else if (ageMonths > 0 && ageMonths < 6) {
-                              // < 6 months: only abortion
-                              if (outcomeSection) {
-                                outcomeSection.style.display = 'block';
-                                outcomeSection.classList.remove('hidden');
-                              }
-                              if (outcomeSelect) {
-                                outcomeSelect.innerHTML = 
-                                  '<option value="">Select outcome...</option>' +
-                                  '<option value="abortion">Abortion (Termination)</option>';
-                                console.log('❌ Non-viable pregnancy (<6 months) - abortion only');
-                              }
-                            } else {
-                              // Hide outcome section if no valid age
-                              if (outcomeSection) {
-                                outcomeSection.style.display = 'none';
-                                console.log('🚫 No valid gestational age - hiding outcome section');
-                              }
-                            }
-                          };
-                          
-                          // Define outcome change handler with comprehensive debugging and proper CSS handling
-                          (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
-                            console.log('🤱 handleObstetricOutcomeChange called with:', { pregnancyIndex, outcome });
-                            
-                            // Get all relevant elements with exact ID verification
-                            const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
-                            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
-                            const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
-                            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
-                            
-                            // Comprehensive element verification
-                            console.log('🔍 Element verification for pregnancy', pregnancyIndex + ':');
-                            console.log('  delivery_mode_section_' + pregnancyIndex + ':', !!deliveryModeSection);
-                            console.log('  baby-status-section-' + pregnancyIndex + ':', !!babyStatusSection);
-                            console.log('  infant_sex_section_' + pregnancyIndex + ':', !!infantSexSection);
-                            console.log('  gestational_age_' + pregnancyIndex + ':', !!gestationalAgeInput);
-                            
-                            if (babyStatusSection) {
-                              console.log('🔍 Baby status section current state:', {
-                                id: babyStatusSection.id,
-                                display: babyStatusSection.style.display,
-                                className: babyStatusSection.className,
-                                innerHTML: babyStatusSection.innerHTML.substring(0, 100) + '...'
-                              });
-                            }
-                            
-                            if (outcome === 'live_birth') {
-                              console.log('👶 Live birth outcome selected - processing workflow...');
+                              if (labourTypeSection) labourTypeSection.style.display = 'none';
+                              if (assistedVaginalSection) assistedVaginalSection.style.display = 'none';
+                              if (csectionSection) csectionSection.style.display = 'none';
                               
-                              // Show delivery mode section
-                              if (deliveryModeSection) {
-                                deliveryModeSection.style.display = 'block';
-                                deliveryModeSection.classList.remove('hidden');
-                                console.log('✅ Delivery mode section displayed');
+                              if (deliveryMode === 'normal_vertex' || deliveryMode === 'assisted_breech') {
+                                if (labourTypeSection) labourTypeSection.style.display = 'block';
+                              } else if (deliveryMode === 'assisted_vaginal') {
+                                if (assistedVaginalSection) assistedVaginalSection.style.display = 'block';
+                              } else if (deliveryMode === 'c_section') {
+                                if (csectionSection) csectionSection.style.display = 'block';
                               }
+                            };
+                            
+                            (window as any).updateInfantSex = function(pregnancyIndex: number) {
+                              const labourType = (document.getElementById('labour_type_' + pregnancyIndex) as HTMLSelectElement)?.value;
+                              const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
                               
-                              // Check gestational age for baby status eligibility
-                              const gestationalAge = parseInt(gestationalAgeInput?.value || '0');
-                              console.log('📊 Gestational age check:', gestationalAge, 'months');
+                              if (labourType === 'induced' || labourType === 'spontaneous') {
+                                if (infantSexSection) infantSexSection.style.display = 'block';
+                              } else {
+                                if (infantSexSection) infantSexSection.style.display = 'none';
+                              }
+                            };
+
+                            // Function to handle outcome changes for referral standard forms
+                            (window as any).handleReferralStandardOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                              const birthWeightSection = document.getElementById('birth-weight-section-' + pregnancyIndex);
+                              const placeDeliverySection = document.getElementById('place-delivery-section-' + pregnancyIndex);
+                              const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
+                              const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
                               
                               if (gestationalAge >= 7) {
-                                console.log('✅ Viable pregnancy (≥7 months) - displaying baby status section');
-                                
-                                if (babyStatusSection) {
-                                  // Multiple display methods to override any CSS conflicts
-                                  babyStatusSection.style.display = 'block';
-                                  babyStatusSection.style.visibility = 'visible';
-                                  babyStatusSection.style.opacity = '1';
-                                  babyStatusSection.style.height = 'auto';
-                                  babyStatusSection.style.overflow = 'visible';
-                                  
-                                  // Remove any conflicting CSS classes
-                                  babyStatusSection.classList.remove('hidden', 'd-none', 'opacity-0', 'invisible');
-                                  
-                                  // Force reflow to ensure display
-                                  babyStatusSection.offsetHeight;
-                                  
-                                  console.log('✅ Baby status section made visible with styles:', {
-                                    display: babyStatusSection.style.display,
-                                    visibility: babyStatusSection.style.visibility,
-                                    opacity: babyStatusSection.style.opacity,
-                                    classList: babyStatusSection.className,
-                                    offsetHeight: babyStatusSection.offsetHeight,
-                                    offsetWidth: babyStatusSection.offsetWidth
-                                  });
-                                  
-                                  // Verify the select dropdown inside is accessible
-                                  const babyStatusSelect = document.getElementById('baby_status_' + pregnancyIndex);
-                                  if (babyStatusSelect) {
-                                    console.log('✅ Baby status select dropdown found and accessible');
-                                  } else {
-                                    console.error('❌ Baby status select dropdown NOT FOUND!');
-                                  }
-                                  
+                                if (outcome === 'live_birth') {
+                                  // Show birth-related fields only for live births
+                                  if (birthWeightSection) birthWeightSection.style.display = 'block';
+                                  if (placeDeliverySection) placeDeliverySection.style.display = 'block';
+                                  if (babyStatusSection) babyStatusSection.style.display = 'block';
                                 } else {
-                                  console.error('❌ CRITICAL: Baby status section element NOT FOUND for pregnancy', pregnancyIndex);
+                                  // Hide birth-related fields for stillbirths or no selection
+                                  if (birthWeightSection) birthWeightSection.style.display = 'none';
+                                  if (placeDeliverySection) placeDeliverySection.style.display = 'none';
+                                  if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                }
+                              }
+                            };
+                            
+                            // Define the main obstetric conditional fields function with comprehensive debugging
+                            (window as any).updateObstetricConditionalFields = function(pregnancyIndex: number) {
+                              console.log('🤱 updateObstetricConditionalFields called for pregnancy:', pregnancyIndex);
+                              
+                              // Element IDs to check
+                              const elementIds = [
+                                'gestational_age_' + pregnancyIndex,
+                                'outcome_section_' + pregnancyIndex, 
+                                'outcome_' + pregnancyIndex,
+                                'baby-status-section-' + pregnancyIndex
+                              ];
+                              
+                              // Check all required elements exist
+                              console.log('🔍 Checking element availability:');
+                              elementIds.forEach(id => {
+                                const element = document.getElementById(id);
+                                console.log(`  ${id}: ${element ? '✓ Found' : '❌ Missing'}`);
+                              });
+                              
+                              const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
+                              const outcomeSection = document.getElementById('outcome_section_' + pregnancyIndex);
+                              const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex) as HTMLSelectElement;
+                              const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
+                              
+                              if (!gestationalAgeInput) {
+                                console.error('❌ Gestational age input not found, aborting');
+                                return;
+                              }
+                              
+                              const ageMonths = parseInt(gestationalAgeInput.value) || 0;
+                              console.log('📊 Gestational age entered:', ageMonths, 'months');
+                              
+                              if (ageMonths >= 6) {
+                                // Show outcome section
+                                if (outcomeSection) {
+                                  outcomeSection.style.display = 'block';
+                                  outcomeSection.classList.remove('hidden');
+                                  console.log('✅ Outcome section displayed');
                                 }
                                 
-                                // Also show infant sex section for live births
+                                // Populate outcome options based on gestational age
+                                if (outcomeSelect) {
+                                  // Remove any existing event listeners to avoid conflicts
+                                  outcomeSelect.removeEventListener('change', (window as any)['outcomeHandler_' + pregnancyIndex]);
+                                  
+                                  if (ageMonths < 7) {
+                                    // 6 months: borderline viability
+                                    outcomeSelect.innerHTML = 
+                                      '<option value="">Select outcome...</option>' +
+                                      '<option value="abortion">Abortion (Termination)</option>' +
+                                      '<option value="still_birth">Still birth</option>' +
+                                      '<option value="live_birth">Live birth</option>';
+                                    console.log('⚠️ Borderline viability (6 months) - all options available');
+                                  } else {
+                                    // 7+ months: viable pregnancy
+                                    outcomeSelect.innerHTML = 
+                                      '<option value="">Select outcome...</option>' +
+                                      '<option value="still_birth">Still birth</option>' +
+                                      '<option value="live_birth">Live birth</option>';
+                                    console.log('✅ Viable pregnancy (7+ months) - live birth/stillbirth only');
+                                  }
+                                  
+                                  // Add event listener with proper cleanup
+                                  const outcomeHandler = function(event) {
+                                    console.log('🎯 Outcome change event fired:', event.target.value);
+                                    (window as any).handleObstetricOutcomeChange(pregnancyIndex, event.target.value);
+                                  };
+                                  
+                                  (window as any)['outcomeHandler_' + pregnancyIndex] = outcomeHandler;
+                                  outcomeSelect.addEventListener('change', outcomeHandler);
+                                  console.log('✅ Event listener attached to outcome select');
+                                }
+                              } else if (ageMonths > 0 && ageMonths < 6) {
+                                // < 6 months: only abortion
+                                if (outcomeSection) {
+                                  outcomeSection.style.display = 'block';
+                                  outcomeSection.classList.remove('hidden');
+                                }
+                                if (outcomeSelect) {
+                                  outcomeSelect.innerHTML = 
+                                    '<option value="">Select outcome...</option>' +
+                                    '<option value="abortion">Abortion (Termination)</option>';
+                                  console.log('❌ Non-viable pregnancy (<6 months) - abortion only');
+                                }
+                              } else {
+                                // Hide outcome section if no valid age
+                                if (outcomeSection) {
+                                  outcomeSection.style.display = 'none';
+                                  console.log('🚫 No valid gestational age - hiding outcome section');
+                                }
+                              }
+                            };
+                            
+                            // Define outcome change handler with comprehensive debugging and proper CSS handling
+                            (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                              console.log('🤱 handleObstetricOutcomeChange called with:', { pregnancyIndex, outcome });
+                              
+                              // Get all relevant elements with exact ID verification
+                              const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
+                              const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
+                              const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
+                              const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
+                              
+                              // Comprehensive element verification
+                              console.log('🔍 Element verification for pregnancy', pregnancyIndex + ':');
+                              console.log('  delivery_mode_section_' + pregnancyIndex + ':', !!deliveryModeSection);
+                              console.log('  baby-status-section-' + pregnancyIndex + ':', !!babyStatusSection);
+                              console.log('  infant_sex_section_' + pregnancyIndex + ':', !!infantSexSection);
+                              console.log('  gestational_age_' + pregnancyIndex + ':', !!gestationalAgeInput);
+                              
+                              if (babyStatusSection) {
+                                console.log('🔍 Baby status section current state:', {
+                                  id: babyStatusSection.id,
+                                  display: babyStatusSection.style.display,
+                                  className: babyStatusSection.className,
+                                  innerHTML: babyStatusSection.innerHTML.substring(0, 100) + '...'
+                                });
+                              }
+                              
+                              if (outcome === 'live_birth') {
+                                console.log('👶 Live birth outcome selected - processing workflow...');
+                                
+                                // Show delivery mode section
+                                if (deliveryModeSection) {
+                                  deliveryModeSection.style.display = 'block';
+                                  deliveryModeSection.classList.remove('hidden');
+                                  console.log('✅ Delivery mode section displayed');
+                                }
+                                
+                                // Check gestational age for baby status eligibility
+                                const gestationalAge = parseInt(gestationalAgeInput?.value || '0');
+                                console.log('📊 Gestational age check:', gestationalAge, 'months');
+                                
+                                if (gestationalAge >= 7) {
+                                  console.log('✅ Viable pregnancy (≥7 months) - displaying baby status section');
+                                  
+                                  if (babyStatusSection) {
+                                    // Multiple display methods to override any CSS conflicts
+                                    babyStatusSection.style.display = 'block';
+                                    babyStatusSection.style.visibility = 'visible';
+                                    babyStatusSection.style.opacity = '1';
+                                    babyStatusSection.style.height = 'auto';
+                                    babyStatusSection.style.overflow = 'visible';
+                                    
+                                    // Remove any conflicting CSS classes
+                                    babyStatusSection.classList.remove('hidden', 'd-none', 'opacity-0', 'invisible');
+                                    
+                                    // Force reflow to ensure display
+                                    babyStatusSection.offsetHeight;
+                                    
+                                    console.log('✅ Baby status section made visible with styles:', {
+                                      display: babyStatusSection.style.display,
+                                      visibility: babyStatusSection.style.visibility,
+                                      opacity: babyStatusSection.style.opacity,
+                                      classList: babyStatusSection.className,
+                                      offsetHeight: babyStatusSection.offsetHeight,
+                                      offsetWidth: babyStatusSection.offsetWidth
+                                    });
+                                    
+                                    // Verify the select dropdown inside is accessible
+                                    const babyStatusSelect = document.getElementById('baby_status_' + pregnancyIndex);
+                                    if (babyStatusSelect) {
+                                      console.log('✅ Baby status select dropdown found and accessible');
+                                    } else {
+                                      console.error('❌ Baby status select dropdown NOT FOUND!');
+                                    }
+                                    
+                                  } else {
+                                    console.error('❌ CRITICAL: Baby status section element NOT FOUND for pregnancy', pregnancyIndex);
+                                  }
+                                  
+                                  // Also show infant sex section for live births
+                                  if (infantSexSection) {
+                                    infantSexSection.style.display = 'block';
+                                    infantSexSection.classList.remove('hidden');
+                                    console.log('✅ Infant sex section displayed for live birth');
+                                  }
+                                } else {
+                                  console.log('⚠️ Non-viable pregnancy (<7 months) - baby status not shown for live birth');
+                                }
+                                
+                              } else if (outcome === 'still_birth') {
+                                console.log('💔 Still birth selected - showing delivery but hiding baby status');
+                                if (deliveryModeSection) {
+                                  deliveryModeSection.style.display = 'block';
+                                  deliveryModeSection.classList.remove('hidden');
+                                }
+                                if (babyStatusSection) {
+                                  babyStatusSection.style.display = 'none';
+                                  console.log('🚫 Baby status hidden for still birth');
+                                }
                                 if (infantSexSection) {
                                   infantSexSection.style.display = 'block';
                                   infantSexSection.classList.remove('hidden');
-                                  console.log('✅ Infant sex section displayed for live birth');
                                 }
+                                
                               } else {
-                                console.log('⚠️ Non-viable pregnancy (<7 months) - baby status not shown for live birth');
+                                console.log('🚫 Other outcome selected (' + outcome + ') - hiding all delivery-related fields');
+                                if (deliveryModeSection) deliveryModeSection.style.display = 'none';
+                                if (babyStatusSection) babyStatusSection.style.display = 'none';
+                                if (infantSexSection) infantSexSection.style.display = 'none';
                               }
                               
-                            } else if (outcome === 'still_birth') {
-                              console.log('💔 Still birth selected - showing delivery but hiding baby status');
-                              if (deliveryModeSection) {
-                                deliveryModeSection.style.display = 'block';
-                                deliveryModeSection.classList.remove('hidden');
-                              }
-                              if (babyStatusSection) {
-                                babyStatusSection.style.display = 'none';
-                                console.log('🚫 Baby status hidden for still birth');
-                              }
-                              if (infantSexSection) {
-                                infantSexSection.style.display = 'block';
-                                infantSexSection.classList.remove('hidden');
-                              }
-                              
-                            } else {
-                              console.log('🚫 Other outcome selected (' + outcome + ') - hiding all delivery-related fields');
-                              if (deliveryModeSection) deliveryModeSection.style.display = 'none';
-                              if (babyStatusSection) babyStatusSection.style.display = 'none';
-                              if (infantSexSection) infantSexSection.style.display = 'none';
-                            }
-                            
-                            console.log('🏁 handleObstetricOutcomeChange workflow completed for pregnancy', pregnancyIndex);
-                          };
-                        }
-                        
-                        // Generate pregnancy history rows
-                        console.log('🏗️ Generating', count, 'pregnancy forms...');
-                        for (let i = 0; i < count; i++) {
-                          console.log('📝 Creating pregnancy form', i + 1, 'of', count);
-                          const pregnancyRow = document.createElement('div');
-                          pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
-                          pregnancyRow.innerHTML = 
-                            '<h6 class="text-xs font-medium text-gray-700">Pregnancy ' + (i + 1) + '</h6>' +
-                            '<div class="grid grid-cols-2 gap-3">' +
-                              '<div>' +
-                                '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>' +
-                                '<input type="date" class="w-full border rounded p-1 text-xs" id="delivery_date_' + i + '" />' +
+                              console.log('🏁 handleObstetricOutcomeChange workflow completed for pregnancy', pregnancyIndex);
+                            };
+                          }
+                          
+                          // Generate pregnancy history rows
+                          console.log('🏗️ Generating', count, 'pregnancy forms...');
+                          for (let i = 0; i < count; i++) {
+                            console.log('📝 Creating pregnancy form', i + 1, 'of', count);
+                            const pregnancyRow = document.createElement('div');
+                            pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
+                            pregnancyRow.innerHTML = 
+                              '<h6 class="text-xs font-medium text-gray-700">Pregnancy ' + (i + 1) + '</h6>' +
+                              '<div class="grid grid-cols-2 gap-3">' +
+                                '<div>' +
+                                  '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>' +
+                                  '<input type="date" class="w-full border rounded p-1 text-xs" id="delivery_date_' + i + '" />' +
+                                '</div>' +
+                                '<div>' +
+                                  '<label class="block text-xs font-medium mb-1">Estimated date of delivery/termination</label>' +
+                                  '<input type="date" class="w-full border rounded p-1 text-xs" id="estimated_delivery_' + i + '" />' +
+                                '</div>' +
                               '</div>' +
-                              '<div>' +
-                                '<label class="block text-xs font-medium mb-1">Estimated date of delivery/termination</label>' +
-                                '<input type="date" class="w-full border rounded p-1 text-xs" id="estimated_delivery_' + i + '" />' +
+                              '<div class="grid grid-cols-2 gap-3">' +
+                                '<div>' +
+                                  '<label class="block text-xs font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>' +
+                                  '<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="gestational_age_' + i + '" onChange="updateObstetricConditionalFields(' + i + ')" placeholder="e.g., 8" />' +
+                                '</div>' +
+                                '<div id="outcome_section_' + i + '" style="display: none;">' +
+                                  '<label class="block text-xs font-medium mb-1">Outcome</label>' +
+                                  '<select class="w-full border rounded p-1 text-xs" id="outcome_' + i + '">' +
+                                    '<option value="">Select outcome...</option>' +
+                                  '</select>' +
+                                '</div>' +
                               '</div>' +
-                            '</div>' +
-                            '<div class="grid grid-cols-2 gap-3">' +
-                              '<div>' +
-                                '<label class="block text-xs font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>' +
-                                '<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="gestational_age_' + i + '" onChange="updateObstetricConditionalFields(' + i + ')" placeholder="e.g., 8" />' +
-                              '</div>' +
-                              '<div id="outcome_section_' + i + '" style="display: none;">' +
-                                '<label class="block text-xs font-medium mb-1">Outcome</label>' +
-                                '<select class="w-full border rounded p-1 text-xs" id="outcome_' + i + '">' +
-                                  '<option value="">Select outcome...</option>' +
+                              '<div id="delivery_mode_section_' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Mode of delivery</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="mode_of_delivery_' + i + '" onChange="updateDeliveryFields(' + i + ')">' +
+                                  '<option value="">Select mode...</option>' +
+                                  '<option value="normal_vertex">Normal Vertex Delivery</option>' +
+                                  '<option value="assisted_vaginal">Assisted Vaginal Delivery</option>' +
+                                  '<option value="assisted_breech">Assisted Breech Delivery</option>' +
+                                  '<option value="c_section">C-section</option>' +
                                 '</select>' +
                               '</div>' +
-                            '</div>' +
-                            '<div id="delivery_mode_section_' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Mode of delivery</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="mode_of_delivery_' + i + '" onChange="updateDeliveryFields(' + i + ')">' +
-                                '<option value="">Select mode...</option>' +
-                                '<option value="normal_vertex">Normal Vertex Delivery</option>' +
-                                '<option value="assisted_vaginal">Assisted Vaginal Delivery</option>' +
-                                '<option value="assisted_breech">Assisted Breech Delivery</option>' +
-                                '<option value="c_section">C-section</option>' +
-                              '</select>' +
-                            '</div>' +
-                            '<div id="labour_type_section_' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Type of labour</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="labour_type_' + i + '" onChange="updateInfantSex(' + i + ')">' +
-                                '<option value="">Select type...</option>' +
-                                '<option value="induced">Induced</option>' +
-                                '<option value="spontaneous">Spontaneous</option>' +
-                              '</select>' +
-                            '</div>' +
-                            '<div id="assisted_vaginal_type_section_' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Type of assisted vaginal delivery</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="assisted_vaginal_type_' + i + '">' +
-                                '<option value="">Select type...</option>' +
-                                '<option value="forceps">Forceps</option>' +
-                                '<option value="vacuum">Vacuum</option>' +
-                              '</select>' +
-                            '</div>' +
-                            '<div id="csection_type_section_' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Type of C-section</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="csection_type_' + i + '">' +
-                                '<option value="">Select type...</option>' +
-                                '<option value="planned">Planned/Elective</option>' +
-                                '<option value="emergency">Emergency</option>' +
-                              '</select>' +
-                            '</div>' +
-                            '<div id="birth-weight-section-' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Birth Weight (kg)</label>' +
-                              '<input type="number" step="0.1" min="0.5" max="6.0" placeholder="e.g., 3.2" class="w-full border rounded p-1 text-xs" id="birth_weight_' + i + '" />' +
-                              '<div id="weight-classification-' + i + '" style="display: none;"></div>' +
-                            '</div>' +
-                            '<div id="place-delivery-section-' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Place of Delivery</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="place_delivery_' + i + '">' +
-                                '<option value="">Select place...</option>' +
-                                '<option value="hospital">Hospital</option>' +
-                                '<option value="health_center">Health Center</option>' +
-                                '<option value="home">Home</option>' +
-                                '<option value="traditional_healer">Traditional Healer</option>' +
-                                '<option value="en_route">En route to facility</option>' +
-                                '<option value="other">Other (specify)</option>' +
-                              '</select>' +
-                              '<div id="delivery-risk-' + i + '" style="display: none;"></div>' +
-                            '</div>' +
-                            '<div id="baby-status-section-' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Baby\'s Current Status</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="baby_status_' + i + '">' +
-                                '<option value="">Select status...</option>' +
-                                '<option value="alive_well">Alive and well</option>' +
-                                '<option value="alive_complications">Alive with complications</option>' +
-                                '<option value="deceased">Deceased</option>' +
-                                '<option value="unknown">Unknown</option>' +
-                              '</select>' +
-                              '<div id="status-alert-' + i + '" style="display: none;"></div>' +
-                            '</div>' +
-                            '<div id="infant_sex_section_' + i + '" style="display: none;">' +
-                              '<label class="block text-xs font-medium mb-1">Sex of infant</label>' +
-                              '<select class="w-full border rounded p-1 text-xs" id="infant_sex_' + i + '">' +
-                                '<option value="">Select sex...</option>' +
-                                '<option value="male">Male</option>' +
-                                '<option value="female">Female</option>' +
-                              '</select>' +
-                            '</div>';
-                          historyContainer.appendChild(pregnancyRow);
+                              '<div id="labour_type_section_' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Type of labour</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="labour_type_' + i + '" onChange="updateInfantSex(' + i + ')">' +
+                                  '<option value="">Select type...</option>' +
+                                  '<option value="induced">Induced</option>' +
+                                  '<option value="spontaneous">Spontaneous</option>' +
+                                '</select>' +
+                              '</div>' +
+                              '<div id="assisted_vaginal_type_section_' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Type of assisted vaginal delivery</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="assisted_vaginal_type_' + i + '">' +
+                                  '<option value="">Select type...</option>' +
+                                  '<option value="forceps">Forceps</option>' +
+                                  '<option value="vacuum">Vacuum</option>' +
+                                '</select>' +
+                              '</div>' +
+                              '<div id="csection_type_section_' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Type of C-section</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="csection_type_' + i + '">' +
+                                  '<option value="">Select type...</option>' +
+                                  '<option value="planned">Planned/Elective</option>' +
+                                  '<option value="emergency">Emergency</option>' +
+                                '</select>' +
+                              '</div>' +
+                              '<div id="birth-weight-section-' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Birth Weight (kg)</label>' +
+                                '<input type="number" step="0.1" min="0.5" max="6.0" placeholder="e.g., 3.2" class="w-full border rounded p-1 text-xs" id="birth_weight_' + i + '" />' +
+                                '<div id="weight-classification-' + i + '" style="display: none;"></div>' +
+                              '</div>' +
+                              '<div id="place-delivery-section-' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Place of Delivery</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="place_delivery_' + i + '">' +
+                                  '<option value="">Select place...</option>' +
+                                  '<option value="hospital">Hospital</option>' +
+                                  '<option value="health_center">Health Center</option>' +
+                                  '<option value="home">Home</option>' +
+                                  '<option value="traditional_healer">Traditional Healer</option>' +
+                                  '<option value="en_route">En route to facility</option>' +
+                                  '<option value="other">Other (specify)</option>' +
+                                '</select>' +
+                                '<div id="delivery-risk-' + i + '" style="display: none;"></div>' +
+                              '</div>' +
+                              '<div id="baby-status-section-' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Baby\'s Current Status</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="baby_status_' + i + '">' +
+                                  '<option value="">Select status...</option>' +
+                                  '<option value="alive_well">Alive and well</option>' +
+                                  '<option value="alive_complications">Alive with complications</option>' +
+                                  '<option value="deceased">Deceased</option>' +
+                                  '<option value="unknown">Unknown</option>' +
+                                '</select>' +
+                                '<div id="status-alert-' + i + '" style="display: none;"></div>' +
+                              '</div>' +
+                              '<div id="infant_sex_section_' + i + '" style="display: none;">' +
+                                '<label class="block text-xs font-medium mb-1">Sex of infant</label>' +
+                                '<select class="w-full border rounded p-1 text-xs" id="infant_sex_' + i + '">' +
+                                  '<option value="">Select sex...</option>' +
+                                  '<option value="male">Male</option>' +
+                                  '<option value="female">Female</option>' +
+                                '</select>' +
+                              '</div>';
+                            historyContainer.appendChild(pregnancyRow);
+                          }
                         }
-                      }
-                    }}
-                  />
-                </div>
-                
-                {/* Dynamic Pregnancy History Container */}
-                <div id="pregnancy-history-container" className="space-y-3"></div>
-                
-                {/* React-based Pregnancy Workflow System */}
-                <ReactPregnancyWorkflowManager />
-                
-                {/* Social Habits Section - Hidden by default */}
-                <div id="social-habits-section" style={{ display: 'none' }} className="space-y-2">
-                  <label className="block text-xs font-medium">Social habits</label>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="none" />
-                      <span>None</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="tobacco" />
-                      <span>Tobacco</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="alcohol" />
-                      <span>Alcohol use</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="substance" />
-                      <span>Substance use</span>
-                    </label>
+                      }}
+                    />
                   </div>
-                </div>
-                
-                {/* Complications Section - Hidden by default */}
-                <div id="complications-section" style={{ display: 'none' }} className="space-y-2">
-                  <label className="block text-xs font-medium">Any complications in child birth</label>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="none" />
-                      <span>None</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="preeclampsia" />
-                      <span>Pre-eclampsia</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="eclampsia" />
-                      <span>Eclampsia</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="convulsions" />
-                      <span>Convulsions</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="heavy_bleeding" />
-                      <span>Heavy bleeding</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="baby_died" />
-                      <span>Baby died within 24 hours</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="macrosomia" />
-                      <span>Macrosomia</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="perineal_tear" />
-                      <span>Perineal tear (3rd or 4th degree)</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="gestational_diabetes" />
-                      <span>Gestational Diabetes</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="text-blue-600" value="other" />
-                      <span>Other (specify)</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Treatment Given Before Referral */}
-              <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
-                <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Treatment Given Before Referral</h5>
-                
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium mb-2">Any treatment given before referral <span className="text-red-500">*</span></label>
-                    <div className="flex space-x-4">
+                  
+                  {/* Dynamic Pregnancy History Container */}
+                  <div id="pregnancy-history-container" className="space-y-3"></div>
+                  
+                  {/* React-based Pregnancy Workflow System */}
+                  <ReactPregnancyWorkflowManager />
+                  
+                  {/* Social Habits Section - Hidden by default */}
+                  <div id="social-habits-section" style={{ display: 'none' }} className="space-y-2">
+                    <label className="block text-xs font-medium">Social habits</label>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
                       <label className="flex items-center space-x-2">
-                        <input 
-                          type="radio" 
-                          name="referral_treatment_given" 
-                          value="yes"
-                          className="text-blue-600"
-                          onChange={(e) => {
-                            const medicationsSection = document.getElementById('referral_medications_section');
-                            if (medicationsSection) {
-                              medicationsSection.style.display = e.target.checked ? 'block' : 'none';
-                            }
-                          }}
-                        />
-                        <span className="text-sm">Yes</span>
+                        <input type="checkbox" className="text-blue-600" value="none" />
+                        <span>None</span>
                       </label>
                       <label className="flex items-center space-x-2">
-                        <input 
-                          type="radio" 
-                          name="referral_treatment_given" 
-                          value="no"
-                          className="text-blue-600"
-                          onChange={(e) => {
-                            const medicationsSection = document.getElementById('referral_medications_section');
-                            if (medicationsSection) {
-                              medicationsSection.style.display = e.target.checked ? 'none' : 'block';
-                            }
-                          }}
-                        />
-                        <span className="text-sm">No</span>
+                        <input type="checkbox" className="text-blue-600" value="tobacco" />
+                        <span>Tobacco</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="alcohol" />
+                        <span>Alcohol use</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="substance" />
+                        <span>Substance use</span>
                       </label>
                     </div>
                   </div>
                   
-                  {/* Medications Section - Hidden by default */}
-                  <div id="referral_medications_section" style={{ display: 'none' }} className="space-y-2">
-                    <label className="block text-xs font-medium">Medications given</label>
-                    <textarea 
-                      className="w-full border rounded p-2 text-sm"
-                      rows={2}
-                      placeholder="Enter medications given before referral"
-                    ></textarea>
-                    <p className="text-xs text-gray-500 italic">Select from Pharmacy Module</p>
+                  {/* Complications Section - Hidden by default */}
+                  <div id="complications-section" style={{ display: 'none' }} className="space-y-2">
+                    <label className="block text-xs font-medium">Any complications in child birth</label>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="none" />
+                        <span>None</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="preeclampsia" />
+                        <span>Pre-eclampsia</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="eclampsia" />
+                        <span>Eclampsia</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="convulsions" />
+                        <span>Convulsions</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="heavy_bleeding" />
+                        <span>Heavy bleeding</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="baby_died" />
+                        <span>Baby died within 24 hours</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="macrosomia" />
+                        <span>Macrosomia</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="perineal_tear" />
+                        <span>Perineal tear (3rd or 4th degree)</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="gestational_diabetes" />
+                        <span>Gestational Diabetes</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="text-blue-600" value="other" />
+                        <span>Other (specify)</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Treatment Given Before Referral */}
+                <div className="space-y-3 border border-blue-300 rounded p-3 bg-white">
+                  <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-1">Treatment Given Before Referral</h5>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium mb-2">Any treatment given before referral <span className="text-red-500">*</span></label>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input 
+                            type="radio" 
+                            name="referral_treatment_given" 
+                            value="yes"
+                            className="text-blue-600"
+                            onChange={(e) => {
+                              const medicationsSection = document.getElementById('referral_medications_section');
+                              if (medicationsSection) {
+                                medicationsSection.style.display = e.target.checked ? 'block' : 'none';
+                              }
+                            }}
+                          />
+                          <span className="text-sm">Yes</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input 
+                            type="radio" 
+                            name="referral_treatment_given" 
+                            value="no"
+                            className="text-blue-600"
+                            onChange={(e) => {
+                              const medicationsSection = document.getElementById('referral_medications_section');
+                              if (medicationsSection) {
+                                medicationsSection.style.display = e.target.checked ? 'none' : 'block';
+                              }
+                            }}
+                          />
+                          <span className="text-sm">No</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {/* Medications Section - Hidden by default */}
+                    <div id="referral_medications_section" style={{ display: 'none' }} className="space-y-2">
+                      <label className="block text-xs font-medium">Medications given</label>
+                      <textarea 
+                        className="w-full border rounded p-2 text-sm"
+                        rows={2}
+                        placeholder="Enter medications given before referral"
+                      ></textarea>
+                      <p className="text-xs text-gray-500 italic">Select from Pharmacy Module</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Additional Notes */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Additional Notes/Comments</label>
-              <textarea 
-                className="w-full border rounded p-2 text-sm" 
-                rows={3}
-                placeholder="Add any additional information about the referral reasons..."
-              ></textarea>
-            </div>
+              {/* Additional Notes */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium">Additional Notes/Comments</label>
+                <textarea 
+                  className="w-full border rounded p-2 text-sm" 
+                  rows={3}
+                  placeholder="Add any additional information about the referral reasons..."
+                ></textarea>
+              </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-4 border-t">
-              <Button 
-                variant="outline" 
-                className="rounded-xl bg-gray-100/60 hover:bg-gray-200/60 text-gray-700 border border-gray-200/50 px-6 py-2 text-sm font-medium transition-all duration-200"
-                onClick={() => setShowReferralReasonsDialog(false)}
-              >
-                Cancel
-              </Button>
-              <Button 
-                className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-none px-6 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200"
-                onClick={() => {
-                  // Update display elements
-                  const categoryDisplay = document.getElementById('referral_category_display');
-                  const reasonsCount = document.getElementById('referral_reasons_count');
-                  
-                  if (categoryDisplay) {
-                    categoryDisplay.textContent = selectedReferralReasons.length > 0 
-                      ? `${selectedReferralReasons.length} categories selected`
-                      : 'Not selected';
-                  }
-                  if (reasonsCount) {
-                    reasonsCount.textContent = selectedReferralReasons.length > 0 
-                      ? `${selectedReferralReasons.length} selected`
-                      : '0 selected';
-                  }
-                  
-                  setShowReferralReasonsDialog(false);
-                  toast({
-                    title: "Referral Reasons Saved",
-                    description: "Referral reasons have been recorded successfully.",
-                    duration: 2000,
-                  });
-                }}
-              >
-                Save & Apply
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3 pt-4 border-t">
+                <Button 
+                  variant="outline" 
+                  className="rounded-xl bg-gray-100/60 hover:bg-gray-200/60 text-gray-700 border border-gray-200/50 px-6 py-2 text-sm font-medium transition-all duration-200"
+                  onClick={() => setShowReferralReasonsDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-none px-6 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200"
+                  onClick={() => {
+                    // Update display elements
+                    const categoryDisplay = document.getElementById('referral_category_display');
+                    const reasonsCount = document.getElementById('referral_reasons_count');
+                    
+                    if (categoryDisplay) {
+                      categoryDisplay.textContent = selectedReferralReasons.length > 0 
+                        ? `${selectedReferralReasons.length} categories selected`
+                        : 'Not selected';
+                    }
+                    if (reasonsCount) {
+                      reasonsCount.textContent = selectedReferralReasons.length > 0 
+                        ? `${selectedReferralReasons.length} selected`
+                        : '0 selected';
+                    }
+                    
+                    setShowReferralReasonsDialog(false);
+                    toast({
+                      title: "Referral Reasons Saved",
+                      description: "Referral reasons have been recorded successfully.",
+                      duration: 2000,
+                    });
+                  }}
+                >
+                  Save & Apply
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
       {/* Referral Checklist Dialog */}
       <Dialog open={showReferralChecklistDialog} onOpenChange={setShowReferralChecklistDialog}>
         <DialogContent className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto" 
@@ -9727,7 +9726,7 @@ export default function AncPage() {
           
           <div className="space-y-6">
             {/* Basic Obstetric Assessment */}
-            <div className="border border-blue-300 rounded-lg p-4 bg-blue-50">
+            <div className="border border-blue-300 rounded-lg p-4 bg-[#24302400]">
               <h5 className="text-sm font-medium text-blue-600 border-b border-blue-200 pb-2 mb-4">Basic Obstetric Assessment</h5>
               
               <div className="grid grid-cols-4 gap-4">
@@ -12124,7 +12123,6 @@ export default function AncPage() {
           )}
         </DialogContent>
       </Dialog>
-
       {/* Maternal Assessment Modal */}
       {showMaternalAssessmentModal && (
         <MaternalAssessmentModal 
@@ -12133,7 +12131,6 @@ export default function AncPage() {
           onSave={handleSaveMaternalAssessment}
         />
       )}
-
       {/* Fetal Assessment Modal */}
       {showFetalAssessmentModal && (
         <FetalAssessmentModal 
@@ -12142,7 +12139,6 @@ export default function AncPage() {
           onSave={handleSaveFetalAssessment}
         />
       )}
-
       {/* Standard ANC Assessment Modal */}
       <Dialog open={showStandardAssessmentDialog} onOpenChange={setShowStandardAssessmentDialog}>
         <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto w-[90vw]" style={{ width: '90vw', maxWidth: '1280px', height: '95vh' }}>
@@ -12164,7 +12160,6 @@ export default function AncPage() {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* Clinical Decision Support Modal */}
       <ClinicalDecisionSupportModal
         condition={currentCdssCondition}
@@ -12172,7 +12167,6 @@ export default function AncPage() {
         onClose={() => setCdssModalOpen(false)}
         onConfirm={handleCDSSConfirm}
       />
-
       {/* Enhanced Behavioral Counselling Modal with Given-When-Then Tracking */}
       <EnhancedBehavioralCounsellingModal
         isOpen={showBehavioralCounsellingDialog}
@@ -12194,7 +12188,6 @@ export default function AncPage() {
         }}
         existingData={behavioralCounsellingData}
       />
-
       {/* Form Trigger-Based CDSS Modal */}
       <CDSSTriggeredModal
         isOpen={showCDSSTriggeredModal}
@@ -12213,7 +12206,6 @@ export default function AncPage() {
           setShowCDSSTriggeredModal(false);
         }}
       />
-
       {/* Laboratory Tests Modal */}
       <LaboratoryTestsModal
         isOpen={showLaboratoryTestsModal}
@@ -12221,7 +12213,6 @@ export default function AncPage() {
         onSave={handleSaveLaboratoryTests}
         initialData={laboratoryTestsData}
       />
-
       {/* Specialized Diagnostic Tests Modal */}
       <LaboratoryTestsModal
         isOpen={showSpecializedTestsModal}
@@ -12230,7 +12221,6 @@ export default function AncPage() {
         initialData={laboratoryTestsData}
         defaultTab="specialized"
       />
-
       {/* Health Education Modal */}
       <HealthEducationModal
         isOpen={showHealthEducationModal}
@@ -12238,7 +12228,6 @@ export default function AncPage() {
         onSave={handleSaveHealthEducation}
         initialData={healthEducationData}
       />
-
       {/* Interventions & Treatments Modal */}
       <InterventionsTreatmentsModal
         isOpen={showInterventionsTreatmentsDialog}
@@ -12247,7 +12236,6 @@ export default function AncPage() {
         existingData={interventionsData}
         onTriggerPrescription={handleTriggerPrescription}
       />
-
       {/* Prescription Modal */}
       <PrescriptionModalWrapper
         isOpen={showPrescriptionModal}
@@ -12255,7 +12243,6 @@ export default function AncPage() {
         onClose={handleClosePrescriptionModal}
         prePopulatedDrug={prePopulatedDrug}
       />
-
       {/* Referral Modal */}
       <ReferralModal
         isOpen={showReferralModal}
@@ -12264,9 +12251,6 @@ export default function AncPage() {
         initialData={referralData}
         dangerSigns={selectedDangerSigns}
       />
-      
-
-      
       {/* Danger Sign Info Modal - Simplified */}
       <Dialog open={showDangerSignInfo} onOpenChange={setShowDangerSignInfo}>
         <DialogContent className="bg-white/60 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-xl rounded-2xl font-sans max-w-md p-6" 
