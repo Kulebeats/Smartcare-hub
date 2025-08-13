@@ -9486,13 +9486,31 @@ export default function AncPage() {
                     type="number" 
                     id="obstetric_gravida"
                     min="1" 
-                    max="20" 
+                    max="30" 
                     className="w-full border rounded p-2 text-sm"
                     placeholder="e.g., 3"
                     required
                     value={obstetricHistory.gravida}
                     onChange={(e) => {
                       const gravida = parseInt(e.target.value) || 0;
+                      
+                      // Business Rule: Gravida validation - Block values over 30, warn for values over 15
+                      if (gravida > 30) {
+                        toast({
+                          title: "Value Exceeds System Limit",
+                          description: "Value exceeds system limit (30). Please verify.",
+                          variant: "destructive",
+                        });
+                        // Reset the input value
+                        e.target.value = obstetricHistory.gravida;
+                        return; // Block save by returning early
+                      } else if (gravida > 15) {
+                        toast({
+                          title: "High Number Warning",
+                          description: "High number of pregnancies recorded. Please confirm.",
+                          variant: "destructive",
+                        });
+                      }
                       
                       // Get current values
                       const para = parseInt(obstetricHistory.para) || 0;
