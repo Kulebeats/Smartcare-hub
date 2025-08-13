@@ -101,9 +101,9 @@ const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, desc
         {showInfoIcon && (
           <ContextCard.Trigger
             content={
-              <div className="text-sm text-left max-w-sm p-2">
-                <div className="font-semibold mb-1">{label}</div>
-                <div className="text-gray-700">{description}</div>
+              <div className="text-sm text-left max-w-sm p-3">
+                <div className="font-bold mb-2 text-black">{label}</div>
+                <div className="text-black leading-relaxed">{description}</div>
               </div>
             }
             side="bottom"

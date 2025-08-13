@@ -24,8 +24,15 @@ const ContextCardTrigger = ({
         anchorSelect={`#${id}`}
         place={side}
         opacity={1}
-        border={"1px solid var(--context-card-border)"}
-        className={`!font-sans !text-center !text-base !rounded-lg !bg-background-100 !text-gray-1000`}
+        border={"2px solid #3b82f6"}
+        className={`!font-sans !text-left !text-sm !rounded-lg !bg-blue-50 !text-black !shadow-lg !z-50 !backdrop-blur-sm`}
+        style={{
+          backgroundColor: '#dbeafe !important',
+          color: '#000000 !important',
+          border: '2px solid #3b82f6 !important',
+          boxShadow: '0 8px 16px rgba(59, 130, 246, 0.3) !important',
+          zIndex: 9999
+        }}
       >
         {content}
       </Tooltip>
