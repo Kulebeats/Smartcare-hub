@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ContextCard } from "@/components/ui/context-card";
 import { AlertTriangle, Shield, Heart, Users, Brain, User } from 'lucide-react';
 
 interface IPVSignsSelectionModalProps {
@@ -19,11 +20,10 @@ interface IPVSignWithTooltipProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
   description: string;
-  onInfoClick: (label: string, description: string) => void;
 }
 
 const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
-  id, name, value, checked, onChange, label, description, onInfoClick
+  id, name, value, checked, onChange, label, description
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -55,16 +55,22 @@ const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
       <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
         <span className="text-black">{label}</span>
         {showInfoIcon && (
-          <button 
-            type="button" 
-            onClick={() => onInfoClick(label, description)}
-            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1"
-            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 8px hsla(223.58deg, 50.96%, 59.22%, 0.5)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+          <ContextCard.Trigger
+            content={
+              <div className="text-sm text-left max-w-xs p-2">
+                <div className="font-semibold mb-1">{label}</div>
+                <div className="text-gray-700">{description}</div>
+              </div>
+            }
+            side="bottom"
           >
-            i
-          </button>
+            <div 
+              className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
+              style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+            >
+              i
+            </div>
+          </ContextCard.Trigger>
         )}
       </label>
     </div>
@@ -79,8 +85,6 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
 }) => {
   const [selectedSigns, setSelectedSigns] = useState<string[]>(initialSelectedSigns);
   const [ipvSignsConfirmed, setIpvSignsConfirmed] = useState(false);
-  const [showInfoModal, setShowInfoModal] = useState(false);
-  const [infoContent, setInfoContent] = useState({ title: '', description: '' });
 
   // IPV Signs organized by category with descriptions for info tooltips
   const ipvSignCategories = {
@@ -188,11 +192,6 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
     onConfirmSelection(selectedSigns);
   };
 
-  const handleInfoClick = (label: string, description: string) => {
-    setInfoContent({ title: label, description });
-    setShowInfoModal(true);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-5xl max-h-[85vh] overflow-y-auto" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
@@ -231,7 +230,6 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
                           onChange={handleIPVSignsChange}
                           label={sign.label}
                           description={sign.description}
-                          onInfoClick={handleInfoClick}
                         />
                       ))}
                     </div>
@@ -285,27 +283,6 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
           </Button>
         </div>
       </DialogContent>
-      
-      {/* Info Modal - matching danger signs pattern */}
-      {showInfoModal && (
-        <Dialog open={showInfoModal} onOpenChange={setShowInfoModal}>
-          <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-md">
-            <DialogTitle className="text-lg font-semibold text-black mb-3">{infoContent.title}</DialogTitle>
-            <div className="space-y-3">
-              <p className="text-sm text-black leading-relaxed">{infoContent.description}</p>
-              <div className="flex justify-end">
-                <Button 
-                  variant="outline" 
-                  className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
-                  onClick={() => setShowInfoModal(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </Dialog>
   );
 };

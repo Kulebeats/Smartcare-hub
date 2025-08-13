@@ -8,6 +8,7 @@ import { ChevronRight, ChevronDown, ArrowLeft, AlertTriangle, Plus, Edit, TestTu
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ContextCard } from "@/components/ui/context-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { AncInitialDialog } from "@/components/medical-record/anc-initial-dialog";
 import { AncDecisionSupportAlert, DecisionRuleTable } from "@/components/medical-record/anc-decision-support";
@@ -67,7 +68,7 @@ const enhancedDangerSignDescriptions = {
 };
 
 // Helper component for danger sign with info modal
-const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description, onInfoClick }) => {
+const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   // Smart contextual display: show icon when selected OR hovered
@@ -96,18 +97,24 @@ const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, desc
         className="rounded border-gray-300 text-red-600 w-3.5 h-3.5"
       />
       <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
-        <span className="text-gray-800">{label}</span>
+        <span className="text-black">{label}</span>
         {showInfoIcon && (
-          <button 
-            type="button" 
-            onClick={() => onInfoClick(label, description)}
-            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1"
-            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 4px 8px hsla(223.58deg, 50.96%, 59.22%, 0.5)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+          <ContextCard.Trigger
+            content={
+              <div className="text-sm text-left max-w-sm p-2">
+                <div className="font-semibold mb-1">{label}</div>
+                <div className="text-gray-700">{description}</div>
+              </div>
+            }
+            side="bottom"
           >
-            i
-          </button>
+            <div 
+              className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
+              style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+            >
+              i
+            </div>
+          </ContextCard.Trigger>
         )}
       </label>
     </div>
