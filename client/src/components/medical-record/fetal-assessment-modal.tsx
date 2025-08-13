@@ -29,6 +29,10 @@ interface FetalAssessmentData {
   no_of_foetus: '1' | '2' | 'multiple' | ''
   no_of_foetus_unknown: boolean
   fetal_heartbeat: 'present' | 'absent' | ''
+  
+  // Additional Symptoms and Maternal Concerns
+  additional_symptoms: string[]
+  maternal_concern: boolean
 }
 
 interface FetalAssessmentModalProps {
@@ -63,6 +67,10 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
     no_of_foetus: '',
     no_of_foetus_unknown: false,
     fetal_heartbeat: '',
+    
+    // Additional Symptoms and Maternal Concerns
+    additional_symptoms: [],
+    maternal_concern: false,
     ...initialData
   })
 
@@ -80,27 +88,55 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
   // Handle fetal movement assessment with business rules
   const handleFetalMovementChange = (value: string) => {
     updateFormData('fetal_movement_felt', value)
-    
-    // Apply business rules if gestational age >= 28 weeks
-    if (gestationalAge >= 28 && value && value !== 'normal') {
+    evaluateFetalMovementDecision(value, formData.additional_symptoms, formData.maternal_concern)
+  }
+
+  // Handle additional symptoms change
+  const handleAdditionalSymptomsChange = (symptoms: string[]) => {
+    updateFormData('additional_symptoms', symptoms)
+    evaluateFetalMovementDecision(formData.fetal_movement_felt, symptoms, formData.maternal_concern)
+  }
+
+  // Handle maternal concern change
+  const handleMaternalConcernChange = (concern: boolean) => {
+    updateFormData('maternal_concern', concern)
+    evaluateFetalMovementDecision(formData.fetal_movement_felt, formData.additional_symptoms, concern)
+  }
+
+  // Evaluate fetal movement decision with all factors
+  const evaluateFetalMovementDecision = (movement: string, symptoms: string[], concern: boolean) => {
+    if (gestationalAge >= 20 && movement && movement !== 'normal') {
       let movementStatus = ''
       
-      if (value === 'reduced') {
+      if (movement === 'reduced') {
         movementStatus = 'Reduced or poor fetal movement'
-      } else if (value === 'absent') {
+      } else if (movement === 'absent') {
         movementStatus = 'No fetal movement'
       }
       
       if (movementStatus) {
         const assessment: FetalMovementAssessment = {
           movementStatus,
-          gestationalAge
+          gestationalAge,
+          maternalConcern: concern,
+          additionalSymptoms: symptoms.filter(s => s !== 'None of the above')
         }
         
         const decision = assessFetalMovement(assessment)
         setFetalMovementDecision(decision)
         setShowMovementAlert(true)
       }
+    } else if (movement === 'normal' && concern) {
+      // Handle normal movement with maternal concern
+      const assessment: FetalMovementAssessment = {
+        movementStatus: 'Normal fetal movement',
+        gestationalAge,
+        maternalConcern: true
+      }
+      
+      const decision = assessFetalMovement(assessment)
+      setFetalMovementDecision(decision)
+      setShowMovementAlert(true)
     } else {
       setFetalMovementDecision(null)
       setShowMovementAlert(false)
@@ -530,6 +566,67 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
                   </Label>
                 </div>
               </div>
+
+              {/* Additional Symptoms Assessment */}
+              {formData.fetal_movement_felt && formData.fetal_movement_felt !== 'normal' && (
+                <div className="space-y-4 mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <Label className="text-sm font-medium text-orange-800">
+                    Are there any additional symptoms? (Select all that apply)
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {[
+                      'Bleeding or spotting',
+                      'Cramping or contractions', 
+                      'Fluid leakage',
+                      'Severe abdominal pain',
+                      'Nausea and vomiting',
+                      'Dizziness or fainting',
+                      'None of the above'
+                    ].map(symptom => (
+                      <label key={symptom} className="flex items-center p-2 hover:bg-orange-100 rounded cursor-pointer">
+                        <Checkbox
+                          checked={formData.additional_symptoms.includes(symptom)}
+                          onCheckedChange={(checked) => {
+                            const currentSymptoms = formData.additional_symptoms || [];
+                            let newSymptoms;
+                            
+                            if (symptom === 'None of the above') {
+                              newSymptoms = checked ? ['None of the above'] : [];
+                            } else {
+                              if (checked) {
+                                newSymptoms = [...currentSymptoms.filter(s => s !== 'None of the above'), symptom];
+                              } else {
+                                newSymptoms = currentSymptoms.filter(s => s !== symptom);
+                              }
+                            }
+                            
+                            handleAdditionalSymptomsChange(newSymptoms);
+                          }}
+                          className="mr-3"
+                        />
+                        <span className="text-sm text-orange-700">{symptom}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Maternal Concern Assessment */}
+              {formData.fetal_movement_felt && (
+                <div className="space-y-4 mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <Checkbox
+                      checked={formData.maternal_concern}
+                      onCheckedChange={(checked) => handleMaternalConcernChange(checked as boolean)}
+                      className="w-5 h-5"
+                    />
+                    <div>
+                      <span className="text-sm font-medium text-blue-800">Mother expresses concern about fetal movement</span>
+                      <p className="text-xs text-blue-600">Check if mother is worried about baby's movement pattern</p>
+                    </div>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
 

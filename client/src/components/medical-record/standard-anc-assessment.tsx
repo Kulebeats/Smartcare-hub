@@ -1782,51 +1782,13 @@ const FetalMovementSection: React.FC<SectionProps> = ({ data, onChange }) => {
           </div>
         </div>
 
-        {/* Additional Symptoms Assessment */}
-        {data.movement_status && data.movement_status !== 'Normal fetal movement' && (
-          <div>
-            <label className="block text-sm font-medium mb-3">
-              Are there any additional symptoms? (Select all that apply)
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {additionalSymptomOptions.map(symptom => (
-                <label key={symptom} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedAdditionalSymptoms.includes(symptom)}
-                    onChange={() => handleSymptomToggle(symptom)}
-                    className="mr-3 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm">{symptom}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Maternal Concern Assessment */}
-        {data.movement_status && (
-          <div>
-            <label className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-              <input
-                type="checkbox"
-                checked={maternalConcern}
-                onChange={(e) => {
-                  setMaternalConcern(e.target.checked);
-                  // Check gestational age when maternal concerns are first entered
-                  if (e.target.checked && !data.gestationalAge) {
-                    setShowGestationalAgePrompt(true);
-                  }
-                }}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <div>
-                <span className="text-sm font-medium">Mother expresses concern about fetal movement</span>
-                <p className="text-xs text-gray-500">Check if mother is worried about baby's movement pattern</p>
-              </div>
-            </label>
-          </div>
-        )}
+        {/* Note: Additional Symptoms and Maternal Concerns moved to Fetal Assessment Modal */}
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-700">
+            <strong>Note:</strong> For detailed fetal movement assessment including additional symptoms and maternal concerns, 
+            please use the Fetal Assessment section which provides comprehensive clinical decision support.
+          </p>
+        </div>
 
         {/* Clinical Decision Support Display */}
         {movementDecision && movementDecision.riskLevel !== 'normal' && (
