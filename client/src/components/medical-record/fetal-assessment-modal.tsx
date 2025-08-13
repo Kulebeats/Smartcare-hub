@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
-import { X, Baby, AlertTriangle } from "lucide-react"
+import { X, Baby, AlertTriangle, Clock, Info } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { assessFetalMovement, type FetalMovementAssessment } from "@/lib/fetal-movement-decision-support"
 
 interface FetalAssessmentData {
   // Fetal Measurements
@@ -24,7 +25,7 @@ interface FetalAssessmentData {
   descent: string
   
   // Fetal Status
-  fetal_movement_felt: 'yes' | 'no' | ''
+  fetal_movement_felt: 'normal' | 'reduced' | 'absent' | ''
   no_of_foetus: '1' | '2' | 'multiple' | ''
   no_of_foetus_unknown: boolean
   fetal_heartbeat: 'present' | 'absent' | ''
@@ -35,13 +36,15 @@ interface FetalAssessmentModalProps {
   onClose: () => void
   onSave: (data: FetalAssessmentData) => void
   initialData?: Partial<FetalAssessmentData>
+  gestationalAge?: number
 }
 
 export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({ 
   open, 
   onClose, 
   onSave, 
-  initialData 
+  initialData,
+  gestationalAge = 28
 }) => {
   const [formData, setFormData] = useState<FetalAssessmentData>({
     // Fetal Measurements
@@ -66,10 +69,42 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
   const [showFhrAlert, setShowFhrAlert] = useState(false)
   const [showHospitalReferral, setShowHospitalReferral] = useState(false)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
+  const [fetalMovementDecision, setFetalMovementDecision] = useState<any>(null)
+  const [showMovementAlert, setShowMovementAlert] = useState(false)
 
   // Update form data helper
   const updateFormData = (key: keyof FetalAssessmentData, value: any) => {
     setFormData(prev => ({ ...prev, [key]: value }))
+  }
+
+  // Handle fetal movement assessment with business rules
+  const handleFetalMovementChange = (value: string) => {
+    updateFormData('fetal_movement_felt', value)
+    
+    // Apply business rules if gestational age >= 28 weeks
+    if (gestationalAge >= 28 && value && value !== 'normal') {
+      let movementStatus = ''
+      
+      if (value === 'reduced') {
+        movementStatus = 'Reduced or poor fetal movement'
+      } else if (value === 'absent') {
+        movementStatus = 'No fetal movement'
+      }
+      
+      if (movementStatus) {
+        const assessment: FetalMovementAssessment = {
+          movementStatus,
+          gestationalAge
+        }
+        
+        const decision = assessFetalMovement(assessment)
+        setFetalMovementDecision(decision)
+        setShowMovementAlert(true)
+      }
+    } else {
+      setFetalMovementDecision(null)
+      setShowMovementAlert(false)
+    }
   }
 
   // Handle SFH calculation
@@ -323,24 +358,125 @@ export const FetalAssessmentModal: React.FC<FetalAssessmentModalProps> = ({
 
             {/* Fetal Status */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Fetal Status</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">Fetal Status</h3>
+                <div className="flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1">
+                  <Clock className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-700">
+                    Current Gestational Age: {gestationalAge} weeks
+                  </span>
+                </div>
+              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Fetal Movement felt?</Label>
+                  <Label className="text-sm font-medium">
+                    Fetal Movement Assessment 
+                    {gestationalAge >= 28 && (
+                      <span className="text-xs text-orange-600 ml-1">(≥28 weeks - Assessment Required)</span>
+                    )}
+                  </Label>
                   <Select
                     value={formData.fetal_movement_felt}
-                    onValueChange={(value) => updateFormData('fetal_movement_felt', value)}
+                    onValueChange={(value) => handleFetalMovementChange(value)}
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select option" />
+                      <SelectValue placeholder="Select fetal movement status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="normal">Normal fetal movement - Regular, consistent movements as expected</SelectItem>
+                      <SelectItem value="reduced">Reduced or poor fetal movement - Decreased movement from normal pattern</SelectItem>
+                      <SelectItem value="absent">No fetal movement - Complete absence of fetal movement</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {/* Fetal Movement Clinical Decision Support Alert */}
+                {showMovementAlert && fetalMovementDecision && (
+                  <Alert className={`border-2 ${
+                    fetalMovementDecision.riskLevel === 'emergency' ? 'border-red-500 bg-red-50' :
+                    fetalMovementDecision.riskLevel === 'urgent' ? 'border-orange-500 bg-orange-50' :
+                    'border-yellow-500 bg-yellow-50'
+                  }`}>
+                    <AlertTriangle className={`h-5 w-5 ${
+                      fetalMovementDecision.riskLevel === 'emergency' ? 'text-red-600' :
+                      fetalMovementDecision.riskLevel === 'urgent' ? 'text-orange-600' :
+                      'text-yellow-600'
+                    }`} />
+                    <AlertDescription className="space-y-3">
+                      <div className={`font-bold text-base ${
+                        fetalMovementDecision.riskLevel === 'emergency' ? 'text-red-800' :
+                        fetalMovementDecision.riskLevel === 'urgent' ? 'text-orange-800' :
+                        'text-yellow-800'
+                      }`}>
+                        {fetalMovementDecision.alertTitle}
+                      </div>
+                      
+                      <p className={`text-sm ${
+                        fetalMovementDecision.riskLevel === 'emergency' ? 'text-red-700' :
+                        fetalMovementDecision.riskLevel === 'urgent' ? 'text-orange-700' :
+                        'text-yellow-700'
+                      }`}>
+                        {fetalMovementDecision.alertMessage}
+                      </p>
+                      
+                      {fetalMovementDecision.recommendations.length > 0 && (
+                        <div>
+                          <div className="font-semibold text-sm mb-2">Clinical Recommendations:</div>
+                          <ul className="list-disc list-inside text-xs space-y-1">
+                            {fetalMovementDecision.recommendations.map((rec: string, index: number) => (
+                              <li key={index} className={
+                                fetalMovementDecision.riskLevel === 'emergency' ? 'text-red-700' :
+                                fetalMovementDecision.riskLevel === 'urgent' ? 'text-orange-700' :
+                                'text-yellow-700'
+                              }>
+                                {rec}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {fetalMovementDecision.safetyConsiderations.length > 0 && (
+                        <div>
+                          <div className="font-semibold text-sm mb-2">Safety Considerations:</div>
+                          <ul className="list-disc list-inside text-xs space-y-1">
+                            {fetalMovementDecision.safetyConsiderations.map((safety: string, index: number) => (
+                              <li key={index} className={
+                                fetalMovementDecision.riskLevel === 'emergency' ? 'text-red-700' :
+                                fetalMovementDecision.riskLevel === 'urgent' ? 'text-orange-700' :
+                                'text-yellow-700'
+                              }>
+                                {safety}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {fetalMovementDecision.urgentAction && (
+                        <div className="bg-red-100 border border-red-300 rounded p-2 mt-3">
+                          <div className="flex items-center space-x-2">
+                            <AlertTriangle className="w-4 h-4 text-red-600" />
+                            <span className="font-bold text-red-800 text-sm">URGENT ACTION REQUIRED</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {fetalMovementDecision.referralRequired && (
+                        <div className="bg-orange-100 border border-orange-300 rounded p-2 mt-3">
+                          <div className="flex items-center space-x-2">
+                            <Info className="w-4 h-4 text-orange-600" />
+                            <span className="font-bold text-orange-800 text-sm">REFERRAL REQUIRED</span>
+                          </div>
+                        </div>
+                      )}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div>
                   <Label className="text-sm font-medium">Fetal heartbeat present?</Label>

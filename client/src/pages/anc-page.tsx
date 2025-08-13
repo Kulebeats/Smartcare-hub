@@ -12375,6 +12375,7 @@ export default function AncPage() {
           open={showFetalAssessmentModal}
           onClose={() => setShowFetalAssessmentModal(false)}
           onSave={handleSaveFetalAssessment}
+          gestationalAge={recentDataSummary.gestationalAge || 28}
         />
       )}
       {/* Standard ANC Assessment Modal */}
