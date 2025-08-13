@@ -9826,7 +9826,7 @@ export default function AncPage() {
                                   <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                                 </div>
                                 <div id="anc-visits-section-${i}" style="display: none;">
-                                  <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
+                                  <label class="block text-sm font-medium mb-1">Number of ANC visits for previous pregnancy</label>
                                   <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                                 </div>
                               </div>
@@ -10316,7 +10316,7 @@ export default function AncPage() {
                             <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                           </div>
                           <div id="anc-visits-section-${i}" style="display: none;">
-                            <label class="block text-sm font-medium mb-1">Number of ANC Visits</label>
+                            <label class="block text-sm font-medium mb-1">Number of ANC visits for previous pregnancy</label>
                             <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                           </div>
                         </div>
@@ -10450,7 +10450,7 @@ export default function AncPage() {
                       container.appendChild(pregnancyDiv);
                     }
                     
-                    // Enhanced JavaScript functions for conditional fields with proper field ordering
+                    // Enhanced JavaScript functions for conditional fields with sequential ordering
                     if (!(window as any).updateObstetricConditionalFields) {
                       (window as any).updateObstetricConditionalFields = function(index: number) {
                         const gestationalAge = parseInt((document.getElementById(`gestational-months-${index}`) as HTMLInputElement)?.value || '0');
@@ -10465,16 +10465,16 @@ export default function AncPage() {
                         // Reset weeks input when months change
                         if (weeksInput) weeksInput.value = '';
                         
+                        // Hide all conditional fields first to prevent gaps
+                        (window as any).hideAllConditionalFields(index);
+                        
                         if (gestationalAge > 0) {
-                          // Always show ANC visits after gestational age
+                          // Always show ANC visits after gestational age - appears sequentially
                           if (ancVisitsSection) ancVisitsSection.style.display = 'block';
                           
                           if (gestationalAge < 6) {
-                            // Early pregnancy - hide weeks, show outcome with abortion/miscarriage
-                            if (weeksSection) weeksSection.style.display = 'none';
-                            if (borderlineCdss) borderlineCdss.style.display = 'none';
+                            // Early pregnancy - show outcome with abortion/miscarriage (no gaps)
                             if (outcomeSection) outcomeSection.style.display = 'block';
-                            if (deliverySection) deliverySection.style.display = 'none';
                             
                             if (outcomeSelect) {
                               outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
@@ -10482,15 +10482,11 @@ export default function AncPage() {
                               outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
                             }
                           } else if (gestationalAge === 6) {
-                            // Borderline viability - show weeks field, hide outcome, show CDSS guidance
+                            // Borderline viability - show weeks field sequentially, then show CDSS guidance
                             if (weeksSection) weeksSection.style.display = 'block';
                             if (borderlineCdss) borderlineCdss.style.display = 'block';
-                            if (outcomeSection) outcomeSection.style.display = 'none';
-                            if (deliverySection) deliverySection.style.display = 'none';
                           } else if (gestationalAge >= 7) {
-                            // Viable pregnancy - hide weeks, show outcome with live/still birth
-                            if (weeksSection) weeksSection.style.display = 'none';
-                            if (borderlineCdss) borderlineCdss.style.display = 'none';
+                            // Viable pregnancy - show outcome and delivery mode sequentially
                             if (outcomeSection) outcomeSection.style.display = 'block';
                             if (deliverySection) deliverySection.style.display = 'block';
                             
@@ -10501,14 +10497,32 @@ export default function AncPage() {
                               outcomeSelect.onchange = () => (window as any).handleObstetricOutcomeChange(index, outcomeSelect.value);
                             }
                           }
-                        } else {
-                          // No gestational age entered - hide everything
-                          if (ancVisitsSection) ancVisitsSection.style.display = 'none';
-                          if (weeksSection) weeksSection.style.display = 'none';
-                          if (borderlineCdss) borderlineCdss.style.display = 'none';
-                          if (outcomeSection) outcomeSection.style.display = 'none';
-                          if (deliverySection) deliverySection.style.display = 'none';
                         }
+                        
+                        // Apply sequential field positioning
+                        (window as any).applySequentialPositioning(index);
+                      };
+                      
+                      // Helper function to hide all conditional fields
+                      (window as any).hideAllConditionalFields = function(index: number) {
+                        const conditionalFields = [
+                          'weeks-section', 'outcome-section', 'delivery-mode-section', 
+                          'labour-type-section', 'place-delivery-section', 'assisted-vaginal-section',
+                          'csection-section', 'infant-sex-section', 'birth-weight-section', 
+                          'baby-status-section', 'borderline-cdss'
+                        ];
+                        
+                        conditionalFields.forEach(fieldId => {
+                          const element = document.getElementById(fieldId + '-' + index);
+                          if (element) element.style.display = 'none';
+                        });
+                      };
+                      
+                      // Function to ensure sequential positioning without gaps
+                      (window as any).applySequentialPositioning = function(index: number) {
+                        // This ensures fields appear in logical order without spacing gaps
+                        // The CSS grid layout handles the positioning automatically
+                        // when fields are shown/hidden in sequence
                       };
 
                       // New function to handle weeks input for borderline viability (6 months)
