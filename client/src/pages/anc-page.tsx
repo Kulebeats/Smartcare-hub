@@ -11527,8 +11527,30 @@ export default function AncPage() {
                     <span>Sickle cell disease</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-gray-300 text-green-600"
+                      onChange={(e) => {
+                        const textBox = document.getElementById('cancer_specify_text');
+                        if (textBox) {
+                          textBox.style.display = e.target.checked ? 'block' : 'none';
+                        }
+                      }}
+                    />
                     <span>Cancer (specify)</span>
+                  </label>
+                </div>
+                <div id="cancer_specify_text" className="mt-2" style={{ display: 'none' }}>
+                  <textarea 
+                    className="w-full border rounded p-2 text-sm" 
+                    rows={2}
+                    placeholder="Please specify type of cancer..."
+                  ></textarea>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <label className="flex items-center space-x-2 text-sm">
+                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <span>Diabetes Mellitus</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
                     <input type="checkbox" className="rounded border-gray-300 text-green-600" />
@@ -11555,9 +11577,25 @@ export default function AncPage() {
                     <span>TB</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-gray-300 text-green-600"
+                      onChange={(e) => {
+                        const textBox = document.getElementById('past_medical_other_text');
+                        if (textBox) {
+                          textBox.style.display = e.target.checked ? 'block' : 'none';
+                        }
+                      }}
+                    />
                     <span>Other (specify)</span>
                   </label>
+                </div>
+                <div id="past_medical_other_text" className="mt-2" style={{ display: 'none' }}>
+                  <textarea 
+                    className="w-full border rounded p-2 text-sm" 
+                    rows={2}
+                    placeholder="Please specify other past medical history..."
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -11636,13 +11674,45 @@ export default function AncPage() {
                     <span>Partial removal of the cervix (cervical conization)</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-gray-300 text-green-600"
+                      onChange={(e) => {
+                        const textBox = document.getElementById('surgical_other_gynae_text');
+                        if (textBox) {
+                          textBox.style.display = e.target.checked ? 'block' : 'none';
+                        }
+                      }}
+                    />
                     <span>Other gynaecological procedures (specify)</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-gray-300 text-green-600"
+                      onChange={(e) => {
+                        const textBox = document.getElementById('surgical_other_surgeries_text');
+                        if (textBox) {
+                          textBox.style.display = e.target.checked ? 'block' : 'none';
+                        }
+                      }}
+                    />
                     <span>Other surgeries (specify)</span>
                   </label>
+                </div>
+                <div id="surgical_other_gynae_text" className="mt-2" style={{ display: 'none' }}>
+                  <textarea 
+                    className="w-full border rounded p-2 text-sm" 
+                    rows={2}
+                    placeholder="Please specify other gynaecological procedures..."
+                  ></textarea>
+                </div>
+                <div id="surgical_other_surgeries_text" className="mt-2" style={{ display: 'none' }}>
+                  <textarea 
+                    className="w-full border rounded p-2 text-sm" 
+                    rows={2}
+                    placeholder="Please specify other surgeries..."
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -11745,9 +11815,25 @@ export default function AncPage() {
                     <span>Salbutamol</span>
                   </label>
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-green-600" />
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-gray-300 text-green-600"
+                      onChange={(e) => {
+                        const textBox = document.getElementById('drug_other_text');
+                        if (textBox) {
+                          textBox.style.display = e.target.checked ? 'block' : 'none';
+                        }
+                      }}
+                    />
                     <span>Other (specify)</span>
                   </label>
+                </div>
+                <div id="drug_other_text" className="mt-2" style={{ display: 'none' }}>
+                  <textarea 
+                    className="w-full border rounded p-2 text-sm" 
+                    rows={2}
+                    placeholder="Please specify other drugs..."
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -12133,10 +12219,23 @@ export default function AncPage() {
                     className="rounded border-gray-300 text-green-600"
                     value="other"
                     name="substance_use"
-                    onChange={(e) => handleSubstanceUseChangeNew(e)}
+                    onChange={(e) => {
+                      handleSubstanceUseChangeNew(e);
+                      const textBox = document.getElementById('substance_other_text');
+                      if (textBox) {
+                        textBox.style.display = e.target.checked ? 'block' : 'none';
+                      }
+                    }}
                   />
                   <span>Other (specify)</span>
                 </label>
+              </div>
+              <div id="substance_other_text" className="mt-2" style={{ display: 'none' }}>
+                <textarea 
+                  className="w-full border rounded p-2 text-sm" 
+                  rows={2}
+                  placeholder="Please specify other substances..."
+                ></textarea>
               </div>
             </div>
             </div>
