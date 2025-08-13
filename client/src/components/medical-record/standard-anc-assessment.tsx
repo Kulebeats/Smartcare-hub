@@ -211,9 +211,9 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Standard ANC Assessment"
-        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto"
+        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl sm:max-w-[680px] max-h-[80vh] overflow-y-auto"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 mt-4 text-sm">
           {/* Medications Section */}
           <MedicationsSection 
             data={assessmentData.medications}
@@ -311,10 +311,10 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
   };
 
   return (
-    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Medications & Supplements</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-base font-medium mb-3 text-gray-800">Medications & Supplements</h3>
       
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Current Medications - Multi-select dropdown */}
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -324,7 +324,7 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
           {/* Multi-select dropdown with improved visibility */}
           <div className="relative">
             <select 
-              className="w-full border-2 border-gray-300 rounded-lg p-3 text-base appearance-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none min-h-[44px]"
+              className="w-full border-2 border-gray-300 rounded-lg p-2 text-sm appearance-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none min-h-[36px]"
               onChange={(e) => {
                 const value = e.target.value;
                 if (value && !selectedMedications.includes(value)) {
@@ -332,7 +332,7 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
                 }
                 e.target.value = ""; // Reset dropdown
               }}
-              style={{ minHeight: '44px' }}
+              style={{ minHeight: '36px' }}
             >
               <option value="" className="text-gray-500">Select medications...</option>
               {medicationOptions
@@ -975,10 +975,10 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
   };
 
   return (
-    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Current Symptoms Assessment</h3>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-base font-medium mb-3 text-gray-800">Current Symptoms Assessment</h3>
       
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Combined Symptoms - Multi-select dropdown */}
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -1147,11 +1147,11 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
   const needsUrgentAction = selectedSigns.length > 0 ? requiresImmediateIntervention(selectedSigns) : false;
 
   return (
-    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">IPV Screening Assessment</h3>
-      <p className="text-sm text-red-600 mb-4">This section requires sensitive handling and confidentiality.</p>
+    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-3" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+      <h3 className="text-base font-medium mb-3 text-gray-800">IPV Screening Assessment</h3>
+      <p className="text-xs text-red-600 mb-3">This section requires sensitive handling and confidentiality.</p>
       
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* IPV Signs - Multi-select dropdown */}
         <div>
           <label className="block text-sm font-medium mb-2">
