@@ -5516,9 +5516,9 @@ export default function AncPage() {
                                   // Generate pregnancy history rows
                                   for (let i = 0; i < count; i++) {
                                     const pregnancyRow = document.createElement('div');
-                                    pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
+                                    pregnancyRow.className = 'space-y-3 border border-blue-300 rounded-lg p-4 bg-[#24302400]';
                                     pregnancyRow.innerHTML = 
-                                      '<h6 class="text-xs font-medium text-gray-700">Pregnancy ' + (i + 1) + '</h6>' +
+                                      '<h5 class="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Pregnancy ' + (i + 1) + '</h5>' +
                                       '<div class="grid grid-cols-2 gap-3">' +
                                         '<div>' +
                                           '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>' +
@@ -8477,9 +8477,9 @@ export default function AncPage() {
                           for (let i = 0; i < count; i++) {
                             console.log('📝 Creating pregnancy form', i + 1, 'of', count);
                             const pregnancyRow = document.createElement('div');
-                            pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
+                            pregnancyRow.className = 'space-y-3 border border-blue-300 rounded-lg p-4 bg-[#24302400]';
                             pregnancyRow.innerHTML = 
-                              '<h6 class="text-xs font-medium text-gray-700">Pregnancy ' + (i + 1) + '</h6>' +
+                              '<h5 class="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Pregnancy ' + (i + 1) + '</h5>' +
                               '<div class="grid grid-cols-2 gap-3">' +
                                 '<div>' +
                                   '<label class="block text-xs font-medium mb-1">Date of delivery/termination</label>' +
@@ -10074,9 +10074,9 @@ export default function AncPage() {
                           // Generate pregnancy history forms
                           for (let i = 0; i < previousPregnanciesCount; i++) {
                             const pregnancyDiv = document.createElement('div');
-                            pregnancyDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4';
+                            pregnancyDiv.className = 'border border-blue-300 rounded-lg p-4 bg-[#24302400] space-y-4';
                             pregnancyDiv.innerHTML = `
-                              <h6 class="font-medium text-gray-700 border-b border-gray-300 pb-2">Pregnancy ${i + 1}</h6>
+                              <h5 class="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Pregnancy ${i + 1}</h5>
                               
                               <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -10567,9 +10567,9 @@ export default function AncPage() {
                     // Generate pregnancy history forms
                     for (let i = 0; i < count; i++) {
                       const pregnancyDiv = document.createElement('div');
-                      pregnancyDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4';
+                      pregnancyDiv.className = 'border border-blue-300 rounded-lg p-4 bg-[#24302400] space-y-4';
                       pregnancyDiv.innerHTML = `
-                        <h6 class="font-medium text-gray-700 border-b border-gray-300 pb-2">Pregnancy ${i + 1}</h6>
+                        <h5 class="text-sm font-medium border-b border-blue-200 pb-2 mb-4 text-[#000000]">Pregnancy ${i + 1}</h5>
                         
                         <div class="grid grid-cols-2 gap-3">
                           <div>
