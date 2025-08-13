@@ -11154,73 +11154,206 @@ export default function AncPage() {
               <div id="complications-content" className="px-4 pb-4 space-y-3" style={{ display: 'none' }}>
                 
                 <div id="detailed-complications" className="ml-6 space-y-3" style={{ display: 'block' }}>
-                  <p className="text-xs text-gray-600 mb-2">Select all complications that occurred in previous pregnancies:</p>
+                  <h6 className="text-sm font-medium text-gray-700 mb-3">Previous Pregnancy Complications</h6>
+                  <p className="text-xs text-gray-600 mb-3">Complications in previous pregnancies/childbirth</p>
                   
-                  <div className="space-y-4">
-                    {/* Pregnancy-related complications */}
-                    <div>
-                      <h6 className="text-sm font-medium text-gray-700 mb-2">Pregnancy Complications</h6>
-                      <div className="grid grid-cols-2 gap-2">
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Pre-eclampsia/Eclampsia</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Gestational diabetes</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Preterm labor</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>IUGR (Low birth weight)</span>
-                        </label>
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="none"
+                        onChange={(e) => {
+                          const checkboxes = document.querySelectorAll('.complication-item:not([value="none"])');
+                          checkboxes.forEach(cb => {
+                            if (e.target.checked) {
+                              cb.checked = false;
+                              cb.disabled = true;
+                            } else {
+                              cb.disabled = false;
+                            }
+                          });
+                        }}
+                      />
+                      <span>None</span>
+                    </label>
                     
-                    {/* Delivery complications */}
-                    <div>
-                      <h6 className="text-sm font-medium text-gray-700 mb-2">Delivery Complications</h6>
-                      <div className="grid grid-cols-2 gap-2">
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Prolonged labor</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Placental complications</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Cord prolapse</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Uterine rupture</span>
-                        </label>
-                      </div>
-                    </div>
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="pre_eclampsia"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Pre-eclampsia</span>
+                    </label>
                     
-                    {/* Postpartum complications */}
-                    <div>
-                      <h6 className="text-sm font-medium text-gray-700 mb-2">Postpartum Complications</h6>
-                      <div className="grid grid-cols-2 gap-2">
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Postpartum hemorrhage</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Infection</span>
-                        </label>
-                        <label className="flex items-center space-x-2 text-sm">
-                          <input type="checkbox" className="rounded border-gray-300 complication-item" />
-                          <span>Other (specify)</span>
-                        </label>
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="eclampsia"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Eclampsia</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="convulsions"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Convulsions</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="heavy_bleeding"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Heavy bleeding</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="baby_died_24h"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Baby died within 24 hours</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="macrosomia"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Macrosomia</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="perineal_tear"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Perineal tear (3rd or 4th degree)</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item" 
+                        value="gestational_diabetes"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                          }
+                        }}
+                      />
+                      <span>Gestational Diabetes</span>
+                    </label>
+                  </div>
+                  
+                  <div className="mt-3">
+                    <label className="flex items-start space-x-2 text-sm">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 complication-item mt-1" 
+                        value="other"
+                        onChange={(e) => {
+                          const otherInput = document.getElementById('other-complication-input');
+                          if (e.target.checked) {
+                            const noneCheckbox = document.querySelector('.complication-item[value="none"]');
+                            if (noneCheckbox) {
+                              noneCheckbox.checked = false;
+                              noneCheckbox.disabled = false;
+                            }
+                            if (otherInput) otherInput.style.display = 'block';
+                          } else {
+                            if (otherInput) otherInput.style.display = 'none';
+                          }
+                        }}
+                      />
+                      <div className="flex-1">
+                        <span>Other (specify)</span>
+                        <input 
+                          id="other-complication-input"
+                          type="text" 
+                          className="w-full mt-1 px-2 py-1 border rounded text-xs" 
+                          placeholder="Specify other complication..."
+                          style={{ display: 'none' }}
+                        />
                       </div>
-                    </div>
+                    </label>
                   </div>
                 </div>
                 
