@@ -163,16 +163,7 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
           />
         )}
 
-        {/* Combined Persisted Symptoms Section - Only show in subsequent visits */}
-        {(visitNumber > 1 || isFollowupVisit) && (
-          <div className="border rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Symptom Persistence Assessment</h3>
-            <CombinedSymptomsSection 
-              data={assessmentData.previousBehaviors}
-              onChange={(data) => updateAssessmentData('previousBehaviors', data)}
-            />
-          </div>
-        )}
+
 
         {/* IPV Screening Section */}
         <IPVScreeningSection
@@ -248,24 +239,9 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
             onChange={(data) => updateAssessmentData('currentSymptoms', data)}
           />
 
-          {/* Previous Behaviors Section - Only show in follow-up visits */}
-          {shouldShowPersistenceSections && (
-            <PreviousBehaviorsSection
-              data={assessmentData.previousBehaviors}
-              onChange={(data) => updateAssessmentData('previousBehaviors', data)}
-            />
-          )}
 
-          {/* Combined Persisted Symptoms Section - Only show in follow-up visits */}
-          {shouldShowPersistenceSections && (
-            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Symptom Persistence Assessment</h3>
-              <CombinedSymptomsSection 
-                data={assessmentData.previousBehaviors}
-                onChange={(data) => updateAssessmentData('previousBehaviors', data)}
-              />
-            </div>
-          )}
+
+
 
           {/* Visit Type Indicator - Show when sections are hidden */}
           {isInitialVisit && (
@@ -778,184 +754,6 @@ const PreviousBehaviorsSection: React.FC<SectionProps> = ({ data, onChange }) =>
 
   // Fetch initial contact social history and substance use data
   useEffect(() => {
-    const fetchInitialBehaviors = async () => {
-      try {
-        // Get the first ANC record (initial contact)
-        const response = await fetch('/api/patients/demo-patient-123/anc/records');
-        const records = await response.json();
-        
-        if (records && records.length > 0) {
-          // Find the first contact record
-          const firstContact = records.find((record: any) => 
-            record.contact_number === 1 || 
-            record.visit_type === 'initial' ||
-            records.indexOf(record) === 0
-          ) || records[0];
-          
-          const behaviors: string[] = [];
-          
-          // Parse initial behaviors from various data sources
-          const checkBehaviorData = (data: any, path: string) => {
-            if (!data) return;
-            
-            // Check for tobacco/smoking indicators
-            const tobaccoFields = ['smoking', 'tobacco', 'tobacco_smoking', 'current_tobacco'];
-            const hasTobacco = tobaccoFields.some(field => 
-              data[field] === true || data[field] === 'yes' || 
-              (Array.isArray(data[field]) && data[field].length > 0 && !data[field].includes('none'))
-            );
-            if (hasTobacco) behaviors.push('Current tobacco use or recently quit');
-            
-            // Check for alcohol indicators
-            const alcoholFields = ['alcohol', 'alcohol_use', 'alcohol_consumption'];
-            const hasAlcohol = alcoholFields.some(field => 
-              data[field] === true || data[field] === 'yes' ||
-              (Array.isArray(data[field]) && data[field].length > 0 && !data[field].includes('none'))
-            );
-            if (hasAlcohol) behaviors.push('Alcohol use');
-            
-            // Check for substance use indicators
-            const substanceFields = ['substance', 'substance_use', 'drug_use'];
-            const hasSubstance = substanceFields.some(field => 
-              data[field] === true || data[field] === 'yes' ||
-              (Array.isArray(data[field]) && data[field].length > 0 && !data[field].includes('none'))
-            );
-            if (hasSubstance) behaviors.push('Substance use');
-            
-            // Check for second-hand smoke exposure
-            const smokeFields = ['second_hand_smoke', 'household_smoking', 'smoke_exposure'];
-            const hasSmoke = smokeFields.some(field => 
-              data[field] === true || data[field] === 'yes'
-            );
-            if (hasSmoke) behaviors.push('Exposure to second-hand smoke in the home');
-            
-            // Check for high caffeine intake
-            const caffeineFields = ['caffeine_intake', 'high_caffeine', 'caffeine'];
-            const hasCaffeine = caffeineFields.some(field => {
-              if (data[field] === 'high' || data[field] === 'excessive') return true;
-              if (Array.isArray(data[field])) {
-                return data[field].some((item: string) => 
-                  item.includes('high') || item.includes('excessive') || item.includes('4+')
-                );
-              }
-              return false;
-            });
-            if (hasCaffeine) behaviors.push('High caffeine intake');
-          };
-          
-          // Check all possible data locations
-          checkBehaviorData(firstContact.social_history, 'social_history');
-          checkBehaviorData(firstContact.substance_assessment, 'substance_assessment');
-          checkBehaviorData(firstContact.client_profile, 'client_profile');
-          checkBehaviorData(firstContact, 'root');
-          
-          // For demonstration, add sample behaviors if record exists but no behaviors detected
-          if (behaviors.length === 0 && firstContact) {
-            // This demonstrates the functionality - in real use, remove this section
-            behaviors.push('Current tobacco use or recently quit', 'High caffeine intake');
-          }
-          
-          // Remove duplicates
-          const uniqueBehaviors = [...new Set(behaviors)];
-          setInitialBehaviors(uniqueBehaviors);
-        }
-      } catch (error) {
-        console.error('Error fetching initial behaviors:', error);
-        setInitialBehaviors([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchInitialBehaviors();
-  }, []);
-
-  const handleCheckboxChange = (field: string, values: string[], value: string) => {
-    const newValues = values.includes(value)
-      ? values.filter(v => v !== value)
-      : [...values, value];
-    onChange({ [field]: newValues });
-  };
-
-  // Define all possible behavior options
-  const allBehaviorOptions = [
-    'Current tobacco use or recently quit',
-    'Exposure to second-hand smoke in the home',
-    'Alcohol use',
-    'Substance use',
-    'High caffeine intake'
-  ];
-
-  // Filter behavior options based on initial behaviors
-  const getAvailableBehaviors = () => {
-    if (isLoading) return [];
-    
-    if (initialBehaviors.length === 0) {
-      return ['None']; // Only show "None" if no initial behaviors
-    }
-    
-    // Show "None" plus only behaviors that were initially reported
-    return ['None', ...initialBehaviors];
-  };
-
-  const availableBehaviors = getAvailableBehaviors();
-
-  return (
-    <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Previous Behavior Assessment</h3>
-      
-      <div className="space-y-4">
-        {/* Persisted Behaviors */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Which of the following behaviours persist?</label>
-          
-          {isLoading ? (
-            <div className="text-sm text-gray-500 italic">Loading previous behavior history...</div>
-          ) : initialBehaviors.length === 0 ? (
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-              <p className="text-sm text-blue-700">
-                No previous behaviors were reported in the initial contact. No persistence assessment needed.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded">
-                <p className="text-sm text-green-700">
-                  <strong>Previously reported behaviors:</strong> {initialBehaviors.join(', ')}
-                </p>
-                <p className="text-xs text-green-600 mt-1">
-                  Only behaviors reported in the initial contact are shown below for persistence assessment.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-2">
-                {availableBehaviors.map(behavior => (
-                  <label key={behavior} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={data.persisted_behaviors?.includes(behavior) || false}
-                      onChange={() => handleCheckboxChange('persisted_behaviors', data.persisted_behaviors || [], behavior)}
-                      className="mr-3 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm font-medium">{behavior}</span>
-                  </label>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-
-
-      </div>
-    </div>
-  );
-};
-
-
-
-const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(data.current_symptoms || []);
-  const [otherSymptom, setOtherSymptom] = useState<string>("");
 
   const symptomOptions = [
     'None',
