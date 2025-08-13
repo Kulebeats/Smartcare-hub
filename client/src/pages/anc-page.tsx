@@ -9866,8 +9866,12 @@ export default function AncPage() {
                               
                               <!-- CDSS Guidance for Borderline Viability -->
                               <div id="borderline-cdss-${i}" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded" style="display: none;">
-                                <div class="text-sm font-medium text-blue-700">🔍 CDSS Guidance: Borderline Viability</div>
-                                <div class="text-xs text-blue-600 mt-1">A 6-month gestation requires precise data. Please enter the exact gestational age in weeks to continue.</div>
+                                <div class="text-sm font-medium text-blue-700">Clinical Advisory: Borderline Viability Entered</div>
+                                <div class="text-xs text-blue-600 mt-1">
+                                  <div><strong>Finding:</strong> A 6-month gestation has been recorded.</div>
+                                  <div class="mt-1"><strong>Guidance:</strong> This is a borderline viability period. To distinguish between a late miscarriage and an extremely preterm birth, a more precise age is required.</div>
+                                  <div class="mt-1"><strong>Required Action:</strong> Enter the gestational age in weeks to continue.</div>
+                                </div>
                               </div>
                               
                               <div id="delivery-mode-section-${i}" style="display: none;">
@@ -10350,8 +10354,12 @@ export default function AncPage() {
                         
                         <!-- CDSS Guidance for Borderline Viability -->
                         <div id="borderline-cdss-${i}" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded" style="display: none;">
-                          <div class="text-sm font-medium text-blue-700">🔍 CDSS Guidance: Borderline Viability</div>
-                          <div class="text-xs text-blue-600 mt-1">A 6-month gestation requires precise data. Please enter the exact gestational age in weeks to continue.</div>
+                          <div class="text-sm font-medium text-blue-700">Clinical Advisory: Borderline Viability Entered</div>
+                          <div class="text-xs text-blue-600 mt-1">
+                            <div><strong>Finding:</strong> A 6-month gestation has been recorded.</div>
+                            <div class="mt-1"><strong>Guidance:</strong> This is a borderline viability period. To distinguish between a late miscarriage and an extremely preterm birth, a more precise age is required.</div>
+                            <div class="mt-1"><strong>Required Action:</strong> Enter the gestational age in weeks to continue.</div>
+                          </div>
                         </div>
                         
                         <div id="delivery-mode-section-${i}" style="display: none;">
