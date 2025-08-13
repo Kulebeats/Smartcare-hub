@@ -45,6 +45,26 @@
   z-index: 999998 !important;
 }
 
+/* Force modal containers to allow tooltip overflow */
+[data-radix-dialog-content] {
+  overflow: visible !important;
+}
+
+.tooltip-container {
+  overflow: visible !important;
+}
+
+/* Ensure tooltip parent elements don't clip */
+.tooltip-parent,
+.tooltip-parent * {
+  overflow: visible !important;
+}
+
+/* Modal content should allow tooltips to escape boundaries */
+.modal-content {
+  overflow: visible !important;
+}
+
 @keyframes toast-timer {
   0% {
     width: 100%;

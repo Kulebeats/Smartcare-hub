@@ -3972,7 +3972,7 @@ export default function AncPage() {
                 </div>
 
                 <Dialog open={showDangerSignsDialog} onOpenChange={setShowDangerSignsDialog}>
-                  <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
+                  <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl tooltip-parent" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)', overflow: 'visible' }}>
                     <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">Danger Signs & Health Concerns</DialogTitle>
                     <form id="danger-signs-form-data">
                       <div className="space-y-4">
@@ -12525,7 +12525,7 @@ export default function AncPage() {
 // Danger Sign Info Modal - Added separately to avoid file conflicts
 const DangerSignInfoModal = ({ open, onClose, title, description }) => (
   <Dialog open={open} onOpenChange={onClose}>
-    <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-2xl max-h-[85vh] overflow-y-auto" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
+    <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-2xl max-h-[85vh] tooltip-parent" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)', overflow: 'visible' }}>
       <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">
         {title}
       </DialogTitle>
