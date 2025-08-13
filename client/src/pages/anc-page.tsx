@@ -10685,23 +10685,36 @@ export default function AncPage() {
 
                       // Step 4: Document Infant Details - Sequential revelation
                       (window as any).handleSexSelection = function(index: number) {
+                        console.log('👶 Sex Selection Function Called for index:', index);
                         const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
                         const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
                         const select = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
+                        const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
+                        
+                        console.log('👶 Selected sex:', select?.value);
+                        console.log('👶 Current outcome:', outcomeSelect?.value);
                         
                         if (select?.value) {
                           // After sex selection, show birth weight
-                          if (birthWeightSection) birthWeightSection.style.display = 'block';
+                          if (birthWeightSection) {
+                            birthWeightSection.style.display = 'block';
+                            console.log('✅ Birth weight section shown');
+                          }
                           
                           // For live births, also show baby's current status
-                          const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
                           if (outcomeSelect?.value === 'live_birth') {
-                            if (babyStatusSection) babyStatusSection.style.display = 'block';
+                            if (babyStatusSection) {
+                              babyStatusSection.style.display = 'block';
+                              console.log('✅ Baby status section shown for live birth');
+                            }
+                          } else {
+                            console.log('❌ Baby status NOT shown - outcome is:', outcomeSelect?.value);
                           }
                         } else {
                           [birthWeightSection, babyStatusSection].forEach(section => {
                             if (section) section.style.display = 'none';
                           });
+                          console.log('❌ No sex selected - hiding birth weight and baby status');
                         }
                       };
                       
