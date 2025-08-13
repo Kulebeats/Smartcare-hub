@@ -211,7 +211,7 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Standard ANC Assessment"
-        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-3xl max-h-[85vh] overflow-y-auto"
+        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-4xl max-h-[85vh] overflow-y-auto"
       >
         <div className="space-y-6">
           {/* Medications Section */}
