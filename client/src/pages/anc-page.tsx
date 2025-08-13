@@ -10740,6 +10740,85 @@ export default function AncPage() {
               {/* Pregnancy forms will be dynamically generated here */}
             </div>
 
+            {/* Global Functions for Obstetric Workflow */}
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                // Define global functions for pregnancy history workflow
+                if (typeof window !== 'undefined' && !window.updateObstetricConditionalFields) {
+                  console.log('🏁 Defining global obstetric functions...');
+                  
+                  // Step 1: Enter Gestational Age (The Key Trigger)
+                  window.updateObstetricConditionalFields = function(index) {
+                    console.log('🔄 Gestational Age Function Called for index:', index);
+                    const gestationalAge = parseInt(document.getElementById('gestational-months-' + index)?.value || '0');
+                    console.log('📊 Gestational Age Entered:', gestationalAge, 'months');
+                    const outcomeSection = document.getElementById('outcome-section-' + index);
+                    const weeksSection = document.getElementById('weeks-section-' + index);
+                    const deliverySection = document.getElementById('delivery-mode-section-' + index);
+                    const borderlineCdss = document.getElementById('borderline-cdss-' + index);
+                    const outcomeSelect = document.getElementById('outcome-' + index);
+                    const weeksInput = document.getElementById('gestational-weeks-' + index);
+                    
+                    if (weeksInput) weeksInput.value = '';
+                    window.hideAllConditionalFields(index);
+                    
+                    if (gestationalAge > 0) {
+                      if (gestationalAge < 6) {
+                        console.log('⛔ Less than 6 months - showing abortion option only');
+                        if (outcomeSection) outcomeSection.style.display = 'block';
+                        if (outcomeSelect) {
+                          outcomeSelect.innerHTML = '<option value="">Select outcome...</option><option value="abortion">Abortion/Miscarriage</option>';
+                          outcomeSelect.onchange = () => window.handleObstetricOutcomeChange(index, outcomeSelect.value);
+                        }
+                      } else if (gestationalAge === 6) {
+                        console.log('⚠️ Exactly 6 months - showing borderline CDSS');
+                        if (weeksSection) weeksSection.style.display = 'block';
+                        if (borderlineCdss) borderlineCdss.style.display = 'block';
+                      } else if (gestationalAge >= 7) {
+                        console.log('✅ 7+ months - showing viable options');
+                        if (outcomeSection) outcomeSection.style.display = 'block';
+                        if (outcomeSelect) {
+                          outcomeSelect.innerHTML = '<option value="">Select outcome...</option><option value="live_birth">Live birth</option><option value="still_birth">Still birth</option>';
+                          outcomeSelect.onchange = () => window.handleObstetricOutcomeChange(index, outcomeSelect.value);
+                        }
+                      }
+                    }
+                  };
+
+                  // Helper function to hide all conditional fields
+                  window.hideAllConditionalFields = function(index) {
+                    const conditionalFields = [
+                      'weeks-section', 'outcome-section', 'delivery-mode-section', 
+                      'labour-type-section', 'place-delivery-section', 'assisted-vaginal-section',
+                      'csection-section', 'infant-sex-section', 'birth-weight-section', 
+                      'baby-status-section', 'borderline-cdss'
+                    ];
+                    
+                    conditionalFields.forEach(function(fieldId) {
+                      const element = document.getElementById(fieldId + '-' + index);
+                      if (element) element.style.display = 'none';
+                    });
+                  };
+
+                  // Step 2: Select Pregnancy Outcome
+                  window.handleObstetricOutcomeChange = function(pregnancyIndex, outcome) {
+                    console.log('🤱 Outcome selected:', outcome, 'for pregnancy', pregnancyIndex);
+                    const deliverySection = document.getElementById('delivery-mode-section-' + pregnancyIndex);
+                    
+                    if (outcome === 'still_birth' || outcome === 'live_birth') {
+                      if (deliverySection) deliverySection.style.display = 'block';
+                      console.log('✅ Delivery section shown for outcome:', outcome);
+                    } else if (outcome === 'abortion') {
+                      if (deliverySection) deliverySection.style.display = 'none';
+                      console.log('❌ Delivery section hidden for abortion');
+                    }
+                  };
+
+                  console.log('✅ Global obstetric functions defined successfully');
+                }
+              `
+            }} />
+
             {/* Social Habits Section */}
             <div id="social-habits-section" className="border border-green-300 rounded-lg bg-green-50" style={{ display: 'none' }}>
               <div className="p-4">
