@@ -220,10 +220,6 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
         onClose={() => setIsModalOpen(false)}
         title="Standard ANC Assessment"
         className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-3xl max-h-[85vh] overflow-y-auto"
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
-          boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.08)'
-        }}
       >
         <div className="space-y-6">
           {/* Medications Section */}
@@ -625,7 +621,7 @@ const CombinedSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => 
           symptoms.push('Nausea and vomiting', 'Gets tired easily', 'Low back pain');
         }
         
-        const uniqueSymptoms = [...new Set(symptoms)];
+        const uniqueSymptoms = Array.from(new Set(symptoms));
         setInitialSymptoms(uniqueSymptoms);
       }
     } catch (error) {
@@ -748,12 +744,191 @@ const CombinedSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => 
   );
 };
 
-const PreviousBehaviorsSection: React.FC<SectionProps> = ({ data, onChange }) => {
-  const [initialBehaviors, setInitialBehaviors] = useState<string[]>([]);
+// Previous Behaviors Section Component  
+const PreviousBehaviorsSection: React.FC<SectionProps> = ({ data, onChange }: any) => {
+  const [initialSymptoms, setInitialSymptoms] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch initial contact social history and substance use data
+  // Fetch initial contact symptoms for persistence comparison
+  const fetchInitialSymptoms = async () => {
+    try {
+      const response = await fetch('/api/patients/search?page=1&limit=1', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const firstContact = data.patients?.[0] || null;
+        
+        const symptoms: string[] = [];
+        
+        // Combine all possible symptom fields from initial contact
+        const allSymptoms = [
+          'Nausea and vomiting', 'Heartburn', 'Leg cramps', 'Constipation',
+          'Low back pain', 'Pelvic pain', 'Varicose veins', 'Oedema',
+          'Gets tired easily', 'Breathing difficulty', 'Breathless during routine activities'
+        ];
+        
+        const checkSymptomData = (data: any) => {
+          if (!data) return;
+          
+          if (Array.isArray(data.physiological_symptoms)) {
+            data.physiological_symptoms.forEach((symptom: string) => {
+              if (allSymptoms.includes(symptom)) {
+                symptoms.push(symptom);
+              }
+            });
+          }
+          
+          if (Array.isArray(data.current_symptoms)) {
+            data.current_symptoms.forEach((symptom: string) => {
+              if (allSymptoms.includes(symptom)) {
+                symptoms.push(symptom);
+              }
+            });
+          }
+          
+          allSymptoms.forEach(symptom => {
+            const key = symptom.toLowerCase().replace(/\s+/g, '_');
+            if (data[key] === true || data[key] === 'yes') {
+              symptoms.push(symptom);
+            }
+          });
+        };
+        
+        checkSymptomData(firstContact?.current_symptoms);
+        checkSymptomData(firstContact?.physiological_symptoms);
+        checkSymptomData(firstContact?.assessment);
+        checkSymptomData(firstContact);
+        
+        if (symptoms.length === 0 && firstContact) {
+          symptoms.push('Nausea and vomiting', 'Gets tired easily', 'Low back pain');
+        }
+        
+        const uniqueSymptoms = Array.from(new Set(symptoms));
+        setInitialSymptoms(uniqueSymptoms);
+      }
+    } catch (error) {
+      console.error('Error fetching initial symptoms:', error);
+      setInitialSymptoms([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchInitialSymptoms();
+  }, []);
+
+  const handleCheckboxChange = (field: string, values: string[], value: string) => {
+    const newValues = values.includes(value)
+      ? values.filter(v => v !== value)
+      : [...values, value];
+    onChange({ [field]: newValues });
+  };
+
+  const physiologicalSymptoms = [
+    'Leg cramps', 'Nausea and vomiting', 'Heartburn', 
+    'Constipation', 'Low back pain', 'Pelvic pain'
+  ];
+  
+  const otherSymptoms = [
+    'Gets tired easily', 'Breathing difficulty', 
+    'Breathless during routine activities'
+  ];
+
+  const getAvailableSymptoms = () => {
+    if (isLoading) return { physiological: [], other: [] };
+    
+    const availablePhysiological = physiologicalSymptoms.filter(symptom => 
+      initialSymptoms.includes(symptom)
+    );
+    
+    const availableOther = otherSymptoms.filter(symptom => 
+      initialSymptoms.includes(symptom)
+    );
+    
+    return {
+      physiological: availablePhysiological.length > 0 ? availablePhysiological : ['None'],
+      other: availableOther.length > 0 ? availableOther : ['None']
+    };
+  };
+
+  const availableSymptoms = getAvailableSymptoms();
+
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-2">
+        Which of the following physiological symptoms persist?
+      </label>
+      
+      {isLoading ? (
+        <div className="text-sm text-gray-500 italic">Loading previous symptom history...</div>
+      ) : initialSymptoms.length === 0 ? (
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+          <p className="text-sm text-blue-700">
+            No previous physiological symptoms were reported in the initial contact. No persistence assessment needed.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded">
+            <p className="text-sm text-green-700">
+              <strong>Previously reported symptoms:</strong> {initialSymptoms.join(', ')}
+            </p>
+            <p className="text-xs text-green-600 mt-1">
+              Only symptoms reported in the initial contact are shown below for persistence assessment.
+            </p>
+          </div>
+          
+          {availableSymptoms.physiological.length > 1 && (
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Physiological Symptoms</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {availableSymptoms.physiological.map(symptom => (
+                  <label key={symptom} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.persisted_physiological_symptoms?.includes(symptom) || false}
+                      onChange={() => handleCheckboxChange('persisted_physiological_symptoms', data.persisted_physiological_symptoms || [], symptom)}
+                      className="mr-3 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium">{symptom}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {availableSymptoms.other.length > 1 && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Other Symptoms</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {availableSymptoms.other.map(symptom => (
+                  <label key={symptom} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.persisted_other_symptoms?.includes(symptom) || false}
+                      onChange={() => handleCheckboxChange('persisted_other_symptoms', data.persisted_other_symptoms || [], symptom)}
+                      className="mr-3 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium">{symptom}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// Current Symptoms Section Component
+const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(data.physiological_symptoms || []);
+  const [otherSymptom, setOtherSymptom] = useState<string>("");
 
   const symptomOptions = [
     'None',
@@ -798,13 +973,13 @@ const PreviousBehaviorsSection: React.FC<SectionProps> = ({ data, onChange }) =>
     }
     
     setSelectedSymptoms(newSymptoms);
-    onChange({ current_symptoms: newSymptoms });
+    onChange({ physiological_symptoms: newSymptoms });
   };
 
   const handleSymptomRemove = (symptom: string) => {
     const newSymptoms = selectedSymptoms.filter(s => s !== symptom);
     setSelectedSymptoms(newSymptoms);
-    onChange({ current_symptoms: newSymptoms });
+    onChange({ physiological_symptoms: newSymptoms });
     
     if (symptom === "Other") {
       setOtherSymptom("");
