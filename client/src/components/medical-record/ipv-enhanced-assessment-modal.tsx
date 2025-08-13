@@ -266,6 +266,22 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <p className="text-gray-600 mb-4">Ensure patient safety before proceeding with IPV assessment</p>
               </div>
               
+              {/* WHO Protocol Reminder */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex gap-3">
+                  <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-blue-800 text-sm">
+                    <p className="font-semibold mb-1">WHO Protocol Requirements:</p>
+                    <ul className="space-y-1">
+                      <li>✓ <strong>Private setting:</strong> Door closed, no interruptions possible</li>
+                      <li>✓ <strong>Confidentiality:</strong> Assured except if child at risk</li>
+                      <li>✓ <strong>Time allocation:</strong> Minimum 15-20 minutes uninterrupted</li>
+                      <li>✓ <strong>Training:</strong> Provider trained in sensitive inquiry</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -277,6 +293,24 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       <li>• Respect cultural preferences for terminology</li>
                     </ul>
                   </div>
+                </div>
+              </div>
+
+              {/* Privacy Verification Checklist */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-gray-800 mb-3">Privacy Verification Checklist:</h4>
+                <div className="space-y-2 text-sm">
+                  {[
+                    'Door is closed and room is private',
+                    'No partner, family, or friends present',
+                    'No children over 2 years old present',
+                    'Confidentiality has been explained'
+                  ].map((item, index) => (
+                    <label key={index} className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded">
+                      <input type="checkbox" className="mr-2 text-blue-600" />
+                      <span className="text-gray-700">{item}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -375,6 +409,18 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <p className="text-gray-600">Select any factors that apply to this patient</p>
               </div>
 
+              {/* Training Prompt */}
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                <div className="flex gap-2">
+                  <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-purple-800 text-sm">
+                    <p className="font-medium mb-1">Provider Guidance - How to Ask:</p>
+                    <p className="italic">"I ask all my patients about their well-being at home because it affects health. Is there anything concerning you?"</p>
+                    <p className="mt-1 text-xs">Use open-ended questions. Listen without judgment.</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid gap-4">
                 {Object.entries(
                   riskFactors.reduce((acc, factor) => {
@@ -394,14 +440,18 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {factors.map((factor) => (
-                        <label key={factor.id} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <label key={factor.id} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer group">
                           <input
                             type="checkbox"
                             checked={assessmentData.riskFactors.includes(factor.id)}
                             onChange={() => handleRiskFactorToggle(factor.id)}
                             className="mr-2 text-blue-600"
                           />
-                          <span className="text-sm">{factor.label}</span>
+                          <span className="text-sm flex-1">{factor.label}</span>
+                          {/* Contextual Help */}
+                          <span className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" title="Ask sensitively about this factor">
+                            ?
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -479,6 +529,18 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <p className="text-gray-600">Assess the 4 types of immediate needs</p>
               </div>
 
+              {/* WHO Training Prompt */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div className="flex gap-2">
+                  <Heart className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-green-800 text-sm">
+                    <p className="font-medium mb-1">WHO Protocol - Immediate Response:</p>
+                    <p>Assess needs without pressuring disclosure. Offer choices, not advice. Respect her decisions.</p>
+                    <p className="mt-1 text-xs italic">"What would be most helpful for you right now?"</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   { key: 'emotional', label: 'Emotional/Psychological Health', icon: Heart, color: 'blue' },
@@ -519,6 +581,18 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">First-Line Support Tasks</h3>
                 <p className="text-gray-600">Complete the 5 essential support actions</p>
+              </div>
+
+              {/* WHO LIVES Protocol Reminder */}
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                <div className="flex gap-2">
+                  <Shield className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-indigo-800 text-sm">
+                    <p className="font-semibold mb-1">WHO LIVES Protocol - Essential Actions:</p>
+                    <p>Each step builds trust and empowers the woman. Complete all 5 steps in sequence.</p>
+                    <p className="mt-1 text-xs">Remember: Her safety and autonomy are paramount.</p>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -574,6 +648,24 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 </h3>
                 <p className="text-gray-600">Complete assessment documentation</p>
               </div>
+
+              {/* WHO Referral Protocol */}
+              {hasRiskFactors && (
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
+                  <div className="flex gap-2">
+                    <Phone className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-orange-800 text-sm">
+                      <p className="font-semibold mb-1">WHO Referral Guidelines:</p>
+                      <ul className="space-y-0.5 text-xs">
+                        <li>• Obtain consent before making referrals</li>
+                        <li>• Provide written information she can take safely</li>
+                        <li>• Warm handover when possible (call together)</li>
+                        <li>• Follow up within 2 weeks if safe to do so</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {hasRiskFactors && (
                 <div>
