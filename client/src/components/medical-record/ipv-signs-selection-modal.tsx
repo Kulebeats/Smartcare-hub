@@ -24,7 +24,7 @@ interface IPVSignWithTooltipProps {
 const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
   id, name, value, checked, onChange, label
 }) => (
-  <div className="flex items-center space-x-2 p-1.5 hover:bg-gray-50 rounded text-xs">
+  <div className="flex items-start space-x-2 p-1 hover:bg-white/50 rounded text-xs">
     <input
       type="checkbox"
       id={id}
@@ -32,9 +32,9 @@ const IPVSignWithTooltip: React.FC<IPVSignWithTooltipProps> = ({
       value={value}
       checked={checked}
       onChange={onChange}
-      className="rounded border-gray-300 text-purple-600"
+      className="rounded border-gray-300 text-purple-600 mt-0.5 flex-shrink-0"
     />
-    <label htmlFor={id} className="text-black cursor-pointer text-xs leading-tight">
+    <label htmlFor={id} className="text-black cursor-pointer text-xs leading-tight flex-1">
       {label}
     </label>
   </div>
@@ -49,42 +49,22 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
   const [selectedSigns, setSelectedSigns] = useState<string[]>(initialSelectedSigns);
   const [ipvSignsConfirmed, setIpvSignsConfirmed] = useState(false);
 
-  // IPV Signs organized by category (mirror danger signs structure)
+  // IPV Signs organized by category - streamlined for better UI
   const ipvSignCategories = {
-    emotional: {
-      title: "Emotional & Mental Health",
-      icon: <Heart className="w-4 h-4 text-blue-600" />,
+    mentalHealth: {
+      title: "Mental Health & Emotional",
+      icon: <Brain className="w-4 h-4 text-blue-600" />,
       signs: [
-        'Ongoing stress',
-        'Ongoing anxiety',
-        'Ongoing depression',
-        'Unspecified ongoing emotional health issues'
-      ]
-    },
-    behavioral: {
-      title: "Behavioral & Substance Use",
-      icon: <Users className="w-4 h-4 text-purple-600" />,
-      signs: [
-        'Misuse of alcohol',
-        'Misuse of drugs',
-        'Unspecified harmful behaviours'
-      ]
-    },
-    selfHarm: {
-      title: "Self-Harm Risk",
-      icon: <AlertTriangle className="w-4 h-4 text-red-600" />,
-      signs: [
-        'Thoughts of self-harm or (attempted) suicide',
-        'Plans of self-harm or (attempt) suicide'
+        'Ongoing stress/anxiety/depression',
+        'Thoughts or plans of self-harm',
+        'Substance misuse (alcohol/drugs)'
       ]
     },
     reproductive: {
       title: "Reproductive Health",
       icon: <Heart className="w-4 h-4 text-pink-600" />,
       signs: [
-        'Repeated sexually transmitted infections (STIs)',
-        'Unwanted pregnancies',
-        'Adverse reproductive outcomes',
+        'Repeated STIs or unwanted pregnancies',
         'Unexplained reproductive symptoms',
         'Repeated vaginal bleeding'
       ]
@@ -94,21 +74,18 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
       icon: <Shield className="w-4 h-4 text-green-600" />,
       signs: [
         'Unexplained chronic pain',
-        'Unexplained chronic gastrointestinal symptoms',
-        'Unexplained genitourinary symptoms',
-        'Injury to abdomen',
-        'Injury other (specify)',
-        'Problems with central nervous system'
+        'Injury to abdomen or other areas',
+        'Chronic gastrointestinal/genitourinary symptoms'
       ]
     },
-    healthcare: {
-      title: "Healthcare Patterns",
-      icon: <User className="w-4 h-4 text-indigo-600" />,
+    behavioral: {
+      title: "Healthcare & Behavioral Patterns",
+      icon: <Users className="w-4 h-4 text-indigo-600" />,
       signs: [
-        'Repeated health consultations with no clear diagnosis',
-        "Woman's partner or husband is intrusive during consultations",
-        "Woman often misses her own or her children's health-care appointments",
-        'Children have emotional and behavioural problems'
+        'Partner intrusive during consultations',
+        'Often misses appointments',
+        'Children have behavioral problems',
+        'Repeated consultations, no clear diagnosis'
       ]
     }
   };
@@ -129,8 +106,8 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-4xl" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
-        <DialogTitle className="text-lg font-semibold text-gray-800 mb-3">IPV Signs & Symptoms Assessment</DialogTitle>
+      <DialogContent className="bg-white/95 backdrop-blur-2xl border border-gray-200/50 ring-1 ring-white/30 rounded-2xl font-sans max-w-5xl max-h-[85vh] overflow-y-auto" style={{ boxShadow: '0 4px 9px hsla(223.58deg, 50.96%, 59.22%, 0.65)' }}>
+        <DialogTitle className="text-lg font-semibold text-black mb-3">IPV Signs & Symptoms Assessment</DialogTitle>
         
         <div className="space-y-4">
           <div>
@@ -146,29 +123,31 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
                 )}
               </div>
               
-              {/* Render IPV signs by category */}
-              {Object.entries(ipvSignCategories).map(([key, category]) => (
-                <div key={key} className="mb-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm transition-all duration-200 hover:bg-white/40" style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }}>
-                  <h5 className="text-xs font-semibold text-black mb-1.5 pb-0.5 border-b border-gray-200/50 flex items-center gap-2">
-                    {category.icon}
-                    {category.title}
-                  </h5>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {category.signs.map((sign) => (
-                      <IPVSignWithTooltip
-                        key={sign}
-                        id={`ipv_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
-                        name={`ipv_sign_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
-                        value={sign}
-                        checked={selectedSigns.includes(sign)}
-                        onChange={handleIPVSignsChange}
-                        label={sign}
-                        category={key}
-                      />
-                    ))}
+              {/* Render IPV signs by category - compact grid layout */}
+              <div className="grid grid-cols-2 gap-3">
+                {Object.entries(ipvSignCategories).map(([key, category]) => (
+                  <div key={key} className="p-3 rounded-lg bg-white/40 backdrop-blur-sm border border-gray-200/30">
+                    <h5 className="text-sm font-semibold text-black mb-2 flex items-center gap-2">
+                      {category.icon}
+                      {category.title}
+                    </h5>
+                    <div className="space-y-1.5">
+                      {category.signs.map((sign) => (
+                        <IPVSignWithTooltip
+                          key={sign}
+                          id={`ipv_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
+                          name={`ipv_sign_${sign.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}`}
+                          value={sign}
+                          checked={selectedSigns.includes(sign)}
+                          onChange={handleIPVSignsChange}
+                          label={sign}
+                          category={key}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
               
               {/* Confirmation Button - Mirror danger signs exactly */}
               {selectedSigns.length > 0 && !ipvSignsConfirmed && (
