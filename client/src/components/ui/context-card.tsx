@@ -25,13 +25,14 @@ const ContextCardTrigger = ({
         place={side}
         opacity={1}
         border={"2px solid #3b82f6"}
-        className={`!font-sans !text-left !text-sm !rounded-lg !bg-blue-50 !text-black !shadow-lg !z-50 !backdrop-blur-sm`}
+        className={`!font-sans !text-left !text-xs !rounded-lg !bg-blue-50 !text-black !shadow-lg !z-50 !backdrop-blur-sm !font-normal`}
         style={{
           backgroundColor: '#dbeafe !important',
           color: '#000000 !important',
-          border: '2px solid #3b82f6 !important',
           boxShadow: '0 8px 16px rgba(59, 130, 246, 0.3) !important',
-          zIndex: 9999
+          zIndex: 99999,
+          fontSize: '12px !important',
+          fontWeight: 'normal !important'
         }}
       >
         {content}
