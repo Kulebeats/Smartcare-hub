@@ -9592,6 +9592,17 @@ export default function AncPage() {
                       if (grandMultiparaWarning) {
                         grandMultiparaWarning.style.display = gravida >= 5 ? 'block' : 'none';
                       }
+                      
+                      // Auto-populate "No. of previous pregnancies" field
+                      // Business Rule: Previous pregnancies = Total Gravida - 1 (current pregnancy)
+                      const previousPregnanciesCount = Math.max(0, gravida - 1);
+                      const previousPregnanciesInput = document.getElementById('obstetric_previous_pregnancies_count') as HTMLInputElement;
+                      
+                      if (previousPregnanciesInput) {
+                        previousPregnanciesInput.value = previousPregnanciesCount.toString();
+                        // Trigger change event to activate existing form generation logic
+                        previousPregnanciesInput.dispatchEvent(new Event('change', { bubbles: true }));
+                      }
                     }}
                   />
                 </div>
