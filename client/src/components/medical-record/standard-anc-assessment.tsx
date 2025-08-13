@@ -12,6 +12,7 @@ import {
   type IPVRiskAssessment 
 } from "@/lib/ipv-decision-support";
 import IPVEnhancedAssessmentModal, { type EnhancedIPVAssessmentData } from './ipv-enhanced-assessment-modal';
+import IPVSignsSelectionModal from './ipv-signs-selection-modal';
 
 interface PreviousRecommendations {
   penicillin?: boolean;
@@ -1058,11 +1059,51 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
 };
 
 const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
+  // New state management to mirror danger signs pattern
+  const [ipvMode, setIpvMode] = useState<'none' | 'present' | null>(null);
+  const [showIPVSignsDialog, setShowIPVSignsDialog] = useState(false);
+  const [selectedIPVSigns, setSelectedIPVSigns] = useState<string[]>([]);
+  const [ipvSignsConfirmed, setIpvSignsConfirmed] = useState(false);
+  const [showIPVModal, setShowIPVModal] = useState(false);
+  
+  // Legacy state for backward compatibility
   const [selectedSigns, setSelectedSigns] = useState<string[]>(data.signs_symptoms || []);
   const [otherSign, setOtherSign] = useState<string>("");
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const [showIPVModal, setShowIPVModal] = useState(false);
   const [ipvButtonDebounce, setIpvButtonDebounce] = useState(false);
+
+  // New IPV mode handlers (mirror danger signs pattern)
+  const handleIPVModeChange = (mode: 'none' | 'present') => {
+    setIpvMode(mode);
+    setIpvSignsConfirmed(false);
+    setSelectedIPVSigns([]);
+    
+    if (mode === 'present') {
+      setShowIPVSignsDialog(true);
+    } else {
+      setShowIPVSignsDialog(false);
+      setShowIPVModal(false);
+    }
+    
+    // Update onChange for integration
+    onChange({ 
+      signs_symptoms: mode === 'none' ? ['No presenting signs or symptoms indicative of IPV'] : [] 
+    });
+  };
+
+  const handleIPVSignsConfirmation = (signs: string[]) => {
+    setSelectedIPVSigns(signs);
+    setIpvSignsConfirmed(true);
+    setShowIPVSignsDialog(false);
+    
+    // Launch existing enhanced IPV modal after confirmation
+    if (signs.length > 0) {
+      setShowIPVModal(true);
+    }
+    
+    // Update onChange for integration
+    onChange({ signs_symptoms: signs });
+  };
 
   const ipvSignOptions = [
     'No presenting signs or symptoms indicative of IPV',
@@ -1152,235 +1193,72 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
       <h3 className="text-base font-medium mb-3 text-gray-800">IPV Screening Assessment</h3>
       <p className="text-xs text-red-600 mb-3">This section requires sensitive handling and confidentiality.</p>
       
-      <div className="space-y-3">
-        {/* IPV Signs - Multi-select dropdown */}
+      <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Presenting signs and symptoms that trigger suspicion of IPV
-          </label>
+          <label className="block text-sm font-medium mb-3">IPV Assessment</label>
           
-          {/* Multi-select dropdown */}
-          <div className="relative">
-            <select 
-              className="w-full border rounded p-2 appearance-none bg-white"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value && !selectedSigns.includes(value)) {
-                  handleSignSelect(value);
-                }
-                e.target.value = ""; // Reset dropdown
-              }}
-            >
-              <option value="">Select signs/symptoms...</option>
-              {ipvSignOptions
-                .filter(option => {
-                  // Don't show options that are already selected
-                  if (selectedSigns.includes(option)) return false;
-                  // If "No signs" is selected, don't show other options
-                  if (selectedSigns.includes("No presenting signs or symptoms indicative of IPV") && 
-                      option !== "No presenting signs or symptoms indicative of IPV") return false;
-                  // If other options are selected, don't show "No signs"
-                  if (selectedSigns.length > 0 && 
-                      !selectedSigns.includes("No presenting signs or symptoms indicative of IPV") && 
-                      option === "No presenting signs or symptoms indicative of IPV") return false;
-
-                  return true;
-                })
-                .map((option) => (
-                  <option key={option} value={option}>{option}</option>
-                ))
-              }
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-              <svg className="w-4 h-4 fill-current text-gray-400" viewBox="0 0 20 20">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
-              </svg>
+          {/* Primary IPV Selection - Mirror danger signs pattern exactly */}
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center space-x-2">
+              <input 
+                type="radio" 
+                id="ipv_mode_none" 
+                name="ipv_sign_mode"
+                value="none"
+                checked={ipvMode === 'none'}
+                onChange={(e) => handleIPVModeChange(e.target.value as 'none' | 'present')}
+                className="rounded border-gray-300 text-purple-600"
+              />
+              <label htmlFor="ipv_mode_none" className="text-sm font-medium text-green-700">None - No presenting signs or symptoms indicative of IPV</label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <input 
+                type="radio" 
+                id="ipv_mode_present" 
+                name="ipv_sign_mode"
+                value="present"
+                checked={ipvMode === 'present'}
+                onChange={(e) => handleIPVModeChange(e.target.value as 'none' | 'present')}
+                className="rounded border-gray-300 text-purple-600"
+              />
+              <label htmlFor="ipv_mode_present" className="text-sm font-medium text-purple-700">Presenting signs and symptoms that trigger suspicion of IPV present</label>
             </div>
           </div>
 
-          {/* Selected signs displayed as tags */}
-          {selectedSigns.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {selectedSigns.map((sign, index) => (
-                <div key={index} className="flex items-center bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
-                  <span>{sign}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleSignRemove(sign)}
-                    className="ml-2 text-red-600 hover:text-red-800"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          
-          {/* Conditional text box for "Other" and "Injury other" */}
-          {(selectedSigns.includes("Other") || selectedSigns.includes("Injury other (specify)")) && (
-            <div className="mt-3">
-              <textarea
-                placeholder={selectedSigns.includes("Injury other (specify)") ? 
-                  "Please specify the type of injury..." : 
-                  "Please specify other signs/symptoms..."
-                }
-                value={otherSign}
-                onChange={(e) => setOtherSign(e.target.value)}
-                className="w-full border rounded p-2 text-sm"
-                rows={2}
-              />
+          {/* Confirmation Status - Mirror danger signs exactly */}
+          {ipvSignsConfirmed && selectedIPVSigns.length > 0 && (
+            <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm text-green-800 font-medium">
+                  IPV signs confirmed: {selectedIPVSigns.join(', ')}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* IPV Status Indicator */}
-        {selectedSigns.length > 0 && !selectedSigns.includes("No presenting signs or symptoms indicative of IPV") && (
-          <div className="mt-3 p-3 bg-red-100 border border-red-300 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-              <div>
-                <p className="text-red-800 font-medium text-sm">
-                  IPV Risk Assessment Required
-                </p>
-                <p className="text-red-700 text-xs mt-1">
-                  Woman suspected or confirmed to be subjected to intimate partner violence = TRUE
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* IPV Signs Selection Modal - Mirror danger signs dialog */}
+        <IPVSignsSelectionModal
+          isOpen={showIPVSignsDialog}
+          onClose={() => setShowIPVSignsDialog(false)}
+          onConfirmSelection={handleIPVSignsConfirmation}
+          initialSelectedSigns={selectedIPVSigns}
+        />
 
-        {/* IPV Risk Assessment Toaster */}
-        {ipvAssessment && (
-          <div className={`mt-3 p-3 rounded-lg border-l-4 ${
-            ipvAssessment.riskLevel === 'none' 
-              ? 'bg-green-50 border-green-400' 
-              : ipvAssessment.riskLevel === 'low'
-                ? 'bg-yellow-50 border-yellow-400'
-                : ipvAssessment.riskLevel === 'medium'
-                  ? 'bg-orange-50 border-orange-400'
-                  : 'bg-red-50 border-red-400'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className={`p-1 rounded-full ${
-                  ipvAssessment.riskLevel === 'none' 
-                    ? 'bg-green-100' 
-                    : ipvAssessment.riskLevel === 'low'
-                      ? 'bg-yellow-100'
-                      : ipvAssessment.riskLevel === 'medium'
-                        ? 'bg-orange-100'
-                        : 'bg-red-100'
-                }`}>
-                  {ipvAssessment.riskLevel === 'none' ? (
-                    <Info className="w-4 h-4 text-green-600" />
-                  ) : needsUrgentAction ? (
-                    <AlertTriangle className="w-4 h-4 text-red-600" />
-                  ) : ipvAssessment.referralRequired ? (
-                    <Shield className="w-4 h-4 text-orange-600" />
-                  ) : (
-                    <Info className="w-4 h-4 text-yellow-600" />
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <p className={`text-sm font-medium ${
-                      ipvAssessment.riskLevel === 'none' 
-                        ? 'text-green-800' 
-                        : ipvAssessment.riskLevel === 'low'
-                          ? 'text-yellow-800'
-                          : ipvAssessment.riskLevel === 'medium'
-                            ? 'text-orange-800'
-                            : 'text-red-800'
-                    }`}>
-                      {ipvAssessment.riskLevel === 'none' 
-                        ? 'No IPV Risk Detected' 
-                        : ipvAssessment.alertTitle
-                      }
-                    </p>
-                    {ipvAssessment.riskLevel !== 'none' && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        ipvAssessment.riskLevel === 'high' || ipvAssessment.riskLevel === 'immediate_danger' 
-                          ? 'bg-red-200 text-red-800' 
-                          : ipvAssessment.riskLevel === 'medium' 
-                            ? 'bg-orange-200 text-orange-800'
-                            : 'bg-yellow-200 text-yellow-800'
-                      }`}>
-                        {ipvAssessment.riskLevel.toUpperCase().replace('_', ' ')}
-                      </span>
-                    )}
-                    {needsUrgentAction && (
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-red-600 text-white">
-                        URGENT
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-xs mt-0.5 ${
-                    ipvAssessment.riskLevel === 'none' 
-                      ? 'text-green-600' 
-                      : ipvAssessment.riskLevel === 'low'
-                        ? 'text-yellow-600'
-                        : ipvAssessment.riskLevel === 'medium'
-                          ? 'text-orange-600'
-                          : 'text-red-600'
-                  }`}>
-                    {ipvAssessment.riskLevel === 'none' 
-                      ? 'Continue with routine care. IPV resources available if needed.' 
-                      : ipvAssessment.alertMessage
-                    }
-                  </p>
-                </div>
-              </div>
-              
-              {/* Interactive Info Button */}
-              {ipvAssessment.riskLevel !== 'none' && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!showIPVModal && !ipvButtonDebounce) {  // Prevent multiple opens
-                      console.log('IPV Info button clicked, opening modal...');
-                      console.log('Current showIPVModal state:', showIPVModal);
-                      console.log('Current ipvButtonDebounce state:', ipvButtonDebounce);
-                      setIpvButtonDebounce(true);
-                      setShowIPVModal(true);
-                      console.log('Modal should now be open');
-                      // Reset debounce after 1 second
-                      setTimeout(() => setIpvButtonDebounce(false), 1000);
-                    } else {
-                      console.log('Button click blocked - modal already open or debounce active');
-                    }
-                  }}
-                  disabled={showIPVModal || ipvButtonDebounce}
-                  className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold hover:opacity-80 hover:scale-105 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                    ipvAssessment.riskLevel === 'low'
-                      ? 'border-yellow-400 bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                      : ipvAssessment.riskLevel === 'medium'
-                        ? 'border-orange-400 bg-orange-100 text-orange-800 hover:bg-orange-200'
-                        : 'border-red-400 bg-red-100 text-red-800 hover:bg-red-200'
-                  }`}
-                  title="Click to view detailed IPV clinical recommendations and WHO guidelines"
-                  aria-label="View IPV clinical recommendations"
-                >
-                  i
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Enhanced IPV Assessment Modal - Render outside main container */}
+        {/* Enhanced IPV Assessment Modal - Launch after confirmation */}
         {showIPVModal && (
           <IPVEnhancedAssessmentModal 
             isOpen={showIPVModal}
             onClose={() => {
               console.log('Closing enhanced IPV modal...');
               setShowIPVModal(false);
-              setIpvButtonDebounce(false);
             }}
-            selectedSigns={selectedSigns}
-            ipvAssessment={ipvAssessment}
+            selectedSigns={selectedIPVSigns}
+            ipvAssessment={selectedIPVSigns.length > 0 ? evaluateIPVRisk(selectedIPVSigns) : null}
             onAssessmentComplete={(enhancedData: EnhancedIPVAssessmentData) => {
               console.log('Enhanced IPV Assessment completed:', enhancedData);
               if (onChange) {
