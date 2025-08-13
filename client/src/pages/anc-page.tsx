@@ -6875,7 +6875,7 @@ export default function AncPage() {
                       </div>
                       <div>
                         <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Current Pregnancy</h3>
-                        <p className="text-sm text-gray-500">Current pregnancy status, gravida, para, and pregnancy history</p>
+
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -9715,8 +9715,8 @@ export default function AncPage() {
       <Dialog open={showObstetricHistoryDialog} onOpenChange={setShowObstetricHistoryDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center text-lg font-semibold text-purple-600">
-              <Baby className="w-5 h-5 mr-2" />
+            <DialogTitle className="flex items-center text-lg font-semibold text-black">
+              <FileText className="w-5 h-5 mr-2" />
               Enhanced Obstetric History Assessment
             </DialogTitle>
             <DialogDescription>
@@ -10726,7 +10726,7 @@ export default function AncPage() {
                   }
                 }}
               />
-              <p className="text-xs text-gray-500 mt-1">Enter the number of previous pregnancies to generate detailed history forms</p>
+
             </div>
 
             {/* Dynamic Pregnancy History Container */}
