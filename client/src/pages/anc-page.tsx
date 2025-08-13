@@ -10558,17 +10558,37 @@ export default function AncPage() {
                     handleOutcome: function(index, outcome) {
                       console.log('🤱 Outcome selected:', outcome, 'for pregnancy', index);
                       const deliverySection = document.getElementById('delivery-mode-section-' + index);
+                      const infantSexSection = document.getElementById('infant-sex-section-' + index);
+                      const birthWeightSection = document.getElementById('birth-weight-section-' + index);
+                      const babyStatusSection = document.getElementById('baby-status-section-' + index);
                       
                       if (outcome === 'still_birth' || outcome === 'live_birth') {
                         if (deliverySection) {
                           deliverySection.style.display = 'block';
                           console.log('✅ Delivery section shown for outcome:', outcome);
                         }
-                      } else if (outcome === 'abortion') {
-                        if (deliverySection) {
-                          deliverySection.style.display = 'none';
-                          console.log('❌ Delivery section hidden for abortion');
+                        
+                        // For live births in viable pregnancies (7+ months), show all infant fields
+                        if (outcome === 'live_birth') {
+                          if (infantSexSection) {
+                            infantSexSection.style.display = 'block';
+                            console.log('✅ Infant sex section shown for live birth');
+                          }
+                          if (birthWeightSection) {
+                            birthWeightSection.style.display = 'block';
+                            console.log('✅ Birth weight section shown for live birth');
+                          }
+                          if (babyStatusSection) {
+                            babyStatusSection.style.display = 'block';
+                            console.log('✅ Baby status section shown permanently for live birth');
+                          }
                         }
+                      } else if (outcome === 'abortion') {
+                        if (deliverySection) deliverySection.style.display = 'none';
+                        if (infantSexSection) infantSexSection.style.display = 'none';
+                        if (birthWeightSection) birthWeightSection.style.display = 'none';
+                        if (babyStatusSection) babyStatusSection.style.display = 'none';
+                        console.log('❌ All delivery and infant sections hidden for abortion');
                       }
                     },
                     
@@ -10697,6 +10717,7 @@ export default function AncPage() {
                   };
                   
                   window.handleObstetricOutcomeChange = function(index, outcome) {
+                    console.log('🔄 Legacy outcome handler called:', index, outcome);
                     window.ObstetricWorkflow.handleOutcome(index, outcome);
                   };
                   
