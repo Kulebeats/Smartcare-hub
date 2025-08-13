@@ -34,6 +34,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure tooltips appear above all modals and overlays */
+.react-tooltip {
+  z-index: 999999 !important;
+  position: fixed !important;
+}
+
+/* Override any modal z-index conflicts */
+[data-radix-popper-content-wrapper] {
+  z-index: 999998 !important;
+}
+
 @keyframes toast-timer {
   0% {
     width: 100%;
