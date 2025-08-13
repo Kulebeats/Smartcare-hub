@@ -10709,6 +10709,20 @@ export default function AncPage() {
                   };
                   
                   console.log('✅ Unified Obstetric Workflow System initialized');
+                  console.log('🔍 Testing workflow system:', typeof window.ObstetricWorkflow);
+                  
+                  // Test immediate functionality
+                  setTimeout(() => {
+                    console.log('🧪 Running workflow system test...');
+                    const container = document.getElementById('pregnancy-history-container');
+                    console.log('📋 Pregnancy container found:', !!container);
+                    if (window.ObstetricWorkflow) {
+                      console.log('✅ ObstetricWorkflow object exists');
+                      console.log('🎯 Available methods:', Object.keys(window.ObstetricWorkflow));
+                    } else {
+                      console.error('❌ ObstetricWorkflow object not found');
+                    }
+                  }, 1000);
                 })();
               `
             }} />
