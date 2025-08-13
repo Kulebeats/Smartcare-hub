@@ -11475,8 +11475,9 @@ export default function AncPage() {
           
           <div className="space-y-6">
             {/* Past Medical History */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Past medical history</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-800">Past medical history</label>
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-2">
                   <input 
@@ -11560,10 +11561,12 @@ export default function AncPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Surgical History */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Surgical history</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-800">Surgical history</label>
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-2">
                   <input 
@@ -11643,10 +11646,12 @@ export default function AncPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Drug History */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Drug history</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-800">Drug history</label>
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-2">
                   <input 
@@ -11681,7 +11686,7 @@ export default function AncPage() {
               </div>
               
               {/* Detailed Drug History Options */}
-              <div id="drug_detailed" className="border-l-2 border-green-200 pl-4 mt-3" style={{ display: 'none' }}>
+              <div id="drug_detailed" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <label className="flex items-center space-x-2 text-sm">
                     <input type="checkbox" className="rounded border-gray-300 text-green-600" />
@@ -11746,10 +11751,12 @@ export default function AncPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Immunization Status */}
-            <div className="space-y-4">
-              <label className="block text-sm font-medium">Immunization status</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-800">Immunization status</label>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -11774,10 +11781,12 @@ export default function AncPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Social History */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Social history</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-800">Social history</label>
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-2">
                   <input 
@@ -11812,7 +11821,7 @@ export default function AncPage() {
               </div>
               
               {/* Detailed Social History Options */}
-              <div id="social_detailed" className="border-l-2 border-green-200 pl-4 mt-3" style={{ display: 'none' }}>
+              <div id="social_detailed" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="flex items-center space-x-2 text-sm">
                     <input type="checkbox" className="rounded border-gray-300 text-green-600" />
@@ -11833,10 +11842,12 @@ export default function AncPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Substance Use Assessment */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Substance Use Assessment</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-800">Substance Use Assessment</label>
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-2">
                   <input 
@@ -12128,15 +12139,18 @@ export default function AncPage() {
                 </label>
               </div>
             </div>
+            </div>
 
             {/* Other Medical Conditions */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium">Other medical conditions</label>
+            <div className="border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-800">Other medical conditions</label>
               <textarea 
                 className="w-full border rounded p-2 text-sm" 
                 rows={3}
                 placeholder="Specify any other medical conditions or relevant history..."
               ></textarea>
+            </div>
             </div>
           </div>
 
