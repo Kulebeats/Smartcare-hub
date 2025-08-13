@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Modal } from "@/components/ui/modal";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Stethoscope, AlertTriangle, Shield, Info } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -207,57 +207,58 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
         </CardHeader>
       </Card>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Standard ANC Assessment"
-        className="bg-white/85 backdrop-blur-2xl border border-white/30 ring-1 ring-white/20 shadow-xl rounded-2xl max-w-[680px] max-h-[80vh] overflow-y-auto"
-      >
-        <div className="space-y-4 mt-4 text-sm">
-          {/* Medications Section */}
-          <MedicationsSection 
-            data={assessmentData.medications}
-            onChange={(data) => updateAssessmentData('medications', data)}
-            previousRecommendations={previousRecommendations}
-          />
+      <Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
+        <DialogContent className="sm:max-w-[680px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Standard ANC Assessment</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4 text-sm">
+            {/* Medications Section */}
+            <MedicationsSection 
+              data={assessmentData.medications}
+              onChange={(data) => updateAssessmentData('medications', data)}
+              previousRecommendations={previousRecommendations}
+            />
 
-          {/* Current Symptoms Section */}
-          <CurrentSymptomsSection
-            data={assessmentData.currentSymptoms}
-            onChange={(data) => updateAssessmentData('currentSymptoms', data)}
-          />
-
-
+            {/* Current Symptoms Section */}
+            <CurrentSymptomsSection
+              data={assessmentData.currentSymptoms}
+              onChange={(data) => updateAssessmentData('currentSymptoms', data)}
+            />
 
 
 
-          {/* Visit Type Indicator - Show when sections are hidden */}
-          {isInitialVisit && (
-            <div className="border-l-4 border-blue-300 bg-blue-50/60 backdrop-blur-md rounded-r-xl mb-6 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.25)' }}>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <h3 className="text-lg font-semibold text-blue-800">
-                  {visitType ? 'Initial ANC Visit' : 'Initial ANC Visit (Default)'}
-                </h3>
+
+
+            {/* Visit Type Indicator - Show when sections are hidden */}
+            {isInitialVisit && (
+              <div className="border-l-4 border-blue-300 bg-blue-50/60 backdrop-blur-md rounded-r-xl mb-6 p-4" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.25)' }}>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <h3 className="text-lg font-semibold text-blue-800">
+                    {visitType ? 'Initial ANC Visit' : 'Initial ANC Visit (Default)'}
+                  </h3>
+                </div>
+                <p className="text-blue-700 text-sm mt-2">
+                  {visitType 
+                    ? 'This is a first antenatal care contact.' 
+                    : 'No visit type specified - defaulting to first antenatal care contact.'
+                  } Behavioral and symptom persistence assessments are not applicable for initial visits as there is no previous visit data to compare against.
+                </p>
               </div>
-              <p className="text-blue-700 text-sm mt-2">
-                {visitType 
-                  ? 'This is a first antenatal care contact.' 
-                  : 'No visit type specified - defaulting to first antenatal care contact.'
-                } Behavioral and symptom persistence assessments are not applicable for initial visits as there is no previous visit data to compare against.
-              </p>
-            </div>
-          )}
+            )}
 
-          {/* IPV Screening Section */}
-          <IPVScreeningSection
-            data={assessmentData.ipvScreening}
-            onChange={(data) => updateAssessmentData('ipvScreening', data)}
-          />
+            {/* IPV Screening Section */}
+            <IPVScreeningSection
+              data={assessmentData.ipvScreening}
+              onChange={(data) => updateAssessmentData('ipvScreening', data)}
+            />
 
 
-        </div>
-      </Modal>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

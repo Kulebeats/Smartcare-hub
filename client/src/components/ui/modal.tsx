@@ -70,7 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby="modal-title"
         tabIndex={-1}
         className={cn(
-          "bg-white rounded-2xl shadow-xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col",
+          "bg-white rounded-2xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col",
           className
         )}
       >
