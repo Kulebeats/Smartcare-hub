@@ -9944,7 +9944,7 @@ export default function AncPage() {
                                 </div>
                               </div>
                               
-                              <div class="grid grid-cols-1 gap-3">
+                              <div class="grid grid-cols-2 gap-3">
                                 <div id="baby-status-section-${i}" style="display: none;">
                                   <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
                                   <select class="w-full border rounded p-2 text-sm h-10">
@@ -9953,6 +9953,7 @@ export default function AncPage() {
                                     <option value="deceased">Deceased</option>
                                   </select>
                                 </div>
+                                <div></div>
                               </div>
                             `;
                             container.appendChild(pregnancyDiv);
@@ -10434,7 +10435,7 @@ export default function AncPage() {
                           </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 gap-3">
+                        <div class="grid grid-cols-2 gap-3">
                           <div id="baby-status-section-${i}" style="display: none;">
                             <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
                             <select class="w-full border rounded p-2 text-sm h-10">
@@ -10445,6 +10446,7 @@ export default function AncPage() {
                               <option value="died_later">Died later</option>
                             </select>
                           </div>
+                          <div></div>
                         </div>
                       `;
                       container.appendChild(pregnancyDiv);
@@ -10569,19 +10571,26 @@ export default function AncPage() {
                         }
                       };
 
-                      // Function to handle obstetric outcome changes
+                      // Function to handle obstetric outcome changes with sequential logic
                       (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                        const deliverySection = document.getElementById(`delivery-mode-section-${pregnancyIndex}`);
+                        const labourSection = document.getElementById(`labour-type-section-${pregnancyIndex}`);
+                        const placeSection = document.getElementById(`place-delivery-section-${pregnancyIndex}`);
+                        const infantSection = document.getElementById(`infant-sex-section-${pregnancyIndex}`);
+                        const birthWeightSection = document.getElementById(`birth-weight-section-${pregnancyIndex}`);
                         const babyStatusSection = document.getElementById(`baby-status-section-${pregnancyIndex}`);
-                        const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${pregnancyIndex + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
                         
-                        if (gestationalAge >= 7) {
-                          if (outcome === 'live_birth') {
-                            // Show baby status only for live births
-                            if (babyStatusSection) babyStatusSection.style.display = 'block';
-                          } else {
-                            // Hide baby status for stillbirths or no selection
-                            if (babyStatusSection) babyStatusSection.style.display = 'none';
-                          }
+                        // First hide all subsequent fields to prevent gaps
+                        [labourSection, placeSection, infantSection, birthWeightSection, babyStatusSection].forEach(section => {
+                          if (section) section.style.display = 'none';
+                        });
+                        
+                        if (outcome === 'live_birth' || outcome === 'still_birth') {
+                          // For viable outcomes, show delivery mode
+                          if (deliverySection) deliverySection.style.display = 'block';
+                        } else {
+                          // For non-viable outcomes, hide delivery fields
+                          if (deliverySection) deliverySection.style.display = 'none';
                         }
                       };
                       
@@ -10591,9 +10600,12 @@ export default function AncPage() {
                         const assistedSection = document.getElementById(`assisted-vaginal-section-${index}`);
                         const csectionSection = document.getElementById(`csection-section-${index}`);
                         const placeDeliverySection = document.getElementById(`place-delivery-section-${index}`);
+                        const infantSection = document.getElementById(`infant-sex-section-${index}`);
+                        const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
+                        const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
                         
-                        // Hide all conditional sections
-                        [labourSection, assistedSection, csectionSection].forEach(section => {
+                        // Hide all subsequent sections to prevent gaps
+                        [labourSection, assistedSection, csectionSection, infantSection, birthWeightSection, babyStatusSection].forEach(section => {
                           if (section) section.style.display = 'none';
                         });
                         
@@ -10606,8 +10618,10 @@ export default function AncPage() {
                             if (labourSection) labourSection.style.display = 'block';
                           } else if (value === 'assisted_vaginal') {
                             if (assistedSection) assistedSection.style.display = 'block';
+                            // Skip labor section for assisted vaginal delivery
                           } else if (value === 'c_section') {
                             if (csectionSection) csectionSection.style.display = 'block';
+                            // Skip labor section for c-section
                           }
                         } else {
                           if (placeDeliverySection) placeDeliverySection.style.display = 'none';
@@ -10618,26 +10632,40 @@ export default function AncPage() {
                         const select = document.querySelector(`#labour-type-section-${index} select`) as HTMLSelectElement;
                         const infantSection = document.getElementById(`infant-sex-section-${index}`);
                         const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
+                        const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
+                        
+                        // Hide subsequent fields first
+                        [birthWeightSection, babyStatusSection].forEach(section => {
+                          if (section) section.style.display = 'none';
+                        });
                         
                         const value = select?.value;
                         if (value === 'induced' || value === 'spontaneous') {
                           if (infantSection) infantSection.style.display = 'block';
-                          
-                          // Check if sex is already selected to show birth weight
-                          const sexSelect = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
-                          if (sexSelect?.value) {
-                            if (birthWeightSection) birthWeightSection.style.display = 'block';
-                          }
                         } else {
                           if (infantSection) infantSection.style.display = 'none';
-                          if (birthWeightSection) birthWeightSection.style.display = 'none';
                         }
                       };
 
-                      // Function to handle sex selection and show birth weight
+                      // Function to handle sex selection and show birth weight sequentially
                       (window as any).handleSexSelection = function(index: number) {
                         const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
-                        if (birthWeightSection) birthWeightSection.style.display = 'block';
+                        const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
+                        const select = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
+                        
+                        if (select?.value) {
+                          if (birthWeightSection) birthWeightSection.style.display = 'block';
+                          
+                          // Check if this is a live birth to show baby status
+                          const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
+                          if (outcomeSelect?.value === 'live_birth') {
+                            if (babyStatusSection) babyStatusSection.style.display = 'block';
+                          }
+                        } else {
+                          [birthWeightSection, babyStatusSection].forEach(section => {
+                            if (section) section.style.display = 'none';
+                          });
+                        }
                       };
                       
                       (window as any).handleSocialHabitsNone = function(noneCheckbox: HTMLInputElement) {
