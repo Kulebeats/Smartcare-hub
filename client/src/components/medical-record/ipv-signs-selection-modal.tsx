@@ -52,12 +52,13 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
   // IPV Signs organized by category - streamlined for better UI
   const ipvSignCategories = {
     mentalHealth: {
-      title: "Mental Health & Emotional",
+      title: "Mental Health & Trauma",
       icon: <Brain className="w-4 h-4 text-blue-600" />,
       signs: [
         'Ongoing stress/anxiety/depression',
         'Thoughts or plans of self-harm',
-        'Substance misuse (alcohol/drugs)'
+        'Substance misuse (alcohol/drugs)',
+        'Signs of trauma or PTSD'
       ]
     },
     reproductive: {
@@ -70,12 +71,13 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
       ]
     },
     physical: {
-      title: "Physical Symptoms",
+      title: "Physical Symptoms & Violence",
       icon: <Shield className="w-4 h-4 text-green-600" />,
       signs: [
         'Unexplained chronic pain',
         'Injury to abdomen or other areas',
-        'Chronic gastrointestinal/genitourinary symptoms'
+        'Chronic gastrointestinal/genitourinary symptoms',
+        'Evidence of physical violence/trauma'
       ]
     },
     behavioral: {
@@ -85,7 +87,8 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
         'Partner intrusive during consultations',
         'Often misses appointments',
         'Children have behavioral problems',
-        'Repeated consultations, no clear diagnosis'
+        'Repeated consultations, no clear diagnosis',
+        'Fear or anxiety around partner/family'
       ]
     }
   };
