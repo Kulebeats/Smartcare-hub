@@ -6867,7 +6867,7 @@ export default function AncPage() {
 
 
                 {/* Current Pregnancy Card */}
-                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+<div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -6898,7 +6898,7 @@ export default function AncPage() {
                 </div>
 
                 {/* Obstetric History Card */}
-                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -6959,14 +6959,14 @@ export default function AncPage() {
                 </div>
 
                 {/* Standard ANC Assessment Card */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <ClipboardCheck className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Standard ANC Assessment</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Standard ANC Assessment</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -6985,8 +6985,8 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Navigation buttons - Client Profile */}
                 <div className="flex justify-between space-x-4 mt-6">
@@ -7024,14 +7024,14 @@ export default function AncPage() {
                   <ANCCardWrapper>
                     <div className="space-y-6">
                 {/* Vital Signs & Measurements Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Thermometer className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Vital Signs & Measurements</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Vital Signs & Measurements</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7051,18 +7051,18 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Maternal Assessment Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Stethoscope className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Maternal Assessment</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Maternal Assessment</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7082,18 +7082,18 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Fetal Assessment Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Baby className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Fetal Assessment</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Fetal Assessment</h4>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -7113,8 +7113,8 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Navigation buttons - Examination */}
                 <div className="flex justify-between mt-6">
@@ -7150,14 +7150,14 @@ export default function AncPage() {
                   <ANCCardWrapper>
                     <div className="space-y-6">
                 {/* Laboratory Tests Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <TestTube className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Laboratory Tests & Results</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Laboratory Tests & Results</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7177,18 +7177,18 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* Specialized Diagnostic Tests Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Microscope className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Specialized Diagnostic Tests</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Specialized Diagnostic Tests</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7208,8 +7208,8 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {/* HIV Testing Card */}
                 <HIVTestingCard 
@@ -7258,8 +7258,8 @@ export default function AncPage() {
                   <ANCCardWrapper>
                     <div className="space-y-6">
                 {/* Health Education Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <FileText className="w-5 h-5 text-blue-600" />
@@ -7285,11 +7285,11 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
                   {showHealthEducation && (
-                    <Card>
-                      <CardContent>
+                    <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                      <div className="p-3">
                       <div className="space-y-4">
                         {/* Nutritional Counseling */}
                         <div className="space-y-2">
@@ -7378,21 +7378,21 @@ export default function AncPage() {
                           </Button>
                         </div>
                       </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   )}
 
 
 
                 {/* Behavioral Counselling Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Heart className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Behavioral Counselling</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Behavioral Counselling</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7412,20 +7412,20 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
 
 
                 {/* Preventive and Promotive Intervention Card - Client Profile Style */}
-                <Card className="mb-6">
-                  <CardContent className="flex items-center justify-between p-6">
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                  <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Pill className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-blue-700 hover:text-blue-800 transition-colors duration-200">Preventive and Promotive Intervention</h3>
+                        <h4 className="font-semibold text-gray-800 text-base">Preventive and Promotive Intervention</h4>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -7445,8 +7445,8 @@ export default function AncPage() {
                         Add Record
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
 
 
