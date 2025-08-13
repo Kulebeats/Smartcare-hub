@@ -1208,7 +1208,7 @@ const IPVScreeningSection: React.FC<SectionProps> = ({ data, onChange }) => {
                 onChange={(e) => handleIPVModeChange(e.target.value as 'none' | 'present')}
                 className="rounded border-gray-300 text-purple-600"
               />
-              <label htmlFor="ipv_mode_none" className="text-sm font-medium text-green-700">None - No presenting signs or symptoms indicative of IPV</label>
+              <label htmlFor="ipv_mode_none" className="text-sm font-medium text-[#0a0a0a]">None - No presenting signs or symptoms indicative of IPV</label>
             </div>
             
             <div className="flex items-center space-x-2">
