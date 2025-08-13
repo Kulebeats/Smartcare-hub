@@ -2459,7 +2459,7 @@ export default function AncPage() {
               <input 
                 type="date" 
                 id="preg${pregnancyNum}_delivery_date"
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 max="${new Date().toISOString().split('T')[0]}"
               />
             </div>
@@ -2470,7 +2470,7 @@ export default function AncPage() {
               <input 
                 type="date" 
                 id="preg${pregnancyNum}_estimated_delivery"
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
               />
             </div>
 
@@ -2482,7 +2482,7 @@ export default function AncPage() {
                 id="preg${pregnancyNum}_gestational_age"
                 min="1" 
                 max="10" 
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 placeholder="Enter months..."
                 onchange="handleGestationalAgeChange(${pregnancyNum}, this.value)"
               />
@@ -2493,7 +2493,7 @@ export default function AncPage() {
               <label class="block text-sm font-medium">Mode of delivery *</label>
               <select 
                 id="preg${pregnancyNum}_mode_delivery"
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handleModeOfDeliveryChange(${pregnancyNum}, this.value)"
               >
                 <option value="">Select mode...</option>
@@ -2509,7 +2509,7 @@ export default function AncPage() {
               <label class="block text-sm font-medium">Type of labour *</label>
               <select 
                 id="preg${pregnancyNum}_labour_type"
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handleLabourTypeChange(${pregnancyNum}, this.value)"
               >
                 <option value="">Select type...</option>
@@ -2521,7 +2521,7 @@ export default function AncPage() {
             <!-- Type of Assisted Vaginal Delivery - Conditional Field -->
             <div id="preg${pregnancyNum}_assisted_vaginal_field" class="space-y-2" style="display: none;">
               <label class="block text-sm font-medium">Type of assisted vaginal delivery *</label>
-              <select class="w-full border rounded p-2">
+              <select class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                 <option value="">Select type...</option>
                 <option value="forceps">Forceps</option>
                 <option value="vacuum">Vacuum</option>
@@ -2531,7 +2531,7 @@ export default function AncPage() {
             <!-- Type of C-section - Conditional Field -->
             <div id="preg${pregnancyNum}_csection_type_field" class="space-y-2" style="display: none;">
               <label class="block text-sm font-medium">Type of C-section *</label>
-              <select class="w-full border rounded p-2">
+              <select class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                 <option value="">Select type...</option>
                 <option value="planned">Planned/Elective</option>
                 <option value="emergency">Emergency</option>
@@ -2543,7 +2543,7 @@ export default function AncPage() {
               <label class="block text-sm font-medium">Outcome *</label>
               <select 
                 id="preg${pregnancyNum}_outcome" 
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handleOutcomeChange(${pregnancyNum}, this.value)"
               >
                 <option value="">Select outcome...</option>
@@ -2559,7 +2559,7 @@ export default function AncPage() {
                 min="0.5" 
                 max="6.0"
                 placeholder="e.g., 3.2"
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handleBirthWeightChange(${pregnancyNum}, this.value)"
               />
               <div id="preg${pregnancyNum}_weight_classification" style="display: none;"></div>
@@ -2569,7 +2569,7 @@ export default function AncPage() {
             <div id="preg${pregnancyNum}_place_delivery_field" class="space-y-2" style="display: none;">
               <label class="block text-sm font-medium">Place of Delivery *</label>
               <select 
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handlePlaceOfDeliveryChange(${pregnancyNum}, this.value)"
               >
                 <option value="">Select place...</option>
@@ -2587,7 +2587,7 @@ export default function AncPage() {
             <div id="preg${pregnancyNum}_baby_status_field" class="space-y-2" style="display: none;">
               <label class="block text-sm font-medium">Baby's Current Status *</label>
               <select 
-                class="w-full border rounded p-2"
+                class="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 onchange="handleBabyStatusChange(${pregnancyNum}, this.value)"
               >
                 <option value="">Select status...</option>
@@ -4938,7 +4938,7 @@ export default function AncPage() {
                       {/* Other reason field (conditionally shown) */}
                       <div id="other-reason-field" className="space-y-2" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Specify other reason</label>
-                        <input type="text" className="w-full border rounded p-2" />
+                        <input type="text" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                       </div>
 
                       {/* Pre-existing Medical Conditions (conditionally shown) */}
@@ -5076,7 +5076,7 @@ export default function AncPage() {
                         <div id="other-medical-condition-field" className="space-y-2 p-3 bg-yellow-50 border border-yellow-200 rounded" style={{ display: 'none' }}>
                           <label className="block text-sm font-medium text-yellow-800">Specify other medical condition</label>
                           <textarea 
-                            className="w-full border rounded p-2 text-sm h-16" 
+                            className="w-full border-2 border-gray-300 rounded p-2 text-sm h-16 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                             placeholder="Describe the other pre-existing medical condition..."
                           ></textarea>
                         </div>
@@ -5092,7 +5092,7 @@ export default function AncPage() {
                       {/* Preeclampsia options (conditionally shown) */}
                       <div id="preeclampsia-options" className="space-y-2 col-span-2" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Preeclampsia complications</label>
-                        <select className="w-full border rounded p-2">
+                        <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                           <option value="">Select</option>
                           <option value="severe_hypertension">Severe hypertension</option>
                           <option value="renal_dysfunction">Renal dysfunction</option>
@@ -5123,7 +5123,7 @@ export default function AncPage() {
                                 id="current_ga_weeks"
                                 min="4" 
                                 max="42" 
-                                className="w-full border rounded p-2"
+                                className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                                 required
                                 onChange={(e) => {
                                   const gaWeeks = parseInt(e.target.value);
@@ -6380,7 +6380,7 @@ export default function AncPage() {
                         <label className="block text-sm font-medium">Name of provider</label>
                         <input 
                           type="text" 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black bg-gray-50" 
                           value={user?.username || ""}
                           readOnly
                         />
@@ -6392,7 +6392,7 @@ export default function AncPage() {
                         <input 
                           type="tel" 
                           pattern="[0-9]{10}" 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black bg-gray-50" 
                           placeholder="10 digits" 
                           value="0123456789"
                           readOnly
@@ -6402,12 +6402,12 @@ export default function AncPage() {
 
                       <div className="space-y-2" id="referral-date-field" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Date referral was made</label>
-                        <input type="date" className="w-full border rounded p-2" />
+                        <input type="date" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                       </div>
 
                       <div className="space-y-2 col-span-2" id="referral-notes-field" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Referral notes</label>
-                        <textarea className="w-full border rounded p-2 h-20"></textarea>
+                        <textarea className="w-full border-2 border-gray-300 rounded p-2 h-20 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"></textarea>
                       </div>
 
                       {/* Maternal Emergency Checklist */}
@@ -9110,7 +9110,7 @@ export default function AncPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Facility Type</label>
-                    <select className="w-full border rounded p-2">
+                    <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <option value="">Select facility type...</option>
                       <option value="district_hospital">District Hospital</option>
                       <option value="general_hospital">General Hospital</option>
@@ -9124,7 +9124,7 @@ export default function AncPage() {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1">Province/Region</label>
-                    <select className="w-full border rounded p-2">
+                    <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <option value="">Select province...</option>
                       <option value="central">Central Province</option>
                       <option value="copperbelt">Copperbelt Province</option>
@@ -9142,7 +9142,7 @@ export default function AncPage() {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Receiving Facility Name</label>
-                  <select className="w-full border rounded p-2">
+                  <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                     <option value="">Select receiving facility...</option>
                     <option value="university_teaching_hospital">University Teaching Hospital (UTH)</option>
                     <option value="levy_mwanawasa_hospital">Levy Mwanawasa University Teaching Hospital</option>
@@ -9161,7 +9161,7 @@ export default function AncPage() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Facility Address</label>
                     <textarea 
-                      className="w-full border rounded p-2 text-sm" 
+                      className="w-full border-2 border-gray-300 rounded p-2 text-sm text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                       rows={2}
                       placeholder="Enter complete facility address..."
                     ></textarea>
@@ -9170,8 +9170,8 @@ export default function AncPage() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Distance from Current Facility</label>
                     <div className="flex space-x-2">
-                      <input type="number" placeholder="Distance" className="flex-1 border rounded p-2" />
-                      <select className="border rounded p-2">
+                      <input type="number" placeholder="Distance" className="flex-1 border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
+                      <select className="border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                         <option value="km">km</option>
                         <option value="miles">miles</option>
                       </select>
@@ -9187,17 +9187,17 @@ export default function AncPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Primary Contact Person</label>
-                  <input type="text" placeholder="Name and title" className="w-full border rounded p-2" />
+                  <input type="text" placeholder="Name and title" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Contact Phone Number</label>
-                  <input type="tel" placeholder="+260 XXX XXX XXX" className="w-full border rounded p-2" />
+                  <input type="tel" placeholder="+260 XXX XXX XXX" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Department/Unit</label>
-                  <select className="w-full border rounded p-2">
+                  <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                     <option value="">Select department...</option>
                     <option value="maternity">Maternity Ward</option>
                     <option value="obstetrics">Obstetrics & Gynecology</option>
@@ -9212,12 +9212,12 @@ export default function AncPage() {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Alternative Contact</label>
-                  <input type="tel" placeholder="Backup contact number" className="w-full border rounded p-2" />
+                  <input type="tel" placeholder="Backup contact number" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                 </div>
                 
                 <div className="col-span-2">
                   <label className="block text-sm font-medium mb-1">Email Address (if available)</label>
-                  <input type="email" placeholder="facility@email.com" className="w-full border rounded p-2" />
+                  <input type="email" placeholder="facility@email.com" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                 </div>
               </div>
             </div>
@@ -9229,7 +9229,7 @@ export default function AncPage() {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Referral Type</label>
-                    <select className="w-full border rounded p-2">
+                    <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <option value="urgent">Urgent (within 24 hours)</option>
                       <option value="semi_urgent">Semi-urgent (within 1 week)</option>
                       <option value="routine">Routine (within 1 month)</option>
@@ -9239,19 +9239,19 @@ export default function AncPage() {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1">Preferred Date</label>
-                    <input type="date" className="w-full border rounded p-2" />
+                    <input type="date" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium mb-1">Preferred Time</label>
-                    <input type="time" className="w-full border rounded p-2" />
+                    <input type="time" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Expected Duration of Stay</label>
-                    <select className="w-full border rounded p-2">
+                    <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <option value="">Select duration...</option>
                       <option value="outpatient">Outpatient visit only</option>
                       <option value="day_case">Day case (same day discharge)</option>
@@ -9265,7 +9265,7 @@ export default function AncPage() {
                   
                   <div>
                     <label className="block text-sm font-medium mb-1">Special Requirements</label>
-                    <select className="w-full border rounded p-2">
+                    <select className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none">
                       <option value="">No special requirements</option>
                       <option value="bed_rest">Bed rest required</option>
                       <option value="isolation">Isolation needed</option>

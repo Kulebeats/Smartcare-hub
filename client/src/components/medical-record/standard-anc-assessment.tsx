@@ -389,7 +389,7 @@ const MedicationsSection: React.FC<MedicationsSectionProps> = ({ data, onChange,
                 placeholder="Please specify other medications..."
                 value={otherMedication}
                 onChange={(e) => setOtherMedication(e.target.value)}
-                className="w-full border rounded p-2 text-sm"
+                className="w-full border-2 border-gray-300 rounded p-2 text-sm text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 rows={2}
               />
             </div>
@@ -995,7 +995,7 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
           {/* Multi-select dropdown */}
           <div className="relative">
             <select 
-              className="w-full border rounded p-2 appearance-none bg-white"
+              className="w-full border-2 border-gray-300 rounded p-2 appearance-none bg-white text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
               onChange={(e) => {
                 const value = e.target.value;
                 if (value && !selectedSymptoms.includes(value)) {
@@ -1052,7 +1052,7 @@ const CurrentSymptomsSection: React.FC<SectionProps> = ({ data, onChange }) => {
                 placeholder="Please specify other symptoms..."
                 value={otherSymptom}
                 onChange={(e) => setOtherSymptom(e.target.value)}
-                className="w-full border rounded p-2 text-sm"
+                className="w-full border-2 border-gray-300 rounded p-2 text-sm text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                 rows={2}
               />
             </div>
