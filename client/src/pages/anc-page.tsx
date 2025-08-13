@@ -8324,39 +8324,76 @@ export default function AncPage() {
                             }
                           };
                           
-                          // Define outcome change handler
+                          // Define outcome change handler with enhanced debugging
                           (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
-                            console.log('🤱 Outcome changed for pregnancy', pregnancyIndex, ':', outcome);
+                            console.log('🤱 handleObstetricOutcomeChange called with:', { pregnancyIndex, outcome });
+                            
                             const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
                             const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
                             const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
+                            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
+                            
+                            console.log('🔍 Element lookup results:', {
+                              deliveryModeSection: !!deliveryModeSection,
+                              babyStatusSection: !!babyStatusSection,
+                              infantSexSection: !!infantSexSection,
+                              gestationalAgeInput: !!gestationalAgeInput
+                            });
                             
                             if (outcome === 'live_birth') {
+                              console.log('👶 Live birth selected - processing...');
+                              
                               // Show delivery mode first
-                              if (deliveryModeSection) deliveryModeSection.style.display = 'block';
+                              if (deliveryModeSection) {
+                                deliveryModeSection.style.display = 'block';
+                                console.log('✅ Delivery mode section shown');
+                              }
                               
                               // For viable pregnancies (7+ months), show baby status immediately 
-                              const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
+                              const gestationalAge = parseInt(gestationalAgeInput?.value || '0');
+                              console.log('📊 Current gestational age:', gestationalAge, 'months');
+                              
                               if (gestationalAge >= 7) {
+                                console.log('✅ Gestational age >= 7 months - showing baby status');
+                                
                                 if (babyStatusSection) {
+                                  // Force display with multiple methods to ensure visibility
                                   babyStatusSection.style.display = 'block';
-                                  console.log('✅ Baby status field shown permanently for viable live birth');
+                                  babyStatusSection.style.visibility = 'visible';
+                                  babyStatusSection.style.opacity = '1';
+                                  babyStatusSection.classList.remove('hidden');
+                                  
+                                  console.log('✅ Baby status field displayed with styles:', {
+                                    display: babyStatusSection.style.display,
+                                    visibility: babyStatusSection.style.visibility,
+                                    opacity: babyStatusSection.style.opacity,
+                                    classList: babyStatusSection.className
+                                  });
+                                } else {
+                                  console.error('❌ Baby status section element NOT FOUND!');
                                 }
+                                
                                 if (infantSexSection) {
                                   infantSexSection.style.display = 'block';
                                   console.log('✅ Infant sex field shown for live birth');
                                 }
+                              } else {
+                                console.log('⚠️ Gestational age < 7 months, baby status not shown');
                               }
                             } else if (outcome === 'still_birth') {
+                              console.log('💔 Still birth selected');
                               if (deliveryModeSection) deliveryModeSection.style.display = 'block';
                               if (babyStatusSection) babyStatusSection.style.display = 'none';
                               if (infantSexSection) infantSexSection.style.display = 'block';
                             } else {
+                              console.log('🚫 Other outcome or no selection - hiding delivery fields');
                               // Hide all delivery-related fields for abortion or no selection
                               if (deliveryModeSection) deliveryModeSection.style.display = 'none';
                               if (babyStatusSection) babyStatusSection.style.display = 'none';
                               if (infantSexSection) infantSexSection.style.display = 'none';
                             }
+                            
+                            console.log('🏁 handleObstetricOutcomeChange completed');
                           };
                         }
                         

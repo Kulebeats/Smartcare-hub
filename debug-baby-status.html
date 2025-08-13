@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Status Field Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        select, input {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+        }
+        .debug-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+        .error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .success {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Baby Status Field Debug Tool</h2>
+        <p>This tool replicates your logic to help identify why the baby status field isn't showing.</p>
+        
+        <form>
+            <div class="form-group">
+                <label>Gestational Age (months)</label>
+                <input type="number" id="gestational_age_0" min="1" max="12" placeholder="Enter gestational age">
+            </div>
+            
+            <div class="form-group">
+                <label>Pregnancy Outcome</label>
+                <select id="outcome_0">
+                    <option value="">Select outcome...</option>
+                </select>
+            </div>
+            
+            <div id="baby-status-section-0" class="form-group hidden">
+                <label>Baby's Current Status</label>
+                <select id="baby_status_0">
+                    <option value="">Select status...</option>
+                    <option value="alive_well">Alive and well</option>
+                    <option value="alive_complications">Alive with complications</option>
+                    <option value="deceased">Deceased</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+                <div id="status-alert-0" class="hidden"></div>
+            </div>
+        </form>
+        
+        <div id="debug-output" class="debug-info">
+            <strong>Debug Information:</strong><br>
+            Waiting for input...
+        </div>
+    </div>
+
+    <script>
+        // Replicate your exact logic with enhanced debugging
+        
+        function updateDebugInfo(message, type = 'info') {
+            const debugDiv = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<br>[${timestamp}] ${message}`;
+            
+            if (type === 'error') {
+                debugDiv.className = 'debug-info error';
+            } else if (type === 'success') {
+                debugDiv.className = 'debug-info success';
+            } else {
+                debugDiv.className = 'debug-info';
+            }
+        }
+        
+        function handleObstetricOutcomeChange(pregnancyIndex, outcome) {
+            updateDebugInfo(`🔄 handleObstetricOutcomeChange called with: pregnancyIndex=${pregnancyIndex}, outcome="${outcome}"`);
+            
+            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
+            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex);
+            const gestationalAge = parseInt(gestationalAgeInput.value || '0');
+            
+            updateDebugInfo(`📊 Current gestational age: ${gestationalAge} months`);
+            updateDebugInfo(`🔍 Baby status section element found: ${babyStatusSection ? 'YES' : 'NO'}`);
+            
+            if (outcome === 'live_birth') {
+                updateDebugInfo(`👶 Live birth selected`);
+                
+                if (gestationalAge >= 7) {
+                    updateDebugInfo(`✅ Gestational age >= 7 months - showing baby status field`);
+                    if (babyStatusSection) {
+                        babyStatusSection.style.display = 'block';
+                        babyStatusSection.classList.remove('hidden');
+                        updateDebugInfo(`✅ Baby status field displayed successfully!`, 'success');
+                    } else {
+                        updateDebugInfo(`❌ ERROR: Baby status section element not found!`, 'error');
+                    }
+                } else {
+                    updateDebugInfo(`⚠️ Gestational age < 7 months - baby status field not shown`);
+                }
+            } else if (outcome === 'still_birth') {
+                updateDebugInfo(`💔 Still birth selected - hiding baby status field`);
+                if (babyStatusSection) {
+                    babyStatusSection.style.display = 'none';
+                    babyStatusSection.classList.add('hidden');
+                }
+            } else {
+                updateDebugInfo(`🚫 Other outcome or no selection - hiding baby status field`);
+                if (babyStatusSection) {
+                    babyStatusSection.style.display = 'none';
+                    babyStatusSection.classList.add('hidden');
+                }
+            }
+        }
+        
+        function updateObstetricConditionalFields(pregnancyIndex) {
+            updateDebugInfo(`🔄 updateObstetricConditionalFields called with pregnancyIndex=${pregnancyIndex}`);
+            
+            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex);
+            const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex);
+            const ageMonths = parseInt(gestationalAgeInput.value) || 0;
+            
+            updateDebugInfo(`📊 Gestational age input value: ${ageMonths} months`);
+            updateDebugInfo(`🔍 Outcome select element found: ${outcomeSelect ? 'YES' : 'NO'}`);
+            
+            if (!outcomeSelect) {
+                updateDebugInfo(`❌ ERROR: Outcome select element not found!`, 'error');
+                return;
+            }
+            
+            if (ageMonths >= 7) {
+                updateDebugInfo(`✅ Gestational age >= 7 months - setting up viable pregnancy options`);
+                
+                outcomeSelect.innerHTML = 
+                    '<option value="">Select outcome...</option>' +
+                    '<option value="still_birth">Still birth</option>' +
+                    '<option value="live_birth">Live birth</option>';
+                
+                // Add event listener
+                outcomeSelect.onchange = function() {
+                    updateDebugInfo(`🎯 Outcome changed to: "${this.value}"`);
+                    handleObstetricOutcomeChange(pregnancyIndex, this.value);
+                };
+                
+                updateDebugInfo(`✅ Event listener attached to outcome dropdown`, 'success');
+            } else if (ageMonths > 0) {
+                updateDebugInfo(`⚠️ Gestational age < 7 months - setting up non-viable pregnancy options`);
+                
+                outcomeSelect.innerHTML = 
+                    '<option value="">Select outcome...</option>' +
+                    '<option value="abortion">Abortion</option>';
+                    
+                outcomeSelect.onchange = function() {
+                    updateDebugInfo(`🎯 Outcome changed to: "${this.value}"`);
+                    handleObstetricOutcomeChange(pregnancyIndex, this.value);
+                };
+            } else {
+                updateDebugInfo(`ℹ️ No gestational age entered yet`);
+                outcomeSelect.innerHTML = '<option value="">Select outcome...</option>';
+            }
+        }
+        
+        // Set up event listeners
+        document.getElementById('gestational_age_0').addEventListener('input', function() {
+            updateDebugInfo(`📝 Gestational age input changed to: ${this.value}`);
+            updateObstetricConditionalFields(0);
+        });
+        
+        // Initialize debug
+        updateDebugInfo('🚀 Debug tool initialized. Enter a gestational age to begin testing.');
+    </script>
+</body>
+</html>
