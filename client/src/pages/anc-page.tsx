@@ -8268,6 +8268,96 @@ export default function AncPage() {
                               }
                             }
                           };
+                          
+                          // Define the main obstetric conditional fields function
+                          (window as any).updateObstetricConditionalFields = function(pregnancyIndex: number) {
+                            console.log('🤱 Obstetric conditional fields function called for pregnancy:', pregnancyIndex);
+                            const gestationalAgeInput = document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement;
+                            const outcomeSection = document.getElementById('outcome_section_' + pregnancyIndex);
+                            const outcomeSelect = document.getElementById('outcome_' + pregnancyIndex) as HTMLSelectElement;
+                            
+                            if (!gestationalAgeInput) return;
+                            
+                            const ageMonths = parseInt(gestationalAgeInput.value) || 0;
+                            console.log('Gestational age entered:', ageMonths, 'months');
+                            
+                            if (ageMonths >= 6) {
+                              // Show outcome section
+                              if (outcomeSection) outcomeSection.style.display = 'block';
+                              
+                              // Populate outcome options based on gestational age
+                              if (outcomeSelect) {
+                                if (ageMonths < 7) {
+                                  // 6 months: borderline viability
+                                  outcomeSelect.innerHTML = 
+                                    '<option value="">Select outcome...</option>' +
+                                    '<option value="abortion">Abortion (Termination)</option>' +
+                                    '<option value="still_birth">Still birth</option>' +
+                                    '<option value="live_birth">Live birth</option>';
+                                  console.log('⚠️ Borderline viability (6 months)');
+                                } else {
+                                  // 7+ months: viable pregnancy
+                                  outcomeSelect.innerHTML = 
+                                    '<option value="">Select outcome...</option>' +
+                                    '<option value="still_birth">Still birth</option>' +
+                                    '<option value="live_birth">Live birth</option>';
+                                  console.log('✅ Viable pregnancy (7+ months)');
+                                }
+                                
+                                // Add event listener for outcome changes
+                                outcomeSelect.onchange = function() {
+                                  handleObstetricOutcomeChange(pregnancyIndex, outcomeSelect.value);
+                                };
+                              }
+                            } else if (ageMonths > 0 && ageMonths < 6) {
+                              // < 6 months: only abortion
+                              if (outcomeSection) outcomeSection.style.display = 'block';
+                              if (outcomeSelect) {
+                                outcomeSelect.innerHTML = 
+                                  '<option value="">Select outcome...</option>' +
+                                  '<option value="abortion">Abortion (Termination)</option>';
+                                console.log('❌ Non-viable pregnancy (<6 months) - abortion only');
+                              }
+                            } else {
+                              // Hide outcome section if no valid age
+                              if (outcomeSection) outcomeSection.style.display = 'none';
+                            }
+                          };
+                          
+                          // Define outcome change handler
+                          (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                            console.log('🤱 Outcome changed for pregnancy', pregnancyIndex, ':', outcome);
+                            const deliveryModeSection = document.getElementById('delivery_mode_section_' + pregnancyIndex);
+                            const babyStatusSection = document.getElementById('baby-status-section-' + pregnancyIndex);
+                            const infantSexSection = document.getElementById('infant_sex_section_' + pregnancyIndex);
+                            
+                            if (outcome === 'live_birth') {
+                              // Show delivery mode first
+                              if (deliveryModeSection) deliveryModeSection.style.display = 'block';
+                              
+                              // For viable pregnancies (7+ months), show baby status immediately 
+                              const gestationalAge = parseInt((document.getElementById('gestational_age_' + pregnancyIndex) as HTMLInputElement)?.value || '0');
+                              if (gestationalAge >= 7) {
+                                if (babyStatusSection) {
+                                  babyStatusSection.style.display = 'block';
+                                  console.log('✅ Baby status field shown permanently for viable live birth');
+                                }
+                                if (infantSexSection) {
+                                  infantSexSection.style.display = 'block';
+                                  console.log('✅ Infant sex field shown for live birth');
+                                }
+                              }
+                            } else if (outcome === 'still_birth') {
+                              if (deliveryModeSection) deliveryModeSection.style.display = 'block';
+                              if (babyStatusSection) babyStatusSection.style.display = 'none';
+                              if (infantSexSection) infantSexSection.style.display = 'block';
+                            } else {
+                              // Hide all delivery-related fields for abortion or no selection
+                              if (deliveryModeSection) deliveryModeSection.style.display = 'none';
+                              if (babyStatusSection) babyStatusSection.style.display = 'none';
+                              if (infantSexSection) infantSexSection.style.display = 'none';
+                            }
+                          };
                         }
                         
                         // Generate pregnancy history rows
@@ -8289,7 +8379,7 @@ export default function AncPage() {
                             '<div class="grid grid-cols-2 gap-3">' +
                               '<div>' +
                                 '<label class="block text-xs font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>' +
-                                '<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="gestational_age_' + i + '" onChange="updateConditionalFields(' + i + ')" placeholder="e.g., 8" />' +
+                                '<input type="number" min="1" max="10" class="w-full border rounded p-1 text-xs" id="gestational_age_' + i + '" onChange="updateObstetricConditionalFields(' + i + ')" placeholder="e.g., 8" />' +
                               '</div>' +
                               '<div id="outcome_section_' + i + '" style="display: none;">' +
                                 '<label class="block text-xs font-medium mb-1">Outcome</label>' +
