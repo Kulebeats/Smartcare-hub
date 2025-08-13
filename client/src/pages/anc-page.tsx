@@ -9748,16 +9748,29 @@ export default function AncPage() {
                               }
                             };
 
+                            // Use the same comprehensive outcome logic for both sections
                             (window as any).handleObstetricOutcomeChange = function(pregnancyIndex: number, outcome: string) {
+                              const deliverySection = document.getElementById(`delivery-mode-section-${pregnancyIndex}`);
+                              const labourSection = document.getElementById(`labour-type-section-${pregnancyIndex}`);
+                              const placeSection = document.getElementById(`place-delivery-section-${pregnancyIndex}`);
+                              const infantSection = document.getElementById(`infant-sex-section-${pregnancyIndex}`);
+                              const birthWeightSection = document.getElementById(`birth-weight-section-${pregnancyIndex}`);
                               const babyStatusSection = document.getElementById(`baby-status-section-${pregnancyIndex}`);
-                              const gestationalAge = parseInt((document.querySelector(`#pregnancy-history-container > div:nth-child(${pregnancyIndex + 1}) input[onchange*="updateObstetricConditionalFields"]`) as HTMLInputElement)?.value || '0');
                               
-                              if (gestationalAge >= 7) {
-                                if (outcome === 'live_birth') {
-                                  if (babyStatusSection) babyStatusSection.style.display = 'block';
-                                } else {
-                                  if (babyStatusSection) babyStatusSection.style.display = 'none';
-                                }
+                              // Hide all subsequent fields to prevent gaps
+                              [labourSection, placeSection, infantSection, birthWeightSection, babyStatusSection].forEach(section => {
+                                if (section) section.style.display = 'none';
+                              });
+                              
+                              if (outcome === 'still_birth') {
+                                // Stillbirth: Maternal fields required, infant fields hidden
+                                if (deliverySection) deliverySection.style.display = 'block';
+                              } else if (outcome === 'live_birth') {
+                                // Live birth: All subsequent maternal and infant fields become relevant
+                                if (deliverySection) deliverySection.style.display = 'block';
+                              } else if (outcome === 'abortion') {
+                                // Abortion: No delivery fields needed - workflow complete
+                                if (deliverySection) deliverySection.style.display = 'none';
                               }
                             };
                             
@@ -9792,18 +9805,23 @@ export default function AncPage() {
                               const select = document.querySelector(`#labour-type-section-${index} select`) as HTMLSelectElement;
                               const infantSection = document.getElementById(`infant-sex-section-${index}`);
                               const birthWeightSection = document.getElementById(`birth-weight-section-${index}`);
+                              const babyStatusSection = document.getElementById(`baby-status-section-${index}`);
+                              
+                              // Hide subsequent fields first
+                              [birthWeightSection, babyStatusSection].forEach(section => {
+                                if (section) section.style.display = 'none';
+                              });
                               
                               const value = select?.value;
                               if (value === 'induced' || value === 'spontaneous') {
-                                if (infantSection) infantSection.style.display = 'block';
-                                
-                                const sexSelect = document.querySelector(`#infant-sex-section-${index} select`) as HTMLSelectElement;
-                                if (sexSelect?.value) {
-                                  if (birthWeightSection) birthWeightSection.style.display = 'block';
+                                // Check if this is a live birth before showing infant details
+                                const outcomeSelect = document.querySelector(`#outcome-section-${index} select`) as HTMLSelectElement;
+                                if (outcomeSelect?.value === 'live_birth') {
+                                  // Step 4: Document Infant Details (only for live births)
+                                  if (infantSection) infantSection.style.display = 'block';
                                 }
                               } else {
                                 if (infantSection) infantSection.style.display = 'none';
-                                if (birthWeightSection) birthWeightSection.style.display = 'none';
                               }
                             };
 
@@ -10590,13 +10608,13 @@ export default function AncPage() {
                           // Mode of delivery, Type of labour, and Place of Delivery are still required
                           // Infant-specific fields (Sex, Birth Weight, Baby's Current Status) remain hidden
                           if (deliverySection) deliverySection.style.display = 'block';
-                          // Workflow ends here for stillbirths - no infant fields needed
+                          // Note: Delivery details will still be collected, but infant fields won't appear
                         } else if (outcome === 'live_birth') {
                           // IF the outcome is "Live birth": All subsequent maternal and infant fields become relevant
                           // Continue to Step 3 - show delivery mode to start delivery documentation
                           if (deliverySection) deliverySection.style.display = 'block';
                         } else if (outcome === 'abortion') {
-                          // For abortion/miscarriage, no delivery fields needed
+                          // For abortion/miscarriage, no delivery fields needed - workflow complete
                           if (deliverySection) deliverySection.style.display = 'none';
                         }
                       };
