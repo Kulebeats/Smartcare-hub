@@ -5594,8 +5594,8 @@ export default function AncPage() {
                           <div id="emergency-pregnancy-history-container" className="space-y-3"></div>
 
                           {/* Social Habits Section - Conditional */}
-                          <div id="emergency-social-habits-section" className="space-y-3 border border-green-300 rounded p-3 bg-green-50" style={{ display: 'none' }}>
-                            <h5 className="text-sm font-medium text-green-600 border-b border-green-200 pb-1">Social Habits Assessment</h5>
+                          <div id="emergency-social-habits-section" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                            <h4 className="font-semibold text-gray-800 text-base">Social Habits Assessment</h4>
                             
                             <div className="space-y-2">
                               <label className="block text-xs font-medium">Social habits during previous pregnancies</label>
@@ -5621,8 +5621,8 @@ export default function AncPage() {
                           </div>
 
                           {/* Complications Section - Conditional */}
-                          <div id="emergency-complications-section" className="space-y-3 border border-red-300 rounded p-3 bg-red-50" style={{ display: 'none' }}>
-                            <h5 className="text-sm font-medium text-red-600 border-b border-red-200 pb-1">Previous Pregnancy Complications</h5>
+                          <div id="emergency-complications-section" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl space-y-3" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                            <h4 className="font-semibold text-gray-800 text-base">Previous Pregnancy Complications</h4>
                             
                             <div className="space-y-2">
                               <label className="block text-xs font-medium">Complications in previous pregnancies/childbirth</label>
@@ -6928,7 +6928,7 @@ export default function AncPage() {
                 </div>
 
                 {/* Medical History Card */}
-                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
+                <div className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl mb-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" style={{ boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -11511,7 +11511,7 @@ export default function AncPage() {
               </div>
               
               {/* Detailed Past Medical History Options */}
-              <div id="past_medical_detailed" className="border-l-2 border-green-200 pl-4 mt-3" style={{ display: 'none' }}>
+              <div id="past_medical_detailed" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="flex items-center space-x-2 text-sm">
                     <input type="checkbox" className="rounded border-gray-300 text-green-600" />
@@ -11598,7 +11598,7 @@ export default function AncPage() {
               </div>
               
               {/* Detailed Surgical History Options */}
-              <div id="surgical_detailed" className="border-l-2 border-green-200 pl-4 mt-3" style={{ display: 'none' }}>
+              <div id="surgical_detailed" className="mt-2 p-3 border-l-4 border-gray-300 bg-white/60 backdrop-blur-md rounded-r-xl" style={{ display: 'none', boxShadow: '0 2px 6px hsla(223.58deg, 50.96%, 59.22%, 0.45)' }}>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="flex items-center space-x-2 text-sm">
                     <input type="checkbox" className="rounded border-gray-300 text-green-600" />
