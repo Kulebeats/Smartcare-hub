@@ -1,0 +1,52 @@
+The logic is that the number of previous pregnancies is always the Total Gravida minus one (for the current pregnancy).
+
+How to Implement the Auto-Population
+To achieve this, you'll modify the onChange event handler for the "Gravida" input inside the "Enhanced Obstetric History Assessment" modal. This ensures that whenever a clinician enters the total number of pregnancies, the field for previous pregnancies updates automatically, which in turn will generate the correct number of detailed history forms.
+
+Step 1: Locate the Target Code
+Find the 
+
+Dialog component for the "Obstetric History Modal" in your code. Inside it, locate the 
+
+input element for "Gravida".
+
+Step 2: Modify the onChange Handler
+Add the following lines to the end of the existing onChange handler for the "Gravida" input (id="obstetric_gravida").
+
+JavaScript
+
+// client/src/pages/anc/modals/ObstetricHistoryModal.tsx
+
+// ... inside the ObstetricHistoryModal component ...
+
+<input
+    type="number"
+    id="obstetric_gravida"
+    // ... other properties
+    onChange={(e) => {
+        const gravida = parseInt(e.target.value) || 0;
+
+        // --- START: Existing validation and auto-correction logic ---
+        // (Keep all the existing logic for para/abortions validation here) [cite: 8771-8842]
+        // ...
+        // --- END: Existing validation and auto-correction logic ---
+
+
+        // --- START: NEW CODE TO ADD ---
+        // 1. Calculate the number of previous pregnancies.
+        //    We use Math.max(0, ...) to prevent a negative number if gravida is 0.
+        const previousPregnanciesCount = Math.max(0, gravida - 1);
+
+        // 2. Find the 'No. of previous pregnancies' input field.
+        const previousPregnanciesInput = document.getElementById('obstetric_previous_pregnancies_count') as HTMLInputElement;
+
+        // 3. Update its value and programmatically trigger its 'change' event.
+        //    Triggering the event is crucial to ensure its own onChange logic
+        //    (which generates the history forms) is executed.
+        if (previousPregnanciesInput) {
+            previousPregnanciesInput.value = previousPregnanciesCount.toString();
+            previousPregnanciesInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        // --- END: NEW CODE TO ADD ---
+    }}
+/>
