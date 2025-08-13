@@ -627,7 +627,7 @@ export default function AncPage() {
       console.log(`✅ React Pregnancy Workflow Manager initialized for ${numberOfPregnancies} pregnancies`);
       
       // Watch for changes to the pregnancy input field
-      const pregnancyInput = document.getElementById('previous_pregnancies') as HTMLInputElement;
+      const pregnancyInput = document.getElementById('referral_previous_pregnancies') as HTMLInputElement;
       if (pregnancyInput) {
         const handlePregnancyChange = () => {
           const count = parseInt(pregnancyInput.value) || 0;
@@ -8144,9 +8144,16 @@ export default function AncPage() {
                     placeholder="0"
                     onChange={(e) => {
                       const count = parseInt(e.target.value) || 0;
+                      console.log('🤱 Pregnancy form generation triggered with count:', count);
                       const historyContainer = document.getElementById('pregnancy-history-container');
                       const socialHabitsSection = document.getElementById('social-habits-section');
                       const complicationsSection = document.getElementById('complications-section');
+                      
+                      console.log('🔍 Container elements found:', {
+                        historyContainer: !!historyContainer,
+                        socialHabitsSection: !!socialHabitsSection,
+                        complicationsSection: !!complicationsSection
+                      });
                       
                       if (historyContainer) {
                         historyContainer.innerHTML = '';
@@ -8398,7 +8405,9 @@ export default function AncPage() {
                         }
                         
                         // Generate pregnancy history rows
+                        console.log('🏗️ Generating', count, 'pregnancy forms...');
                         for (let i = 0; i < count; i++) {
+                          console.log('📝 Creating pregnancy form', i + 1, 'of', count);
                           const pregnancyRow = document.createElement('div');
                           pregnancyRow.className = 'space-y-3 border border-gray-200 rounded p-3 bg-gray-50';
                           pregnancyRow.innerHTML = 
