@@ -3653,7 +3653,7 @@ export default function AncPage() {
                         <label className="block text-sm font-medium">Contact Date <span className="text-red-500">*</span></label>
                         <input 
                           type="date" 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                           id="contact_date"
                           max={new Date().toISOString().split('T')[0]}
                           onChange={(e) => {
@@ -3668,7 +3668,7 @@ export default function AncPage() {
                       <div className="space-y-2">
                         <label className="block text-sm font-medium">Reason for Facility Visit <span className="text-red-500">*</span></label>
                         <select 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                           id="reason_for_visit"
                           required
                           onChange={(e) => {
@@ -3704,7 +3704,7 @@ export default function AncPage() {
                         <div className="flex gap-2 items-center">
                           <input 
                             type="text" 
-                            className="flex-1 border rounded p-2 bg-gray-50" 
+                            className="flex-1 border-2 border-gray-300 rounded p-2 bg-gray-50 text-black" 
                             value={safeMotherhoodNumber}
                             id="safe_motherhood_no"
                             required
@@ -3745,7 +3745,7 @@ export default function AncPage() {
                       <div className="space-y-2">
                         <label className="block text-sm font-medium">Does the client consent to receive SMS reminders during pregnancy?</label>
                         <select 
-                          className="w-full border rounded p-2"
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                           value={wantsReminders}
                           onChange={(e) => setWantsReminders(e.target.value as "" | "yes" | "no")}
                         >
@@ -3762,7 +3762,7 @@ export default function AncPage() {
                         {/* Multi-select dropdown */}
                         <div className="relative">
                           <select 
-                            className="w-full border rounded p-2 appearance-none bg-white"
+                            className="w-full border-2 border-gray-300 rounded p-2 appearance-none bg-white text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value && !coHabitants.includes(value)) {
@@ -3832,7 +3832,7 @@ export default function AncPage() {
                               placeholder="Please specify other co-habitants..."
                               value={otherCoHabitant}
                               onChange={(e) => setOtherCoHabitant(e.target.value)}
-                              className="w-full border rounded p-2 text-sm"
+                              className="w-full border-2 border-gray-300 rounded p-2 text-sm text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                             />
                           </div>
                         )}
@@ -3842,7 +3842,7 @@ export default function AncPage() {
                       <div className="space-y-2">
                         <label className="block text-sm font-medium">Origin</label>
                         <select 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                           value={origin}
                           onChange={(e) => {
                             setOrigin(e.target.value);
@@ -3866,7 +3866,7 @@ export default function AncPage() {
                       <div className="space-y-2">
                         <label className="block text-sm font-medium">Came as a Couple? <span className="text-red-500">*</span></label>
                         <select 
-                          className="w-full border rounded p-2" 
+                          className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" 
                           value={cameAsCouple}
                           onChange={(e) => {
                             setCameAsCouple(e.target.value as "" | "yes" | "no");
@@ -3896,7 +3896,7 @@ export default function AncPage() {
                       {/* Reason for additional contact - conditionally shown */}
                       <div id="additional-reason-field" className="space-y-2 col-span-2" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Reason for additional contact (specify)</label>
-                        <input type="text" className="w-full border rounded p-2" />
+                        <input type="text" className="w-full border-2 border-gray-300 rounded p-2 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none" />
                       </div>
                     </div>
 
