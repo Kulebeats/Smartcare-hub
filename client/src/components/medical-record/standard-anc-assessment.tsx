@@ -101,7 +101,8 @@ export const StandardANCAssessment: React.FC<StandardANCAssessmentProps> = ({
   
   // Show persistence sections only for follow-up visits (not initial visits)
   // When no visitType is provided, default to initial visit behavior (hide persistence sections)
-  const shouldShowPersistenceSections = isFollowupBasedOnType || (visitNumber > 1 && !isInitialVisit);
+  // Priority: visitType takes precedence over visitNumber calculation
+  const shouldShowPersistenceSections = isFollowupBasedOnType;
 
   useEffect(() => {
     // Initialize static previous recommendations once
