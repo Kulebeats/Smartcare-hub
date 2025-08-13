@@ -242,7 +242,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
                 <div className="mt-3 flex justify-center">
                   <Button 
                     onClick={handleIPVSignConfirmation}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 hover:bg-purple-700 text-white px-6 py-2 bg-[#338eea]"
                   >
                     Confirm Selection ({selectedSigns.length} sign{selectedSigns.length > 1 ? 's' : ''})
                   </Button>
