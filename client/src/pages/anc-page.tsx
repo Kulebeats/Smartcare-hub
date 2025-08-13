@@ -42,6 +42,7 @@ import { PMTCTCardSection } from "@/components/medical-record/PMTCTCardSection";
 import ReferralCard from "@/components/medical-record/referral-card";
 import ReferralModal from "@/components/medical-record/referral-modal";
 import { ANCHeaderDock } from "@/components/anc-header-dock";
+import { PregnancyHistoryForm, useMultiplePregnancyForms } from "../components/medical-record/PregnancyHistoryForm";
 
 // Zambian ANC Guidelines danger sign descriptions (2022)
 const enhancedDangerSignDescriptions = {
@@ -614,6 +615,38 @@ export default function AncPage() {
   
   // Referral Modal State
   const [showReferralModal, setShowReferralModal] = useState(false);
+  
+  // Pregnancy Workflow State
+  const [numberOfPregnancies, setNumberOfPregnancies] = useState(0);
+  
+  // React-based pregnancy workflow manager component
+  const ReactPregnancyWorkflowManager: React.FC = () => {
+    const { renderPregnancyForms } = useMultiplePregnancyForms(numberOfPregnancies);
+    
+    useEffect(() => {
+      console.log(`✅ React Pregnancy Workflow Manager initialized for ${numberOfPregnancies} pregnancies`);
+      
+      // Watch for changes to the pregnancy input field
+      const pregnancyInput = document.getElementById('previous_pregnancies') as HTMLInputElement;
+      if (pregnancyInput) {
+        const handlePregnancyChange = () => {
+          const count = parseInt(pregnancyInput.value) || 0;
+          setNumberOfPregnancies(count);
+          console.log(`🔄 Pregnancy count updated: ${count}`);
+        };
+        
+        pregnancyInput.addEventListener('change', handlePregnancyChange);
+        pregnancyInput.addEventListener('input', handlePregnancyChange);
+        
+        return () => {
+          pregnancyInput.removeEventListener('change', handlePregnancyChange);
+          pregnancyInput.removeEventListener('input', handlePregnancyChange);
+        };
+      }
+    }, []);
+    
+    return <>{renderPregnancyForms()}</>;
+  };
   
   // PMTCT Update Handler
   const handlePMTCTUpdate = (updatedData: any) => {
@@ -8345,6 +8378,9 @@ export default function AncPage() {
                 
                 {/* Dynamic Pregnancy History Container */}
                 <div id="pregnancy-history-container" className="space-y-3"></div>
+                
+                {/* React-based Pregnancy Workflow System */}
+                <ReactPregnancyWorkflowManager />
                 
                 {/* Social Habits Section - Hidden by default */}
                 <div id="social-habits-section" style={{ display: 'none' }} className="space-y-2">
