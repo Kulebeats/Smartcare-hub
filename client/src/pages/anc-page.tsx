@@ -10991,7 +10991,7 @@ export default function AncPage() {
             {/* Social Habits Section */}
             <div id="social-habits-section" className="border border-green-300 rounded-lg bg-green-50" style={{ display: 'none' }}>
               <div className="p-4">
-                <h5 className="text-sm font-medium text-green-600 mb-3">Previous Pregnancy Social Habits Assessment</h5>
+                <h5 className="text-sm font-medium mb-3 text-[#000000]">Previous Pregnancy Social Habits Assessment</h5>
                 
                 <div className="flex items-center space-x-6">
                   <label className="flex items-center space-x-2 text-sm">
