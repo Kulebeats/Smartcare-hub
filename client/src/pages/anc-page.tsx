@@ -9822,16 +9822,9 @@ export default function AncPage() {
                               
                               <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                  <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
-                                  <input type="date" class="w-full border rounded p-2 text-sm h-10" />
-                                </div>
-                                <div id="anc-visits-section-${i}" style="display: none;">
                                   <label class="block text-sm font-medium mb-1">Number of ANC visits for previous pregnancy</label>
-                                  <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
+                                  <input type="number" placeholder="4" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                                 </div>
-                              </div>
-                              
-                              <div class="grid grid-cols-2 gap-3">
                                 <div>
                                   <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                                   <input 
@@ -9843,6 +9836,13 @@ export default function AncPage() {
                                     onchange="updateObstetricConditionalFields(${i})"
                                     id="gestational-months-${i}"
                                   />
+                                </div>
+                              </div>
+                              
+                              <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
+                                  <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                                 </div>
                                 <div id="weeks-section-${i}" style="display: none;">
                                   <label class="block text-sm font-medium mb-1">Gestational age (weeks) <span class="text-red-500">*</span></label>
@@ -10313,16 +10313,9 @@ export default function AncPage() {
                         
                         <div class="grid grid-cols-2 gap-3">
                           <div>
-                            <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
-                            <input type="date" class="w-full border rounded p-2 text-sm h-10" />
-                          </div>
-                          <div id="anc-visits-section-${i}" style="display: none;">
                             <label class="block text-sm font-medium mb-1">Number of ANC visits for previous pregnancy</label>
-                            <input type="number" placeholder="8" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
+                            <input type="number" placeholder="4" class="w-full border rounded p-2 text-sm h-10" min="0" max="20" />
                           </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-3">
                           <div>
                             <label class="block text-sm font-medium mb-1">Gestational age (months) <span class="text-red-500">*</span></label>
                             <input 
@@ -10334,6 +10327,13 @@ export default function AncPage() {
                               onchange="updateObstetricConditionalFields(${i})"
                               id="gestational-months-${i}"
                             />
+                          </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                          <div>
+                            <label class="block text-sm font-medium mb-1">Date of delivery/termination</label>
+                            <input type="date" class="w-full border rounded p-2 text-sm h-10" />
                           </div>
                           <div id="weeks-section-${i}" style="display: none;">
                             <label class="block text-sm font-medium mb-1">Gestational age (weeks) <span class="text-red-500">*</span></label>
