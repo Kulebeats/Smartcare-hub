@@ -9967,8 +9967,10 @@ export default function AncPage() {
                                   <label class="block text-sm font-medium mb-1">Baby's Current Status</label>
                                   <select class="w-full border rounded p-2 text-sm h-10">
                                     <option value="">Select status...</option>
-                                    <option value="alive">Alive</option>
-                                    <option value="deceased">Deceased</option>
+                                    <option value="alive_well">Alive and well</option>
+                                    <option value="alive_issues">Alive with health issues</option>
+                                    <option value="died_neonatal">Died in neonatal period</option>
+                                    <option value="died_later">Died later</option>
                                   </select>
                                 </div>
                                 <div></div>
@@ -10811,6 +10813,52 @@ export default function AncPage() {
                     } else if (outcome === 'abortion') {
                       if (deliverySection) deliverySection.style.display = 'none';
                       console.log('❌ Delivery section hidden for abortion');
+                    }
+                  };
+
+                  // Step 3: Handle delivery mode selection  
+                  window.updateDeliveryFields = function(index) {
+                    const select = document.querySelector('#delivery-mode-section-' + index + ' select');
+                    const labourSection = document.getElementById('labour-type-section-' + index);
+                    const placeDeliverySection = document.getElementById('place-delivery-section-' + index);
+                    
+                    if (select && select.value) {
+                      if (placeDeliverySection) placeDeliverySection.style.display = 'block';
+                      if (labourSection) labourSection.style.display = 'block';
+                    }
+                  };
+
+                  // Step 4: Handle sex selection and show baby status
+                  window.handleSexSelection = function(index) {
+                    console.log('👶 Sex Selection Function Called for index:', index);
+                    const birthWeightSection = document.getElementById('birth-weight-section-' + index);
+                    const babyStatusSection = document.getElementById('baby-status-section-' + index);
+                    const select = document.querySelector('#infant-sex-section-' + index + ' select');
+                    const outcomeSelect = document.querySelector('#outcome-section-' + index + ' select');
+                    
+                    console.log('👶 Selected sex:', select?.value);
+                    console.log('👶 Current outcome:', outcomeSelect?.value);
+                    
+                    if (select && select.value) {
+                      // After sex selection, show birth weight
+                      if (birthWeightSection) {
+                        birthWeightSection.style.display = 'block';
+                        console.log('✅ Birth weight section shown');
+                      }
+                      
+                      // For live births, also show baby's current status
+                      if (outcomeSelect && outcomeSelect.value === 'live_birth') {
+                        if (babyStatusSection) {
+                          babyStatusSection.style.display = 'block';
+                          console.log('✅ Baby status section shown for live birth');
+                        }
+                      } else {
+                        console.log('❌ Baby status NOT shown - outcome is:', outcomeSelect?.value);
+                      }
+                    } else {
+                      if (birthWeightSection) birthWeightSection.style.display = 'none';
+                      if (babyStatusSection) babyStatusSection.style.display = 'none';
+                      console.log('❌ No sex selected - hiding birth weight and baby status');
                     }
                   };
 
