@@ -255,7 +255,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6" style={{ overscrollBehavior: 'contain' }}>
           
           {/* Page 1: Privacy Check */}
           {currentPage === 1 && (
