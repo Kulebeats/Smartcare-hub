@@ -398,27 +398,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <p className="text-black">Confirm initial screening results and identify any additional concerns</p>
               </div>
 
-              {/* Initial Screening Results */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-blue-600" />
-                  Initial Screening Results
-                </h4>
-                <p className="text-blue-800 text-sm mb-3">
-                  The following concerns were identified during the initial IPV screening:
-                </p>
-                <div className="space-y-2">
-                  {selectedSigns.filter(sign => sign !== "No presenting signs or symptoms indicative of IPV").map((sign, index) => (
-                    <div key={index} className="flex items-center gap-3 bg-white/60 p-2 rounded border border-blue-100">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm text-black">{sign}</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-blue-700 text-xs mt-2 italic">
-                  These have been automatically mapped to relevant risk factors for comprehensive assessment.
-                </p>
-              </div>
+              
 
               {/* Provider Guidance */}
               <div className="border border-purple-200 rounded-lg p-3 bg-[#f5fcff] text-[#1f2937e8]">
