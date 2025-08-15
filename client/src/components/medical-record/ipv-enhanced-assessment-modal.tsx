@@ -726,7 +726,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
         {/* Footer */}
         <div className="border-t bg-gray-50 px-6 py-4 flex justify-between items-center flex-shrink-0">
-          <div className="text-sm text-gray-500">WHO Clinical Guidelines</div>
+          <div className="text-sm text-gray-500">WHO Guidelines for Intimate Partner & Sexual Violence 2013</div>
           <div className="flex gap-3">
             {currentPage > 1 && (
               <button 
