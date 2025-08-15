@@ -4012,7 +4012,7 @@ export default function AncPage() {
                               onChange={(e) => handleDangerSignModeChange(e.target.value as 'none' | 'present')}
                               className="rounded border-gray-300 text-blue-600"
                             />
-                            <label htmlFor="danger_mode_none" className="text-sm font-medium text-green-700">None - No danger signs present</label>
+                            <label htmlFor="danger_mode_none" className="text-sm font-medium text-[#120f0f]">None - No danger signs present</label>
                           </div>
                           
                           <div className="flex items-center space-x-2">
