@@ -264,23 +264,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
     }));
   };
 
-  const handleActiveListeningToggle = (technique: string) => {
-    const current = assessmentData.livesProtocol.listen.activeListening;
-    updateLIVESProtocol('listen', {
-      activeListening: current.includes(technique) 
-        ? current.filter(t => t !== technique)
-        : [...current, technique]
-    });
-  };
-
-  const handleValidationPhraseToggle = (phrase: string) => {
-    const current = assessmentData.livesProtocol.validate.selectedPhrases;
-    updateLIVESProtocol('validate', {
-      selectedPhrases: current.includes(phrase) 
-        ? current.filter(p => p !== phrase)
-        : [...current, phrase]
-    });
-  };
+  // Removed interactive checkbox handlers since these are now guidance-only sections
 
   const handleSafeContactAdd = (contact: string) => {
     if (contact.trim()) {
@@ -319,14 +303,17 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
     if (currentPage === 1) return assessmentData.patientAlone === 'yes';
     if (currentPage === 4 && hasRiskFactors) {
       // For LIVES protocol, allow proceeding if some meaningful work has been done
-      const hasListenContent = assessmentData.livesProtocol.listen.activeListening.length > 0 || 
-                              assessmentData.livesProtocol.listen.narrative.length > 0;
+      const hasListenContent = assessmentData.livesProtocol.listen.narrative.length > 0 ||
+                              assessmentData.livesProtocol.listen.clinicalNotes.length > 0;
       const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
                                assessmentData.livesProtocol.inquire.safePlace !== null;
-      const hasValidateContent = assessmentData.livesProtocol.validate.selectedPhrases.length > 0;
+      const hasSafetyContent = assessmentData.livesProtocol.enhanceSafety.emergencyPlan.length > 0 ||
+                              assessmentData.livesProtocol.enhanceSafety.violenceIncreased !== null;
+      const hasSupportContent = assessmentData.livesProtocol.support.referralsMade.length > 0 ||
+                               assessmentData.livesProtocol.support.patientConsent !== null;
       
-      // Allow proceeding if any two phases have content or any phase is completed
-      const contentCount = [hasListenContent, hasInquireContent, hasValidateContent].filter(Boolean).length;
+      // Allow proceeding if any phase has content or any phase is completed
+      const contentCount = [hasListenContent, hasInquireContent, hasSafetyContent, hasSupportContent].filter(Boolean).length;
       const completedCount = [
         assessmentData.livesProtocol.listen.completed,
         assessmentData.livesProtocol.inquire.completed,
@@ -335,7 +322,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         assessmentData.livesProtocol.support.completed
       ].filter(Boolean).length;
       
-      return contentCount >= 1 || completedCount >= 1; // More flexible validation
+      return contentCount >= 1 || completedCount >= 1; // Flexible validation based on actual content
     }
     return true;
   };
@@ -785,26 +772,23 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Active Listening Techniques */}
+                {/* Active Listening Techniques Guide */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-black mb-2">
-                    Active Listening Techniques Used
+                    Active Listening Techniques
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      'I understand', 'I see', 'That must have been difficult', 'Thank you for sharing',
-                      'I hear you', 'Tell me more', 'That sounds challenging', 'You are being very brave'
-                    ].map((technique) => (
-                      <label key={technique} className="flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={assessmentData.livesProtocol.listen.activeListening.includes(technique)}
-                          onChange={() => handleActiveListeningToggle(technique)}
-                          className="mr-2 text-blue-600"
-                        />
-                        <span className="text-xs text-black">"{technique}"</span>
-                      </label>
-                    ))}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-blue-800 text-sm mb-2">Use these supportive phrases during conversation:</p>
+                    <div className="grid grid-cols-2 gap-1 text-xs text-blue-700">
+                      <p>• "I understand"</p>
+                      <p>• "I see"</p>
+                      <p>• "That must have been difficult"</p>
+                      <p>• "Thank you for sharing"</p>
+                      <p>• "I hear you"</p>
+                      <p>• "Tell me more"</p>
+                      <p>• "That sounds challenging"</p>
+                      <p>• "You are being very brave"</p>
+                    </div>
                   </div>
                 </div>
 
@@ -952,32 +936,23 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Pre-scripted Validation Phrases */}
+                {/* Validation Phrases Guide */}
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-black mb-2">
-                    Validation Phrases Used
+                    Validation Phrases
                   </label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      'Thank you for telling me. I know this was difficult.',
-                      'You are not to blame.',
-                      'You are not alone; this happens to many women.',
-                      'I believe you.',
-                      'You are being very brave by talking about this.',
-                      'What happened to you is not okay.',
-                      'You deserve to be treated with respect.',
-                      'It takes courage to seek help.'
-                    ].map((phrase) => (
-                      <label key={phrase} className="flex items-start p-2 hover:bg-green-50 rounded cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={assessmentData.livesProtocol.validate.selectedPhrases.includes(phrase)}
-                          onChange={() => handleValidationPhraseToggle(phrase)}
-                          className="mr-2 mt-0.5 text-green-600"
-                        />
-                        <span className="text-xs text-black italic">"{phrase}"</span>
-                      </label>
-                    ))}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-green-800 text-sm mb-2">Use these supportive validation statements:</p>
+                    <div className="space-y-1 text-xs text-green-700">
+                      <p>• "Thank you for telling me. I know this was difficult."</p>
+                      <p>• "You are not to blame."</p>
+                      <p>• "You are not alone; this happens to many women."</p>
+                      <p>• "I believe you."</p>
+                      <p>• "You are being very brave by talking about this."</p>
+                      <p>• "What happened to you is not okay."</p>
+                      <p>• "You deserve to be treated with respect."</p>
+                      <p>• "It takes courage to seek help."</p>
+                    </div>
                   </div>
                 </div>
 
@@ -1319,9 +1294,9 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                     <div className="text-indigo-700 text-sm mt-2">
                       <p className="mb-2">Complete any of these activities to proceed to final documentation:</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <p>• Select active listening techniques (Listen)</p>
+                        <p>• Add patient narrative or observations (Listen)</p>
                         <p>• Answer immediate safety questions (Inquire)</p>
-                        <p>• Choose validation phrases (Validate)</p>
+                        <p>• Mark validation phase complete (Validate)</p>
                         <p>• Complete safety planning (Enhance Safety)</p>
                         <p>• Make referrals (Support)</p>
                         <p>• Mark any phase as complete</p>
@@ -1337,12 +1312,16 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       ].filter(Boolean).length}/5 phases complete</p>
                       <p className="mt-1">
                         {(() => {
-                          const hasListenContent = assessmentData.livesProtocol.listen.activeListening.length > 0 || 
-                                                  assessmentData.livesProtocol.listen.narrative.length > 0;
+                          const hasListenContent = assessmentData.livesProtocol.listen.narrative.length > 0 ||
+                                                  assessmentData.livesProtocol.listen.clinicalNotes.length > 0;
                           const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
                                                    assessmentData.livesProtocol.inquire.safePlace !== null;
-                          const hasValidateContent = assessmentData.livesProtocol.validate.selectedPhrases.length > 0;
-                          const contentCount = [hasListenContent, hasInquireContent, hasValidateContent].filter(Boolean).length;
+                          const hasSafetyContent = assessmentData.livesProtocol.enhanceSafety.emergencyPlan.length > 0 ||
+                                                  assessmentData.livesProtocol.enhanceSafety.violenceIncreased !== null;
+                          const hasSupportContent = assessmentData.livesProtocol.support.referralsMade.length > 0 ||
+                                                   assessmentData.livesProtocol.support.patientConsent !== null;
+                          
+                          const contentCount = [hasListenContent, hasInquireContent, hasSafetyContent, hasSupportContent].filter(Boolean).length;
                           const completedCount = [
                             assessmentData.livesProtocol.listen.completed,
                             assessmentData.livesProtocol.inquire.completed,
@@ -1438,8 +1417,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       
                       {/* Detailed LIVES Summary */}
                       <div className="mt-3 space-y-2">
-                        <p>• Active listening techniques: <strong>{assessmentData.livesProtocol.listen.activeListening.length}</strong></p>
-                        <p>• Validation phrases used: <strong>{assessmentData.livesProtocol.validate.selectedPhrases.length}</strong></p>
+                        <p>• Patient narrative documented: <strong>{assessmentData.livesProtocol.listen.narrative.length > 0 ? 'Yes' : 'No'}</strong></p>
+                        <p>• Clinical observations noted: <strong>{assessmentData.livesProtocol.listen.clinicalNotes.length > 0 ? 'Yes' : 'No'}</strong></p>
                         <p>• Safety contacts identified: <strong>{assessmentData.livesProtocol.enhanceSafety.safeContacts.length}</strong></p>
                         <p>• Referrals provided: <strong>{assessmentData.livesProtocol.support.referralsMade.length}</strong></p>
                         <p>• Safety plan generated: <strong>{assessmentData.livesProtocol.enhanceSafety.printablePlan ? 'Yes' : 'No'}</strong></p>
