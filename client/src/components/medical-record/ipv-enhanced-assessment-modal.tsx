@@ -422,7 +422,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <div className="flex gap-3">
                   <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div className="text-blue-800 text-sm">
-                    <p className="font-semibold mb-1">WHO Protocol Requirements:</p>
+                    <p className="font-semibold mb-1 text-[#000000]">Protocol Requirements:</p>
                     <ul className="space-y-1">
                       <li>✓ <strong>Private setting:</strong> Door closed, no interruptions possible</li>
                       <li>✓ <strong>Confidentiality:</strong> Assured except if child at risk</li>
