@@ -1372,7 +1372,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* Comprehensive Assessment Summary */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-[#ffffff00]">
                 <h5 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   Complete Assessment Summary
