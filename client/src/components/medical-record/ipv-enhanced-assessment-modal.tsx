@@ -541,7 +541,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* WHO Training Prompt */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <div className="border border-green-200 rounded-lg p-3 text-[#000000] bg-[#f0fdf4ad]">
                 <div className="flex gap-2">
                   <Heart className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                   <div className="text-green-800 text-sm">
