@@ -205,7 +205,7 @@ const IPVSignsSelectionModal: React.FC<IPVSignsSelectionModalProps> = ({
               <div className="flex justify-between items-center mb-2">
                 <h4 className="font-semibold text-black text-base">Select specific IPV signs and symptoms:</h4>
                 {selectedSigns.length > 0 && (
-                  <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                  <span className="text-sm px-2 py-1 rounded text-[#ffffff] bg-[#007fffbf]">
                     {selectedSigns.length} sign{selectedSigns.length > 1 ? 's' : ''} selected
                   </span>
                 )}
