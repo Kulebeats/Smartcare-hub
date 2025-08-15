@@ -6435,7 +6435,7 @@ export default function AncPage() {
                         <textarea className="w-full border-2 border-gray-300 rounded p-2 h-20 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"></textarea>
                       </div>
 
-                      {/* Maternal Emergency Checklist */}
+                      {/* Dynamic Maternal Emergency Checklist */}
                       <div className="col-span-2" id="maternal-emergency-checklist" style={{ display: 'none' }}>
                         <div className="border rounded-lg p-4 bg-blue-50">
                           <div className="flex items-center justify-between mb-3">
@@ -6462,7 +6462,18 @@ export default function AncPage() {
                           </div>
                           
                           <div id="checklist-content" style={{ display: 'block' }}>
-                            <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto">
+                            {/* Dynamic Emergency Checklist Component */}
+                            <DynamicEmergencyChecklist 
+                              dangerSigns={sharedDangerSigns}
+                              onChecklistChange={(completedItems, totalItems) => {
+                                console.log(`Emergency checklist completion: ${completedItems.length}/${totalItems} (${Math.round((completedItems.length / totalItems) * 100)}%)`);
+                              }}
+                              showClinicalFocus={true}
+                              className="space-y-3"
+                            />
+                            
+                            {/* Fallback to static checklist when no danger signs */}
+                            <div id="static-emergency-checklist-fallback" className={`${sharedDangerSigns.length > 0 ? 'hidden' : ''} grid grid-cols-1 gap-3 max-h-64 overflow-y-auto`}>
                               
                               {/* Communication Items */}
                               <div className="bg-white rounded p-3 border-l-4 border-green-500">

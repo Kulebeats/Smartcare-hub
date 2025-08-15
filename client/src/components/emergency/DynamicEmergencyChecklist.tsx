@@ -3,7 +3,7 @@
  * Prioritizes checklist items based on danger signs
  */
 import React, { useState, useEffect } from 'react';
-import { EmergencyChecklistPrioritizer, ChecklistItem } from '../../../shared/emergency-checklist-mapping';
+import { EmergencyChecklistPrioritizer, ChecklistItem } from '../../../../shared/emergency-checklist-mapping';
 
 interface DynamicEmergencyChecklistProps {
   dangerSigns: string[];
