@@ -3690,6 +3690,17 @@ export default function AncPage() {
                       </svg>
                       Add Record
                     </Button>
+                    <Button 
+                      className="rounded-full bg-green-500 hover:bg-green-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
+                      onClick={() => {
+                        setShowVitalSignsDialog(true);
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                      </svg>
+                      Call Vitals
+                    </Button>
 
                   </div>
                 </div>
