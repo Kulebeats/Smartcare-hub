@@ -875,7 +875,7 @@ export default function AncPage() {
   const handleDangerSignsAcknowledgement = useCallback((acknowledgedSigns: string[]) => {
     setAcknowledgedDangerSigns(acknowledgedSigns);
     setDangerSignsWorkflowPhase('action_selection');
-    setDangerSignMode('present'); // Ensure danger signs modal is visible
+    // Keep danger signs modal open - don't change dangerSignMode
     
     toast({
       title: "Danger Signs Information Reviewed",
@@ -905,7 +905,8 @@ export default function AncPage() {
       });
     }
     
-    // Reset workflow after action selection
+    // Close the danger signs modal after action selection
+    setDangerSignMode(undefined);
     setDangerSignsWorkflowPhase('selection');
     setAcknowledgedDangerSigns([]);
   }, [acknowledgedDangerSigns, syncDangerSignsToReferral, toast]);
@@ -4310,6 +4311,7 @@ export default function AncPage() {
                             onClick={() => {
                               setDangerSignsWorkflowPhase('selection');
                               setAcknowledgedDangerSigns([]);
+                              // Keep the modal open but return to selection view
                             }}
                             className="w-full mt-3 border-orange-300 text-orange-700 hover:bg-orange-100"
                           >

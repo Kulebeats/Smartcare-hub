@@ -294,7 +294,11 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
                 </div>
               </div>
               <button 
-                onClick={() => setShowUrgentModal(false)}
+                onClick={() => {
+                  setShowUrgentModal(false);
+                  // Close button should also trigger acknowledgment and return to main modal
+                  onDangerSignsAcknowledged?.(dangerSigns);
+                }}
                 className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -319,8 +323,7 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
             <button
               onClick={() => {
                 setShowUrgentModal(false);
-                setShowDangerSignsInfo(true);
-                // Notify parent that danger signs information was acknowledged
+                // Don't show danger signs info modal, instead notify parent to show action selection
                 onDangerSignsAcknowledged?.(dangerSigns);
               }}
               className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-orange-600 hover:bg-orange-700 text-white"
