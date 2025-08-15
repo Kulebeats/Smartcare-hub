@@ -42,6 +42,24 @@ interface LIVESProtocolData {
   };
 }
 
+interface ValidationRule {
+  id: string;
+  page: number;
+  required: boolean;
+  condition: (data: EnhancedIPVAssessmentData) => boolean;
+  errorMessage: string;
+  category: 'WHO_MANDATORY' | 'CLINICAL_BEST_PRACTICE' | 'LEGAL_REQUIREMENT';
+  phase?: 'LISTEN' | 'INQUIRE' | 'VALIDATE' | 'ENHANCE_SAFETY' | 'SUPPORT';
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  mandatoryFieldsComplete: string[];
+  mandatoryFieldsMissing: string[];
+}
+
 interface EnhancedIPVAssessmentData {
   patientAlone: 'yes' | 'no' | null;
   riskFactors: string[];
@@ -61,6 +79,12 @@ interface EnhancedIPVAssessmentData {
   };
   referrals: string[];
   notes: string;
+  privacyVerification: {
+    doorClosed: boolean;
+    noOthersPresent: boolean;
+    noChildrenPresent: boolean;
+    confidentialityExplained: boolean;
+  };
 }
 
 interface IPVEnhancedAssessmentModalProps {
@@ -134,8 +158,148 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
       support: false
     },
     referrals: [],
-    notes: ''
+    notes: '',
+    privacyVerification: {
+      doorClosed: false,
+      noOthersPresent: false,
+      noChildrenPresent: false,
+      confidentialityExplained: false
+    }
   });
+
+  // Business Rules Engine
+  const businessRules: ValidationRule[] = [
+    // Page 1 - Privacy Assessment Rules
+    {
+      id: 'patient_alone_required',
+      page: 1,
+      required: true,
+      category: 'WHO_MANDATORY',
+      condition: (data) => data.patientAlone === 'yes',
+      errorMessage: 'Patient must be alone to proceed with IPV assessment for safety reasons'
+    },
+    {
+      id: 'privacy_checklist_minimum',
+      page: 1,
+      required: true,
+      category: 'CLINICAL_BEST_PRACTICE',
+      condition: (data) => {
+        const checks = data.privacyVerification;
+        const completedChecks = Object.values(checks).filter(Boolean).length;
+        return completedChecks >= 3; // At least 3 of 4 privacy checks
+      },
+      errorMessage: 'At least 3 privacy verification items must be confirmed'
+    },
+    
+    // Page 4 - WHO LIVES Protocol Rules
+    {
+      id: 'listen_minimum_content',
+      page: 4,
+      required: true,
+      phase: 'LISTEN',
+      category: 'WHO_MANDATORY',
+      condition: (data) => {
+        const listen = data.livesProtocol.listen;
+        return listen.narrative.length >= 20 || listen.clinicalNotes.length >= 20 || listen.completed;
+      },
+      errorMessage: 'LISTEN phase requires patient narrative or clinical observations (minimum 20 characters) or phase completion'
+    },
+    {
+      id: 'inquire_safety_assessment',
+      page: 4,
+      required: true,
+      phase: 'INQUIRE',
+      category: 'WHO_MANDATORY',
+      condition: (data) => {
+        const inquire = data.livesProtocol.inquire;
+        return inquire.immediateSafety !== null || inquire.safePlace !== null || inquire.completed;
+      },
+      errorMessage: 'INQUIRE phase requires immediate safety assessment or phase completion'
+    },
+    {
+      id: 'validate_acknowledgment',
+      page: 4,
+      required: false,
+      phase: 'VALIDATE',
+      category: 'CLINICAL_BEST_PRACTICE',
+      condition: (data) => data.livesProtocol.validate.completed,
+      errorMessage: 'VALIDATE phase completion recommended for comprehensive care'
+    },
+    {
+      id: 'lives_minimum_phases',
+      page: 4,
+      required: true,
+      category: 'WHO_MANDATORY',
+      condition: (data) => {
+        const phases = data.livesProtocol;
+        const completedCount = [
+          phases.listen.completed,
+          phases.inquire.completed,
+          phases.validate.completed,
+          phases.enhanceSafety.completed,
+          phases.support.completed
+        ].filter(Boolean).length;
+        
+        const contentCount = [
+          phases.listen.narrative.length > 0 || phases.listen.clinicalNotes.length > 0,
+          phases.inquire.immediateSafety !== null || phases.inquire.safePlace !== null,
+          phases.validate.completed,
+          phases.enhanceSafety.emergencyPlan.length > 0 || phases.enhanceSafety.violenceIncreased !== null,
+          phases.support.referralsMade.length > 0 || phases.support.patientConsent !== null
+        ].filter(Boolean).length;
+        
+        return completedCount >= 2 || contentCount >= 3;
+      },
+      errorMessage: 'WHO LIVES Protocol requires completion of at least 2 phases or meaningful content in 3 phases'
+    }
+  ];
+
+  const validatePage = (page: number): ValidationResult => {
+    const pageRules = businessRules.filter(rule => rule.page === page);
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    const mandatoryFieldsComplete: string[] = [];
+    const mandatoryFieldsMissing: string[] = [];
+
+    pageRules.forEach(rule => {
+      const isValid = rule.condition(assessmentData);
+      
+      if (!isValid) {
+        if (rule.required) {
+          errors.push(rule.errorMessage);
+          mandatoryFieldsMissing.push(rule.id);
+        } else {
+          warnings.push(rule.errorMessage);
+        }
+      } else {
+        if (rule.required) {
+          mandatoryFieldsComplete.push(rule.id);
+        }
+      }
+    });
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      mandatoryFieldsComplete,
+      mandatoryFieldsMissing
+    };
+  };
+
+  const [validationResult, setValidationResult] = useState<ValidationResult>({
+    isValid: true,
+    errors: [],
+    warnings: [],
+    mandatoryFieldsComplete: [],
+    mandatoryFieldsMissing: []
+  });
+
+  // Update validation when assessment data or page changes
+  useEffect(() => {
+    const result = validatePage(currentPage);
+    setValidationResult(result);
+  }, [assessmentData, currentPage]);
 
   // Categorized risk factors based on the attachment
   const riskFactors = [
@@ -304,31 +468,18 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
   };
 
   const canProceed = () => {
-    if (currentPage === 1) return assessmentData.patientAlone === 'yes';
-    if (currentPage === 4 && hasRiskFactors) {
-      // For LIVES protocol, allow proceeding if some meaningful work has been done
-      const hasListenContent = assessmentData.livesProtocol.listen.narrative.length > 0 ||
-                              assessmentData.livesProtocol.listen.clinicalNotes.length > 0;
-      const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
-                               assessmentData.livesProtocol.inquire.safePlace !== null;
-      const hasSafetyContent = assessmentData.livesProtocol.enhanceSafety.emergencyPlan.length > 0 ||
-                              assessmentData.livesProtocol.enhanceSafety.violenceIncreased !== null;
-      const hasSupportContent = assessmentData.livesProtocol.support.referralsMade.length > 0 ||
-                               assessmentData.livesProtocol.support.patientConsent !== null;
-      
-      // Allow proceeding if any phase has content or any phase is completed
-      const contentCount = [hasListenContent, hasInquireContent, hasSafetyContent, hasSupportContent].filter(Boolean).length;
-      const completedCount = [
-        assessmentData.livesProtocol.listen.completed,
-        assessmentData.livesProtocol.inquire.completed,
-        assessmentData.livesProtocol.validate.completed,
-        assessmentData.livesProtocol.enhanceSafety.completed,
-        assessmentData.livesProtocol.support.completed
-      ].filter(Boolean).length;
-      
-      return contentCount >= 1 || completedCount >= 1; // Flexible validation based on actual content
-    }
-    return true;
+    const validation = validatePage(currentPage);
+    return validation.isValid;
+  };
+
+  const handlePrivacyVerificationChange = (field: keyof typeof assessmentData.privacyVerification) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      privacyVerification: {
+        ...prev.privacyVerification,
+        [field]: !prev.privacyVerification[field]
+      }
+    }));
   };
 
   const handleComplete = () => {
@@ -396,10 +547,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6" style={{ 
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch'
-        }}>
+        <div className="flex-1 overflow-y-auto p-6">
           
           {/* Page 1: Privacy Check */}
           {currentPage === 1 && (
@@ -431,16 +579,27 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <h4 className="text-sm font-semibold text-black mb-3">Privacy Verification Checklist:</h4>
                 <div className="space-y-2 text-sm">
                   {[
-                    'Door is closed and room is private',
-                    'No partner, family, or friends present',
-                    'No children over 2 years old present',
-                    'Confidentiality has been explained'
-                  ].map((item, index) => (
-                    <label key={index} className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded">
-                      <input type="checkbox" className="mr-2 text-blue-600" />
-                      <span className="text-black">{item}</span>
+                    { key: 'doorClosed' as const, label: 'Door is closed and room is private' },
+                    { key: 'noOthersPresent' as const, label: 'No partner, family, or friends present' },
+                    { key: 'noChildrenPresent' as const, label: 'No children over 2 years old present' },
+                    { key: 'confidentialityExplained' as const, label: 'Confidentiality has been explained' }
+                  ].map(({ key, label }) => (
+                    <label key={key} className="flex items-center cursor-pointer hover:bg-gray-100 p-1 rounded">
+                      <input 
+                        type="checkbox" 
+                        checked={assessmentData.privacyVerification[key]}
+                        onChange={() => handlePrivacyVerificationChange(key)}
+                        className="mr-2 text-blue-600" 
+                      />
+                      <span className="text-black">{label}</span>
                     </label>
                   ))}
+                </div>
+                <div className="mt-2 text-xs">
+                  <span className={`font-medium ${validationResult.mandatoryFieldsComplete.includes('privacy_checklist_minimum') ? 'text-green-600' : 'text-orange-600'}`}>
+                    {Object.values(assessmentData.privacyVerification).filter(Boolean).length}/4 completed
+                    {validationResult.mandatoryFieldsComplete.includes('privacy_checklist_minimum') ? ' ✓' : ' (3 required)'}
+                  </span>
                 </div>
               </div>
 
@@ -1259,57 +1418,57 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 </div>
               </div>
 
-              {/* Progress and Navigation Helper */}
+              {/* Enhanced Progress and Validation Helper */}
               <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4">
                 <div className="flex">
                   <FileText className="w-5 h-5 text-indigo-400 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="text-indigo-800 font-semibold">Progress & Next Steps</h4>
+                    <h4 className="text-indigo-800 font-semibold">WHO LIVES Protocol - Business Rules Status</h4>
                     <div className="text-indigo-700 text-sm mt-2">
-                      <p className="mb-2">Complete any of these activities to proceed to final documentation:</p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <p>• Add patient narrative or observations (Listen)</p>
-                        <p>• Answer immediate safety questions (Inquire)</p>
-                        <p>• Mark validation phase complete (Validate)</p>
-                        <p>• Complete safety planning (Enhance Safety)</p>
-                        <p>• Make referrals (Support)</p>
-                        <p>• Mark any phase as complete</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {/* LISTEN Requirements */}
+                        <div className="border border-indigo-200 rounded p-2 bg-indigo-50">
+                          <div className="font-medium text-indigo-800 mb-1">LISTEN Phase Requirements:</div>
+                          <div className="text-xs space-y-1">
+                            <div className={`${assessmentData.livesProtocol.listen.narrative.length >= 20 ? 'text-green-700' : 'text-orange-600'}`}>
+                              • Patient narrative ({assessmentData.livesProtocol.listen.narrative.length}/20 chars) {assessmentData.livesProtocol.listen.narrative.length >= 20 ? '✓' : '○'}
+                            </div>
+                            <div className={`${assessmentData.livesProtocol.listen.clinicalNotes.length >= 20 ? 'text-green-700' : 'text-orange-600'}`}>
+                              • Clinical observations ({assessmentData.livesProtocol.listen.clinicalNotes.length}/20 chars) {assessmentData.livesProtocol.listen.clinicalNotes.length >= 20 ? '✓' : '○'}
+                            </div>
+                            <div className={`${assessmentData.livesProtocol.listen.completed ? 'text-green-700' : 'text-gray-500'}`}>
+                              • Phase completion {assessmentData.livesProtocol.listen.completed ? '✓' : '○'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* INQUIRE Requirements */}
+                        <div className="border border-indigo-200 rounded p-2 bg-indigo-50">
+                          <div className="font-medium text-indigo-800 mb-1">INQUIRE Phase Requirements:</div>
+                          <div className="text-xs space-y-1">
+                            <div className={`${assessmentData.livesProtocol.inquire.immediateSafety !== null ? 'text-green-700' : 'text-orange-600'}`}>
+                              • Immediate safety assessed {assessmentData.livesProtocol.inquire.immediateSafety !== null ? '✓' : '○'}
+                            </div>
+                            <div className={`${assessmentData.livesProtocol.inquire.safePlace !== null ? 'text-green-700' : 'text-gray-500'}`}>
+                              • Safe place needs {assessmentData.livesProtocol.inquire.safePlace !== null ? '✓' : '○'}
+                            </div>
+                            <div className={`${assessmentData.livesProtocol.inquire.completed ? 'text-green-700' : 'text-gray-500'}`}>
+                              • Phase completion {assessmentData.livesProtocol.inquire.completed ? '✓' : '○'}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="text-indigo-700 text-xs mt-3 p-2 bg-indigo-100 rounded">
-                      <p className="font-medium">Protocol Status: {[
-                        assessmentData.livesProtocol.listen.completed,
-                        assessmentData.livesProtocol.inquire.completed,
-                        assessmentData.livesProtocol.validate.completed,
-                        assessmentData.livesProtocol.enhanceSafety.completed,
-                        assessmentData.livesProtocol.support.completed
-                      ].filter(Boolean).length}/5 phases complete</p>
+                      <p className="font-medium">Business Rules Status: {validationResult.isValid ? '✅ All mandatory requirements met' : `❌ ${validationResult.errors.length} requirements missing`}</p>
                       <p className="mt-1">
-                        {(() => {
-                          const hasListenContent = assessmentData.livesProtocol.listen.narrative.length > 0 ||
-                                                  assessmentData.livesProtocol.listen.clinicalNotes.length > 0;
-                          const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
-                                                   assessmentData.livesProtocol.inquire.safePlace !== null;
-                          const hasSafetyContent = assessmentData.livesProtocol.enhanceSafety.emergencyPlan.length > 0 ||
-                                                  assessmentData.livesProtocol.enhanceSafety.violenceIncreased !== null;
-                          const hasSupportContent = assessmentData.livesProtocol.support.referralsMade.length > 0 ||
-                                                   assessmentData.livesProtocol.support.patientConsent !== null;
-                          
-                          const contentCount = [hasListenContent, hasInquireContent, hasSafetyContent, hasSupportContent].filter(Boolean).length;
-                          const completedCount = [
-                            assessmentData.livesProtocol.listen.completed,
-                            assessmentData.livesProtocol.inquire.completed,
-                            assessmentData.livesProtocol.validate.completed,
-                            assessmentData.livesProtocol.enhanceSafety.completed,
-                            assessmentData.livesProtocol.support.completed
-                          ].filter(Boolean).length;
-                          
-                          if (contentCount >= 1 || completedCount >= 1) {
-                            return "✅ Ready to proceed to final documentation";
-                          } else {
-                            return "⏳ Complete at least one LIVES activity above to continue";
-                          }
-                        })()}
+                        Protocol Progress: {[
+                          assessmentData.livesProtocol.listen.completed,
+                          assessmentData.livesProtocol.inquire.completed,
+                          assessmentData.livesProtocol.validate.completed,
+                          assessmentData.livesProtocol.enhanceSafety.completed,
+                          assessmentData.livesProtocol.support.completed
+                        ].filter(Boolean).length}/5 phases complete
                       </p>
                     </div>
                   </div>
@@ -1431,8 +1590,55 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         </div>
 
         {/* Footer */}
+        {/* Validation Status */}
+        {validationResult.errors.length > 0 || validationResult.warnings.length > 0 ? (
+          <div className="px-6 py-3 border-t border-gray-200 bg-red-50">
+            {validationResult.errors.length > 0 && (
+              <div className="mb-2">
+                <div className="flex items-center gap-2 text-red-800 font-semibold mb-1">
+                  <AlertTriangle size={16} />
+                  Required Items Missing:
+                </div>
+                <ul className="text-sm text-red-700 space-y-1">
+                  {validationResult.errors.map((error, index) => (
+                    <li key={index}>• {error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {validationResult.warnings.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 text-orange-800 font-semibold mb-1">
+                  <AlertTriangle size={16} />
+                  Recommendations:
+                </div>
+                <ul className="text-sm text-orange-700 space-y-1">
+                  {validationResult.warnings.map((warning, index) => (
+                    <li key={index}>• {warning}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : null}
+
         <div className="border-t bg-gray-50 px-6 py-4 flex justify-between items-center flex-shrink-0">
-          <div className="text-sm text-gray-500">WHO Guidelines for Intimate Partner & Sexual Violence 2013</div>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-500">WHO Guidelines for IPV 2013</div>
+            {currentPage === 4 && hasRiskFactors && (
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className={`${assessmentData.livesProtocol.listen.narrative.length > 0 || assessmentData.livesProtocol.listen.clinicalNotes.length > 0 || assessmentData.livesProtocol.listen.completed ? 'text-green-700' : 'text-gray-500'}`}>
+                  LISTEN {assessmentData.livesProtocol.listen.completed ? '✓' : (assessmentData.livesProtocol.listen.narrative.length > 0 || assessmentData.livesProtocol.listen.clinicalNotes.length > 0) ? '◐' : '○'}
+                </span>
+              </div>
+            )}
+            {validationResult.mandatoryFieldsComplete.length > 0 && (
+              <div className="text-xs text-green-600 font-medium">
+                {validationResult.mandatoryFieldsComplete.length}/{businessRules.filter(r => r.page === currentPage && r.required).length} required complete
+              </div>
+            )}
+          </div>
           <div className="flex gap-3">
             {currentPage > 1 && (
               <button 
@@ -1448,6 +1654,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 onClick={nextPage}
                 disabled={!canProceed()}
                 className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                title={!canProceed() ? 'Complete required items to continue' : ''}
               >
                 Next
                 <ArrowRight className="w-4 h-4" />
