@@ -77,33 +77,44 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
     { id: 'children_problems', label: 'Children have emotional/behavioral problems', category: 'Behavioral' }
   ];
 
+  // Map IPV signs to risk factors for initial assessment
+  const mapIPVSignsToRiskFactors = (signs: string[]): string[] => {
+    return signs
+      .filter(sign => sign !== "No presenting signs or symptoms indicative of IPV")
+      .map(sign => {
+        // Map selected signs to risk factor IDs with comprehensive matching
+        if (sign.toLowerCase().includes('stress')) return 'ongoing_stress';
+        if (sign.toLowerCase().includes('anxiety')) return 'ongoing_anxiety';
+        if (sign.toLowerCase().includes('depression')) return 'ongoing_depression';
+        if (sign.toLowerCase().includes('alcohol')) return 'alcohol_misuse';
+        if (sign.toLowerCase().includes('drug')) return 'drug_misuse';
+        if (sign.toLowerCase().includes('self-harm') || sign.toLowerCase().includes('suicide')) return 'self_harm_thoughts';
+        if (sign.toLowerCase().includes('sti') || sign.toLowerCase().includes('sexually transmitted')) return 'repeated_stis';
+        if (sign.toLowerCase().includes('unwanted pregnanc')) return 'unwanted_pregnancies';
+        if (sign.toLowerCase().includes('chronic pain')) return 'chronic_pain';
+        if (sign.toLowerCase().includes('injury')) return 'traumatic_injury';
+        if (sign.toLowerCase().includes('intrusive')) return 'intrusive_partner';
+        if (sign.toLowerCase().includes('missed') || sign.toLowerCase().includes('misses')) return 'missed_appointments';
+        if (sign.toLowerCase().includes('children')) return 'children_problems';
+        // Additional mappings for comprehensive coverage
+        if (sign.toLowerCase().includes('emotional')) return 'ongoing_stress';
+        if (sign.toLowerCase().includes('trauma') || sign.toLowerCase().includes('ptsd')) return 'self_harm_thoughts';
+        if (sign.toLowerCase().includes('reproductive')) return 'repeated_stis';
+        if (sign.toLowerCase().includes('bleeding')) return 'repeated_stis';
+        if (sign.toLowerCase().includes('gastrointestinal') || sign.toLowerCase().includes('genitourinary')) return 'chronic_pain';
+        if (sign.toLowerCase().includes('partner')) return 'intrusive_partner';
+        return null;
+      })
+      .filter(Boolean) as string[];
+  };
+
   // Initialize risk factors from selected signs
   useEffect(() => {
     if (selectedSigns.length > 0) {
-      const mappedFactors = selectedSigns
-        .filter(sign => sign !== "No presenting signs or symptoms indicative of IPV")
-        .map(sign => {
-          // Map selected signs to risk factor IDs
-          if (sign.includes('stress')) return 'ongoing_stress';
-          if (sign.includes('anxiety')) return 'ongoing_anxiety';
-          if (sign.includes('depression')) return 'ongoing_depression';
-          if (sign.includes('alcohol')) return 'alcohol_misuse';
-          if (sign.includes('drug')) return 'drug_misuse';
-          if (sign.includes('self-harm') || sign.includes('suicide')) return 'self_harm_thoughts';
-          if (sign.includes('STI')) return 'repeated_stis';
-          if (sign.includes('unwanted pregnanc')) return 'unwanted_pregnancies';
-          if (sign.includes('chronic pain')) return 'chronic_pain';
-          if (sign.includes('injury')) return 'traumatic_injury';
-          if (sign.includes('intrusive')) return 'intrusive_partner';
-          if (sign.includes('misses')) return 'missed_appointments';
-          if (sign.includes('children')) return 'children_problems';
-          return null;
-        })
-        .filter(Boolean) as string[];
-
+      const initialRiskFactors = mapIPVSignsToRiskFactors(selectedSigns);
       setAssessmentData(prev => ({
         ...prev,
-        riskFactors: mappedFactors
+        riskFactors: initialRiskFactors
       }));
     }
   }, [selectedSigns]);
@@ -379,62 +390,100 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
             </div>
           )}
 
-          {/* Page 2: Risk Factors */}
+          {/* Page 2: Review & Expand Assessment */}
           {currentPage === 2 && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-black mb-2">Risk Factor Screening</h3>
-                <p className="text-black">Select any factors that apply to this patient</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Review & Expand Assessment</h3>
+                <p className="text-black">Confirm initial screening results and identify any additional concerns</p>
               </div>
 
-              {/* Training Prompt */}
+              {/* Initial Screening Results */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  Initial Screening Results
+                </h4>
+                <p className="text-blue-800 text-sm mb-3">
+                  The following concerns were identified during the initial IPV screening:
+                </p>
+                <div className="space-y-2">
+                  {selectedSigns.filter(sign => sign !== "No presenting signs or symptoms indicative of IPV").map((sign, index) => (
+                    <div key={index} className="flex items-center gap-3 bg-white/60 p-2 rounded border border-blue-100">
+                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <span className="text-sm text-black">{sign}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-blue-700 text-xs mt-2 italic">
+                  These have been automatically mapped to relevant risk factors for comprehensive assessment.
+                </p>
+              </div>
+
+              {/* Provider Guidance */}
               <div className="border border-purple-200 rounded-lg p-3 bg-[#f5fcff] text-[#1f2937e8]">
                 <div className="flex gap-2">
                   <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
                   <div className="text-purple-800 text-sm">
-                    <p className="font-medium mb-1">Provider Guidance - How to Ask:</p>
-                    <p className="italic">"I ask all my patients about their well-being at home because it affects health. Is there anything concerning you?"</p>
-                    <p className="mt-1 text-xs">Use open-ended questions. Listen without judgment.</p>
+                    <p className="font-medium mb-1">Deeper Assessment Guidance:</p>
+                    <p className="italic">"During our conversation, have any additional concerns emerged that we should discuss?"</p>
+                    <p className="mt-1 text-xs">Allow natural disclosure. Use empathetic responses.</p>
                   </div>
                 </div>
               </div>
 
-              <div className="grid gap-4">
-                {Object.entries(
-                  riskFactors.reduce((acc, factor) => {
-                    if (!acc[factor.category]) acc[factor.category] = [];
-                    acc[factor.category].push(factor);
-                    return acc;
-                  }, {} as Record<string, typeof riskFactors>)
-                ).map(([category, factors]) => (
-                  <div key={category} className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-black mb-3 flex items-center gap-2">
-                      {category === 'Emotional' && <Heart className="w-4 h-4 text-blue-600" />}
-                      {category === 'Behavioral' && <Users className="w-4 h-4 text-purple-600" />}
-                      {category === 'Self-harm' && <AlertTriangle className="w-4 h-4 text-red-600" />}
-                      {category === 'Reproductive' && <Heart className="w-4 h-4 text-pink-600" />}
-                      {category === 'Physical' && <Shield className="w-4 h-4 text-green-600" />}
-                      {category}
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {factors.map((factor) => (
-                        <label key={factor.id} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer group">
-                          <input
-                            type="checkbox"
-                            checked={assessmentData.riskFactors.includes(factor.id)}
-                            onChange={() => handleRiskFactorToggle(factor.id)}
-                            className="mr-2 text-blue-600"
-                          />
-                          <span className="text-sm flex-1 text-black">{factor.label}</span>
-                          {/* Contextual Help */}
-                          <span className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" title="Ask sensitively about this factor">
-                            ?
-                          </span>
-                        </label>
-                      ))}
+              {/* Additional Risk Factors */}
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h4 className="font-semibold text-black mb-3 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-orange-600" />
+                  Additional Concerns Assessment
+                </h4>
+                <p className="text-black text-sm mb-4">
+                  Based on further discussion, are there any additional risk factors to consider?
+                </p>
+                
+                <div className="grid gap-3">
+                  {Object.entries(
+                    riskFactors.reduce((acc, factor) => {
+                      if (!acc[factor.category]) acc[factor.category] = [];
+                      acc[factor.category].push(factor);
+                      return acc;
+                    }, {} as Record<string, typeof riskFactors>)
+                  ).map(([category, factors]) => (
+                    <div key={category} className="border border-gray-100 rounded-lg p-3 bg-gray-50/50">
+                      <h5 className="text-sm font-medium text-black mb-2 flex items-center gap-2">
+                        {category === 'Emotional' && <Heart className="w-3 h-3 text-blue-600" />}
+                        {category === 'Behavioral' && <Users className="w-3 h-3 text-purple-600" />}
+                        {category === 'Self-harm' && <AlertTriangle className="w-3 h-3 text-red-600" />}
+                        {category === 'Reproductive' && <Heart className="w-3 h-3 text-pink-600" />}
+                        {category === 'Physical' && <Shield className="w-3 h-3 text-green-600" />}
+                        {category}
+                      </h5>
+                      <div className="grid grid-cols-1 gap-1">
+                        {factors.map((factor) => {
+                          const isInitialFactor = mapIPVSignsToRiskFactors(selectedSigns).includes(factor.id);
+                          return (
+                            <label key={factor.id} className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                              isInitialFactor ? 'bg-blue-100 border border-blue-200' : 'hover:bg-gray-100'
+                            }`}>
+                              <input
+                                type="checkbox"
+                                checked={assessmentData.riskFactors.includes(factor.id)}
+                                onChange={() => handleRiskFactorToggle(factor.id)}
+                                disabled={isInitialFactor}
+                                className="mr-2 text-blue-600"
+                              />
+                              <span className={`text-xs flex-1 ${isInitialFactor ? 'text-blue-800 font-medium' : 'text-black'}`}>
+                                {factor.label}
+                                {isInitialFactor && <span className="ml-2 text-blue-600">(From initial screening)</span>}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {hasRiskFactors && (
@@ -442,10 +491,14 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   <div className="flex">
                     <AlertTriangle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0" />
                     <div>
-                      <h4 className="text-red-800 font-semibold">⚠️ Risk Factors Detected</h4>
+                      <h4 className="text-red-800 font-semibold">⚠️ Risk Assessment Summary</h4>
                       <p className="text-red-700 text-sm mt-1">
-                        {assessmentData.riskFactors.length} risk factor(s) identified. First-line support required.
+                        {assessmentData.riskFactors.length} risk factor(s) confirmed. First-line support protocols will be initiated.
                       </p>
+                      <div className="mt-2 text-xs text-red-600">
+                        <p>• Initial screening: {mapIPVSignsToRiskFactors(selectedSigns).length} factors</p>
+                        <p>• Additional assessment: {assessmentData.riskFactors.length - mapIPVSignsToRiskFactors(selectedSigns).length} factors</p>
+                      </div>
                     </div>
                   </div>
                 </div>
