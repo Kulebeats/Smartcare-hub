@@ -46,6 +46,22 @@ import { ANCHeaderDock } from "@/components/anc-header-dock";
 import { PregnancyHistoryForm, useMultiplePregnancyForms } from "../components/medical-record/PregnancyHistoryForm";
 import { DynamicEmergencyChecklist } from "../components/emergency/DynamicEmergencyChecklist";
 
+// Static mapping from referral reasons to danger signs (module-level constant)
+const REFERRAL_REASON_TO_DANGER_SIGN: { [key: string]: string } = {
+  'convulsions': 'Convulsing',
+  'severe_bleeding': 'Vaginal bleeding',
+  'unconscious': 'Unconscious',
+  'severe_headache_bp': 'Severe headache',
+  'visual_disturbance': 'Visual disturbance',
+  'high_fever': 'Fever',
+  'severe_anemia': 'Looks very ill',
+  'prolonged_labor': 'Labour',
+  'fetal_distress': 'Imminent delivery',
+  'severe_vomiting': 'Severe vomiting',
+  'severe_abdominal_pain': 'Severe abdominal pain',
+  'draining': 'Draining'
+};
+
 // Zambian ANC Guidelines danger sign descriptions (2022)
 const enhancedDangerSignDescriptions = {
   // Bleeding & Delivery Complications
@@ -962,10 +978,10 @@ export default function AncPage() {
     syncReferralToDangerSigns(selectedReasons);
     // Update emergency danger signs for dynamic checklist
     const mappedDangerSigns = selectedReasons
-      .map(reason => referralReasonToDangerSign[reason])
+      .map(reason => REFERRAL_REASON_TO_DANGER_SIGN[reason])
       .filter(Boolean);
     setEmergencyDangerSigns(mappedDangerSigns);
-  }, [syncReferralToDangerSigns, referralReasonToDangerSign]);
+  }, [syncReferralToDangerSigns]);
 
   // Attach to window object when component mounts
   useEffect(() => {
@@ -2475,30 +2491,14 @@ export default function AncPage() {
     console.log(`================================`);
   }, []);
 
-  // Mapping from referral reasons to danger signs
-  const referralReasonToDangerSign: { [key: string]: string } = {
-    'convulsions': 'Convulsing',
-    'severe_bleeding': 'Vaginal bleeding',
-    'unconscious': 'Unconscious',
-    'severe_headache_bp': 'Severe headache',
-    'visual_disturbance': 'Visual disturbance',
-    'high_fever': 'Fever',
-    'severe_anemia': 'Looks very ill',
-    'prolonged_labor': 'Labour',
-    'fetal_distress': 'Imminent delivery',
-    'severe_vomiting': 'Severe vomiting',
-    'severe_abdominal_pain': 'Severe abdominal pain',
-    'draining': 'Draining'
-  };
-
   // Update emergency danger signs based on selected referral reasons
   const updateEmergencyDangerSigns = useCallback(() => {
     const selectedReasons = Array.from(document.querySelectorAll('input[name="referral_reasons"]:checked')).map((cb: any) => cb.value);
     const mappedDangerSigns = selectedReasons
-      .map(reason => referralReasonToDangerSign[reason])
+      .map(reason => REFERRAL_REASON_TO_DANGER_SIGN[reason])
       .filter(Boolean);
     setEmergencyDangerSigns(mappedDangerSigns);
-  }, [referralReasonToDangerSign]);
+  }, []);
 
   // Global functions for dynamic pregnancy sections
   useEffect(() => {
