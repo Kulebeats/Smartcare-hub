@@ -334,11 +334,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   </label>
                   
                   <label 
-                    className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                      assessmentData.patientAlone === 'no' 
-                        ? 'border-red-500 bg-red-50' 
-                        : 'border-gray-200 hover:bg-red-50 hover:border-red-300'
-                    }`}
+                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-red-50 hover:border-red-300 pt-[2px] pb-[2px] mt-[7px] mb-[7px]"
                     onClick={(e) => {
                       console.log('No label clicked');
                       e.stopPropagation();
