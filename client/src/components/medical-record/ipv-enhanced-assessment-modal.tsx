@@ -301,7 +301,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold">Is the patient alone right now?</h4>
+                <h4 className="text-lg font-semibold pt-[-1px] pb-[-1px] mt-[-7px] mb-[-7px]">Is the patient alone right now?</h4>
                 <div className="space-y-4">
                   <label 
                     className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-green-50 hover:border-green-300 mt-[4px] mb-[4px] pt-[4px] pb-[4px]"
