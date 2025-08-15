@@ -388,7 +388,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* Training Prompt */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+              <div className="border border-purple-200 rounded-lg p-3 bg-[#f5fcff] text-[#1f2937e8]">
                 <div className="flex gap-2">
                   <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
                   <div className="text-purple-800 text-sm">
