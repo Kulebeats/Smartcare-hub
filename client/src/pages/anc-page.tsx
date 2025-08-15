@@ -964,6 +964,18 @@ export default function AncPage() {
     setTimeout(() => updateEmergencyDangerSigns(), 100);
   }, [syncReferralToDangerSigns, updateEmergencyDangerSigns]);
 
+  // Attach to window object when component mounts
+  useEffect(() => {
+    (window as any).updateChecklistRelevance = updateChecklistRelevance;
+    (window as any).updateEmergencyDangerSigns = updateEmergencyDangerSigns;
+    
+    // Cleanup on unmount
+    return () => {
+      delete (window as any).updateChecklistRelevance;
+      delete (window as any).updateEmergencyDangerSigns;
+    };
+  }, [updateChecklistRelevance, updateEmergencyDangerSigns]);
+
   // Expose sync function to global scope for inline handlers
   useEffect(() => {
     (window as any).handleReferralReasonsSync = handleReferralReasonsChange;
@@ -2484,18 +2496,6 @@ export default function AncPage() {
       .filter(Boolean);
     setEmergencyDangerSigns(mappedDangerSigns);
   }, [referralReasonToDangerSign]);
-
-  // Attach to window object when component mounts
-  useEffect(() => {
-    (window as any).updateChecklistRelevance = updateChecklistRelevance;
-    (window as any).updateEmergencyDangerSigns = updateEmergencyDangerSigns;
-    
-    // Cleanup on unmount
-    return () => {
-      delete (window as any).updateChecklistRelevance;
-      delete (window as any).updateEmergencyDangerSigns;
-    };
-  }, [updateChecklistRelevance, updateEmergencyDangerSigns]);
 
   // Global functions for dynamic pregnancy sections
   useEffect(() => {
