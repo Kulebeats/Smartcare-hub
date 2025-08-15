@@ -224,6 +224,7 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
   const [showUrgentModal, setShowUrgentModal] = useState<boolean>(false);
   const [showFacilityManagement, setShowFacilityManagement] = useState<boolean>(false);
   const [showDangerSignsInfo, setShowDangerSignsInfo] = useState<boolean>(false);
+  const [hasAcknowledgedInfo, setHasAcknowledgedInfo] = useState<boolean>(false);
   const { toast } = useToast();
   
   // Generate recommendation and show urgent modal immediately on mount (after confirmation)
@@ -240,6 +241,7 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
       if (isUrgent) {
         // Show modal alert for urgent recommendations
         setShowUrgentModal(true);
+        setHasAcknowledgedInfo(false); // Reset acknowledgment state
       } else {
         // Show green toaster for safe recommendations
         const cleanRecommendation = newRecommendation
@@ -575,9 +577,9 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
       {/* Compact Danger Signs Information and Management Protocols Dialog */}
       <Dialog open={showDangerSignsInfo} onOpenChange={(open) => {
         setShowDangerSignsInfo(open);
-        if (!open) {
-          // When dialog closes, trigger acknowledgment to show action selection
-          onDangerSignsAcknowledged?.(dangerSigns);
+        if (!open && !hasAcknowledgedInfo) {
+          // When dialog closes without explicit acknowledgment, re-show urgent modal
+          setTimeout(() => setShowUrgentModal(true), 100);
         }
       }}>
         <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto bg-white/85 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-2xl rounded-2xl" aria-describedby="danger-signs-info-description"
@@ -715,8 +717,9 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
               className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
               onClick={() => {
                 setShowDangerSignsInfo(false);
-                // Trigger acknowledgment to show action selection in main modal
-                onDangerSignsAcknowledged?.(dangerSigns);
+                setHasAcknowledgedInfo(true);
+                // Re-show the urgent modal after acknowledging info
+                setTimeout(() => setShowUrgentModal(true), 100);
               }}
             >
               Close
@@ -725,8 +728,9 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
               className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
               onClick={() => {
                 setShowDangerSignsInfo(false);
-                // Trigger acknowledgment to show action selection in main modal
-                onDangerSignsAcknowledged?.(dangerSigns);
+                setHasAcknowledgedInfo(true);
+                // Re-show the urgent modal after acknowledging info
+                setTimeout(() => setShowUrgentModal(true), 100);
               }}
             >
               Acknowledge
