@@ -251,6 +251,19 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         return completedCount >= 2 || contentCount >= 3;
       },
       errorMessage: 'WHO LIVES Protocol requires completion of at least 2 phases or meaningful content in 3 phases'
+    },
+    
+    // Page 3 - Immediate Needs Assessment Rule
+    {
+      id: 'immediate_needs_minimum',
+      page: 3,
+      required: true,
+      category: 'CLINICAL_BEST_PRACTICE',
+      condition: (data) => {
+        const needs = data.immediateNeeds;
+        return needs.emotional || needs.physical || needs.safety || needs.support;
+      },
+      errorMessage: 'At least one immediate needs assessment must be selected'
     }
   ];
 

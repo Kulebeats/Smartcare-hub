@@ -112,10 +112,11 @@ Preferred communication style: Simple, everyday language.
 
 **User Interface Improvements**:
 - Fixed modal scrolling issues enabling proper mouse wheel navigation
-- Added validation status panel with error/warning categorization
+- Removed validation error message clutter for cleaner interface
 - Enhanced footer with LISTEN phase integration indicators
 - Real-time progress counters showing mandatory vs. completed requirements
-- Visual feedback system with green/orange/red status indicators
+- Clean validation with business rules enforcement without error message display
+- Added mandatory immediate needs assessment requirement (at least one selection required)
 
 **WHO Protocol Compliance Maintained**:
 - ✅ Enforces WHO LIVES sequential methodology through business rules
