@@ -224,7 +224,6 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-xl font-bold">IPV Risk Assessment</h2>
-              <p className="text-red-100 text-sm">WHO Guidelines B1.3 - Enhanced Protocol</p>
             </div>
             <button 
               onClick={(e) => {
