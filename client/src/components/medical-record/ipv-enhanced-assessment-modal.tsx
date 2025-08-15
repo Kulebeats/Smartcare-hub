@@ -262,7 +262,6 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
             <div className="space-y-6">
               <div>
                 <h3 className="text-2xl font-bold text-black mb-2">Privacy Assessment</h3>
-                <p className="text-black mb-4">Ensure patient safety before proceeding with IPV assessment</p>
               </div>
               
               {/* WHO Protocol Reminder */}
