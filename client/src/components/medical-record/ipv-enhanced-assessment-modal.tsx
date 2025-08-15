@@ -1299,29 +1299,27 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 </div>
               </div>
 
-              {/* LIVES Protocol Summary */}
+              {/* Completion Summary & Documentation Guidance */}
               <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4">
                 <div className="flex">
-                  <Shield className="w-5 h-5 text-indigo-400 mr-3 flex-shrink-0" />
+                  <FileText className="w-5 h-5 text-indigo-400 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="text-indigo-800 font-semibold">WHO LIVES Protocol Progress</h4>
-                    <div className="text-indigo-700 text-sm mt-1 grid grid-cols-2 md:grid-cols-3 gap-2">
-                      <p>• Listen: {assessmentData.livesProtocol.listen.completed ? '✓' : '○'}</p>
-                      <p>• Inquire: {assessmentData.livesProtocol.inquire.completed ? '✓' : '○'}</p>
-                      <p>• Validate: {assessmentData.livesProtocol.validate.completed ? '✓' : '○'}</p>
-                      <p>• Enhance Safety: {assessmentData.livesProtocol.enhanceSafety.completed ? '✓' : '○'}</p>
-                      <p>• Support: {assessmentData.livesProtocol.support.completed ? '✓' : '○'}</p>
-                      <p className="md:col-span-1">
-                        <strong>
-                          {[
-                            assessmentData.livesProtocol.listen.completed,
-                            assessmentData.livesProtocol.inquire.completed,
-                            assessmentData.livesProtocol.validate.completed,
-                            assessmentData.livesProtocol.enhanceSafety.completed,
-                            assessmentData.livesProtocol.support.completed
-                          ].filter(Boolean).length}/5 Complete
-                        </strong>
-                      </p>
+                    <h4 className="text-indigo-800 font-semibold">Documentation Guidance</h4>
+                    <div className="text-indigo-700 text-sm mt-2 space-y-1">
+                      <p>• <strong>Listen:</strong> Document narrative and clinical observations in final notes</p>
+                      <p>• <strong>Inquire:</strong> Record immediate safety responses and follow-up needs</p>
+                      <p>• <strong>Validate:</strong> Note validation techniques used and patient responses</p>
+                      <p>• <strong>Enhance Safety:</strong> Include safety plan details and emergency contacts</p>
+                      <p>• <strong>Support:</strong> List all referrals made and patient consent status</p>
+                    </div>
+                    <div className="text-indigo-700 text-xs mt-3 p-2 bg-indigo-100 rounded">
+                      <p className="font-medium">Protocol Progress: {[
+                        assessmentData.livesProtocol.listen.completed,
+                        assessmentData.livesProtocol.inquire.completed,
+                        assessmentData.livesProtocol.validate.completed,
+                        assessmentData.livesProtocol.enhanceSafety.completed,
+                        assessmentData.livesProtocol.support.completed
+                      ].filter(Boolean).length}/5 phases complete</p>
                     </div>
                   </div>
                 </div>
@@ -1329,97 +1327,111 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
             </div>
           )}
 
-          {/* Page 5: Referrals & Documentation */}
+          {/* Page 5: Final Documentation */}
           {currentPage === (hasRiskFactors ? 5 : 3) && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-black mb-2">
-                  {hasRiskFactors ? 'Referrals & Documentation' : 'Documentation'}
-                </h3>
-                <p className="text-black">Complete assessment documentation</p>
+                <h3 className="text-2xl font-bold text-black mb-2">Final Documentation</h3>
+                <p className="text-black">Complete comprehensive assessment documentation</p>
               </div>
 
-              {/* WHO Referral Protocol */}
-              {hasRiskFactors && (
-                <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                  <div className="flex gap-2">
-                    <Phone className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-orange-800 text-sm">
-                      <p className="font-semibold mb-1">WHO Referral Guidelines:</p>
-                      <ul className="space-y-0.5 text-xs">
-                        <li>• Obtain consent before making referrals</li>
-                        <li>• Provide written information she can take safely</li>
-                        <li>• Warm handover when possible (call together)</li>
-                        <li>• Follow up within 2 weeks if safe to do so</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {hasRiskFactors && (
-                <div>
-                  <h4 className="font-semibold text-black mb-3 flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    Referrals Made
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      'Crisis hotline',
-                      'Domestic violence shelter',
-                      'Legal aid services',
-                      'Mental health counseling',
-                      'Social services',
-                      'Police/law enforcement',
-                      'Medical specialist',
-                      'Support groups'
-                    ].map((referral) => (
-                      <label key={referral} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={assessmentData.referrals.includes(referral)}
-                          onChange={() => handleReferralToggle(referral)}
-                          className="mr-2 text-blue-600"
-                        />
-                        <span className="text-sm text-black">{referral}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-
+              {/* Final Clinical Notes */}
               <div>
                 <label className="block text-sm font-medium text-black mb-2">
-                  Clinical Notes <span className="text-red-600">*</span>
+                  Comprehensive Clinical Notes <span className="text-red-600">*</span>
                 </label>
                 <textarea
-                  rows={6}
+                  rows={8}
                   value={assessmentData.notes}
                   onChange={(e) => setAssessmentData(prev => ({ ...prev, notes: e.target.value }))}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Document findings, support provided, safety planning, and next steps..."
+                  placeholder={hasRiskFactors ? 
+                    "Document comprehensive assessment findings, LIVES protocol implementation, safety planning outcomes, referrals made, and recommended next steps..." :
+                    "Document assessment findings and any observations..."}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Use objective language. Store securely - authorized access only.
+                  🔒 Use objective language. Store securely - authorized access only.
                 </p>
               </div>
 
-              {/* Summary */}
+              {/* Comprehensive Assessment Summary */}
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h5 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                <h5 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
-                  Assessment Summary
+                  Complete Assessment Summary
                 </h5>
-                <div className="text-sm text-green-800 grid grid-cols-2 gap-4">
-                  <div>
-                    <p>• Risk factors: <strong>{assessmentData.riskFactors.length}</strong></p>
-                    <p>• Privacy maintained: <strong>{assessmentData.patientAlone === 'yes' ? 'Yes' : 'No'}</strong></p>
-                  </div>
-                  {hasRiskFactors && (
+                <div className="text-sm text-green-800 space-y-3">
+                  {/* Basic Assessment Info */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p>• Support tasks: <strong>{Object.values(assessmentData.firstLineSupport).filter(Boolean).length}/5</strong></p>
-                      <p>• Referrals: <strong>{assessmentData.referrals.length}</strong></p>
+                      <p>• Risk factors identified: <strong>{assessmentData.riskFactors.length}</strong></p>
+                      <p>• Privacy maintained: <strong>{assessmentData.patientAlone === 'yes' ? 'Yes' : 'No'}</strong></p>
                     </div>
+                    <div>
+                      <p>• Assessment completed: <strong>Yes</strong></p>
+                      <p>• Documentation: <strong>{assessmentData.notes.length > 50 ? 'Complete' : 'Pending'}</strong></p>
+                    </div>
+                  </div>
+
+                  {/* LIVES Protocol Summary */}
+                  {hasRiskFactors && (
+                    <div className="border-t pt-3 mt-3">
+                      <p className="font-semibold mb-2">WHO LIVES Protocol Implementation:</p>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p>• Listen: {assessmentData.livesProtocol.listen.completed ? '✓ Complete' : '○ Pending'}</p>
+                          <p>• Inquire: {assessmentData.livesProtocol.inquire.completed ? '✓ Complete' : '○ Pending'}</p>
+                        </div>
+                        <div>
+                          <p>• Validate: {assessmentData.livesProtocol.validate.completed ? '✓ Complete' : '○ Pending'}</p>
+                          <p>• Enhance Safety: {assessmentData.livesProtocol.enhanceSafety.completed ? '✓ Complete' : '○ Pending'}</p>
+                        </div>
+                        <div>
+                          <p>• Support: {assessmentData.livesProtocol.support.completed ? '✓ Complete' : '○ Pending'}</p>
+                          <p><strong>Protocol: {[
+                            assessmentData.livesProtocol.listen.completed,
+                            assessmentData.livesProtocol.inquire.completed,
+                            assessmentData.livesProtocol.validate.completed,
+                            assessmentData.livesProtocol.enhanceSafety.completed,
+                            assessmentData.livesProtocol.support.completed
+                          ].filter(Boolean).length}/5 Complete</strong></p>
+                        </div>
+                      </div>
+                      
+                      {/* Detailed LIVES Summary */}
+                      <div className="mt-3 space-y-2">
+                        <p>• Active listening techniques: <strong>{assessmentData.livesProtocol.listen.activeListening.length}</strong></p>
+                        <p>• Validation phrases used: <strong>{assessmentData.livesProtocol.validate.selectedPhrases.length}</strong></p>
+                        <p>• Safety contacts identified: <strong>{assessmentData.livesProtocol.enhanceSafety.safeContacts.length}</strong></p>
+                        <p>• Referrals provided: <strong>{assessmentData.livesProtocol.support.referralsMade.length}</strong></p>
+                        <p>• Safety plan generated: <strong>{assessmentData.livesProtocol.enhanceSafety.printablePlan ? 'Yes' : 'No'}</strong></p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Final Recommendations */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Recommendations & Next Steps
+                </h5>
+                <div className="text-sm text-blue-800 space-y-1">
+                  {!hasRiskFactors ? (
+                    <>
+                      <p>• Continue with standard ANC care protocols</p>
+                      <p>• Routine follow-up at next scheduled visit</p>
+                      <p>• Maintain supportive, non-judgmental care environment</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>• Follow-up on safety planning within 1-2 weeks (if safe to do so)</p>
+                      <p>• Monitor for escalation of risk factors at future visits</p>
+                      <p>• Ensure all referral connections were successful</p>
+                      <p>• Document any changes in safety situation</p>
+                      <p>• Continue trauma-informed care approach</p>
+                    </>
                   )}
                 </div>
               </div>
