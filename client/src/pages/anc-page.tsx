@@ -67,54 +67,62 @@ const enhancedDangerSignDescriptions = {
   'Other': 'Any other concerning symptoms or signs not listed above that require clinical assessment.'
 };
 
-// Helper component for danger sign with info modal
+// Helper component for danger sign with inline expandable info
 const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description, onInfoClick }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   
   // Smart contextual display: show icon when selected OR hovered
   const showInfoIcon = checked || isHovered;
   
   return (
-    <div 
-      className="flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-gray-100/70" 
-      style={{ boxShadow: '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }} 
-      onMouseEnter={(e) => { 
-        e.currentTarget.style.boxShadow = '0 3px 6px hsla(223.58deg, 50.96%, 59.22%, 0.35)';
-        setIsHovered(true);
-      }} 
-      onMouseLeave={(e) => { 
-        e.currentTarget.style.boxShadow = '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)';
-        setIsHovered(false);
-      }}
-    >
-      <input 
-        type="checkbox" 
-        id={id}
-        name={name}
-        value={value}
-        checked={checked}
-        onChange={onChange}
-        className="rounded border-gray-300 text-red-600 w-3.5 h-3.5"
-      />
-      <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
-        <span className="text-black">{label}</span>
-        {showInfoIcon && (
-          <div 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (onInfoClick) {
-                onInfoClick(label, description);
-              }
-            }}
-            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
-            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-            title={`Click for information about ${label}`}
-          >
-            i
-          </div>
-        )}
-      </label>
+    <div>
+      <div 
+        className="flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-gray-100/70" 
+        style={{ boxShadow: '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)' }} 
+        onMouseEnter={(e) => { 
+          e.currentTarget.style.boxShadow = '0 3px 6px hsla(223.58deg, 50.96%, 59.22%, 0.35)';
+          setIsHovered(true);
+        }} 
+        onMouseLeave={(e) => { 
+          e.currentTarget.style.boxShadow = '0 1px 3px hsla(223.58deg, 50.96%, 59.22%, 0.2)';
+          setIsHovered(false);
+        }}
+      >
+        <input 
+          type="checkbox" 
+          id={id}
+          name={name}
+          value={value}
+          checked={checked}
+          onChange={onChange}
+          className="rounded border-gray-300 text-red-600 w-3.5 h-3.5"
+        />
+        <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
+          <span className="text-black">{label}</span>
+          {showInfoIcon && (
+            <div 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowInfo(!showInfo);
+              }}
+              className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
+              style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+              title={`Click for information about ${label}`}
+            >
+              i
+            </div>
+          )}
+        </label>
+      </div>
+      
+      {/* Inline expandable information */}
+      {showInfo && (
+        <div className="ml-6 mt-1 p-2 bg-blue-50 border-l-2 border-blue-400 rounded-r animate-in slide-in-from-top-1 duration-200">
+          <p className="text-xs text-gray-700 leading-relaxed">{description}</p>
+        </div>
+      )}
     </div>
   );
 };
