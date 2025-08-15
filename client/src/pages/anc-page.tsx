@@ -4730,92 +4730,8 @@ export default function AncPage() {
                                     updateChecklistRelevance();
                                   }, 100);
                                   
-                                  setTimeout(() => {
-                                    const initializeChecklistTracking = () => {
-                                      const checkboxes = document.querySelectorAll('input[name="maternal_checklist"]');
-                                      const selectInputs = document.querySelectorAll('select[name="clotting_test_result"]');
-                                      const textInputs = document.querySelectorAll('input[name="checklist_bp"], input[name="checklist_pulse"], input[name="checklist_temp"], input[name="checklist_rr"], input[name="blood_loss_ml"]');
-                                      
-                                      const updateProgress = () => {
-                                        let completed = 0;
-                                        const total = 22;
-                                        
-                                        // Check checkboxes
-                                        checkboxes.forEach((checkbox: any) => {
-                                          const statusElement = document.getElementById(checkbox.value + '_status');
-                                          if (checkbox.checked) {
-                                            completed++;
-                                            if (statusElement) statusElement.innerHTML = '✅';
-                                          } else {
-                                            if (statusElement) statusElement.innerHTML = '❌';
-                                          }
-                                        });
-                                        
-                                        // Check select inputs
-                                        selectInputs.forEach((select: any) => {
-                                          const statusElement = document.getElementById('clotting_test_status');
-                                          if (select.value) {
-                                            completed++;
-                                            if (statusElement) statusElement.innerHTML = '✅';
-                                          } else {
-                                            if (statusElement) statusElement.innerHTML = '❌';
-                                          }
-                                        });
-                                        
-                                        // Check vital signs inputs
-                                        const vitalSignsCompleted = Array.from(textInputs).filter((input: any) => input.value).length;
-                                        completed += vitalSignsCompleted;
-                                        
-                                        textInputs.forEach((input: any) => {
-                                          const statusElement = document.getElementById(input.name + '_status');
-                                          if (input.value) {
-                                            if (statusElement) statusElement.innerHTML = '✅';
-                                          } else {
-                                            if (statusElement) statusElement.innerHTML = '❌';
-                                          }
-                                        });
-                                        
-                                        // Update progress display
-                                        const progressText = document.getElementById('checklist-progress');
-                                        const progressBar = document.getElementById('checklist-progress-bar');
-                                        
-                                        if (progressText) {
-                                          progressText.textContent = `${completed}/${total} items completed`;
-                                        }
-                                        
-                                        if (progressBar) {
-                                          const percentage = (completed / total) * 100;
-                                          progressBar.style.width = `${percentage}%`;
-                                          
-                                          if (percentage === 100) {
-                                            progressBar.className = 'bg-green-600 h-2 rounded-full transition-all duration-300';
-                                          } else if (percentage >= 75) {
-                                            progressBar.className = 'bg-yellow-500 h-2 rounded-full transition-all duration-300';
-                                          } else {
-                                            progressBar.className = 'bg-red-500 h-2 rounded-full transition-all duration-300';
-                                          }
-                                        }
-                                      };
-                                      
-                                      // Add event listeners
-                                      checkboxes.forEach(checkbox => {
-                                        checkbox.addEventListener('change', updateProgress);
-                                      });
-                                      
-                                      selectInputs.forEach(select => {
-                                        select.addEventListener('change', updateProgress);
-                                      });
-                                      
-                                      textInputs.forEach(input => {
-                                        input.addEventListener('input', updateProgress);
-                                      });
-                                      
-                                      // Initial update
-                                      updateProgress();
-                                    };
-                                    
-                                    initializeChecklistTracking();
-                                  }, 200);
+                                  // Note: Progress tracking is now handled by the DynamicEmergencyChecklist React component
+                                  // The onChecklistChange callback updates the progress display automatically
                                 }
                               }}
                             />
@@ -6520,6 +6436,27 @@ export default function AncPage() {
                               dangerSigns={emergencyDangerSigns}
                               onChecklistChange={(completedItems, totalItems) => {
                                 console.log(`Emergency checklist completion: ${completedItems.length}/${totalItems} (${Math.round((completedItems.length / totalItems) * 100)}%)`);
+                                
+                                // Update the progress display for compatibility with existing UI
+                                const progressText = document.getElementById('checklist-progress');
+                                const progressBar = document.getElementById('checklist-progress-bar');
+                                
+                                if (progressText) {
+                                  progressText.textContent = `${completedItems.length}/${totalItems} items completed`;
+                                }
+                                
+                                if (progressBar) {
+                                  const percentage = totalItems > 0 ? (completedItems.length / totalItems) * 100 : 0;
+                                  progressBar.style.width = `${percentage}%`;
+                                  
+                                  if (percentage === 100) {
+                                    progressBar.className = 'bg-green-600 h-2 rounded-full transition-all duration-300';
+                                  } else if (percentage >= 75) {
+                                    progressBar.className = 'bg-yellow-500 h-2 rounded-full transition-all duration-300';
+                                  } else {
+                                    progressBar.className = 'bg-red-500 h-2 rounded-full transition-all duration-300';
+                                  }
+                                }
                               }}
                               showClinicalFocus={true}
                               className="space-y-3"
