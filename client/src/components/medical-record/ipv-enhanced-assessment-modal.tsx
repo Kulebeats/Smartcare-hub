@@ -261,7 +261,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           {currentPage === 1 && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-black mb-2">Privacy Assessment</h3>
+                <h3 className="text-2xl font-bold text-black mt-[-13px] mb-[-13px]">Privacy Assessment</h3>
               </div>
               
               {/* WHO Protocol Reminder */}
