@@ -200,7 +200,10 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
   // Handle modal effects
   useEffect(() => {
     if (isOpen) {
-      // Lock body scroll
+      // Store original body overflow
+      const originalOverflow = document.body.style.overflow;
+      
+      // Lock body scroll but allow modal scroll
       document.body.style.overflow = 'hidden';
       
       // Handle escape key
@@ -213,7 +216,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
       document.addEventListener('keydown', handleEscape);
       
       return () => {
-        document.body.style.overflow = 'unset';
+        // Restore original overflow
+        document.body.style.overflow = originalOverflow || 'unset';
         document.removeEventListener('keydown', handleEscape);
       };
     }
@@ -343,33 +347,23 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
   const modalContent = (
     <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         zIndex: 10000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px'
+        pointerEvents: 'auto'
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
       }}
     >
       <div 
+        className="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col relative"
         style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          maxWidth: '896px',
-          width: '100%',
-          height: '85vh',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
           pointerEvents: 'auto'
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         
         {/* Header */}
@@ -379,14 +373,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               <h2 className="text-xl font-bold">IPV Risk Assessment</h2>
             </div>
             <button 
-              onClick={(e) => {
-                console.log('Close button clicked');
-                e.preventDefault();
-                e.stopPropagation();
-                onClose();
-              }} 
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded"
-              style={{ pointerEvents: 'auto' }}
+              onClick={onClose}
+              className="p-2 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
             >
               <X size={20} />
             </button>
@@ -408,7 +396,10 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6" style={{ overscrollBehavior: 'contain' }}>
+        <div className="flex-1 overflow-y-auto p-6" style={{ 
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}>
           
           {/* Page 1: Privacy Check */}
           {currentPage === 1 && (
@@ -457,12 +448,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 <h4 className="text-lg font-semibold pt-[-1px] pb-[-1px] mt-[-7px] mb-[-7px]">Is the patient alone right now?</h4>
                 <div className="space-y-4">
                   <label 
-                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-green-50 hover:border-green-300 mt-[4px] mb-[4px] pt-[4px] pb-[4px]"
-                    onClick={(e) => {
-                      console.log('Yes label clicked');
-                      e.stopPropagation();
-                    }}
-                    style={{ pointerEvents: 'auto' }}
+                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-green-50 hover:border-green-300"
                   >
                     <input
                       type="radio"
@@ -470,15 +456,9 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       value="yes"
                       checked={assessmentData.patientAlone === 'yes'}
                       onChange={(e) => {
-                        console.log('Yes radio button clicked');
                         setAssessmentData(prev => ({ ...prev, patientAlone: e.target.value as 'yes' }));
                       }}
-                      onClick={(e) => {
-                        console.log('Yes radio button onClick');
-                        e.stopPropagation();
-                      }}
                       className="mr-3 text-green-600 w-4 h-4"
-                      style={{ pointerEvents: 'auto' }}
                     />
                     <div>
                       <span className="font-medium text-black">✓ Yes, patient is alone</span>
@@ -487,12 +467,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                   </label>
                   
                   <label 
-                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-red-50 hover:border-red-300 pt-[2px] pb-[2px] mt-[7px] mb-[7px]"
-                    onClick={(e) => {
-                      console.log('No label clicked');
-                      e.stopPropagation();
-                    }}
-                    style={{ pointerEvents: 'auto' }}
+                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors border-gray-200 hover:bg-red-50 hover:border-red-300"
                   >
                     <input
                       type="radio"
@@ -500,15 +475,9 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                       value="no"
                       checked={assessmentData.patientAlone === 'no'}
                       onChange={(e) => {
-                        console.log('No radio button clicked');
                         setAssessmentData(prev => ({ ...prev, patientAlone: e.target.value as 'no' }));
                       }}
-                      onClick={(e) => {
-                        console.log('No radio button onClick');
-                        e.stopPropagation();
-                      }}
                       className="mr-3 text-red-600 w-4 h-4"
-                      style={{ pointerEvents: 'auto' }}
                     />
                     <div>
                       <span className="font-medium text-black">✗ No, others are present</span>
@@ -730,7 +699,12 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
           {/* Page 4: WHO LIVES Protocol */}
           {currentPage === 4 && hasRiskFactors && (
-            <div className="space-y-6 max-h-[70vh] overflow-y-auto" style={{ overscrollBehavior: 'contain' }}>
+            <div className="space-y-6"
+              style={{
+                maxHeight: 'none',
+                overflow: 'visible'
+              }}
+            >
               <div>
                 <h3 className="text-2xl font-bold text-black mb-2">WHO LIVES Protocol</h3>
                 <p className="text-black">Comprehensive first-line support through structured clinical guidance</p>
@@ -1462,14 +1436,8 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
           <div className="flex gap-3">
             {currentPage > 1 && (
               <button 
-                onClick={(e) => {
-                  console.log('Previous button clicked');
-                  e.preventDefault();
-                  e.stopPropagation();
-                  prevPage();
-                }} 
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                style={{ pointerEvents: 'auto' }}
+                onClick={prevPage}
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Previous
@@ -1477,29 +1445,17 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
             )}
             {currentPage < totalPages ? (
               <button 
-                onClick={(e) => {
-                  console.log('Next button clicked');
-                  e.preventDefault();
-                  e.stopPropagation();
-                  nextPage();
-                }} 
+                onClick={nextPage}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                style={{ pointerEvents: 'auto' }}
+                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 Next
                 <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
               <button 
-                onClick={(e) => {
-                  console.log('Complete Assessment button clicked');
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleComplete();
-                }}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                style={{ pointerEvents: 'auto' }}
+                onClick={handleComplete}
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 <CheckCircle className="w-4 h-4" />
                 Complete Assessment
