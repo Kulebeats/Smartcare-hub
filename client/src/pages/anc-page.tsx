@@ -68,7 +68,7 @@ const enhancedDangerSignDescriptions = {
 };
 
 // Helper component for danger sign with info modal
-const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description }) => {
+const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, description, onInfoClick }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   // Smart contextual display: show icon when selected OR hovered
@@ -99,22 +99,20 @@ const DangerSignWithTooltip = ({ id, name, value, checked, onChange, label, desc
       <label htmlFor={id} className="text-xs font-medium flex items-center space-x-1.5 flex-1 cursor-pointer font-sans">
         <span className="text-black">{label}</span>
         {showInfoIcon && (
-          <ContextCard.Trigger
-            content={
-              <div className="text-xs text-left max-w-sm p-2">
-                <div className="font-medium mb-1 text-black">{label}</div>
-                <div className="text-black leading-relaxed font-normal">{description}</div>
-              </div>
-            }
-            side="bottom"
+          <div 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onInfoClick) {
+                onInfoClick(label, description);
+              }
+            }}
+            className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
+            style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
+            title={`Click for information about ${label}`}
           >
-            <div 
-              className="w-3 h-3 rounded-full border border-gray-400 bg-white/80 text-gray-600 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center text-xs font-semibold transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5 hover:scale-110 animate-in fade-in-0 slide-in-from-right-1 cursor-help"
-              style={{ boxShadow: '0 1px 2px hsla(223.58deg, 50.96%, 59.22%, 0.3)' }}
-            >
-              i
-            </div>
-          </ContextCard.Trigger>
+            i
+          </div>
         )}
       </label>
     </div>
