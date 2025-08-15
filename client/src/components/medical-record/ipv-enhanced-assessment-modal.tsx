@@ -318,13 +318,24 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
   const canProceed = () => {
     if (currentPage === 1) return assessmentData.patientAlone === 'yes';
     if (currentPage === 4 && hasRiskFactors) {
-      // For LIVES protocol, require at least Listen, Inquire, and Validate to be completed
-      const livesProgress = [
+      // For LIVES protocol, allow proceeding if some meaningful work has been done
+      const hasListenContent = assessmentData.livesProtocol.listen.activeListening.length > 0 || 
+                              assessmentData.livesProtocol.listen.narrative.length > 0;
+      const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
+                               assessmentData.livesProtocol.inquire.safePlace !== null;
+      const hasValidateContent = assessmentData.livesProtocol.validate.selectedPhrases.length > 0;
+      
+      // Allow proceeding if any two phases have content or any phase is completed
+      const contentCount = [hasListenContent, hasInquireContent, hasValidateContent].filter(Boolean).length;
+      const completedCount = [
         assessmentData.livesProtocol.listen.completed,
         assessmentData.livesProtocol.inquire.completed,
-        assessmentData.livesProtocol.validate.completed
-      ];
-      return livesProgress.filter(Boolean).length >= 3; // Require core L-I-V completion
+        assessmentData.livesProtocol.validate.completed,
+        assessmentData.livesProtocol.enhanceSafety.completed,
+        assessmentData.livesProtocol.support.completed
+      ].filter(Boolean).length;
+      
+      return contentCount >= 1 || completedCount >= 1; // More flexible validation
     }
     return true;
   };
@@ -1299,27 +1310,54 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 </div>
               </div>
 
-              {/* Completion Summary & Documentation Guidance */}
+              {/* Progress and Navigation Helper */}
               <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4">
                 <div className="flex">
                   <FileText className="w-5 h-5 text-indigo-400 mr-3 flex-shrink-0" />
                   <div>
-                    <h4 className="text-indigo-800 font-semibold">Documentation Guidance</h4>
-                    <div className="text-indigo-700 text-sm mt-2 space-y-1">
-                      <p>• <strong>Listen:</strong> Document narrative and clinical observations in final notes</p>
-                      <p>• <strong>Inquire:</strong> Record immediate safety responses and follow-up needs</p>
-                      <p>• <strong>Validate:</strong> Note validation techniques used and patient responses</p>
-                      <p>• <strong>Enhance Safety:</strong> Include safety plan details and emergency contacts</p>
-                      <p>• <strong>Support:</strong> List all referrals made and patient consent status</p>
+                    <h4 className="text-indigo-800 font-semibold">Progress & Next Steps</h4>
+                    <div className="text-indigo-700 text-sm mt-2">
+                      <p className="mb-2">Complete any of these activities to proceed to final documentation:</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <p>• Select active listening techniques (Listen)</p>
+                        <p>• Answer immediate safety questions (Inquire)</p>
+                        <p>• Choose validation phrases (Validate)</p>
+                        <p>• Complete safety planning (Enhance Safety)</p>
+                        <p>• Make referrals (Support)</p>
+                        <p>• Mark any phase as complete</p>
+                      </div>
                     </div>
                     <div className="text-indigo-700 text-xs mt-3 p-2 bg-indigo-100 rounded">
-                      <p className="font-medium">Protocol Progress: {[
+                      <p className="font-medium">Protocol Status: {[
                         assessmentData.livesProtocol.listen.completed,
                         assessmentData.livesProtocol.inquire.completed,
                         assessmentData.livesProtocol.validate.completed,
                         assessmentData.livesProtocol.enhanceSafety.completed,
                         assessmentData.livesProtocol.support.completed
                       ].filter(Boolean).length}/5 phases complete</p>
+                      <p className="mt-1">
+                        {(() => {
+                          const hasListenContent = assessmentData.livesProtocol.listen.activeListening.length > 0 || 
+                                                  assessmentData.livesProtocol.listen.narrative.length > 0;
+                          const hasInquireContent = assessmentData.livesProtocol.inquire.immediateSafety !== null ||
+                                                   assessmentData.livesProtocol.inquire.safePlace !== null;
+                          const hasValidateContent = assessmentData.livesProtocol.validate.selectedPhrases.length > 0;
+                          const contentCount = [hasListenContent, hasInquireContent, hasValidateContent].filter(Boolean).length;
+                          const completedCount = [
+                            assessmentData.livesProtocol.listen.completed,
+                            assessmentData.livesProtocol.inquire.completed,
+                            assessmentData.livesProtocol.validate.completed,
+                            assessmentData.livesProtocol.enhanceSafety.completed,
+                            assessmentData.livesProtocol.support.completed
+                          ].filter(Boolean).length;
+                          
+                          if (contentCount >= 1 || completedCount >= 1) {
+                            return "✅ Ready to proceed to final documentation";
+                          } else {
+                            return "⏳ Complete at least one LIVES activity above to continue";
+                          }
+                        })()}
+                      </p>
                     </div>
                   </div>
                 </div>
