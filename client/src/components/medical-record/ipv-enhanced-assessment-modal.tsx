@@ -282,19 +282,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
                 </div>
               </div>
               
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-amber-800 text-sm">
-                    <p className="font-medium mb-1">Critical Safety Guidelines:</p>
-                    <ul className="space-y-1">
-                      <li>• Never discuss violence unless woman is completely alone</li>
-                      <li>• Use empathic, non-judgmental language</li>
-                      <li>• Respect cultural preferences for terminology</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              
 
               {/* Privacy Verification Checklist */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
