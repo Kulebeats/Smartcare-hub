@@ -749,7 +749,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* L - LISTEN Component */}
-              <div className="border border-blue-200 rounded-lg p-4 bg-blue-100">
+              <div className="border border-gray-200 rounded-lg p-4 bg-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">L</div>
                   <h4 className="font-bold text-black text-lg">LISTEN</h4>
@@ -837,7 +837,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* I - INQUIRE Component */}
-              <div className="border border-blue-200 rounded-lg p-4 bg-blue-100">
+              <div className="border border-gray-200 rounded-lg p-4 bg-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-sm">I</div>
                   <h4 className="font-bold text-black text-lg">INQUIRE</h4>
@@ -913,7 +913,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* V - VALIDATE Component */}
-              <div className="border border-blue-200 rounded-lg p-4 bg-blue-100">
+              <div className="border border-gray-200 rounded-lg p-4 bg-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm">V</div>
                   <h4 className="font-bold text-black text-lg">VALIDATE</h4>
@@ -984,7 +984,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* E - ENHANCE SAFETY Component */}
-              <div className="border border-blue-200 rounded-lg p-4 bg-blue-100">
+              <div className="border border-gray-200 rounded-lg p-4 bg-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">E</div>
                   <h4 className="font-bold text-black text-lg">ENHANCE SAFETY</h4>
@@ -1155,7 +1155,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {/* S - SUPPORT Component */}
-              <div className="border border-blue-200 rounded-lg p-4 bg-blue-100">
+              <div className="border border-gray-200 rounded-lg p-4 bg-white">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">S</div>
                   <h4 className="font-bold text-black text-lg">SUPPORT</h4>
