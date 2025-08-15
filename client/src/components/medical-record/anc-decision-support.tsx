@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 interface AncDecisionSupportProps {
   dangerSigns: string[];
   onRecordClosure?: (reason: string) => void;
+  onDangerSignsAcknowledged?: (acknowledgedSigns: string[]) => void;
 }
 
 // Zambian ANC Guidelines danger sign descriptions (2022)
@@ -217,7 +218,7 @@ const criticalDangerSigns = [
   'Vaginal bleeding', 'Imminent delivery', 'Severe abdominal pain'
 ];
 
-export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure }: AncDecisionSupportProps) {
+export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDangerSignsAcknowledged }: AncDecisionSupportProps) {
   const [recommendation, setRecommendation] = useState<string>("");
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [showUrgentModal, setShowUrgentModal] = useState<boolean>(false);
@@ -319,6 +320,8 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure }: AncDec
               onClick={() => {
                 setShowUrgentModal(false);
                 setShowDangerSignsInfo(true);
+                // Notify parent that danger signs information was acknowledged
+                onDangerSignsAcknowledged?.(dangerSigns);
               }}
               className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-orange-600 hover:bg-orange-700 text-white"
             >
