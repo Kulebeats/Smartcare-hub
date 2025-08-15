@@ -70,3 +70,40 @@ Preferred communication style: Simple, everyday language.
 - **Zambian MoH**: Facility registry integration.
 - **Zambian ANC Guidelines 2022**: Official danger signs descriptions and management protocols.
 - **Clinical Decision Rules**: Based on evidence-based medicine.
+
+## Recent Enhancements
+
+### WHO LIVES Protocol Implementation - Comprehensive First-Line Support
+**Date**: August 15, 2025
+**Objective**: Transform the basic IPV first-line support checklist into a comprehensive WHO LIVES protocol with structured clinical decision support.
+
+**Enhancement Implemented**:
+1. **Enhanced Data Architecture**: Extended `EnhancedIPVAssessmentData` interface with comprehensive `LIVESProtocolData` structure supporting all five protocol phases
+2. **Five-Component LIVES Workflow**: Complete replacement of Page 4 with structured modules:
+   - **Listen (L)**: Secure narrative documentation area with active listening technique tracking and clinical observations
+   - **Inquire (I)**: Immediate safety assessment with structured questions covering safety, injuries, safe places, and children at risk
+   - **Validate (V)**: Pre-scripted validation phrases with documentation of supportive responses used
+   - **Enhance Safety (E)**: Guided safety planning with violence escalation assessment, weapon presence checks, emergency plan documentation, safe contacts management, and discrete safety plan generation
+   - **Support (S)**: Integrated referral directory with consent tracking and comprehensive service categories
+
+**Technical Implementation**:
+- Added `LIVESProtocolData` interface with completion tracking for each phase
+- Implemented specialized helper functions for protocol management
+- Enhanced validation logic requiring core L-I-V completion before proceeding
+- Applied consistent visual styling with phase-specific color coding and completion indicators
+
+**Clinical Decision Support Features**:
+- Context-sensitive clinical guidance for each LIVES phase
+- Pre-populated validation phrases based on WHO guidelines
+- Structured immediate safety assessment with risk indicators
+- Emergency safety planning with printable summary generation
+- Comprehensive referral directory with 12+ service categories
+- Real-time progress tracking with phase completion visualization
+
+**WHO Protocol Compliance**:
+- ✅ Follows WHO LIVES sequential methodology
+- ✅ Maintains survivor autonomy and safety focus
+- ✅ Provides evidence-based clinical prompts
+- ✅ Supports secure narrative documentation
+- ✅ Enables discrete safety plan generation
+- ✅ Includes comprehensive referral pathways

@@ -3,6 +3,45 @@ import { createPortal } from 'react-dom';
 import { X, AlertTriangle, Shield, Heart, Users, FileText, CheckCircle, Phone, MapPin, UserCheck, MessageCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { type IPVRiskAssessment } from '@/lib/ipv-decision-support';
 
+interface LIVESProtocolData {
+  listen: {
+    narrative: string;
+    activeListening: string[];
+    clinicalNotes: string;
+    completed: boolean;
+  };
+  inquire: {
+    immediateSafety: boolean | null;
+    safePlace: boolean | null;
+    injuries: boolean | null;
+    childrenAtRisk: boolean | null;
+    additionalConcerns: string[];
+    completed: boolean;
+  };
+  validate: {
+    selectedPhrases: string[];
+    customValidation: string;
+    documentedResponse: string;
+    completed: boolean;
+  };
+  enhanceSafety: {
+    violenceIncreased: boolean | null;
+    weaponsPresent: boolean | null;
+    emergencyPlan: string;
+    safeContacts: string[];
+    codeWords: string;
+    printablePlan: boolean;
+    completed: boolean;
+  };
+  support: {
+    referralsMade: string[];
+    patientConsent: boolean | null;
+    followUpPlanned: boolean | null;
+    serviceDirectory: string[];
+    completed: boolean;
+  };
+}
+
 interface EnhancedIPVAssessmentData {
   patientAlone: 'yes' | 'no' | null;
   riskFactors: string[];
@@ -13,6 +52,7 @@ interface EnhancedIPVAssessmentData {
     safetyPlan: boolean;
     connected: boolean;
   };
+  livesProtocol: LIVESProtocolData;
   immediateNeeds: {
     emotional: boolean;
     physical: boolean;
@@ -48,6 +88,44 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
       validated: false,
       safetyPlan: false,
       connected: false
+    },
+    livesProtocol: {
+      listen: {
+        narrative: '',
+        activeListening: [],
+        clinicalNotes: '',
+        completed: false
+      },
+      inquire: {
+        immediateSafety: null,
+        safePlace: null,
+        injuries: null,
+        childrenAtRisk: null,
+        additionalConcerns: [],
+        completed: false
+      },
+      validate: {
+        selectedPhrases: [],
+        customValidation: '',
+        documentedResponse: '',
+        completed: false
+      },
+      enhanceSafety: {
+        violenceIncreased: null,
+        weaponsPresent: null,
+        emergencyPlan: '',
+        safeContacts: [],
+        codeWords: '',
+        printablePlan: false,
+        completed: false
+      },
+      support: {
+        referralsMade: [],
+        patientConsent: null,
+        followUpPlanned: null,
+        serviceDirectory: [],
+        completed: false
+      }
     },
     immediateNeeds: {
       emotional: false,
@@ -172,6 +250,63 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
     }));
   };
 
+  // LIVES Protocol helper functions
+  const updateLIVESProtocol = (section: keyof LIVESProtocolData, updates: Partial<LIVESProtocolData[keyof LIVESProtocolData]>) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      livesProtocol: {
+        ...prev.livesProtocol,
+        [section]: {
+          ...prev.livesProtocol[section],
+          ...updates
+        }
+      }
+    }));
+  };
+
+  const handleActiveListeningToggle = (technique: string) => {
+    const current = assessmentData.livesProtocol.listen.activeListening;
+    updateLIVESProtocol('listen', {
+      activeListening: current.includes(technique) 
+        ? current.filter(t => t !== technique)
+        : [...current, technique]
+    });
+  };
+
+  const handleValidationPhraseToggle = (phrase: string) => {
+    const current = assessmentData.livesProtocol.validate.selectedPhrases;
+    updateLIVESProtocol('validate', {
+      selectedPhrases: current.includes(phrase) 
+        ? current.filter(p => p !== phrase)
+        : [...current, phrase]
+    });
+  };
+
+  const handleSafeContactAdd = (contact: string) => {
+    if (contact.trim()) {
+      const current = assessmentData.livesProtocol.enhanceSafety.safeContacts;
+      updateLIVESProtocol('enhanceSafety', {
+        safeContacts: [...current, contact.trim()]
+      });
+    }
+  };
+
+  const handleSafeContactRemove = (index: number) => {
+    const current = assessmentData.livesProtocol.enhanceSafety.safeContacts;
+    updateLIVESProtocol('enhanceSafety', {
+      safeContacts: current.filter((_, i) => i !== index)
+    });
+  };
+
+  const handleSupportReferralToggle = (referral: string) => {
+    const current = assessmentData.livesProtocol.support.referralsMade;
+    updateLIVESProtocol('support', {
+      referralsMade: current.includes(referral) 
+        ? current.filter(r => r !== referral)
+        : [...current, referral]
+    });
+  };
+
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -182,6 +317,15 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
 
   const canProceed = () => {
     if (currentPage === 1) return assessmentData.patientAlone === 'yes';
+    if (currentPage === 4 && hasRiskFactors) {
+      // For LIVES protocol, require at least Listen, Inquire, and Validate to be completed
+      const livesProgress = [
+        assessmentData.livesProtocol.listen.completed,
+        assessmentData.livesProtocol.inquire.completed,
+        assessmentData.livesProtocol.validate.completed
+      ];
+      return livesProgress.filter(Boolean).length >= 3; // Require core L-I-V completion
+    }
     return true;
   };
 
@@ -586,65 +730,600 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
             </div>
           )}
 
-          {/* Page 4: First-Line Support */}
+          {/* Page 4: WHO LIVES Protocol */}
           {currentPage === 4 && hasRiskFactors && (
-            <div className="space-y-6">
+            <div className="space-y-6 max-h-[70vh] overflow-y-auto" style={{ overscrollBehavior: 'contain' }}>
               <div>
-                <h3 className="text-2xl font-bold text-black mb-2">First-Line Support Tasks</h3>
-                <p className="text-black">Complete the 5 essential support actions</p>
+                <h3 className="text-2xl font-bold text-black mb-2">WHO LIVES Protocol</h3>
+                <p className="text-black">Comprehensive first-line support through structured clinical guidance</p>
               </div>
 
-              {/* WHO LIVES Protocol Reminder */}
+              {/* Protocol Overview */}
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
                 <div className="flex gap-2">
                   <Shield className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
                   <div className="text-indigo-800 text-sm">
                     <p className="font-semibold mb-1">WHO LIVES Protocol - Essential Actions:</p>
-                    <p>Each step builds trust and empowers the woman. Complete all 5 steps in sequence.</p>
-                    <p className="mt-1 text-xs">Remember: Her safety and autonomy are paramount.</p>
+                    <p>Follow each step sequentially to provide comprehensive, evidence-based support.</p>
+                    <p className="mt-1 text-xs">Remember: Survivor autonomy and safety are paramount.</p>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {[
-                  { key: 'listened', label: 'LISTEN', desc: 'Listen closely with empathy, without judging' },
-                  { key: 'inquired', label: 'INQUIRE', desc: 'Ask about needs and concerns (emotional, physical, practical)' },
-                  { key: 'validated', label: 'VALIDATE', desc: 'Show understanding and belief - assure not to blame' },
-                  { key: 'safetyPlan', label: 'ENHANCE SAFETY', desc: 'Discuss protection plan if violence occurs again' },
-                  { key: 'connected', label: 'SUPPORT', desc: 'Connect to information, services and social support' }
-                ].map(({ key, label, desc }) => (
-                  <label key={key} className={`block border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                    assessmentData.firstLineSupport[key as keyof typeof assessmentData.firstLineSupport] 
-                      ? 'border-green-300 bg-green-50' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={assessmentData.firstLineSupport[key as keyof typeof assessmentData.firstLineSupport]}
-                        onChange={() => handleCheckboxChange('firstLineSupport', key)}
-                        className="mt-1 text-green-600"
-                      />
-                      <div>
-                        <div className="font-semibold text-black">{label}</div>
-                        <div className="text-sm text-black mt-1">{desc}</div>
-                      </div>
+              {/* L - LISTEN Component */}
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">L</div>
+                  <h4 className="font-bold text-black text-lg">LISTEN</h4>
+                  <div className="ml-auto">
+                    {assessmentData.livesProtocol.listen.completed && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Clinical Guidance */}
+                <div className="border border-purple-200 rounded-lg p-3 mb-4 bg-[#f5fcff] text-[#1f2937e8]">
+                  <div className="flex gap-2">
+                    <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-purple-800 text-sm">
+                      <p className="font-medium mb-1">Clinical Guidance:</p>
+                      <p className="italic">"Listen with empathy and without judgment. Use active listening techniques."</p>
+                      <p className="mt-1 text-xs">Allow for silence. Do not rush the patient.</p>
                     </div>
+                  </div>
+                </div>
+
+                {/* Active Listening Techniques */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Active Listening Techniques Used
                   </label>
-                ))}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      'I understand', 'I see', 'That must have been difficult', 'Thank you for sharing',
+                      'I hear you', 'Tell me more', 'That sounds challenging', 'You are being very brave'
+                    ].map((technique) => (
+                      <label key={technique} className="flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={assessmentData.livesProtocol.listen.activeListening.includes(technique)}
+                          onChange={() => handleActiveListeningToggle(technique)}
+                          className="mr-2 text-blue-600"
+                        />
+                        <span className="text-xs text-black">"{technique}"</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Secure Narrative Area */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Patient Narrative (Secure Documentation)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={assessmentData.livesProtocol.listen.narrative}
+                    onChange={(e) => updateLIVESProtocol('listen', { narrative: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Document the survivor's narrative in their own words..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    🔒 Encrypted storage. Use patient's exact words when possible.
+                  </p>
+                </div>
+
+                {/* Clinical Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Clinical Observations
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={assessmentData.livesProtocol.listen.clinicalNotes}
+                    onChange={(e) => updateLIVESProtocol('listen', { clinicalNotes: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Clinical observations about emotional state, body language, etc..."
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.listen.completed}
+                      onChange={(e) => updateLIVESProtocol('listen', { completed: e.target.checked })}
+                      className="mr-2 text-green-600"
+                    />
+                    <span className="text-sm font-medium text-black">Mark LISTEN phase as complete</span>
+                  </label>
+                </div>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h5 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Safety Planning Questions
-                </h5>
-                <div className="text-sm text-yellow-800 space-y-1">
-                  <p>• "Do you have a safe place to go if needed?"</p>
-                  <p>• "Do you have important documents accessible?"</p>
-                  <p>• "Is there someone you trust for emergencies?"</p>
-                  <p>• "Would you like information about support services?"</p>
+              {/* I - INQUIRE Component */}
+              <div className="border border-orange-200 rounded-lg p-4 bg-orange-50/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-sm">I</div>
+                  <h4 className="font-bold text-black text-lg">INQUIRE</h4>
+                  <div className="ml-auto">
+                    {assessmentData.livesProtocol.inquire.completed && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Clinical Guidance */}
+                <div className="border border-purple-200 rounded-lg p-3 mb-4 bg-[#f5fcff] text-[#1f2937e8]">
+                  <div className="flex gap-2">
+                    <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-purple-800 text-sm">
+                      <p className="font-medium mb-1">Assessment Focus:</p>
+                      <p className="italic">Ask about immediate needs and concerns without pressuring disclosure.</p>
+                      <p className="mt-1 text-xs">Focus on safety, physical needs, and emotional support.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Immediate Safety Questions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {[
+                    { key: 'immediateSafety', label: 'Are you safe right now?', icon: Shield },
+                    { key: 'safePlace', label: 'Do you need a safe place to go?', icon: MapPin },
+                    { key: 'injuries', label: 'Do you have any injuries that need attention?', icon: Heart },
+                    { key: 'childrenAtRisk', label: 'Are there children at risk?', icon: Users }
+                  ].map(({ key, label, icon: Icon }) => (
+                    <div key={key} className="border border-gray-200 rounded-lg p-3 bg-white/60">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon className="w-4 h-4 text-orange-600" />
+                        <span className="text-sm font-medium text-black">{label}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name={key}
+                            checked={assessmentData.livesProtocol.inquire[key as keyof typeof assessmentData.livesProtocol.inquire] === true}
+                            onChange={() => updateLIVESProtocol('inquire', { [key]: true })}
+                            className="mr-1 text-green-600"
+                          />
+                          <span className="text-xs text-black">Yes</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name={key}
+                            checked={assessmentData.livesProtocol.inquire[key as keyof typeof assessmentData.livesProtocol.inquire] === false}
+                            onChange={() => updateLIVESProtocol('inquire', { [key]: false })}
+                            className="mr-1 text-red-600"
+                          />
+                          <span className="text-xs text-black">No</span>
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.inquire.completed}
+                      onChange={(e) => updateLIVESProtocol('inquire', { completed: e.target.checked })}
+                      className="mr-2 text-green-600"
+                    />
+                    <span className="text-sm font-medium text-black">Mark INQUIRE phase as complete</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* V - VALIDATE Component */}
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm">V</div>
+                  <h4 className="font-bold text-black text-lg">VALIDATE</h4>
+                  <div className="ml-auto">
+                    {assessmentData.livesProtocol.validate.completed && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Clinical Guidance */}
+                <div className="border border-purple-200 rounded-lg p-3 mb-4 bg-[#f5fcff] text-[#1f2937e8]">
+                  <div className="flex gap-2">
+                    <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-purple-800 text-sm">
+                      <p className="font-medium mb-1">Validation Guidelines:</p>
+                      <p className="italic">Show understanding and belief. Assure them they are not to blame.</p>
+                      <p className="mt-1 text-xs">Use non-judgmental, supportive language.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pre-scripted Validation Phrases */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Validation Phrases Used
+                  </label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      'Thank you for telling me. I know this was difficult.',
+                      'You are not to blame.',
+                      'You are not alone; this happens to many women.',
+                      'I believe you.',
+                      'You are being very brave by talking about this.',
+                      'What happened to you is not okay.',
+                      'You deserve to be treated with respect.',
+                      'It takes courage to seek help.'
+                    ].map((phrase) => (
+                      <label key={phrase} className="flex items-start p-2 hover:bg-green-50 rounded cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={assessmentData.livesProtocol.validate.selectedPhrases.includes(phrase)}
+                          onChange={() => handleValidationPhraseToggle(phrase)}
+                          className="mr-2 mt-0.5 text-green-600"
+                        />
+                        <span className="text-xs text-black italic">"{phrase}"</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom Validation */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Additional Validation Messages
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={assessmentData.livesProtocol.validate.customValidation}
+                    onChange={(e) => updateLIVESProtocol('validate', { customValidation: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Additional validation messages or patient responses..."
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.validate.completed}
+                      onChange={(e) => updateLIVESProtocol('validate', { completed: e.target.checked })}
+                      className="mr-2 text-green-600"
+                    />
+                    <span className="text-sm font-medium text-black">Mark VALIDATE phase as complete</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* E - ENHANCE SAFETY Component */}
+              <div className="border border-red-200 rounded-lg p-4 bg-red-50/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">E</div>
+                  <h4 className="font-bold text-black text-lg">ENHANCE SAFETY</h4>
+                  <div className="ml-auto">
+                    {assessmentData.livesProtocol.enhanceSafety.completed && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Clinical Guidance */}
+                <div className="border border-purple-200 rounded-lg p-3 mb-4 bg-[#f5fcff] text-[#1f2937e8]">
+                  <div className="flex gap-2">
+                    <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-purple-800 text-sm">
+                      <p className="font-medium mb-1">Safety Planning Focus:</p>
+                      <p className="italic">Discuss protection plans if violence occurs again. Respect her choices.</p>
+                      <p className="mt-1 text-xs">Collaborate on safety strategies. Document agreed-upon plans.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Safety Assessment Questions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="border border-gray-200 rounded-lg p-3 bg-white/60">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-4 h-4 text-red-600" />
+                      <span className="text-sm font-medium text-black">Has the level of violence increased recently?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="violenceIncreased"
+                          checked={assessmentData.livesProtocol.enhanceSafety.violenceIncreased === true}
+                          onChange={() => updateLIVESProtocol('enhanceSafety', { violenceIncreased: true })}
+                          className="mr-1 text-red-600"
+                        />
+                        <span className="text-xs text-black">Yes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="violenceIncreased"
+                          checked={assessmentData.livesProtocol.enhanceSafety.violenceIncreased === false}
+                          onChange={() => updateLIVESProtocol('enhanceSafety', { violenceIncreased: false })}
+                          className="mr-1 text-green-600"
+                        />
+                        <span className="text-xs text-black">No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-3 bg-white/60">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="w-4 h-4 text-red-600" />
+                      <span className="text-sm font-medium text-black">Are there weapons in the home?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="weaponsPresent"
+                          checked={assessmentData.livesProtocol.enhanceSafety.weaponsPresent === true}
+                          onChange={() => updateLIVESProtocol('enhanceSafety', { weaponsPresent: true })}
+                          className="mr-1 text-red-600"
+                        />
+                        <span className="text-xs text-black">Yes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="weaponsPresent"
+                          checked={assessmentData.livesProtocol.enhanceSafety.weaponsPresent === false}
+                          onChange={() => updateLIVESProtocol('enhanceSafety', { weaponsPresent: false })}
+                          className="mr-1 text-green-600"
+                        />
+                        <span className="text-xs text-black">No</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emergency Plan */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Emergency Safety Plan
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={assessmentData.livesProtocol.enhanceSafety.emergencyPlan}
+                    onChange={(e) => updateLIVESProtocol('enhanceSafety', { emergencyPlan: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Document the agreed-upon emergency plan: Where to go, who to call, what to do..."
+                  />
+                </div>
+
+                {/* Safe Contacts */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Safe Contacts
+                  </label>
+                  <div className="space-y-2">
+                    {assessmentData.livesProtocol.enhanceSafety.safeContacts.map((contact, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-white/60 rounded border">
+                        <Users className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-black flex-1">{contact}</span>
+                        <button
+                          onClick={() => handleSafeContactRemove(index)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <input
+                      type="text"
+                      placeholder="Add safe contact..."
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-red-500"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                          handleSafeContactAdd(e.currentTarget.value);
+                          e.currentTarget.value = '';
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Code Words */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Code Words/Phrases
+                  </label>
+                  <input
+                    type="text"
+                    value={assessmentData.livesProtocol.enhanceSafety.codeWords}
+                    onChange={(e) => updateLIVESProtocol('enhanceSafety', { codeWords: e.target.value })}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Discrete code words or phrases for emergency communication..."
+                  />
+                </div>
+
+                {/* Printable Plan Option */}
+                <div className="mb-3">
+                  <label className="flex items-center p-2 hover:bg-red-50 rounded cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.enhanceSafety.printablePlan}
+                      onChange={(e) => updateLIVESProtocol('enhanceSafety', { printablePlan: e.target.checked })}
+                      className="mr-2 text-red-600"
+                    />
+                    <span className="text-sm text-black">Generate discrete printable safety plan summary</span>
+                  </label>
+                </div>
+
+                <div className="mt-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.enhanceSafety.completed}
+                      onChange={(e) => updateLIVESProtocol('enhanceSafety', { completed: e.target.checked })}
+                      className="mr-2 text-green-600"
+                    />
+                    <span className="text-sm font-medium text-black">Mark ENHANCE SAFETY phase as complete</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* S - SUPPORT Component */}
+              <div className="border border-purple-200 rounded-lg p-4 bg-purple-50/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">S</div>
+                  <h4 className="font-bold text-black text-lg">SUPPORT</h4>
+                  <div className="ml-auto">
+                    {assessmentData.livesProtocol.support.completed && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Clinical Guidance */}
+                <div className="border border-purple-200 rounded-lg p-3 mb-4 bg-[#f5fcff] text-[#1f2937e8]">
+                  <div className="flex gap-2">
+                    <MessageCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-purple-800 text-sm">
+                      <p className="font-medium mb-1">Support Connection:</p>
+                      <p className="italic">"Would you like me to connect you with someone who can help further?"</p>
+                      <p className="mt-1 text-xs">Offer referrals based on expressed needs. Obtain consent first.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Consent Questions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="border border-gray-200 rounded-lg p-3 bg-white/60">
+                    <div className="flex items-center gap-2 mb-2">
+                      <UserCheck className="w-4 h-4 text-purple-600" />
+                      <span className="text-sm font-medium text-black">Patient consents to referrals?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="patientConsent"
+                          checked={assessmentData.livesProtocol.support.patientConsent === true}
+                          onChange={() => updateLIVESProtocol('support', { patientConsent: true })}
+                          className="mr-1 text-green-600"
+                        />
+                        <span className="text-xs text-black">Yes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="patientConsent"
+                          checked={assessmentData.livesProtocol.support.patientConsent === false}
+                          onChange={() => updateLIVESProtocol('support', { patientConsent: false })}
+                          className="mr-1 text-red-600"
+                        />
+                        <span className="text-xs text-black">No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-3 bg-white/60">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Phone className="w-4 h-4 text-purple-600" />
+                      <span className="text-sm font-medium text-black">Follow-up planned?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="followUpPlanned"
+                          checked={assessmentData.livesProtocol.support.followUpPlanned === true}
+                          onChange={() => updateLIVESProtocol('support', { followUpPlanned: true })}
+                          className="mr-1 text-green-600"
+                        />
+                        <span className="text-xs text-black">Yes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="followUpPlanned"
+                          checked={assessmentData.livesProtocol.support.followUpPlanned === false}
+                          onChange={() => updateLIVESProtocol('support', { followUpPlanned: false })}
+                          className="mr-1 text-red-600"
+                        />
+                        <span className="text-xs text-black">No</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Referral Directory */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Referrals Made
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {[
+                      'Crisis hotline (24/7)',
+                      'Domestic violence shelter',
+                      'Legal aid services',
+                      'Mental health counseling',
+                      'Social services',
+                      'Police victim support',
+                      'Medical specialist',
+                      'Support groups',
+                      'Emergency financial aid',
+                      'Housing assistance',
+                      'Child protection services',
+                      'Immigration support'
+                    ].map((referral) => (
+                      <label key={referral} className="flex items-center p-2 hover:bg-purple-50 rounded cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={assessmentData.livesProtocol.support.referralsMade.includes(referral)}
+                          onChange={() => handleSupportReferralToggle(referral)}
+                          className="mr-2 text-purple-600"
+                        />
+                        <span className="text-xs text-black">{referral}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={assessmentData.livesProtocol.support.completed}
+                      onChange={(e) => updateLIVESProtocol('support', { completed: e.target.checked })}
+                      className="mr-2 text-green-600"
+                    />
+                    <span className="text-sm font-medium text-black">Mark SUPPORT phase as complete</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* LIVES Protocol Summary */}
+              <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4">
+                <div className="flex">
+                  <Shield className="w-5 h-5 text-indigo-400 mr-3 flex-shrink-0" />
+                  <div>
+                    <h4 className="text-indigo-800 font-semibold">WHO LIVES Protocol Progress</h4>
+                    <div className="text-indigo-700 text-sm mt-1 grid grid-cols-2 md:grid-cols-3 gap-2">
+                      <p>• Listen: {assessmentData.livesProtocol.listen.completed ? '✓' : '○'}</p>
+                      <p>• Inquire: {assessmentData.livesProtocol.inquire.completed ? '✓' : '○'}</p>
+                      <p>• Validate: {assessmentData.livesProtocol.validate.completed ? '✓' : '○'}</p>
+                      <p>• Enhance Safety: {assessmentData.livesProtocol.enhanceSafety.completed ? '✓' : '○'}</p>
+                      <p>• Support: {assessmentData.livesProtocol.support.completed ? '✓' : '○'}</p>
+                      <p className="md:col-span-1">
+                        <strong>
+                          {[
+                            assessmentData.livesProtocol.listen.completed,
+                            assessmentData.livesProtocol.inquire.completed,
+                            assessmentData.livesProtocol.validate.completed,
+                            assessmentData.livesProtocol.enhanceSafety.completed,
+                            assessmentData.livesProtocol.support.completed
+                          ].filter(Boolean).length}/5 Complete
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
