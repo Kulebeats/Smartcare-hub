@@ -283,7 +283,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               
 
               {/* Privacy Verification Checklist */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-[18px] mb-[18px] pt-[1px] pb-[1px]">
                 <h4 className="text-sm font-semibold text-black mb-3">Privacy Verification Checklist:</h4>
                 <div className="space-y-2 text-sm">
                   {[
