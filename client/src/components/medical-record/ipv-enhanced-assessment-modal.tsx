@@ -1590,37 +1590,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
         </div>
 
         {/* Footer */}
-        {/* Validation Status */}
-        {validationResult.errors.length > 0 || validationResult.warnings.length > 0 ? (
-          <div className="px-6 py-3 border-t border-gray-200 bg-red-50">
-            {validationResult.errors.length > 0 && (
-              <div className="mb-2">
-                <div className="flex items-center gap-2 text-red-800 font-semibold mb-1">
-                  <AlertTriangle size={16} />
-                  Required Items Missing:
-                </div>
-                <ul className="text-sm text-red-700 space-y-1">
-                  {validationResult.errors.map((error, index) => (
-                    <li key={index}>• {error}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {validationResult.warnings.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 text-orange-800 font-semibold mb-1">
-                  <AlertTriangle size={16} />
-                  Recommendations:
-                </div>
-                <ul className="text-sm text-orange-700 space-y-1">
-                  {validationResult.warnings.map((warning, index) => (
-                    <li key={index}>• {warning}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : null}
+        
 
         <div className="border-t bg-gray-50 px-6 py-4 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-4">
