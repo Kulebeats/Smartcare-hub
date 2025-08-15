@@ -737,7 +737,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
 
               {hasRiskFactors && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                <div className="border-l-4 border-red-400 p-4 bg-[#d6d6d614]">
                   <div className="flex">
                     <AlertTriangle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0" />
                     <div>
