@@ -3690,17 +3690,7 @@ export default function AncPage() {
                       </svg>
                       Add Record
                     </Button>
-                    <Button 
-                      className="rounded-full bg-green-500 hover:bg-green-600 text-white border-none px-4 py-2 text-sm flex items-center gap-1"
-                      onClick={() => {
-                        setShowVitalSignsDialog(true);
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                      </svg>
-                      Call Vitals
-                    </Button>
+
 
                   </div>
                 </div>
@@ -4712,6 +4702,7 @@ export default function AncPage() {
                                 const referralDateField = document.getElementById('referral-date-field');
                                 const referralNotesField = document.getElementById('referral-notes-field');
                                 const checklistField = document.getElementById('maternal-emergency-checklist');
+                                const callVitalsSection = document.getElementById('call-vitals-section');
 
                                 if (reasonsField) reasonsField.style.display = isChecked ? 'block' : 'none';
                                 if (treatmentField) treatmentField.style.display = isChecked ? 'block' : 'none';
@@ -4720,6 +4711,7 @@ export default function AncPage() {
                                 if (providerPhoneField) providerPhoneField.style.display = isChecked ? 'block' : 'none';
                                 if (referralDateField) referralDateField.style.display = isChecked ? 'block' : 'none';
                                 if (referralNotesField) referralNotesField.style.display = isChecked ? 'block' : 'none';
+                                if (callVitalsSection) callVitalsSection.style.display = isChecked ? 'block' : 'none';
                                 if (checklistField) checklistField.style.display = isChecked ? 'block' : 'none';
                                 
                                 // Update Latest Encounter data
@@ -6477,6 +6469,23 @@ export default function AncPage() {
                       <div className="space-y-2 col-span-2" id="referral-notes-field" style={{ display: 'none' }}>
                         <label className="block text-sm font-medium">Referral notes</label>
                         <textarea className="w-full border-2 border-gray-300 rounded p-2 h-20 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"></textarea>
+                      </div>
+
+                      {/* Call Vitals Button - Before Emergency Checklist */}
+                      <div className="col-span-2 mb-4" id="call-vitals-section" style={{ display: 'none' }}>
+                        <div className="flex justify-center">
+                          <Button 
+                            className="rounded-full bg-green-500 hover:bg-green-600 text-white border-none px-6 py-3 text-sm flex items-center gap-2"
+                            onClick={() => {
+                              setShowVitalSignsDialog(true);
+                            }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                            Call Vitals Modal
+                          </Button>
+                        </div>
                       </div>
 
                       {/* Dynamic Maternal Emergency Checklist */}
