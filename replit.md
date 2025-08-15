@@ -107,20 +107,20 @@ Preferred communication style: Simple, everyday language.
 ### Enhanced Danger Signs Workflow Implementation
 **Date**: August 15, 2025
 **Updates**:
-- Successfully implemented enhanced danger signs workflow with proper state management for improved clinical decision support
-- Added acknowledgment callback to orange "Danger Signs Information" button - now returns users to main danger signs modal instead of closing
-- Created action selection UI that appears after acknowledging danger signs from urgent alert modal
-- Implemented "Emergency Referral" and "Facility Management" action buttons with seamless workflow integration
-- Enhanced user experience: urgent alert → orange button acknowledgment → return to danger signs modal with action selection options
-- Preserved all existing functionality while improving clinical workflow efficiency
-- Users can now review danger signs information and select appropriate clinical management without losing context
+- Successfully implemented streamlined danger signs workflow returning users to original urgent alert modal
+- Orange "Danger Signs Information" button shows detailed clinical protocols and management guidance
+- After reviewing information (acknowledge/close), users return directly to original urgent alert modal
+- Maintains original Emergency Referral and Facility Management buttons in urgent alert modal
+- Removed intermediate "Clinical Management Required" section per user feedback
+- Preserved all existing functionality while providing seamless information review workflow
+- Users can review danger signs information and then proceed with original urgent alert options
 
 ### Technical Implementation Details
 - Enhanced `AncDecisionSupportAlert` component with `onDangerSignsAcknowledged` callback
-- Added workflow phase state management: 'selection' | 'acknowledged' | 'action_selection'
-- Implemented acknowledged danger signs tracking and action selection UI
-- Both orange button and X close button now trigger acknowledgment and return to main modal
-- Integrated with existing referral workflows and emergency management protocols
+- Simplified acknowledgment flow to return to original urgent alert modal instead of creating new UI
+- Both acknowledge and close buttons in information modal trigger return to urgent alert
+- Removed complex workflow phase state management for cleaner user experience
+- Integrated seamlessly with existing referral workflows and emergency management protocols
 
 ### Ongoing Work
 - Final ANC PrEP Assessment modal styling updates in progress

@@ -705,9 +705,7 @@ export default function AncPage() {
   const [selectedDangerSigns, setSelectedDangerSigns] = useState<string[]>([]);
   const [dangerSignMode, setDangerSignMode] = useState<'none' | 'present' | undefined>(undefined);
   
-  // Enhanced danger signs workflow state
-  const [dangerSignsWorkflowPhase, setDangerSignsWorkflowPhase] = useState<'selection' | 'acknowledged' | 'action_selection'>('selection');
-  const [acknowledgedDangerSigns, setAcknowledgedDangerSigns] = useState<string[]>([]);
+
   
   // Shared state for bi-directional sync between Danger Signs and Emergency Referral
   const [sharedReferralReasons, setSharedReferralReasons] = useState<string[]>([]);
@@ -871,45 +869,18 @@ export default function AncPage() {
     'Vaginal bleeding', 'Imminent delivery', 'Severe abdominal pain'
   ];
 
-  // Handle danger signs acknowledgment from orange button
+  // Handle danger signs acknowledgment from orange button - return to urgent alert modal
   const handleDangerSignsAcknowledgement = useCallback((acknowledgedSigns: string[]) => {
-    setAcknowledgedDangerSigns(acknowledgedSigns);
-    setDangerSignsWorkflowPhase('action_selection');
-    // Keep danger signs modal open - don't change dangerSignMode
-    
+    // Don't set workflow phase to action_selection, instead keep original flow
+    // This will cause the AncDecisionSupportAlert to re-trigger the urgent modal
     toast({
       title: "Danger Signs Information Reviewed",
-      description: "Please select appropriate clinical management action.",
+      description: "Please select emergency referral or facility management.",
       variant: "default",
     });
   }, [toast]);
 
-  // Handle management action selection
-  const handleManagementAction = useCallback((action: 'emergency_referral' | 'facility_management') => {
-    if (action === 'emergency_referral') {
-      // Auto-populate emergency referral with acknowledged danger signs
-      syncDangerSignsToReferral(acknowledgedDangerSigns);
-      setShowEmergencyReferralAuto(true);
-      
-      toast({
-        title: "Emergency Referral Initiated",
-        description: "Referral form pre-populated with danger signs.",
-        variant: "default",
-      });
-    } else if (action === 'facility_management') {
-      // For facility management, we can show a different flow or modal
-      toast({
-        title: "Facility Management Selected",
-        description: "Proceed with on-site clinical management protocols.",
-        variant: "default",
-      });
-    }
-    
-    // Close the danger signs modal after action selection
-    setDangerSignMode(undefined);
-    setDangerSignsWorkflowPhase('selection');
-    setAcknowledgedDangerSigns([]);
-  }, [acknowledgedDangerSigns, syncDangerSignsToReferral, toast]);
+
 
   // Handle danger sign confirmation
   const handleDangerSignConfirmation = useCallback(() => {
@@ -4246,79 +4217,7 @@ export default function AncPage() {
                         </div>
                       </div>
 
-                      {/* Action Selection UI - Show after acknowledgment from orange button */}
-                      {dangerSignsWorkflowPhase === 'action_selection' && acknowledgedDangerSigns.length > 0 && (
-                        <div className="mt-4 p-4 border-l-4 border-orange-400 bg-orange-50 rounded">
-                          <h4 className="font-semibold text-orange-800 mb-3 flex items-center">
-                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                            </svg>
-                            Clinical Management Required
-                          </h4>
-                          
-                          {/* Acknowledged Signs Summary */}
-                          <div className="mb-4 p-3 bg-white rounded border">
-                            <p className="text-sm font-medium text-gray-700 mb-2">
-                              Acknowledged Danger Signs:
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {acknowledgedDangerSigns.map(sign => (
-                                <span key={sign} className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">
-                                  {sign}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          {/* Action Selection */}
-                          <div className="space-y-3">
-                            <p className="text-sm text-gray-700 mb-3 font-medium">
-                              Select appropriate clinical management:
-                            </p>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <Button
-                                onClick={() => handleManagementAction('emergency_referral')}
-                                className="w-full bg-red-600 hover:bg-red-700 text-white p-4 h-auto flex items-center justify-start space-x-3"
-                              >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                                </svg>
-                                <div className="text-left">
-                                  <div className="font-semibold">Emergency Referral</div>
-                                  <div className="text-xs opacity-90">Immediate emergency services</div>
-                                </div>
-                              </Button>
-                              
-                              <Button
-                                onClick={() => handleManagementAction('facility_management')}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 h-auto flex items-center justify-start space-x-3"
-                              >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                                <div className="text-left">
-                                  <div className="font-semibold">Facility Management</div>
-                                  <div className="text-xs opacity-90">On-site clinical protocols</div>
-                                </div>
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          {/* Back Option */}
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setDangerSignsWorkflowPhase('selection');
-                              setAcknowledgedDangerSigns([]);
-                              // Keep the modal open but return to selection view
-                            }}
-                            className="w-full mt-3 border-orange-300 text-orange-700 hover:bg-orange-100"
-                          >
-                            ← Back to Danger Signs Selection
-                          </Button>
-                        </div>
-                      )}
+
 
                       {/* Decision Support Alert - Only trigger after confirmation */}
                       {dangerSignMode === 'present' && selectedDangerSigns.length > 0 && dangerSignsConfirmed && (
