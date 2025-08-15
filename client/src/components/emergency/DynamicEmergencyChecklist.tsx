@@ -76,11 +76,6 @@ export const DynamicEmergencyChecklist: React.FC<DynamicEmergencyChecklistProps>
       <div className={`border rounded-lg p-3 space-y-2 ${styles.containerClass}`}>
         <div className={`flex items-center justify-between p-2 rounded ${styles.headerClass}`}>
           <div className="flex items-center space-x-2">
-            <span className={`font-medium ${styles.iconColor}`}>
-              {priority === 'critical' && '🚨'}
-              {priority === 'secondary' && '⚠️'}
-              {priority === 'standard' && '📋'}
-            </span>
             <span className="font-medium text-sm">{title}</span>
           </div>
           <span className={`text-xs px-2 py-1 rounded-full ${styles.badgeClass}`}>
