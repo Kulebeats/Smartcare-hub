@@ -418,7 +418,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
               </div>
               
               {/* WHO Protocol Reminder */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="border border-blue-200 rounded-lg p-4 text-[#000000] bg-[#f7f7f700]">
                 <div className="flex gap-3">
                   <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div className="text-blue-800 text-sm">
