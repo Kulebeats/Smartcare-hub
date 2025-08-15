@@ -5800,7 +5800,7 @@ export default function AncPage() {
 
                           {/* Previous Maternal Complications */}
                           <div id="complications-risk-grid" className="space-y-4" style={{ display: 'none' }}>
-                            <div className="space-y-3">
+                            <div className="space-y-3 text-[#030303]">
                               <h6 className="text-sm font-semibold text-amber-700 border-b border-amber-300 pb-1">Previous Maternal Complications</h6>
                               <div className="grid grid-cols-2 gap-2">
                                 <label className="flex items-center space-x-2 text-sm p-2 hover:bg-red-50 rounded border">
