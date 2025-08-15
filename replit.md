@@ -139,7 +139,31 @@ Preferred communication style: Simple, everyday language.
 4. **Clinical Alerts**: Grand Multiparity (≥5), High Parity (>6), Recurrent Loss (≥3)
 5. **Field Ranges**: Gravida (1-20), Para (0-15), Abortions (0-10), Living Children (0-15)
 
+### Dynamic Emergency Checklist Implementation
+**Date**: August 15, 2025
+**Objective**: Transform static emergency referral checklist into dynamic, context-aware system that prioritizes actions based on specific danger signs.
+
+**Technical Implementation**:
+- Created `shared/emergency-checklist-mapping.ts` with comprehensive danger sign categorization and priority mapping
+- Developed `DynamicEmergencyChecklist` React component with visual priority hierarchy (Critical/Secondary/Standard)
+- Implemented clinical decision logic based on WHO/CDC protocols for 4 categories: Neurological, Bleeding & Delivery, Hypertensive, Systemic
+- Added real-time progress tracking and clinical focus display
+
+**Business Logic Features**:
+1. **Smart Prioritization**: Dynamically reorganizes 24 checklist items based on clinical urgency
+2. **Visual Hierarchy**: Color-coded sections (Red=Critical, Orange=Secondary, Blue=Standard) 
+3. **Clinical Context**: Displays clinical rationale for emergency protocol selection
+4. **Progress Tracking**: Real-time completion percentage with item counting
+5. **Fallback System**: Maintains compatibility with existing static checklist when no danger signs present
+
+**Category Mappings**:
+- **Neurological** (Convulsing, Unconscious): Focus on seizure control, airway protection
+- **Bleeding & Delivery** (Vaginal bleeding, Imminent delivery): Focus on volume replacement, shock management
+- **Hypertensive** (Severe headache, Visual disturbance): Focus on eclampsia prevention, BP management
+- **Systemic** (Fever, Looks very ill): Focus on infection control, fluid resuscitation
+
 ### Ongoing Work
+- Integration of dynamic checklist into existing referral modal workflow
+- Testing across all danger sign combinations for clinical accuracy
 - Integration of unified obstetric components into existing workflows
-- Testing harmonized business rules across all three implementations
 - Final ANC PrEP Assessment modal styling updates in progress

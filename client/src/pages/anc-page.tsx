@@ -44,6 +44,7 @@ import ReferralCard from "@/components/medical-record/referral-card";
 import ReferralModal from "@/components/medical-record/referral-modal";
 import { ANCHeaderDock } from "@/components/anc-header-dock";
 import { PregnancyHistoryForm, useMultiplePregnancyForms } from "../components/medical-record/PregnancyHistoryForm";
+import { DynamicEmergencyChecklist } from "../components/emergency/DynamicEmergencyChecklist";
 
 // Zambian ANC Guidelines danger sign descriptions (2022)
 const enhancedDangerSignDescriptions = {

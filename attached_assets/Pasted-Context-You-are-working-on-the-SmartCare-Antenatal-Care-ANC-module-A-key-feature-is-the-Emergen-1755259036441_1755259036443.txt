@@ -1,0 +1,108 @@
+Context: You are working on the SmartCare Antenatal Care (ANC) module. A key feature is the "Emergency Referral" workflow, which includes a detailed checklist. The current checklist is static. The goal is to make it dynamic and context-aware based on the specific clinical danger sign that triggers the referral.
+
+Objective:
+Create a React component or a JSON data structure that groups and prioritizes items from a master EmergencyChecklist based on the triggering DangerSign. This will allow the UI to intelligently display the most critical actions first for a given emergency.
+
+Input Data:
+
+Danger Signs (Grouped by Category):
+
+Bleeding & Delivery: 'Vaginal bleeding', 'Draining', 'Imminent delivery', 'Labour'
+
+Neurological: 'Convulsing', 'Unconscious', 'Severe headache', 'Visual disturbance'
+
+Systemic/Sepsis: 'Fever', 'Looks very ill', 'Severe vomiting'
+
+Master Emergency Checklist Items (by Section):
+
+Communication: 'Receiving facility contacted', 'Reason for referral communicated', etc.
+
+Pre-Referral Procedures: 'IV access secured', 'Urinary catheter inserted', 'Blood samples collected', 'Bedside clotting test done', 'Urinalysis done'
+
+IV Fluids & Medications: 'IV fluids administered', 'Appropriate drugs given'
+
+Vital Signs Monitoring: 'BP', 'Pulse', 'Temp', 'RR'
+
+Special Procedures: 'Anti-shock garment/UBT applied', 'Estimated blood loss', 'Patient positioned appropriately'
+
+Final Steps: 'Details discussed with patient/family', 'Referral form completed', 'Referral register updated'
+
+Core Logic / Business Rules:
+
+You must map the danger signs to a prioritized list of checklist items. Use the following clinical reasoning:
+
+For Bleeding & Delivery Complications:
+
+Clinical Focus: Volume Replacement & Shock Management.
+
+Critical Priorities: Items related to Special Procedures (blood loss), IV Fluids & Medications, and Vital Signs Monitoring.
+
+Secondary Actions: Items related to Pre-Referral Procedures (IV access, blood samples) and patient positioning.
+
+For Neurological Emergencies (Convulsing, Unconscious):
+
+Clinical Focus: Seizure Control & Airway Protection (ABCs).
+
+Critical Priorities: Items related to Special Procedures (patient positioning), IV Fluids & Medications (especially Magnesium Sulfate), and Vital Signs Monitoring (BP).
+
+Secondary Actions: Pre-Referral Procedures (IV access, catheter, urinalysis).
+
+For Suspected Severe Pre-eclampsia (Severe headache, Visual disturbance):
+
+Clinical Focus: Assessment and prevention of eclampsia.
+
+Critical Priorities: Vital Signs Monitoring (BP) and Pre-Referral Procedures (Urinalysis for protein).
+
+Secondary Actions: IV Fluids & Medications (securing IV access in preparation for meds).
+
+For Systemic Illness / Suspected Sepsis (Fever, Looks very ill):
+
+Clinical Focus: Infection Control & Fluid Resuscitation.
+
+Critical Priorities: IV Fluids & Medications (antibiotics, fluids) and Vital Signs Monitoring.
+
+Secondary Actions: Pre-Referral Procedures (blood samples for cultures).
+
+Baseline Items: The Communication & Coordination and Final Steps sections are considered standard procedures required for all referrals.
+
+Output Requirements:
+
+Generate a JSON object or a TypeScript data structure where the keys are the danger sign categories and the value is an object containing prioritized arrays of checklist items (critical, secondary, standard).
+
+Example Output Snippet:
+
+JSON
+
+{
+  "Bleeding & Delivery": {
+    "clinicalFocus": "Volume replacement, shock management, and preparation for obstetric intervention.",
+    "priorities": {
+      "critical": [
+        "Estimated blood loss",
+        "Anti-shock garment/UBT applied",
+        "IV fluids administered",
+        "Appropriate drugs given",
+        "Monitor BP and Pulse for shock"
+      ],
+      "secondary": [
+        "Secure IV access",
+        "Collect blood samples for cross-matching",
+        "Insert urinary catheter",
+        "Patient positioned appropriately"
+      ],
+      "standard": [
+        "Receiving facility contacted",
+        "Reason for referral communicated",
+        "Referral form completed",
+        "Referral register updated"
+      ]
+    }
+  },
+  "Neurological": {
+    "clinicalFocus": "Seizure control, airway protection (ABCs), and managing severe hypertension.",
+    "priorities": {
+        // ... prioritized items for Neurological emergencies
+    }
+  }
+  // ... other categories
+}
