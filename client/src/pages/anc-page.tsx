@@ -5800,7 +5800,7 @@ export default function AncPage() {
                         </div>
 
                         {/* Business Rule: Previous Pregnancy Complications (shown when gravida > 1) */}
-                        <div id="obstetric-risk-fields" className="space-y-3 border border-amber-300 rounded p-3 bg-amber-50" style={{ display: 'none' }}>
+                        <div id="obstetric-risk-fields" className="space-y-3 border border-amber-300 rounded p-3 bg-[#ffffff]" style={{ display: 'none' }}>
                           <h5 className="text-sm font-medium text-amber-700 border-b border-amber-300 pb-1">Previous Pregnancy Risk Assessment</h5>
                           
                           <div className="space-y-2">
