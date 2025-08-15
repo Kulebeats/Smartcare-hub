@@ -961,8 +961,11 @@ export default function AncPage() {
     setSharedReferralReasons(selectedReasons);
     syncReferralToDangerSigns(selectedReasons);
     // Update emergency danger signs for dynamic checklist
-    setTimeout(() => updateEmergencyDangerSigns(), 100);
-  }, [syncReferralToDangerSigns, updateEmergencyDangerSigns]);
+    const mappedDangerSigns = selectedReasons
+      .map(reason => referralReasonToDangerSign[reason])
+      .filter(Boolean);
+    setEmergencyDangerSigns(mappedDangerSigns);
+  }, [syncReferralToDangerSigns, referralReasonToDangerSign]);
 
   // Attach to window object when component mounts
   useEffect(() => {
