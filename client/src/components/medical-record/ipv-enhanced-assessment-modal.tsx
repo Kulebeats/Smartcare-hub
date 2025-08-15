@@ -220,7 +220,7 @@ const IPVEnhancedAssessmentModal: React.FC<IPVEnhancedAssessmentModalProps> = ({
       >
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-t-xl flex-shrink-0">
+        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-t-xl flex-shrink-0 pt-[1px] pb-[1px]">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-xl font-bold">IPV Risk Assessment</h2>
