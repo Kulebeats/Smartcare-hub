@@ -294,11 +294,7 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
                 </div>
               </div>
               <button 
-                onClick={() => {
-                  setShowUrgentModal(false);
-                  // Close button should also trigger acknowledgment and return to main modal
-                  onDangerSignsAcknowledged?.(dangerSigns);
-                }}
+                onClick={() => setShowUrgentModal(false)}
                 className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -323,8 +319,8 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
             <button
               onClick={() => {
                 setShowUrgentModal(false);
-                // Don't show danger signs info modal, instead notify parent to show action selection
-                onDangerSignsAcknowledged?.(dangerSigns);
+                setShowDangerSignsInfo(true);
+                // The danger signs info modal will handle the acknowledgment
               }}
               className="w-full p-4 rounded-2xl transition-all duration-200 text-left transform hover:scale-105 hover:shadow-lg bg-orange-600 hover:bg-orange-700 text-white"
             >
@@ -577,7 +573,13 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
       </Dialog>
 
       {/* Compact Danger Signs Information and Management Protocols Dialog */}
-      <Dialog open={showDangerSignsInfo} onOpenChange={setShowDangerSignsInfo}>
+      <Dialog open={showDangerSignsInfo} onOpenChange={(open) => {
+        setShowDangerSignsInfo(open);
+        if (!open) {
+          // When dialog closes, trigger acknowledgment to show action selection
+          onDangerSignsAcknowledged?.(dangerSigns);
+        }
+      }}>
         <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto bg-white/85 backdrop-blur-2xl border border-white/20 ring-1 ring-white/10 shadow-2xl rounded-2xl" aria-describedby="danger-signs-info-description"
           style={{ 
             background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.80) 100%)',
@@ -711,7 +713,11 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
             <Button
               variant="outline"
               className="rounded-full bg-gray-200 hover:bg-gray-300 text-black border-none px-6"
-              onClick={() => setShowDangerSignsInfo(false)}
+              onClick={() => {
+                setShowDangerSignsInfo(false);
+                // Trigger acknowledgment to show action selection in main modal
+                onDangerSignsAcknowledged?.(dangerSigns);
+              }}
             >
               Close
             </Button>
@@ -719,7 +725,8 @@ export function AncDecisionSupportAlert({ dangerSigns, onRecordClosure, onDanger
               className="rounded-full bg-blue-500 hover:bg-blue-600 text-white border-none px-6"
               onClick={() => {
                 setShowDangerSignsInfo(false);
-                onRecordClosure?.("Reviewed danger signs protocols: " + dangerSigns.join(', '));
+                // Trigger acknowledgment to show action selection in main modal
+                onDangerSignsAcknowledged?.(dangerSigns);
               }}
             >
               Acknowledge
