@@ -612,6 +612,7 @@ export default function AncPage() {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showDangerSignsDialog, setShowDangerSignsDialog] = useState(false);
   const [showEmergencyReferralDialog, setShowEmergencyReferralDialog] = useState(false);
+  const [emergencyDangerSigns, setEmergencyDangerSigns] = useState<string[]>([]);
   const [showReferralReasonsDialog, setShowReferralReasonsDialog] = useState(false);
   const [showReferralChecklistDialog, setShowReferralChecklistDialog] = useState(false);
   const [showFacilityInfoDialog, setShowFacilityInfoDialog] = useState(false);
@@ -959,7 +960,9 @@ export default function AncPage() {
   const handleReferralReasonsChange = useCallback((selectedReasons: string[]) => {
     setSharedReferralReasons(selectedReasons);
     syncReferralToDangerSigns(selectedReasons);
-  }, [syncReferralToDangerSigns]);
+    // Update emergency danger signs for dynamic checklist
+    setTimeout(() => updateEmergencyDangerSigns(), 100);
+  }, [syncReferralToDangerSigns, updateEmergencyDangerSigns]);
 
   // Expose sync function to global scope for inline handlers
   useEffect(() => {
@@ -2457,15 +2460,42 @@ export default function AncPage() {
     console.log(`================================`);
   }, []);
 
+  // Mapping from referral reasons to danger signs
+  const referralReasonToDangerSign: { [key: string]: string } = {
+    'convulsions': 'Convulsing',
+    'severe_bleeding': 'Vaginal bleeding',
+    'unconscious': 'Unconscious',
+    'severe_headache_bp': 'Severe headache',
+    'visual_disturbance': 'Visual disturbance',
+    'high_fever': 'Fever',
+    'severe_anemia': 'Looks very ill',
+    'prolonged_labor': 'Labour',
+    'fetal_distress': 'Imminent delivery',
+    'severe_vomiting': 'Severe vomiting',
+    'severe_abdominal_pain': 'Severe abdominal pain',
+    'draining': 'Draining'
+  };
+
+  // Update emergency danger signs based on selected referral reasons
+  const updateEmergencyDangerSigns = useCallback(() => {
+    const selectedReasons = Array.from(document.querySelectorAll('input[name="referral_reasons"]:checked')).map((cb: any) => cb.value);
+    const mappedDangerSigns = selectedReasons
+      .map(reason => referralReasonToDangerSign[reason])
+      .filter(Boolean);
+    setEmergencyDangerSigns(mappedDangerSigns);
+  }, [referralReasonToDangerSign]);
+
   // Attach to window object when component mounts
   useEffect(() => {
     (window as any).updateChecklistRelevance = updateChecklistRelevance;
+    (window as any).updateEmergencyDangerSigns = updateEmergencyDangerSigns;
     
     // Cleanup on unmount
     return () => {
       delete (window as any).updateChecklistRelevance;
+      delete (window as any).updateEmergencyDangerSigns;
     };
-  }, [updateChecklistRelevance]);
+  }, [updateChecklistRelevance, updateEmergencyDangerSigns]);
 
   // Global functions for dynamic pregnancy sections
   useEffect(() => {
@@ -6464,7 +6494,7 @@ export default function AncPage() {
                           <div id="checklist-content" style={{ display: 'block' }}>
                             {/* Dynamic Emergency Checklist Component */}
                             <DynamicEmergencyChecklist 
-                              dangerSigns={sharedDangerSigns}
+                              dangerSigns={emergencyDangerSigns}
                               onChecklistChange={(completedItems, totalItems) => {
                                 console.log(`Emergency checklist completion: ${completedItems.length}/${totalItems} (${Math.round((completedItems.length / totalItems) * 100)}%)`);
                               }}
@@ -6473,7 +6503,7 @@ export default function AncPage() {
                             />
                             
                             {/* Fallback to static checklist when no danger signs */}
-                            <div id="static-emergency-checklist-fallback" className={`${sharedDangerSigns.length > 0 ? 'hidden' : ''} grid grid-cols-1 gap-3 max-h-64 overflow-y-auto`}>
+                            <div id="static-emergency-checklist-fallback" className={`${emergencyDangerSigns.length > 0 ? 'hidden' : ''} grid grid-cols-1 gap-3 max-h-64 overflow-y-auto`}>
                               
                               {/* Communication Items */}
                               <div className="bg-white rounded p-3 border-l-4 border-green-500">
